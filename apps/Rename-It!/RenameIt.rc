@@ -1,0 +1,1247 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_LINK_CURSOR         CURSOR                  "res\\lien.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DEL                 BITMAP                  "res\\delete.bmp"
+IDB_DOWN                BITMAP                  "res\\down.bmp"
+IDB_ADDFILTER           BITMAP                  "res\\new.bmp"
+IDB_PROP                BITMAP                  "res\\prop.bmp"
+IDB_UP                  BITMAP                  "res\\up.bmp"
+IDB_SAVE                BITMAP                  "res\\save.bmp"
+IDB_OPEN                BITMAP                  "res\\open.bmp"
+IDB_ADDFOLDER           BITMAP                  "res\\add folder.bmp"
+IDB_ADDFILES            BITMAP                  "res\\add files.bmp"
+IDB_DELALL              BITMAP                  "res\\delete all.bmp"
+IDB_UNSELECT_ALL        BITMAP                  "res\\unselect all.bmp"
+IDB_INVERSE_SELECTION   BITMAP                  "res\\inverse selection.bmp"
+IDB_SELECT_ALL          BITMAP                  "res\\select all.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\RenameIt.ico"
+IDI_REMOVED             ICON                    "res\\removed.ico"
+IDI_REN_OK              ICON                    "res\\ok.ico"
+IDI_CONFLICT            ICON                    "res\\conflict.ico"
+IDI_BADNAME             ICON                    "res\\bad name.ico"
+IDI_REN_ERROR           ICON                    "res\\error.ico"
+IDI_INVALIDNAME         ICON                    "res\\badname.ico"
+IDI_RENAMER             ICON                    "res\\renamer.ico"
+IDI_WIN_ERROR           ICON                    "res\\WinError.ico"
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 217, 102
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Rename-It!"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Rename-It! version 4 Alpha",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    EDITTEXT        IDC_WEB_EDIT,40,27,135,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    EDITTEXT        IDC_DEV_EDIT,40,41,63,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+END
+
+IDD_RENAMEIT_DIALOG DIALOGEX 0, 0, 237, 178
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_ACCEPTFILES | WS_EX_APPWINDOW
+CAPTION "Rename-It!"
+MENU IDR_MAINMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Part to rename:",IDC_STATIC,7,10,50,8
+    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,60,7,118,14
+    GROUPBOX        "Renaming filters",IDC_STATIC_RULES,7,25,223,72
+    CONTROL         "List4",IDC_RULES_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,15,35,195,39
+    PUSHBUTTON      "&Up",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
+    PUSHBUTTON      "&Dd",IDC_BUTTON_MOVEDOWN,211,60,14,14,WS_DISABLED
+    DEFPUSHBUTTON   "Add &filter",IDC_BUTTON_ADDRULE,15,78,50,14
+    PUSHBUTTON      "Filters",IDC_BUTTON_FILTERLIST,70,78,50,14
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVERULE,125,78,50,14
+    PUSHBUTTON      "Remove all",IDC_BUTTON_CLEARRULE,180,78,50,14
+    PUSHBUTTON      "Add f&iles",IDC_BUTTON_ADDFILE,7,108,50,14
+    PUSHBUTTON      "Add f&olders",IDC_BUTTON_ADDFOLDER,62,108,50,14
+    CONTROL         "List3",IDC_FILENAMES_IN,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,0,125,237,53
+    PUSHBUTTON      "Rename files",IDOK,114,108,60,14,WS_DISABLED
+    PUSHBUTTON      "&Cancel",IDCANCEL,180,108,50,14
+END
+
+IDD_CONFIGURE DIALOGEX 0, 0, 192, 100
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configure"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Default filters' folder:",IDC_STATIC,7,7,61,8
+    EDITTEXT        IDC_EDIRECTORY,7,18,123,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse...",IDC_BROWSE,135,18,50,14
+    CONTROL         "Add a renaming filter automatically",IDC_AUTO_ADD_RENAMER_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,46,118,10
+    DEFPUSHBUTTON   "Save",IDOK,79,79,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,135,79,50,14
+END
+
+IDD_REPORT DIALOGEX 0, 0, 374, 206
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Report"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Rename file list",IDC_STATIC,7,7,360,170
+    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
+    PUSHBUTTON      "Refresh",IDC_REFRESH_BUTTON,205,185,50,14
+    DEFPUSHBUTTON   "Rename",IDOK,262,185,50,14,WS_DISABLED
+    PUSHBUTTON      "Cancel",IDCANCEL,317,185,50,14
+    LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
+END
+
+IDD_RENAME DIALOGEX 0, 0, 228, 75
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rename"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "New name:",IDC_STATIC,7,31,37,8
+    EDITTEXT        IDC_NEW_EDIT,67,28,154,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,116,55,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,171,55,50,14
+    LTEXT           "Original name:",IDC_STATIC,7,9,47,8
+    EDITTEXT        IDC_ORIGINAL_EDIT,67,7,154,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
+IDD_NOT_ADDED_FILES DIALOGEX 0, 0, 288, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Not-added files"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,118,172,50,14
+    GROUPBOX        "Files not added to the list",IDC_STATIC,7,7,274,158
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SORTASCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,17,260,141
+END
+
+IDD_SEARCH_REPLACE_DIALOG DIALOGEX 0, 0, 347, 190
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Search & Replace"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Find what:",IDC_STATIC,3,8,37,8
+    CONTROL         "",IDC_SEARCH_RICHEDIT,"RichEdit20A",ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP,65,6,200,14
+    CONTROL         ">",IDC_SEARCHBUTTON,"Button",BS_OWNERDRAW,268,6,12,13
+    LTEXT           "Replace with:",IDC_STATIC,3,24,46,8
+    CONTROL         "",IDC_REPLACE_RICHEDIT,"RichEdit20A",ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP,65,23,200,14
+    CONTROL         ">",IDC_REPLACEBUTTON,"Button",BS_OWNERDRAW,268,23,12,13
+    CONTROL         "Use:",IDC_USE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,41,31,10
+    COMBOBOX        IDC_USE_COMBO,65,40,95,61,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Advanced options",IDC_ADVANCED_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,54,73,10
+    LTEXT           "Locale:",IDC_STATIC,13,69,24,8
+    COMBOBOX        IDC_LOCALE_COMBO,44,67,73,61,CBS_DROPDOWN | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Find options",IDC_STATIC,10,85,126,55
+    CONTROL         "Match case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,97,53,10
+    CONTROL         "Match whole word",IDC_WHOLEWORD_TEXT,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,18,110,76,10
+    CONTROL         "Match full text",IDC_WHOLE_TEXT,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,18,123,62,10
+    GROUPBOX        "Replace options",IDC_STATIC,178,59,159,81
+    CONTROL         "Change case:",IDC_CASE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,71,61,10
+    COMBOBOX        IDC_CASE_COMBO,253,70,73,61,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Replace `%d' by a number serie",IDC_SERIES_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,84,122,10
+    PUSHBUTTON      "?",IDC_SERIES_BUTTON,311,84,12,10
+    LTEXT           "Start:",IDC_STATIC,197,96,20,8
+    EDITTEXT        IDC_SERIE_START_EDIT,220,94,39,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
+    CONTROL         "",IDC_SERIE_START_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,256,93,9,14
+    LTEXT           "Step:",IDC_STATIC,265,96,19,8
+    EDITTEXT        IDC_SERIE_STEP_EDIT,287,94,39,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
+    CONTROL         "",IDC_SERIE_STEP_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,323,92,10,14
+    CONTROL         "ID3 Tag Reader Mode",IDC_ID3TAG_CHECK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,186,110,87,10
+    CONTROL         "Replace every occurrence",IDC_ALL_OCCURRENCES_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,186,123,100,10
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,147,340,1
+    LTEXT           "Before:",IDC_STATIC,3,157,27,8
+    EDITTEXT        IDC_BEFORE,36,154,308,14,ES_AUTOHSCROLL
+    LTEXT           "After:",IDC_STATIC,3,176,22,8
+    EDITTEXT        IDC_AFTER,36,173,308,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,289,6,55,14
+    PUSHBUTTON      "Cancel",IDCANCEL,289,23,55,14
+END
+
+IDD_PROGRESS DIALOGEX 0, 0, 210, 83
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Progress"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Cancel",IDCANCEL,79,62,50,14,WS_DISABLED
+    LTEXT           "$(Done) of $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 95
+    END
+
+    IDD_RENAMEIT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 230
+        VERTGUIDE, 15
+        VERTGUIDE, 225
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 161
+        HORZGUIDE, 85
+        HORZGUIDE, 115
+    END
+
+    IDD_CONFIGURE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 185
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_REPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 367
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 199
+    END
+
+    IDD_RENAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 68
+    END
+
+    IDD_NOT_ADDED_FILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 281
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_SEARCH_REPLACE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 344
+        VERTGUIDE, 18
+        VERTGUIDE, 186
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 187
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,9,0,1
+ PRODUCTVERSION 3,9,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "Rename a large number of files at once."
+            VALUE "FileDescription", "Rename-It!"
+            VALUE "FileVersion", "3, 9, 0, 1"
+            VALUE "InternalName", "RenameIt"
+            VALUE "LegalCopyright", "Copyright © 1998, 2007 Werner BEROUX"
+            VALUE "OriginalFilename", "RenameIt.exe"
+            VALUE "ProductName", "Rename-It! Application"
+            VALUE "ProductVersion", "3, 9, 0, 1"
+        END
+        BLOCK "040c04b0"
+        BEGIN
+            VALUE "Comments", "Renomme un grand nombre de fichier en un fois."
+            VALUE "FileDescription", "Rename-It!"
+            VALUE "FileVersion", "3, 9, 0, 1"
+            VALUE "InternalName", "RenameIt"
+            VALUE "LegalCopyright", "Copyright © 1998, 2007 Werner BEROUX"
+            VALUE "OriginalFilename", "RenameIt.exe"
+            VALUE "ProductName", "Application RenameIt"
+            VALUE "ProductVersion", "3, 9, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200, 0x40c, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Open...",                     ID_FILE_OPEN
+        MENUITEM "Save as...",                  ID_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Configure",                  ID_FILE_CONFIGURE
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       ID_FILE_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Always on top",              ID_VIEW_ALWAYS_ON_TOP
+    END
+    POPUP "&?"
+    BEGIN
+        MENUITEM "&Help\tF1",                   ID_HELP_INDEX
+        MENUITEM "&What is This?\tShift+F1",    ID_CONTEXT_HELP
+        POPUP "Feedback"
+        BEGIN
+            MENUITEM "Bug report",                  ID_FEEDBACK_BUGREPORT
+            MENUITEM "Information request",         ID_FEEDBACK_INFORMATIONREQUEST
+            MENUITEM "Suggestions",                 ID_FEEDBACK_SUGGESTIONS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&About",                      ID_HELP_ABOUT
+    END
+END
+
+IDR_SEARCH_WILD MENU 
+BEGIN
+    POPUP "Search Wildcard"
+    BEGIN
+        MENUITEM "Zero or more of any character\t*", ID_WILD_0ORMORE
+        MENUITEM "Any single character\t?",     ID_WILD_1MATCH
+    END
+END
+
+IDR_SEARCH_REGEXP MENU 
+BEGIN
+    POPUP "Search RegExp"
+    BEGIN
+        MENUITEM "Any Character\t.",            ID_ANYCHARACTER
+        MENUITEM "0 or More Matches\t*",        ID_0ORMOREMATCHES
+        MENUITEM "1 or More Matches\t+",        ID_1ORMOREMATCHES
+        MENUITEM SEPARATOR
+        MENUITEM "Beginnging of Line\t^",       ID_BEGINNGINGOFLINE
+        MENUITEM "End of Line\t$",              ID_ENDOFLINE
+        MENUITEM "Line jump\t\\n",              ID_SEARCHREGEXP_NEWLINE
+        MENUITEM SEPARATOR
+        MENUITEM "Character in Group\t[ ]",     ID_CHARACTERINRANGE
+        MENUITEM "Character Not in Group\t[^ ]", ID_CHARACTERNOTINRANGE
+        MENUITEM "Or\t|",                       ID_OR
+        MENUITEM "Tagged Expression\t( )",      ID_TAGGEDEXPRESSION
+        MENUITEM SEPARATOR
+        MENUITEM "Alphanumeric Character\t[0-9A-Za-z]", ID_ALPHANUMERICCHARACTER
+        MENUITEM "Alphabetic Character\t[A-Za-z]", ID_ALPHABETICCHARACTER
+        MENUITEM "Decimal Digit\t[0-9]",        ID_DECIMALDIGIT
+    END
+END
+
+IDR_REPLACE MENU 
+BEGIN
+    POPUP "Replace macros"
+    BEGIN
+        MENUITEM "File's directory\t$(FileDir)", ID_REPLACE_FILEDIR
+        MENUITEM "File name\t$(FileName)",      ID_REPLACE_FILENAME
+        MENUITEM "File's extension\t$(FileExt)", ID_REPLACE_FILEEXT
+        MENUITEM "Name before filtering\t$(UnfilteredName)", ID_REPLACE_UNFILTEREDNAME
+        MENUITEM "Filtered name\t$(FilteredName)", ID_REPLACE_FILTEREDNAME
+        MENUITEM SEPARATOR
+        POPUP "ID3 Tag Reader"
+        BEGIN
+            MENUITEM "Track\t$(ID3Track)",          ID_ID3TAGREADER_TRACK
+            MENUITEM "Artist\t$(ID3Artist)",        ID_ID3TAGREADER_ARTIST
+            MENUITEM "Title\t$(ID3Title)",          ID_ID3TAGREADER_TITLE
+            MENUITEM "Album\t$(ID3Album)",          ID_ID3TAGREADER_ALBUM
+            MENUITEM "Year\t$(ID3Year)",            ID_ID3TAGREADER_YEAR
+            MENUITEM "Comment\t$(ID3Comment)",      ID_ID3TAGREADER_COMMENT
+            MENUITEM "Genre\t$(ID3Genre)",          ID_ID3TAGREADER_GENRE
+        END
+        MENUITEM SEPARATOR
+        POPUP "Regular Expressions"
+        BEGIN
+            MENUITEM "Replaced Text\t\\0",          ID_REGEXP_FINDWHATTEXT
+            MENUITEM "Tagged Expression 1\t\\1",    ID_REGEXP_TAGGEDEXPRESSION1
+            MENUITEM "Tagged Expression 2\t\\2",    ID_REGEXP_TAGGEDEXPRESSION2
+            MENUITEM "Tagged Expression 3\t\\3",    ID_REGEXP_TAGGEDEXPRESSION3
+            MENUITEM "Tagged Expression 4\t\\4",    ID_REGEXP_TAGGEDEXPRESSION4
+            MENUITEM "Tagged Expression 5\t\\5",    ID_REGEXP_TAGGEDEXPRESSION5
+            MENUITEM "Tagged Expression 6\t\\6",    ID_REGEXP_TAGGEDEXPRESSION6
+            MENUITEM "Tagged Expression 7\t\\7",    ID_REGEXP_TAGGEDEXPRESSION7
+            MENUITEM "Tagged Expression 8\t\\8",    ID_REGEXP_TAGGEDEXPRESSION8
+            MENUITEM "Tagged Expression 9\t\\9",    ID_REGEXP_TAGGEDEXPRESSION9
+        END
+        POPUP "Wildcards"
+        BEGIN
+            MENUITEM "Tagget expression (characters matching '*')\t*", ID_TAGGETBYSTAR
+        END
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SEARCH_REPLACE_DIALOG DLGINIT
+BEGIN
+    IDC_USE_COMBO, 0x403, 20, 0
+0x6552, 0x7567, 0x616c, 0x2072, 0x7865, 0x7270, 0x7365, 0x6973, 0x6e6f, 
+0x0073, 
+    IDC_USE_COMBO, 0x403, 10, 0
+0x6957, 0x646c, 0x6163, 0x6472, 0x0073, 
+    IDC_LOCALE_COMBO, 0x403, 2, 0
+0x0043, 
+    IDC_LOCALE_COMBO, 0x403, 5, 0
+0x4f2e, 0x5043, "\000" 
+    IDC_LOCALE_COMBO, 0x403, 5, 0
+0x412e, 0x5043, "\000" 
+    IDC_LOCALE_COMBO, 0x403, 8, 0
+0x6e45, 0x6c67, 0x7369, 0x0068, 
+    IDC_LOCALE_COMBO, 0x403, 7, 0
+0x7246, 0x6e65, 0x6863, "\000" 
+    IDC_CASE_COMBO, 0x403, 10, 0
+0x6f6c, 0x6577, 0x6372, 0x7361, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 10, 0
+0x5055, 0x4550, 0x4352, 0x5341, 0x0045, 
+    IDC_CASE_COMBO, 0x403, 14, 0
+0x6553, 0x746e, 0x6e65, 0x6563, 0x6320, 0x7361, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 10, 0
+0x6f57, 0x6472, 0x4320, 0x7361, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 12, 0
+0x4e69, 0x4556, 0x5452, 0x6320, 0x5341, 0x0045, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Rename-It!..."
+    IDS_ADDDIR              "%1 is a directory.\nDo you want to add the files in the directory?"
+    IDS_CANTSAVE            "Unable to save configuration to registry."
+    IDS_GENERICERROR        "Unknow error in file %1 at line %2.\nPlease report it to the software's authors."
+    ID_CANT_SAVE_FILE       "Couldn't save file."
+    ID_OVERWRITE_SYSTEM_FILE "Unable to overwrite a system file."
+    ID_OVERWRITE_READONLY_FILE 
+                            "The file is marked as read only.\n\nAre you sure you want\nto overwrite it?"
+    ID_RENAME_SYSTEM_FILE   "System file"
+    IDS_CONFIRM_EXIT        "Some files haven't been renamed.\nAre you sure you want to exit?"
+    IDS_REPORT_BEFORE       "Files to rename: %d\nBad file names: %d"
+    IDS_MANUAL_RENAMING_ERROR 
+                            "The file/folder could not be renamed like that."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NO_FILENAME_CHANGES "No file has to be renamed."
+    IDS_RENAMED_ALL         "Done:\n%d files renamed."
+    IDS_DONE                "Done"
+    IDS_BEFORE              "Before"
+    IDS_AFTER               "After"
+    IDS_FILTER              "Filter"
+    IDS_NO_RECENT_FILTERS   "No recent filters"
+    IDS_RECENT_FILTERS      "Recent &filters"
+    IDS_OPEN                "&Open..."
+    IDS_SAVE_AS             "&Save as..."
+    IDS_CANT_OPEN_FILTERS   "Couldn't open filter list."
+    IDS_SAMPLE_PATH         "X:\\Sample\\Sample_FileName.Ext"
+    IDS_HOME_PAGE           "Home page at Beroux.com"
+    IDS_MENU_ADD_FILTER     "&Add filter\tIns"
+    IDS_MENU_MOVE_UP        "Move &up"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_MOVE_DOWN      "Move &down"
+    IDS_MENU_REMOVE         "Remove from list\tDel"
+    IDS_MENU_REMOVE_ALL     "Clear list"
+    IDS_MENU_PROPERTIES     "P&roperties"
+    IDS_FILTERS             "Filters"
+    IDS_MENU_ADD_FOLDER     "&Add folders"
+    IDS_MENU_ADD_FILES      "Add &files"
+    IDS_FILES               "Files"
+    IDS_DIR                 "Directory"
+    IDS_ERROR               "Error"
+    IDS_REMOVED_FROM_DISK   "Removed: File has been deleted from disk"
+    IDS_CONFLICT            "Conflict: Same file name has been found"
+    IDS_BAD_FILE_NAME       "Bad file name: This name should be avoided (probably reserved for the system)"
+    IDS_MENU_RENAME         "Rena&me\tF2"
+    IDS_MENU_REMOVE_MISSING "Remove &all missing files"
+    IDS_MENU_REFRESH        "&Refresh\tF5"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RENAME_LIST         "Rename list"
+    IDS_FILE_ALREADY_EXIST  "File already in the list"
+    IDS_NOT_EMPTY_FILTER_LIST_SAVE 
+                            "The current filter list is not empty.\nDo you want to save it now?"
+    IDS_CANT_SAVE_FILTERS   "Couldn't save filter list."
+    IDS_MENU_SELECT_ALL     "Select All"
+    IDS_MENU_SELECT_NONE    "Unselect All"
+    IDS_MENU_SELECT_INVERT  "Inverse Selection"
+    IDS_MODIFY_EXTENSION_WARNING 
+                            "You are going to change the extension of one or more files.\nIf you change a file name extension, the file may become unusable.\n\nAre you sure you want to change it?"
+    IDS_NO_FILTER           "<No filter>"
+    IDS_SCAN_FOR_PLUGINS    "Where should Rename-It! scan for .rit files"
+    IDS_UNABLE_TO_LOAD_PLUGIN "Unable to load plug-in:\n%1"
+    IDS_ERROR_LOADING_PLUGIN "<error loading plug-in>"
+    IDS_UNKNOWN             "<unknown>"
+    IDS_COLUMN_FILE_NAME    "File name"
+    IDS_COLUMN_ERROR_MESSAGE "Error message"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RIT_OFN_FILTER      "Rename-It Filters (*.rit)|*.rit||"
+    IDS_FILES_OFN_FILTER    "Files to rename (*.*)|*.*||"
+    IDS_FILES_OFN_TITLE     "Select files"
+    IDS_FOLDER_OFN_TITLE    "Select folder"
+    IDS_UNKNOWN_FILTER      "Error during loading of the filter ""%1"":\nUnknown filter."
+    IDS_STATUS_RENAME_COUNT "%1 files(s) to rename of the %2 file(s)."
+    IDS_INVALID_FILE_NAME   "Invalid file name: Contains forbidden characters"
+    IDS_RENAME_PARTS        "C:\\..\\Folders\\Filename.Ext"
+    IDS_TT_SELECT_RENAME_PARTS 
+                            "Highlight the elements you would like to rename."
+    IDS_NO_FILTER_TO_SAVE   "Nothing to save: No filter have been defined."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SEARCH_AND_REPLACE  "Searc&h and replace"
+    IDS_DESCR_ID3           "ID3Tag Reader: "
+    IDS_SERIES_HELP         "Replace ""%d"" by a number in the replacement string before doing anything else. This can be used to create enumerations.\n\nFormat samples:\n""123""\t""%d""\n""   123""\t""%6d""\n""123   ""\t""%-6d""\n""000123""\t""%06d""\n""%""\t""%%"" (%% will be replace by a single %)"
+    IDS_SEARCH_INVITE       "Enter search string. Replaces entire name if empty."
+    IDS_REPLACE_INVITE      "Enter string that replaces the matching search string."
+    IDS_DESCR_REPLACE_REGEXP "RegExp replace"
+    IDS_DESCR_REPLACE_WILDCARD "Wildcard replace"
+    IDS_DESCR_REPLACE       "Replace"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DESCR_WITH          "with"
+    IDS_DESCR_MATCH_CASE    "match case"
+    IDS_DESCR_SKIP_CASE     "skip case"
+    IDS_DESCR_ONCE          "replace once"
+    IDS_DESCR_SERIES        "enumerate"
+    IDS_SERIES_DEFAULT_REPLACE "Image %03d"
+    IDS_DESCR_WHOLE_TEXT    "match whole"
+    IDS_TT_BEFORE           "Sample string before applying the renaming filter"
+    IDS_TT_AFTER            "Sample string after applying the renaming filter"
+    IDS_TT_ID3              "ID3 Tag macros for the replacement text box"
+    IDS_TT_LOCALE           "Locale settings (affects the spaces and case handling)"
+    IDS_TT_ALLOCCURENCES    "Replace as many times as possible"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CMDLINE_FILTER_FILE_MISSING 
+                            "The filter file is not specified in the command-line."
+    IDS_CMDLINE_LOG_FILE_MISSING 
+                            "The log file is not specified in the command-line."
+    IDS_CMDLINE_NO_FILTER   "To rename from the command-line, you have to specify a valid filter file."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_PGRS_CHECK_CAPTION  "Stage 1: Checking..."
+    IDS_PGRS_PREREN_CAPTION "Stage 2: Preparing renaming..."
+    IDS_PGRS_RENAMING_CAPTION "Stage 3: Renaming $(Done) of $(Total)..."
+    IDS_PGRS_TITLE          "Renaming Progress"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// French (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_RENAMEIT_DIALOG DIALOGEX 0, 0, 237, 178
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_ACCEPTFILES | WS_EX_APPWINDOW
+CAPTION "Rename-It!"
+MENU IDR_MAINMENU
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,73,7,119,14
+    GROUPBOX        "Filtres de renommage",IDC_STATIC_RULES,7,25,223,72
+    CONTROL         "List4",IDC_RULES_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,15,35,195,39
+    PUSHBUTTON      "^",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
+    PUSHBUTTON      "v",IDC_BUTTON_MOVEDOWN,211,60,14,14,WS_DISABLED
+    DEFPUSHBUTTON   "Ajouter filtre",IDC_BUTTON_ADDRULE,15,78,50,14
+    PUSHBUTTON      "Filtres",IDC_BUTTON_FILTERLIST,70,78,50,14
+    PUSHBUTTON      "Retirer",IDC_BUTTON_REMOVERULE,125,78,50,14
+    PUSHBUTTON      "Tout retirer",IDC_BUTTON_CLEARRULE,180,78,50,14
+    PUSHBUTTON      "Ajouter fichier",IDC_BUTTON_ADDFILE,7,108,50,14
+    PUSHBUTTON      "Ajouter dossier",IDC_BUTTON_ADDFOLDER,62,108,50,14
+    CONTROL         "List3",IDC_FILENAMES_IN,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,0,125,237,53
+    PUSHBUTTON      "Renommer",IDOK,114,108,60,14,WS_DISABLED
+    PUSHBUTTON      "Annuler",IDCANCEL,180,108,50,14
+    LTEXT           "Partie à renommer :",IDC_STATIC,7,10,63,8
+END
+
+IDD_NOT_ADDED_FILES DIALOGEX 0, 0, 288, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Fichiers non-ajoutés"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,118,172,50,14
+    GROUPBOX        "Fichier qui n'ont pas pu être ajouté",IDC_STATIC,7,7,274,158
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SORTASCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,14,17,260,141
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 217, 102
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "A propos de Rename-It!"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
+    LTEXT           "Rename-It! version 4 Alpha",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    EDITTEXT        IDC_WEB_EDIT,40,27,136,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    EDITTEXT        IDC_DEV_EDIT,40,41,66,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+END
+
+IDD_CONFIGURE DIALOGEX 0, 0, 192, 100
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Configuration"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Emplacement par défaut des filtres:",IDC_STATIC,7,7,106,8
+    EDITTEXT        IDC_EDIRECTORY,7,18,123,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Parcourir...",IDC_BROWSE,135,18,50,14
+    CONTROL         "Ajouter un filtre de renommage automatiquement",IDC_AUTO_ADD_RENAMER_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,46,160,10
+    DEFPUSHBUTTON   "Sauvegarder",IDOK,79,79,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,135,79,50,14
+END
+
+IDD_RENAME DIALOGEX 0, 0, 228, 75
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Renommer"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Nouveau nom:",IDC_STATIC,7,31,48,8
+    EDITTEXT        IDC_NEW_EDIT,67,28,154,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,116,55,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,171,55,50,14
+    LTEXT           "Nom d'origine:",IDC_STATIC,7,9,46,8
+    EDITTEXT        IDC_ORIGINAL_EDIT,67,7,154,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
+IDD_REPORT DIALOGEX 0, 0, 374, 206
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rapport"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Liste des fichiers à renommer",IDC_STATIC,7,7,360,170
+    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
+    DEFPUSHBUTTON   "Renommer",IDOK,262,185,50,14,WS_DISABLED
+    PUSHBUTTON      "Annuler",IDCANCEL,317,185,50,14
+    LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
+    PUSHBUTTON      "Rafraîchir",IDC_REFRESH_BUTTON,205,185,50,14
+END
+
+IDD_SEARCH_REPLACE_DIALOG DIALOGEX 0, 0, 347, 190
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Chercher et remplacer"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Rechercher :",IDC_STATIC,3,8,42,8
+    CONTROL         "",IDC_SEARCH_RICHEDIT,"RichEdit20A",ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP,65,6,200,14
+    CONTROL         ">",IDC_SEARCHBUTTON,"Button",BS_OWNERDRAW,268,6,12,13
+    LTEXT           "Remplacer par :",IDC_STATIC,3,24,54,8
+    CONTROL         "",IDC_REPLACE_RICHEDIT,"RichEdit20A",ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP,65,23,200,14
+    CONTROL         ">",IDC_REPLACEBUTTON,"Button",BS_OWNERDRAW,268,23,12,13
+    CONTROL         "Utiliser :",IDC_USE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,41,43,10
+    COMBOBOX        IDC_USE_COMBO,65,40,95,61,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Options avancées",IDC_ADVANCED_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,54,73,10
+    LTEXT           "Région :",IDC_STATIC,14,69,28,8
+    COMBOBOX        IDC_LOCALE_COMBO,51,67,73,61,CBS_DROPDOWN | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Options de recherche",IDC_STATIC,10,85,126,55
+    CONTROL         "Respecter la casse",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,18,97,77,10
+    CONTROL         "Mot entier seulement",IDC_WHOLEWORD_TEXT,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,18,110,85,10
+    CONTROL         "Texte entier seulement",IDC_WHOLE_TEXT,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,18,123,91,10
+    GROUPBOX        "Options de remplacement",IDC_STATIC,170,59,167,81
+    CONTROL         "Changer la casse :",IDC_CASE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,71,77,10
+    COMBOBOX        IDC_CASE_COMBO,256,70,70,61,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Remplacer %d par un nombre en série",IDC_SERIES_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,84,143,10
+    PUSHBUTTON      "?",IDC_SERIES_BUTTON,322,84,12,10
+    LTEXT           "Début :",IDC_STATIC,189,96,25,8
+    EDITTEXT        IDC_SERIE_START_EDIT,217,94,41,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
+    CONTROL         "",IDC_SERIE_START_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,251,93,10,14
+    LTEXT           "Pas :",IDC_STATIC,265,96,17,8
+    EDITTEXT        IDC_SERIE_STEP_EDIT,285,94,41,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
+    CONTROL         "",IDC_SERIE_STEP_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,318,91,10,14
+    CONTROL         "Mode Lecteur de Tag ID3",IDC_ID3TAG_CHECK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,178,110,98,10
+    CONTROL         "Remplacer toutes les occurrences",IDC_ALL_OCCURRENCES_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,178,123,126,10
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,147,340,1
+    CONTROL         "Avant :",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,3,157,26,8
+    EDITTEXT        IDC_BEFORE,35,154,309,14,ES_AUTOHSCROLL
+    LTEXT           "Après :",IDC_STATIC,3,176,27,8
+    EDITTEXT        IDC_AFTER,35,173,309,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,289,6,55,14
+    PUSHBUTTON      "Annuler",IDCANCEL,289,23,55,14
+END
+
+IDD_RENAME_ERROR DIALOGEX 0, 0, 225, 121
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Renaming Error"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,84,99,50,15
+    LTEXT           "$(Files) files or folders could not be correctly renamed.",IDC_DESCR_STATIC,45,9,173,19
+    CONTROL         "Keep the current files names",IDC_ACTION_RADIO,"Button",BS_AUTORADIOBUTTON | WS_GROUP,31,51,107,10
+    CONTROL         "Try to revert back to original files names",IDC_ACTION2_RADIO,
+                    "Button",BS_AUTORADIOBUTTON,31,65,145,10
+    PUSHBUTTON      "Show details",IDC_DETAILS_BUTTON,168,82,50,14
+    ICON            IDI_WIN_ERROR,IDC_STATIC,8,7,20,20
+    LTEXT           "What do you want to do?",IDC_STATIC,31,38,82,8
+    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | NOT WS_VISIBLE | WS_BORDER | WS_TABSTOP,8,80,210,18
+END
+
+IDD_PROGRESS DIALOGEX 0, 0, 210, 83
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Progression"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Annuler",IDCANCEL,79,62,50,14,WS_DISABLED
+    LTEXT           "$(Done) de $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_NOT_ADDED_FILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 281
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 95
+    END
+
+    IDD_CONFIGURE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 185
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_RENAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 68
+    END
+
+    IDD_REPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 367
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 199
+    END
+
+    IDD_SEARCH_REPLACE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 344
+        VERTGUIDE, 10
+        VERTGUIDE, 18
+        VERTGUIDE, 178
+        VERTGUIDE, 337
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 187
+    END
+
+    IDD_RENAME_ERROR, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 218
+        VERTGUIDE, 31
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_PROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINMENU MENU 
+BEGIN
+    POPUP "&Fichier"
+    BEGIN
+        MENUITEM "Ouvrir...",                   ID_FILE_OPEN
+        MENUITEM "Enregistrer sous...",         ID_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "&Configurer",                 ID_FILE_CONFIGURE
+        MENUITEM SEPARATOR
+        MENUITEM "&Quitter",                    ID_FILE_EXIT
+    END
+    POPUP "Fe&nêtre"
+    BEGIN
+        MENUITEM "&Toujours au dessus",         ID_VIEW_ALWAYS_ON_TOP
+    END
+    POPUP "&?"
+    BEGIN
+        MENUITEM "&Aide\tF1",                   ID_HELP_INDEX
+        MENUITEM "&Qu'est-ce que c'est?\tMaj+F1", ID_CONTEXT_HELP
+        POPUP "Feedback"
+        BEGIN
+            MENUITEM "Rapporter un bogue",          ID_FEEDBACK_BUGREPORT
+            MENUITEM "Demande d'information",       ID_FEEDBACK_INFORMATIONREQUEST
+            MENUITEM "Suggestions",                 ID_FEEDBACK_SUGGESTIONS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&A propos",                   ID_HELP_ABOUT
+    END
+END
+
+IDR_SEARCH_WILD MENU 
+BEGIN
+    POPUP "Search Wildcard"
+    BEGIN
+        MENUITEM "Zéro ou plusieurs caractères\t*", ID_WILD_0ORMORE
+        MENUITEM "Tout caractère unique\t?",    ID_WILD_1MATCH
+    END
+END
+
+IDR_SEARCH_REGEXP MENU 
+BEGIN
+    POPUP "Search RegExp"
+    BEGIN
+        MENUITEM "Tout caractère unique\t.",    ID_ANYCHARACTER
+        MENUITEM "Zéro ou plus\t*",             ID_0ORMOREMATCHES
+        MENUITEM "Un ou plus\t+",               ID_1ORMOREMATCHES
+        MENUITEM SEPARATOR
+        MENUITEM "Début de ligne\t^",           ID_BEGINNGINGOFLINE
+        MENUITEM "Fin de ligne\t$",             ID_ENDOFLINE
+        MENUITEM "Saut de ligne\t\\n",          ID_SEARCHREGEXP_NEWLINE
+        MENUITEM SEPARATOR
+        MENUITEM "Tout caractère de l'ensemble\t[ ]", ID_CHARACTERINRANGE
+        MENUITEM "Tout caractère hors de l'ensemble\t[^ ]", ID_CHARACTERNOTINRANGE
+        MENUITEM "Ou\t|",                       ID_OR
+        MENUITEM "Expression de balise\t( )",   ID_TAGGEDEXPRESSION
+        MENUITEM SEPARATOR
+        MENUITEM "Caractère alphanumerique\t[0-9A-Za-z]", ID_ALPHANUMERICCHARACTER
+        MENUITEM "Caractère de l'alphabet\t[A-Za-z]", ID_ALPHABETICCHARACTER
+        MENUITEM "Chiffre\t[0-9]",              ID_DECIMALDIGIT
+    END
+END
+
+IDR_REPLACE MENU 
+BEGIN
+    POPUP "Replace macros"
+    BEGIN
+        MENUITEM "Répertoire du fichier\t$(FileDir)", ID_REPLACE_FILEDIR
+        MENUITEM "Nom du fichier\t$(FileName)", ID_REPLACE_FILENAME
+        MENUITEM "Extension du fichier\t$(FileExt)", ID_REPLACE_FILEEXT
+        MENUITEM "Nom avant filtrage\t$(UnfilteredName)", ID_REPLACE_UNFILTEREDNAME
+        MENUITEM "Nom après filtrage\t$(FilteredName)", ID_REPLACE_FILTEREDNAME
+        MENUITEM SEPARATOR
+        POPUP "Lecteur de Tag ID3"
+        BEGIN
+            MENUITEM "Piste\t$(ID3Track)",          ID_ID3TAGREADER_TRACK
+            MENUITEM "Artiste\t$(ID3Artist)",       ID_ID3TAGREADER_ARTIST
+            MENUITEM "Titre\t$(ID3Title)",          ID_ID3TAGREADER_TITLE
+            MENUITEM "Album\t$(ID3Album)",          ID_ID3TAGREADER_ALBUM
+            MENUITEM "Année\t$(ID3Year)",           ID_ID3TAGREADER_YEAR
+            MENUITEM "Commentaire\t$(ID3Comment)",  ID_ID3TAGREADER_COMMENT
+            MENUITEM "Genre\t$(ID3Genre)",          ID_ID3TAGREADER_GENRE
+        END
+        MENUITEM SEPARATOR
+        POPUP "Expresionns Régulières"
+        BEGIN
+            MENUITEM "Rechercher\t\\0",             ID_REGEXP_FINDWHATTEXT
+            MENUITEM "Expression avec balises 1\t\\1", ID_REGEXP_TAGGEDEXPRESSION1
+            MENUITEM "Expression avec balises 2\t\\2", ID_REGEXP_TAGGEDEXPRESSION2
+            MENUITEM "Expression avec balises 3\t\\3", ID_REGEXP_TAGGEDEXPRESSION3
+            MENUITEM "Expression avec balises 4\t\\4", ID_REGEXP_TAGGEDEXPRESSION4
+            MENUITEM "Expression avec balises 5\t\\5", ID_REGEXP_TAGGEDEXPRESSION5
+            MENUITEM "Expression avec balises 6\t\\6", ID_REGEXP_TAGGEDEXPRESSION6
+            MENUITEM "Expression avec balises 7\t\\7", ID_REGEXP_TAGGEDEXPRESSION7
+            MENUITEM "Expression avec balises 8\t\\8", ID_REGEXP_TAGGEDEXPRESSION8
+            MENUITEM "Expression avec balises 9\t\\9", ID_REGEXP_TAGGEDEXPRESSION9
+        END
+        POPUP "Wildcards"
+        BEGIN
+            MENUITEM "Tagget expression (characters matching '*')\t*", ID_TAGGETBYSTAR
+        END
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SEARCH_REPLACE_DIALOG DLGINIT
+BEGIN
+    IDC_USE_COMBO, 0x403, 22, 0
+0x7845, 0x7270, 0x7365, 0x6973, 0x6e6f, 0x7220, 0x67e9, 0x6c75, 0xe869, 
+0x6572, 0x0073, 
+    IDC_USE_COMBO, 0x403, 22, 0
+0x6143, 0x6172, 0x7463, 0x72e8, 0x7365, 0x6720, 0x6ee9, 0x72e9, 0x7169, 
+0x6575, 0x0073, 
+    IDC_LOCALE_COMBO, 0x403, 2, 0
+0x0043, 
+    IDC_LOCALE_COMBO, 0x403, 5, 0
+0x4f2e, 0x5043, "\000" 
+    IDC_LOCALE_COMBO, 0x403, 5, 0
+0x412e, 0x5043, "\000" 
+    IDC_LOCALE_COMBO, 0x403, 8, 0
+0x6e45, 0x6c67, 0x7369, 0x0068, 
+    IDC_LOCALE_COMBO, 0x403, 7, 0
+0x7246, 0x6e65, 0x6863, "\000" 
+    IDC_CASE_COMBO, 0x403, 10, 0
+0x696d, 0x756e, 0x6373, 0x6c75, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 10, 0
+0x414d, 0x554a, 0x4353, 0x4c55, 0x0045, 
+    IDC_CASE_COMBO, 0x403, 16, 0
+0x6850, 0x6172, 0x6573, 0x6320, 0x6d6f, 0x6c70, 0x74e8, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 12, 0
+0x6f4d, 0x2074, 0x6e55, 0x7469, 0x7571, 0x0065, 
+    IDC_CASE_COMBO, 0x403, 9, 0
+0x6920, 0x4556, 0x5352, 0x5245, "\000" 
+    0
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)\r\n"
+    "LANGUAGE 12, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\RenameIt.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "À &propos de Rename-It!..."
+    IDS_ADDDIR              "%1 est un répertoire.\nVoulez-vous ajouter les fichiers qui sont dans ce répertoire?"
+    IDS_CANTSAVE            "Impossible de sauvegarder la configuration dans la base de registre."
+    IDS_GENERICERROR        "Erreur inconnue dans le fichier %1 à la ligne %2.\nVeuillez rapporter cette erreur aux auteurs du logiciel."
+    ID_CANT_SAVE_FILE       "Impossible de sauvegarder le fichier."
+    ID_OVERWRITE_SYSTEM_FILE "Impossible d'écraser un fichier système."
+    ID_OVERWRITE_READONLY_FILE 
+                            "Ce fichier est marqué comme lecture-seule.\n\nÊtes-vous sûr de vouloir l'écraser?"
+    ID_RENAME_SYSTEM_FILE   "Fichier système"
+    IDS_CONFIRM_EXIT        "Certains fichiers n'ont pas été renommé.\nÊtes-vous sûr de vouloir quitter?"
+    IDS_REPORT_BEFORE       "Fichiers à renommer: %d\nNoms de fichiers incorrects: %d"
+    IDS_MANUAL_RENAMING_ERROR 
+                            "Le fichier/dossier n'a pas pu être renommé ainsi."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NO_FILENAME_CHANGES "Aucun fichier à renommer."
+    IDS_RENAMED_ALL         "Terminé:\n%d fichiers renommés."
+    IDS_DONE                "Terminé"
+    IDS_BEFORE              "Avant"
+    IDS_AFTER               "Après"
+    IDS_FILTER              "Filtrer"
+    IDS_NO_RECENT_FILTERS   "Aucun fichier récent"
+    IDS_RECENT_FILTERS      "&Filtres récents"
+    IDS_OPEN                "&Ouvrir..."
+    IDS_SAVE_AS             "&Enregistrer sous..."
+    IDS_CANT_OPEN_FILTERS   "Impossible d'ouvrir la liste des filtres."
+    IDS_SAMPLE_PATH         "X:\\Dossier\\Fichier_Exemple.Ext"
+    IDS_HOME_PAGE           "Home page chez Beroux.com"
+    IDS_MENU_ADD_FILTER     "&Ajouter filtre\tIns"
+    IDS_MENU_MOVE_UP        "Déplacer vers le &haut"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_MOVE_DOWN      "Déplacer vers le &bas"
+    IDS_MENU_REMOVE         "Retirer de la liste\tDel"
+    IDS_MENU_REMOVE_ALL     "Effacer toute la liste"
+    IDS_MENU_PROPERTIES     "P&ropiétés"
+    IDS_FILTERS             "Filtres"
+    IDS_MENU_ADD_FOLDER     "&Ajouter un dossier"
+    IDS_MENU_ADD_FILES      "Ajouter des &fichiers"
+    IDS_FILES               "Fichiers"
+    IDS_DIR                 "Dossier"
+    IDS_ERROR               "Erreur"
+    IDS_REMOVED_FROM_DISK   "Supprimé: Le fichier a été supprimé du disque"
+    IDS_CONFLICT            "Conflit: Le nom de fichier apparaît plusieurs fois"
+    IDS_BAD_FILE_NAME       "Nom à risque: Le nom du fichier peut poser des problèmes"
+    IDS_MENU_RENAME         "Reno&mmer\tF2"
+    IDS_MENU_REMOVE_MISSING "Retirer tous les fichiers &manquants"
+    IDS_MENU_REFRESH        "&Rafraîchir\tF5"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RENAME_LIST         "Renommer la liste"
+    IDS_FILE_ALREADY_EXIST  "Fichier déjà présent dans la liste"
+    IDS_NOT_EMPTY_FILTER_LIST_SAVE 
+                            "La liste des filtres n'est pas vide.\nVoulez-vous la sauvegarder maintenant?"
+    IDS_CANT_SAVE_FILTERS   "Erreur de sauvegarde de la liste des filtres."
+    IDS_MENU_SELECT_ALL     "Tout Sélectionner"
+    IDS_MENU_SELECT_NONE    "Tout Désélectionner"
+    IDS_MENU_SELECT_INVERT  "Inverser la Sélection"
+    IDS_MODIFY_EXTENSION_WARNING 
+                            "Si vous modifiez l'extension d'un fichier, le fichier risque d'être inutilisable.\n\nVoulez-vous vraiment modifier l'extension ?"
+    IDS_NO_FILTER           "<Aucun filre>"
+    IDS_SCAN_FOR_PLUGINS    "Où doit Rename-It! rechercher des fichiers .rit"
+    IDS_UNABLE_TO_LOAD_PLUGIN "Erreur lors du chargement du plug-in :\n%1"
+    IDS_ERROR_LOADING_PLUGIN "<erreur de chargement du plug-in>"
+    IDS_UNKNOWN             "<inconnu>"
+    IDS_COLUMN_FILE_NAME    "Nom de fichier"
+    IDS_COLUMN_ERROR_MESSAGE "Message d'erreur"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RIT_OFN_FILTER      "Filtres Rename-It (*.rit)|*.rit||"
+    IDS_FILES_OFN_FILTER    "Fichiers à renommer (*.*)|*.*||"
+    IDS_FILES_OFN_TITLE     "Selectionner les fichiers"
+    IDS_FOLDER_OFN_TITLE    "Selectionner le dosser"
+    IDS_UNKNOWN_FILTER      "Erreur lors du chargement du filtre ""%1"":\nFiltre inconnu."
+    IDS_STATUS_RENAME_COUNT "%1 fichier(s) à renommer sur %2 fichier(s)."
+    IDS_INVALID_FILE_NAME   "Nom invalide: Le nom contient des caractères invalides"
+    IDS_RENAME_PARTS        "C:\\..\\Dossiers\\Nom_du_fichier.Ext"
+    IDS_TT_SELECT_RENAME_PARTS 
+                            "Mettez en surbrillance les éléments que vous souhaitez renommer."
+    IDS_NO_FILTER_TO_SAVE   "Il n'y a rien à sauvegarder: Aucun filtre n'a été défini."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SEARCH_AND_REPLACE  "C&hercher et remplacer"
+    IDS_DESCR_ID3           "Lecteur Tag ID3: "
+    IDS_SERIES_HELP         "Remplace ""%d"" par un nombre incrémenté chaque fois, dans la chaîne de replacement, avant tout autre opération. Cela permet de créer des séries.\n\nExemples de formats:\n""123""\t""%d""\n""   123""\t""%6d""\n""123   ""\t""%-6d""\n""000123""\t""%06d""\n""%""\t""%%"" (%% sera replacé par un unique %)"
+    IDS_SEARCH_INVITE       "Entrer une chaîne à rechercher, sinon ça remplacera tout."
+    IDS_REPLACE_INVITE      "Entrer une chaîne qui remplacera la chaîne recherchée."
+    IDS_DESCR_REPLACE_REGEXP "Remplace avec ExpReg"
+    IDS_DESCR_REPLACE_WILDCARD "Remplace avec Wildcard"
+    IDS_DESCR_REPLACE       "Remplace"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DESCR_WITH          "par"
+    IDS_DESCR_MATCH_CASE    "respecter la case"
+    IDS_DESCR_SKIP_CASE     "ignore la case"
+    IDS_DESCR_ONCE          "remplacer qu'une fois"
+    IDS_DESCR_SERIES        "enumérer"
+    IDS_SERIES_DEFAULT_REPLACE "Image %03d"
+    IDS_DESCR_WHOLE_TEXT    "texte entier"
+    IDS_TT_BEFORE           "Exemple de chaîne avant d'avoir appliqué le filtre de renommage"
+    IDS_TT_AFTER            "Exemple de chaîne après avoir appliqué le filtre de renommage"
+    IDS_TT_ID3              "Macros Tag ID3 pour la zone de remplacement"
+    IDS_TT_LOCALE           "Options locales (affecte les espaces et la casse)"
+    IDS_TT_ALLOCCURENCES    "Effectuer autant de remplacements que possible"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CMDLINE_FILTER_FILE_MISSING 
+                            "Le fichier filtre à charger n'est pas spécifié dans la ligne de commande."
+    IDS_CMDLINE_LOG_FILE_MISSING 
+                            "Le fichier log à utiliser n'est pas spécifié dans la ligne de commande."
+    IDS_CMDLINE_NO_FILTER   "Pour renommer depuis la ligne de commande, vous devez spécifier un fichier de filtres valide."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_PGRS_CHECK_CAPTION  "Phase 1: Vérification..."
+    IDS_PGRS_PREREN_CAPTION "Phase 2: Prépartion du renommage..."
+    IDS_PGRS_RENAMING_CAPTION "Phase 3: Renomme $(Done) sur $(Total)..."
+    IDS_PGRS_TITLE          "Progression du renommage"
+END
+
+#endif    // French (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+LANGUAGE 12, 1
+#pragma code_page(1252)
+#include "res\RenameIt.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

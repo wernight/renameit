@@ -1,0 +1,575 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>perlreftut - perldoc.perl.org</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Language" content="en-gb" />
+  <link href="css.css" rel="stylesheet" rev="stylesheet" type="text/css" media="screen" />
+</head>
+
+<script language="JavaScript" type="text/javascript" src="label.js"></script>
+
+<script language="JavaScript">
+  pageDepth = 0;
+  setPath();
+</script>
+
+<body onLoad="showToolbars();loadLabels()">
+
+<div id="pageHeader">
+  <div id="pageHeaderLogo">
+    <img src="onion.gif">
+  </div>
+  <div id="pageHeaderText">
+    <a href="http://perldoc.perl.org">perldoc.perl.org</a>
+  </div>
+</div>
+
+<div id="pageBody">
+  <div id="left">
+    <div id="leftContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeLeft()" title="Hide navigation" onmouseover="leftCloseIcon.src='close_purple.gif';" onmouseout="leftCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="leftCloseIcon" id="leftCloseIcon" border=0></a>
+      </div>
+      <h1>Manual:</h1>
+      <ul>
+        <li><a href="index-overview.html">Overview</a></li>
+        <li><a href="index-tutorials.html">Tutorials</a></li>
+        <li><a href="index-faq.html">FAQs</a></li>
+        <li><a href="index-history.html">History / Changes</a></li>
+        <li><a href="index-licence.html">Licence</a></li>
+      </ul>
+      <h2>Reference:</h2>
+      <ul>
+        <li><a href="index-language.html">Language</a></li>
+        <li><a href="index-functions.html">Functions</a></li>
+        <li><a href="perlop.html">Operators</a></li>
+        <li><a href="perlvar.html">Special variables</a></li>
+        <li><a href="index-pragmas.html">Pragmas</a></li>
+        <li><a href="index-modules-A.html">Core modules</a></li>
+        <li><a href="index-utilities.html">Utilities</a></li>
+        <li><a href="index-internals.html">Internals</a></li>
+        <li><a href="index-platforms.html">Platform specific</a></li>
+      </ul>
+      <h2>Links:</h2>
+      <ul>
+        <li><a href="http://search.cpan.org">CPAN</a></li>
+        <li><a href="http://www.perl.com">Perl.com</a></li>
+        <li><a href="http://www.perl.org">Perl.org</a></li>
+        <li><a href="http://www.pm.org">Perl Mongers</a></li>
+        <li><a href="http://www.perlmonks.org">Perl Monks</a></li>
+        <li><a href="http://planet.perl.org">Planet Perl</a></li>
+        <li><a href="http://use.perl.org">Use Perl</a></li>
+      </ul>
+      <h2>Contact:</h2>
+      <ul>
+        <li>Site maintained by<br><a href="http://perl.jonallen.info">Jon Allen</a>
+            (<a href="http://perl.jonallen.info">JJ</a>)</li>
+        <li class="spaced">Last updated on<br>23 April 2006</li>
+	<li class="spaced">See the <a href="http://perl.jonallen.info/projects/perldoc">project page</a> for
+	more details</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="center">  
+    <div id="centerContent">
+      <div id="contentHeader">
+        <div id="contentHeaderLeft"><a href="#" onClick="showLeft()">Show navigation</a></div>
+        <div id="contentHeaderCentre">-- Perl 5.8.8 documentation --</div>
+        <div id="contentHeaderRight"><a href="#" onClick="showRight()">Show toolbar</a></div>
+      </div>
+      <div id="breadCrumbs"><a href="index.html">Home</a> &gt; <a href="index-tutorials.html">Tutorials</a> &gt; perlreftut</div>
+      <script language="JavaScript">fromSearch();</script>
+      <div id="contentBody"><div class="title_container"><div class="page_title">perlreftut</div><div class="pdf_link"><a href="perlreftut.pdf">View as PDF</a></div><div class="pdf_img_link"><a href="perlreftut.pdf"><img src="pdficon.gif" border=0></a></div></div><ul><li><a href="#NAME">NAME</a><li><a href="#DESCRIPTION">DESCRIPTION</a><li><a href="#Who-Needs-Complicated-Data-Structures%3f">Who Needs Complicated Data Structures?</a><li><a href="#The-Solution">The Solution</a><li><a href="#Syntax">Syntax</a><ul><li><a href="#Making-References">Making References</a><li><a href="#Using-References">Using References</a><li><a href="#An-Example">An Example</a><li><a href="#Arrow-Rule">Arrow Rule</a></ul><li><a href="#Solution">Solution</a><li><a href="#The-Rest">The Rest</a><li><a href="#Summary">Summary</a><li><a href="#Credits">Credits</a><ul><li><a href="#Distribution-Conditions">Distribution Conditions</a></ul></ul><a name="NAME"></a><h1>NAME</h1>
+<p>perlreftut - Mark's very short tutorial about references</p>
+<a name="DESCRIPTION"></a><h1>DESCRIPTION</h1>
+<p>One of the most important new features in Perl 5 was the capability to
+manage complicated data structures like multidimensional arrays and
+nested hashes.  To enable these, Perl 5 introduced a feature called
+`references', and using references is the key to managing complicated,
+structured data in Perl.  Unfortunately, there's a lot of funny syntax
+to learn, and the main manual page can be hard to follow.  The manual
+is quite complete, and sometimes people find that a problem, because
+it can be hard to tell what is important and what isn't.</p>
+<p>Fortunately, you only need to know 10% of what's in the main page to get
+90% of the benefit.  This page will show you that 10%.</p>
+<a name="Who-Needs-Complicated-Data-Structures%3f"></a><h1>Who Needs Complicated Data Structures?</h1>
+<p>One problem that came up all the time in Perl 4 was how to represent a
+hash whose values were lists.  Perl 4 had hashes, of course, but the
+values had to be scalars; they couldn't be lists.</p>
+<p>Why would you want a hash of lists?  Let's take a simple example: You
+have a file of city and country names, like this:</p>
+<pre class="verbatim">	Chicago<span class="cm">,</span> USA
+	Frankfurt<span class="cm">,</span> Germany
+	Berlin<span class="cm">,</span> Germany
+	Washington<span class="cm">,</span> USA
+	Helsinki<span class="cm">,</span> Finland
+	New York<span class="cm">,</span> USA</pre>
+<p>and you want to produce an output like this, with each country mentioned
+once, and then an alphabetical list of the cities in that country:</p>
+<pre class="verbatim">	Finland: Helsinki.
+	Germany: Berlin, Frankfurt.
+	USA:  Chicago, New York, Washington.</pre><p>The natural way to do this is to have a hash whose keys are country
+names.  Associated with each country name key is a list of the cities in
+that country.  Each time you read a line of input, split it into a country
+and a city, look up the list of cities already known to be in that
+country, and append the new city to the list.  When you're done reading
+the input, iterate over the hash as usual, sorting each list of cities
+before you print it out.</p>
+<p>If hash values can't be lists, you lose.  In Perl 4, hash values can't
+be lists; they can only be strings.  You lose.  You'd probably have to
+combine all the cities into a single string somehow, and then when
+time came to write the output, you'd have to break the string into a
+list, sort the list, and turn it back into a string.  This is messy
+and error-prone.  And it's frustrating, because Perl already has
+perfectly good lists that would solve the problem if only you could
+use them.</p>
+<a name="The-Solution"></a><h1>The Solution</h1>
+<p>By the time Perl 5 rolled around, we were already stuck with this
+design: Hash values must be scalars.  The solution to this is
+references.</p>
+<p>A reference is a scalar value that <i>refers to</i> an entire array or an
+entire hash (or to just about anything else).  Names are one kind of
+reference that you're already familiar with.  Think of the President
+of the United States: a messy, inconvenient bag of blood and bones.
+But to talk about him, or to represent him in a computer program, all
+you need is the easy, convenient scalar string "George Bush".</p>
+<p>References in Perl are like names for arrays and hashes.  They're
+Perl's private, internal names, so you can be sure they're
+unambiguous.  Unlike "George Bush", a reference only refers to one
+thing, and you always know what it refers to.  If you have a reference
+to an array, you can recover the entire array from it.  If you have a
+reference to a hash, you can recover the entire hash.  But the
+reference is still an easy, compact scalar value.</p>
+<p>You can't have a hash whose values are arrays; hash values can only be
+scalars.  We're stuck with that.  But a single reference can refer to
+an entire array, and references are scalars, so you can have a hash of
+references to arrays, and it'll act a lot like a hash of arrays, and
+it'll be just as useful as a hash of arrays.</p>
+<p>We'll come back to this city-country problem later, after we've seen
+some syntax for managing references.</p>
+<a name="Syntax"></a><h1>Syntax</h1>
+<p>There are just two ways to make a reference, and just two ways to use
+it once you have it.</p>
+<a name="Making-References"></a><h2>Making References</h2>
+<h3><b>Make Rule 1</b></h3>
+<p>If you put a <code class="inline">\</code>
+ in front of a variable, you get a
+reference to that variable.</p>
+<pre class="verbatim">    <span class="i">$aref</span> = \<span class="i">@array</span><span class="sc">;</span>         <span class="c"># $aref now holds a reference to @array</span>
+    <span class="i">$href</span> = \<span class="i">%hash</span><span class="sc">;</span>          <span class="c"># $href now holds a reference to %hash</span>
+    <span class="i">$sref</span> = \<span class="i">$scalar</span><span class="sc">;</span>        <span class="c"># $sref now holds a reference to $scalar</span></pre>
+<p>Once the reference is stored in a variable like $aref or $href, you
+can copy it or store it just the same as any other scalar value:</p>
+<pre class="verbatim">    <span class="i">$xy</span> = <span class="i">$aref</span><span class="sc">;</span>             <span class="c"># $xy now holds a reference to @array</span>
+    <span class="i">$p</span>[<span class="n">3</span>] = <span class="i">$href</span><span class="sc">;</span>           <span class="c"># $p[3] now holds a reference to %hash</span>
+    <span class="i">$z</span> = <span class="i">$p</span>[<span class="n">3</span>]<span class="sc">;</span>              <span class="c"># $z now holds a reference to %hash</span></pre>
+<p>These examples show how to make references to variables with names.
+Sometimes you want to make an array or a hash that doesn't have a
+name.  This is analogous to the way you like to be able to use the
+string <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+ or the number 80 without having to store it in a named
+variable first.</p>
+<p><b>Make Rule 2</b></p>
+<p><code class="inline"><span class="s">[</span> ITEMS <span class="s">]</span></code>
+ makes a new, anonymous array, and returns a reference to
+that array.  <code class="inline"><span class="s">{</span> ITEMS <span class="s">}</span></code>
+ makes a new, anonymous hash, and returns a
+reference to that hash.</p>
+<pre class="verbatim">    <span class="i">$aref</span> = <span class="s">[</span> <span class="n">1</span><span class="cm">,</span> <span class="q">&quot;foo&quot;</span><span class="cm">,</span> <a class="l_k" href="functions/undef.html">undef</a><span class="cm">,</span> <span class="n">13</span> <span class="s">]</span><span class="sc">;</span>
+    <span class="c"># $aref now holds a reference to an array</span></pre>
+<pre class="verbatim">    <span class="i">$href</span> = <span class="s">{</span> APR <span class="cm">=&gt;</span> <span class="n">4</span><span class="cm">,</span> AUG <span class="cm">=&gt;</span> <span class="n">8</span> <span class="s">}</span><span class="sc">;</span>
+    <span class="c"># $href now holds a reference to a hash</span></pre>
+<p>The references you get from rule 2 are the same kind of
+references that you get from rule 1:</p>
+<pre class="verbatim">	<span class="c"># This:</span>
+	<span class="i">$aref</span> = <span class="s">[</span> <span class="n">1</span><span class="cm">,</span> <span class="n">2</span><span class="cm">,</span> <span class="n">3</span> <span class="s">]</span><span class="sc">;</span></pre>
+<pre class="verbatim">	<span class="c"># Does the same as this:</span>
+	<span class="i">@array</span> = <span class="s">(</span><span class="n">1</span><span class="cm">,</span> <span class="n">2</span><span class="cm">,</span> <span class="n">3</span><span class="s">)</span><span class="sc">;</span>
+	<span class="i">$aref</span> = \<span class="i">@array</span><span class="sc">;</span></pre>
+<p>The first line is an abbreviation for the following two lines, except
+that it doesn't create the superfluous array variable <code class="inline"><span class="i">@array</span></code>
+.</p>
+<p>If you write just <code class="inline"><span class="s">[</span><span class="s">]</span></code>
+, you get a new, empty anonymous array.
+If you write just <code class="inline"><span class="s">{</span><span class="s">}</span></code>
+, you get a new, empty anonymous hash.</p>
+<a name="Using-References"></a><h2>Using References</h2>
+<p>What can you do with a reference once you have it?  It's a scalar
+value, and we've seen that you can store it as a scalar and get it back
+again just like any scalar.  There are just two more ways to use it:</p>
+<h3><b>Use Rule 1</b></h3>
+<p>You can always use an array reference, in curly braces, in place of
+the name of an array.  For example, <code class="inline"><span class="i">@</span>{<span class="i">$aref</span>}</code>
+ instead of <code class="inline"><span class="i">@array</span></code>
+.</p>
+<p>Here are some examples of that:</p>
+<p>Arrays:</p>
+<pre class="verbatim">	@a		@{$aref}		An array
+	reverse @a	reverse @{$aref}	Reverse the array
+	$a[3]		${$aref}[3]		An element of the array
+	$a[3] = 17;	${$aref}[3] = 17	Assigning an element</pre><p>On each line are two expressions that do the same thing.  The
+left-hand versions operate on the array <code class="inline"><span class="i">@a</span></code>
+.  The right-hand
+versions operate on the array that is referred to by <code class="inline"><span class="i">$aref</span></code>
+.  Once
+they find the array they're operating on, both versions do the same
+things to the arrays.</p>
+<p>Using a hash reference is <i>exactly</i> the same:</p>
+<pre class="verbatim">	%h		%{$href}	      A hash
+	keys %h		keys %{$href}	      Get the keys from the hash
+	$h{'red'}	${$href}{'red'}	      An element of the hash
+	$h{'red'} = 17	${$href}{'red'} = 17  Assigning an element</pre><p>Whatever you want to do with a reference, <b>Use Rule 1</b> tells you how
+to do it.  You just write the Perl code that you would have written
+for doing the same thing to a regular array or hash, and then replace
+the array or hash name with <code class="inline"><span class="s">{</span><span class="i">$reference</span><span class="s">}</span></code>
+.  "How do I loop over an
+array when all I have is a reference?"  Well, to loop over an array, you
+would write</p>
+<pre class="verbatim">        for <a class="l_k" href="functions/my.html">my</a> <span class="i">$element</span> <span class="s">(</span><span class="i">@array</span><span class="s">)</span> <span class="s">{</span>
+           ...
+        <span class="s">}</span></pre>
+<p>so replace the array name, <code class="inline"><span class="i">@array</span></code>
+, with the reference:</p>
+<pre class="verbatim">        for <a class="l_k" href="functions/my.html">my</a> <span class="i">$element</span> <span class="s">(</span><span class="i">@</span>{<span class="i">$aref</span>}<span class="s">)</span> <span class="s">{</span>
+           ...
+        <span class="s">}</span></pre>
+<p>"How do I print out the contents of a hash when all I have is a
+reference?"  First write the code for printing out a hash:</p>
+<pre class="verbatim">        for <a class="l_k" href="functions/my.html">my</a> <span class="i">$key</span> <span class="s">(</span><a class="l_k" href="functions/keys.html">keys</a> <span class="i">%hash</span><span class="s">)</span> <span class="s">{</span>
+          <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;$key =&gt; $hash{$key}\n&quot;</span><span class="sc">;</span>
+        <span class="s">}</span></pre>
+<p>And then replace the hash name with the reference:</p>
+<pre class="verbatim">        for <a class="l_k" href="functions/my.html">my</a> <span class="i">$key</span> <span class="s">(</span><a class="l_k" href="functions/keys.html">keys</a> <span class="i">%</span>{<span class="i">$href</span>}<span class="s">)</span> <span class="s">{</span>
+          <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;$key =&gt; ${$href}{$key}\n&quot;</span><span class="sc">;</span>
+        <span class="s">}</span></pre>
+<h3><b>Use Rule 2</b></h3>
+<p><b>Use Rule 1</b> is all you really need, because it tells you how to do
+absolutely everything you ever need to do with references.  But the
+most common thing to do with an array or a hash is to extract a single
+element, and the <b>Use Rule 1</b> notation is cumbersome.  So there is an
+abbreviation.</p>
+<p><code class="inline"><span class="i">$</span>{<span class="i">$aref</span>}[<span class="n">3</span>]</code>
+ is too hard to read, so you can write <code class="inline"><span class="i">$aref</span>-&gt;[<span class="n">3</span>]</code>
+
+instead.</p>
+<p><code class="inline"><span class="i">$</span>{<span class="i">$href</span>}{red}</code>
+ is too hard to read, so you can write
+<code class="inline"><span class="i">$href</span>-&gt;{red}</code>
+ instead.</p>
+<p>If <code class="inline"><span class="i">$aref</span></code>
+ holds a reference to an array, then <code class="inline"><span class="i">$aref</span>-&gt;[<span class="n">3</span>]</code>
+ is
+the fourth element of the array.  Don't confuse this with <code class="inline"><span class="i">$aref</span>[<span class="n">3</span>]</code>
+,
+which is the fourth element of a totally different array, one
+deceptively named <code class="inline"><span class="i">@aref</span></code>
+.  <code class="inline"><span class="i">$aref</span></code>
+ and <code class="inline"><span class="i">@aref</span></code>
+ are unrelated the
+same way that <code class="inline"><span class="i">$item</span></code>
+ and <code class="inline"><span class="i">@item</span></code>
+ are.</p>
+<p>Similarly, <code class="inline"><span class="i">$href</span>-&gt;{<span class="q">&#39;red&#39;</span>}</code>
+ is part of the hash referred to by
+the scalar variable <code class="inline"><span class="i">$href</span></code>
+, perhaps even one with no name.
+<code class="inline"><span class="i">$href</span>{<span class="q">&#39;red&#39;</span>}</code>
+ is part of the deceptively named <code class="inline"><span class="i">%href</span></code>
+ hash.  It's
+easy to forget to leave out the <code class="inline">-&gt;</code>
+, and if you do, you'll get
+bizarre results when your program gets array and hash elements out of
+totally unexpected hashes and arrays that weren't the ones you wanted
+to use.</p>
+<a name="An-Example"></a><h2>An Example</h2>
+<p>Let's see a quick example of how all this is useful.</p>
+<p>First, remember that <code class="inline"><span class="s">[</span><span class="n">1</span><span class="cm">,</span> <span class="n">2</span><span class="cm">,</span> <span class="n">3</span><span class="s">]</span></code>
+ makes an anonymous array containing
+<code class="inline"><span class="s">(</span><span class="n">1</span><span class="cm">,</span> <span class="n">2</span><span class="cm">,</span> <span class="n">3</span><span class="s">)</span></code>
+, and gives you a reference to that array.</p>
+<p>Now think about</p>
+<pre class="verbatim">	<span class="i">@a</span> = <span class="s">(</span> <span class="s">[</span><span class="n">1</span><span class="cm">,</span> <span class="n">2</span><span class="cm">,</span> <span class="n">3</span><span class="s">]</span><span class="cm">,</span>
+               <span class="s">[</span><span class="n">4</span><span class="cm">,</span> <span class="n">5</span><span class="cm">,</span> <span class="n">6</span><span class="s">]</span><span class="cm">,</span>
+	       <span class="s">[</span><span class="n">7</span><span class="cm">,</span> <span class="n">8</span><span class="cm">,</span> <span class="n">9</span><span class="s">]</span>
+             <span class="s">)</span><span class="sc">;</span></pre>
+<p>@a is an array with three elements, and each one is a reference to
+another array.</p>
+<p><code class="inline"><span class="i">$a</span>[<span class="n">1</span>]</code>
+ is one of these references.  It refers to an array, the array
+containing <code class="inline"><span class="s">(</span><span class="n">4</span><span class="cm">,</span> <span class="n">5</span><span class="cm">,</span> <span class="n">6</span><span class="s">)</span></code>
+, and because it is a reference to an array,
+<b>Use Rule 2</b> says that we can write <code class="inline"><span class="i">$a</span>[<span class="n">1</span>]-&gt;[<span class="n">2</span>]</code>
+ to get the
+third element from that array.  <code class="inline"><span class="i">$a</span>[<span class="n">1</span>]-&gt;[<span class="n">2</span>]</code>
+ is the 6.
+Similarly, <code class="inline"><span class="i">$a</span>[<span class="n">0</span>]-&gt;[<span class="n">1</span>]</code>
+ is the 2.  What we have here is like a
+two-dimensional array; you can write <code class="inline"><span class="i">$a</span>[ROW]-&gt;[COLUMN]</code>
+ to get
+or set the element in any row and any column of the array.</p>
+<p>The notation still looks a little cumbersome, so there's one more
+abbreviation:</p>
+<a name="Arrow-Rule"></a><h2>Arrow Rule</h2>
+<p>In between two <b>subscripts</b>, the arrow is optional.</p>
+<p>Instead of <code class="inline"><span class="i">$a</span>[<span class="n">1</span>]-&gt;[<span class="n">2</span>]</code>
+, we can write <code class="inline"><span class="i">$a</span>[<span class="n">1</span>][<span class="n">2</span>]</code>
+; it means the
+same thing.  Instead of <code class="inline"><span class="i">$a</span>[<span class="n">0</span>]-&gt;[<span class="n">1</span>] = <span class="n">23</span></code>
+, we can write
+<code class="inline"><span class="i">$a</span>[<span class="n">0</span>][<span class="n">1</span>] = <span class="n">23</span></code>
+; it means the same thing.</p>
+<p>Now it really looks like two-dimensional arrays!</p>
+<p>You can see why the arrows are important.  Without them, we would have
+had to write <code class="inline"><span class="i">$</span>{<span class="i">$a</span>[<span class="n">1</span>]}[<span class="n">2</span>]</code>
+ instead of <code class="inline"><span class="i">$a</span>[<span class="n">1</span>][<span class="n">2</span>]</code>
+.  For
+three-dimensional arrays, they let us write <code class="inline"><span class="i">$x</span>[<span class="n">2</span>][<span class="n">3</span>][<span class="n">5</span>]</code>
+ instead of
+the unreadable <code class="inline"><span class="i">$</span>{<span class="i">$</span>{<span class="i">$x</span>[<span class="n">2</span>]}[<span class="n">3</span>]}[<span class="n">5</span>]</code>
+.</p>
+<a name="Solution"></a><h1>Solution</h1>
+<p>Here's the answer to the problem I posed earlier, of reformatting a
+file of city and country names.</p>
+<pre class="verbatim">    <span class="n">1</span>   <a class="l_k" href="functions/my.html">my</a> <span class="i">%table</span><span class="sc">;</span></pre>
+<pre class="verbatim">    2   while (&lt;&gt;) {
+    3    chomp;
+    4     my ($city, $country) = split /, /;
+    5     $table{$country} = [] unless exists $table{$country};
+    6     push @{$table{$country}}, $city;
+    7   }</pre><pre class="verbatim">    8   foreach $country (sort keys %table) {
+    9     print "$country: ";
+   10     my @cities = @{$table{$country}};
+   11     print join ', ', sort @cities;
+   12     print ".\n";
+   13	}</pre><p>The program has two pieces: Lines 2--7 read the input and build a data
+structure, and lines 8-13 analyze the data and print out the report.
+We're going to have a hash, <code class="inline"><span class="i">%table</span></code>
+, whose keys are country names,
+and whose values are references to arrays of city names.  The data
+structure will look like this:</p>
+<pre class="verbatim">           %table
+        +-------+---+
+        |       |   |   +-----------+--------+
+        |Germany| *----&gt;| Frankfurt | Berlin |
+        |       |   |   +-----------+--------+
+        +-------+---+
+        |       |   |   +----------+
+        |Finland| *----&gt;| Helsinki |
+        |       |   |   +----------+
+        +-------+---+
+        |       |   |   +---------+------------+----------+
+        |  USA  | *----&gt;| Chicago | Washington | New York |
+        |       |   |   +---------+------------+----------+
+        +-------+---+</pre><p>We'll look at output first.  Supposing we already have this structure,
+how do we print it out?</p>
+<pre class="verbatim">    8   foreach $country (sort keys %table) {
+    9     print "$country: ";
+   10     my @cities = @{$table{$country}};
+   11     print join ', ', sort @cities;
+   12     print ".\n";
+   13	}</pre><p><code class="inline"><span class="i">%table</span></code>
+ is an
+ordinary hash, and we get a list of keys from it, sort the keys, and
+loop over the keys as usual.  The only use of references is in line 10.
+<code class="inline"><span class="i">$table</span>{<span class="i">$country</span>}</code>
+ looks up the key <code class="inline"><span class="i">$country</span></code>
+ in the hash
+and gets the value, which is a reference to an array of cities in that country.
+<b>Use Rule 1</b> says that
+we can recover the array by saying
+<code class="inline"><span class="i">@</span>{<span class="i">$table</span>{<span class="i">$country</span>}}</code>
+.  Line 10 is just like</p>
+<pre class="verbatim">	<span class="i">@cities</span> = <span class="i">@array</span><span class="sc">;</span></pre>
+<p>except that the name <code class="inline">array</code>
+ has been replaced by the reference
+<code class="inline"><span class="s">{</span><span class="i">$table</span>{<span class="i">$country</span>}<span class="s">}</span></code>
+.  The <code class="inline"><span class="i">@</span></code>
+ tells Perl to get the entire array.
+Having gotten the list of cities, we sort it, join it, and print it
+out as usual.</p>
+<p>Lines 2-7 are responsible for building the structure in the first
+place.  Here they are again:</p>
+<pre class="verbatim">    2   while (&lt;&gt;) {
+    3    chomp;
+    4     my ($city, $country) = split /, /;
+    5     $table{$country} = [] unless exists $table{$country};
+    6     push @{$table{$country}}, $city;
+    7   }</pre><p>Lines 2-4 acquire a city and country name.  Line 5 looks to see if the
+country is already present as a key in the hash.  If it's not, the
+program uses the <code class="inline"><span class="s">[</span><span class="s">]</span></code>
+ notation (<b>Make Rule 2</b>) to manufacture a new,
+empty anonymous array of cities, and installs a reference to it into
+the hash under the appropriate key.</p>
+<p>Line 6 installs the city name into the appropriate array.
+<code class="inline"><span class="i">$table</span>{<span class="i">$country</span>}</code>
+ now holds a reference to the array of cities seen
+in that country so far.  Line 6 is exactly like</p>
+<pre class="verbatim">	<a class="l_k" href="functions/push.html">push</a> <span class="i">@array</span><span class="cm">,</span> <span class="i">$city</span><span class="sc">;</span></pre>
+<p>except that the name <code class="inline">array</code>
+ has been replaced by the reference
+<code class="inline"><span class="s">{</span><span class="i">$table</span>{<span class="i">$country</span>}<span class="s">}</span></code>
+.  The <code class="inline"><a class="l_k" href="functions/push.html">push</a></code> adds a city name to the end of the
+referred-to array.</p>
+<p>There's one fine point I skipped.  Line 5 is unnecessary, and we can
+get rid of it.</p>
+<pre class="verbatim">    2   while (&lt;&gt;) {
+    3    chomp;
+    4     my ($city, $country) = split /, /;
+    5   ####  $table{$country} = [] unless exists $table{$country};
+    6     push @{$table{$country}}, $city;
+    7   }</pre><p>If there's already an entry in <code class="inline"><span class="i">%table</span></code>
+ for the current <code class="inline"><span class="i">$country</span></code>
+,
+then nothing is different.  Line 6 will locate the value in
+<code class="inline"><span class="i">$table</span>{<span class="i">$country</span>}</code>
+, which is a reference to an array, and push
+<code class="inline"><span class="i">$city</span></code>
+ into the array.  But
+what does it do when
+<code class="inline"><span class="i">$country</span></code>
+ holds a key, say <code class="inline">Greece</code>
+, that is not yet in <code class="inline"><span class="i">%table</span></code>
+?</p>
+<p>This is Perl, so it does the exact right thing.  It sees that you want
+to push <code class="inline">Athens</code>
+ onto an array that doesn't exist, so it helpfully
+makes a new, empty, anonymous array for you, installs it into
+<code class="inline"><span class="i">%table</span></code>
+, and then pushes <code class="inline">Athens</code>
+ onto it.  This is called
+`autovivification'--bringing things to life automatically.  Perl saw
+that they key wasn't in the hash, so it created a new hash entry
+automatically. Perl saw that you wanted to use the hash value as an
+array, so it created a new empty array and installed a reference to it
+in the hash automatically.  And as usual, Perl made the array one
+element longer to hold the new city name.</p>
+<a name="The-Rest"></a><h1>The Rest</h1>
+<p>I promised to give you 90% of the benefit with 10% of the details, and
+that means I left out 90% of the details.  Now that you have an
+overview of the important parts, it should be easier to read the
+<a href="perlref.html">perlref</a> manual page, which discusses 100% of the details.</p>
+<p>Some of the highlights of <a href="perlref.html">perlref</a>:</p>
+<ul>
+<li>
+<p>You can make references to anything, including scalars, functions, and
+other references.</p>
+</li>
+<li>
+<p>In <b>Use Rule 1</b>, you can omit the curly brackets whenever the thing
+inside them is an atomic scalar variable like <code class="inline"><span class="i">$aref</span></code>
+.  For example,
+<code class="inline"><span class="i">@$aref</span></code>
+ is the same as <code class="inline"><span class="i">@</span>{<span class="i">$aref</span>}</code>
+, and <code class="inline"><span class="i">$$aref</span>[<span class="n">1</span>]</code>
+ is the same as
+<code class="inline"><span class="i">$</span>{<span class="i">$aref</span>}[<span class="n">1</span>]</code>
+.  If you're just starting out, you may want to adopt
+the habit of always including the curly brackets.</p>
+</li>
+<li>
+<p>This doesn't copy the underlying array:</p>
+<pre class="verbatim">        <span class="i">$aref2</span> = <span class="i">$aref1</span><span class="sc">;</span></pre>
+<p>You get two references to the same array.  If you modify
+<code class="inline"><span class="i">$aref1</span>-&gt;[<span class="n">23</span>]</code>
+ and then look at
+<code class="inline"><span class="i">$aref2</span>-&gt;[<span class="n">23</span>]</code>
+ you'll see the change.</p>
+<p>To copy the array, use</p>
+<pre class="verbatim">        <span class="i">$aref2</span> = <span class="s">[</span><span class="i">@</span>{<span class="i">$aref1</span>}<span class="s">]</span><span class="sc">;</span></pre>
+<p>This uses <code class="inline"><span class="s">[</span>...<span class="s">]</span></code>
+ notation to create a new anonymous array, and
+<code class="inline"><span class="i">$aref2</span></code>
+ is assigned a reference to the new array.  The new array is
+initialized with the contents of the array referred to by <code class="inline"><span class="i">$aref1</span></code>
+.</p>
+<p>Similarly, to copy an anonymous hash, you can use</p>
+<pre class="verbatim">        <span class="i">$href2</span> = <span class="s">{</span><span class="i">%</span>{<span class="i">$href1</span>}<span class="s">}</span><span class="sc">;</span></pre>
+</li>
+<li>
+<p>To see if a variable contains a reference, use the <code class="inline"><a class="l_k" href="functions/ref.html">ref</a></code> function.  It
+returns true if its argument is a reference.  Actually it's a little
+better than that: It returns <code class="inline">HASH</code>
+ for hash references and <code class="inline">ARRAY</code>
+
+for array references.</p>
+</li>
+<li>
+<p>If you try to use a reference like a string, you get strings like</p>
+<pre class="verbatim">	<span class="i">ARRAY</span><span class="s">(</span><span class="n">0x80f5dec</span><span class="s">)</span>   or    <span class="i">HASH</span><span class="s">(</span><span class="n">0x826afc0</span><span class="s">)</span></pre>
+<p>If you ever see a string that looks like this, you'll know you
+printed out a reference by mistake.</p>
+<p>A side effect of this representation is that you can use <code class="inline">eq</code>
+ to see
+if two references refer to the same thing.  (But you should usually use
+<code class="inline">==</code>
+ instead because it's much faster.)</p>
+</li>
+<li>
+<p>You can use a string as if it were a reference.  If you use the string
+<code class="inline"><span class="q">&quot;foo&quot;</span></code>
+ as an array reference, it's taken to be a reference to the
+array <code class="inline"><span class="i">@foo</span></code>
+.  This is called a <i>soft reference</i> or <i>symbolic
+reference</i>.  The declaration <code class="inline"><a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="strict.html">strict</a> <span class="q">&#39;refs&#39;</span></code>
+ disables this
+feature, which can cause all sorts of trouble if you use it by accident.</p>
+</li>
+</ul>
+<p>You might prefer to go on to <a href="perllol.html">perllol</a> instead of <a href="perlref.html">perlref</a>; it
+discusses lists of lists and multidimensional arrays in detail.  After
+that, you should move on to <a href="perldsc.html">perldsc</a>; it's a Data Structure Cookbook
+that shows recipes for using and printing out arrays of hashes, hashes
+of arrays, and other kinds of data.</p>
+<a name="Summary"></a><h1>Summary</h1>
+<p>Everyone needs compound data structures, and in Perl the way you get
+them is with references.  There are four important rules for managing
+references: Two for making references and two for using them.  Once
+you know these rules you can do most of the important things you need
+to do with references.</p>
+<a name="Credits"></a><h1>Credits</h1>
+<p>Author: Mark Jason Dominus, Plover Systems (<code class="inline">mjd-perl-<a class="l_k" href="functions/ref.html">ref</a>+<span class="i">@plover</span>.com</code>
+)</p>
+<p>This article originally appeared in <i>The Perl Journal</i>
+( <a href="http://www.tpj.com/">http://www.tpj.com/</a> ) volume 3, #2.  Reprinted with permission.</p>
+<p>The original title was <i>Understand References Today</i>.</p>
+<a name="Distribution-Conditions"></a><h2>Distribution Conditions</h2>
+<p>Copyright 1998 The Perl Journal.</p>
+<p>This documentation is free; you can redistribute it and/or modify it
+under the same terms as Perl itself.</p>
+<p>Irrespective of its distribution, all code examples in these files are
+hereby placed into the public domain.  You are permitted and
+encouraged to use this code in your own programs for fun or for profit
+as you see fit.  A simple comment in the code giving credit would be
+courteous but is not required.</p>
+</div>
+      <div id="contentFooter"><a href="http://www.perl.org"><img src="perlpowered.png" border=0></a></div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div id="rightContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeRight()" title="Hide toolbar" onmouseover="rightCloseIcon.src='close_purple.gif';" onmouseout="rightCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="rightCloseIcon" id="rightCloseIcon" border=0></a>
+      </div>
+      <h1>Search:</h1>
+      <p>
+        <form action="search.html" name="perldoc_search">
+	  <input type="text" name="q" size="10" class="grey"><br>
+	  <!--<select name="r"><option value="1" selected>Go to top result<option value="0">Show results list</select>-->
+	</form>
+      </p>
+      <h2>Labels:</h2>
+      <p>
+        <a href="#" onClick="addLabel('perlreftut','perlreftut.html')">Add this page</a>
+      </p>
+      <div class="labels" id="labels">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

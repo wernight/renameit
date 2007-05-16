@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>perlreref - perldoc.perl.org</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Language" content="en-gb" />
+  <link href="css.css" rel="stylesheet" rev="stylesheet" type="text/css" media="screen" />
+</head>
+
+<script language="JavaScript" type="text/javascript" src="label.js"></script>
+
+<script language="JavaScript">
+  pageDepth = 0;
+  setPath();
+</script>
+
+<body onLoad="showToolbars();loadLabels()">
+
+<div id="pageHeader">
+  <div id="pageHeaderLogo">
+    <img src="onion.gif">
+  </div>
+  <div id="pageHeaderText">
+    <a href="http://perldoc.perl.org">perldoc.perl.org</a>
+  </div>
+</div>
+
+<div id="pageBody">
+  <div id="left">
+    <div id="leftContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeLeft()" title="Hide navigation" onmouseover="leftCloseIcon.src='close_purple.gif';" onmouseout="leftCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="leftCloseIcon" id="leftCloseIcon" border=0></a>
+      </div>
+      <h1>Manual:</h1>
+      <ul>
+        <li><a href="index-overview.html">Overview</a></li>
+        <li><a href="index-tutorials.html">Tutorials</a></li>
+        <li><a href="index-faq.html">FAQs</a></li>
+        <li><a href="index-history.html">History / Changes</a></li>
+        <li><a href="index-licence.html">Licence</a></li>
+      </ul>
+      <h2>Reference:</h2>
+      <ul>
+        <li><a href="index-language.html">Language</a></li>
+        <li><a href="index-functions.html">Functions</a></li>
+        <li><a href="perlop.html">Operators</a></li>
+        <li><a href="perlvar.html">Special variables</a></li>
+        <li><a href="index-pragmas.html">Pragmas</a></li>
+        <li><a href="index-modules-A.html">Core modules</a></li>
+        <li><a href="index-utilities.html">Utilities</a></li>
+        <li><a href="index-internals.html">Internals</a></li>
+        <li><a href="index-platforms.html">Platform specific</a></li>
+      </ul>
+      <h2>Links:</h2>
+      <ul>
+        <li><a href="http://search.cpan.org">CPAN</a></li>
+        <li><a href="http://www.perl.com">Perl.com</a></li>
+        <li><a href="http://www.perl.org">Perl.org</a></li>
+        <li><a href="http://www.pm.org">Perl Mongers</a></li>
+        <li><a href="http://www.perlmonks.org">Perl Monks</a></li>
+        <li><a href="http://planet.perl.org">Planet Perl</a></li>
+        <li><a href="http://use.perl.org">Use Perl</a></li>
+      </ul>
+      <h2>Contact:</h2>
+      <ul>
+        <li>Site maintained by<br><a href="http://perl.jonallen.info">Jon Allen</a>
+            (<a href="http://perl.jonallen.info">JJ</a>)</li>
+        <li class="spaced">Last updated on<br>23 April 2006</li>
+	<li class="spaced">See the <a href="http://perl.jonallen.info/projects/perldoc">project page</a> for
+	more details</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="center">  
+    <div id="centerContent">
+      <div id="contentHeader">
+        <div id="contentHeaderLeft"><a href="#" onClick="showLeft()">Show navigation</a></div>
+        <div id="contentHeaderCentre">-- Perl 5.8.8 documentation --</div>
+        <div id="contentHeaderRight"><a href="#" onClick="showRight()">Show toolbar</a></div>
+      </div>
+      <div id="breadCrumbs"><a href="index.html">Home</a> &gt; <a href="index-language.html">Language reference</a> &gt; perlreref</div>
+      <script language="JavaScript">fromSearch();</script>
+      <div id="contentBody"><div class="title_container"><div class="page_title">perlreref</div><div class="pdf_link"><a href="perlreref.pdf">View as PDF</a></div><div class="pdf_img_link"><a href="perlreref.pdf"><img src="pdficon.gif" border=0></a></div></div><ul><li><a href="#NAME">NAME</a><li><a href="#DESCRIPTION">DESCRIPTION</a><ul><li><a href="#OPERATORS">OPERATORS</a><li><a href="#SYNTAX">SYNTAX</a><li><a href="#ESCAPE-SEQUENCES">ESCAPE SEQUENCES</a><li><a href="#CHARACTER-CLASSES">CHARACTER CLASSES</a><li><a href="#ANCHORS">ANCHORS</a><li><a href="#QUANTIFIERS">QUANTIFIERS</a><li><a href="#EXTENDED-CONSTRUCTS">EXTENDED CONSTRUCTS</a><li><a href="#VARIABLES">VARIABLES</a><li><a href="#FUNCTIONS">FUNCTIONS</a><li><a href="#TERMINOLOGY">TERMINOLOGY</a></ul><li><a href="#AUTHOR">AUTHOR</a><li><a href="#SEE-ALSO">SEE ALSO</a><li><a href="#THANKS">THANKS</a></ul><a name="NAME"></a><h1>NAME</h1>
+<p>perlreref - Perl Regular Expressions Reference</p>
+<a name="DESCRIPTION"></a><h1>DESCRIPTION</h1>
+<p>This is a quick reference to Perl's regular expressions.
+For full information see <a href="perlre.html">perlre</a> and <a href="perlop.html">perlop</a>, as well
+as the <a href="#SEE-ALSO">"SEE ALSO"</a> section in this document.</p>
+<a name="OPERATORS"></a><h2>OPERATORS</h2>
+<pre class="verbatim">  =~ determines to which variable the regex is applied.
+     In its absence, $_ is used.</pre><pre class="verbatim">        <span class="i">$var</span> =~ <span class="q">/foo/</span><span class="sc">;</span></pre>
+<pre class="verbatim">  !~ determines to which variable the regex is applied<span class="cm">,</span>
+     and negates the result of the match<span class="sc">;</span> it returns
+     false if the match succeeds<span class="cm">,</span> and true if it fails.</pre>
+<pre class="verbatim">       <span class="i">$var</span> !~ <span class="q">/foo/</span><span class="sc">;</span></pre>
+<pre class="verbatim">  m/pattern/igmsoxc searches a string for a pattern match,
+     applying the given options.</pre><pre class="verbatim">        i  case-Insensitive
+        g  Global - all occurrences
+        m  Multiline mode - ^ and $ match internal lines
+        s  match as a Single line - . matches \n
+        o  compile pattern Once
+        x  eXtended legibility - free whitespace and comments
+        c  don't reset pos on failed matches when using /g</pre><pre class="verbatim">     If 'pattern' is an empty string, the last I&lt;successfully&gt; matched
+     regex is used. Delimiters other than '/' may be used for both this
+     operator and the following ones.</pre><pre class="verbatim">  qr/pattern/imsox lets you store a regex in a variable,
+     or pass one around. Modifiers as for m// and are stored
+     within the regex.</pre><pre class="verbatim">  s/pattern/replacement/igmsoxe substitutes matches of
+     'pattern' with 'replacement'. Modifiers as for m//
+     with one addition:</pre><pre class="verbatim">        e  Evaluate replacement as an expression</pre>
+<pre class="verbatim">     'e' may be specified multiple times. 'replacement' is interpreted
+     as a double quoted string unless a single-quote (') is the delimiter.</pre><pre class="verbatim">  ?pattern? is like m/pattern/ but matches only once. No alternate
+      delimiters can be used. Must be reset with L&lt;reset|perlfunc/reset&gt;.</pre><a name="SYNTAX"></a><h2>SYNTAX</h2>
+<pre class="verbatim">   \       Escapes the character immediately following it
+   .       Matches any single character except a newline (unless /s is used)
+   ^       Matches at the beginning of the string (or line, if /m is used)
+   $       Matches at the end of the string (or line, if /m is used)
+   *       Matches the preceding element 0 or more times
+   +       Matches the preceding element 1 or more times
+   ?       Matches the preceding element 0 or 1 times
+   {...}   Specifies a range of occurrences for the element preceding it
+   [...]   Matches any one of the characters contained within the brackets
+   (...)   Groups subexpressions for capturing to $1, $2...
+   (?:...) Groups subexpressions without capturing (cluster)
+   |       Matches either the subexpression preceding or following it
+   \1, \2 ...  The text from the Nth group</pre><a name="ESCAPE-SEQUENCES"></a><h2>ESCAPE SEQUENCES</h2>
+<p>These work as in normal strings.</p>
+<pre class="verbatim">   \a       Alarm (beep)
+   \e       Escape
+   \f       Formfeed
+   \n       Newline
+   \r       Carriage return
+   \t       Tab
+   \037     Any octal ASCII value
+   \x7f     Any hexadecimal ASCII value
+   \x{263a} A wide hexadecimal value
+   \cx      Control-x
+   \N{name} A named character</pre><pre class="verbatim">   \l  Lowercase <a class="l_k" href="functions/next.html">next</a> <span class="j">character</span>
+   \u  Titlecase <a class="l_k" href="functions/next.html">next</a> <span class="j">character</span>
+   \L  Lowercase until \E
+   \U  Uppercase until \E
+   \Q  Disable pattern metacharacters until \E
+   \E  End case modification</pre>
+<p>For Titlecase, see <a href="#Titlecase">"Titlecase"</a>.</p>
+<p>This one works differently from normal strings:</p>
+<pre class="verbatim">   \b  An assertion<span class="cm">,</span> not backspace<span class="cm">,</span> except in a character class</pre>
+<a name="CHARACTER-CLASSES"></a><h2>CHARACTER CLASSES</h2>
+<pre class="verbatim">   [amy]    Match 'a', 'm' or 'y'
+   [f-j]    Dash specifies "range"
+   [f-j-]   Dash escaped or at start or end means 'dash'
+   [^f-j]   Caret indicates "match any character _except_ these"</pre><p>The following sequences work within or without a character class.
+The first six are locale aware, all are Unicode aware.  The default
+character class equivalent are given.  See <a href="perllocale.html">perllocale</a> and
+<a href="perlunicode.html">perlunicode</a> for details.</p>
+<pre class="verbatim">   \d      A digit                     [0-9]
+   \D      A nondigit                  [^0-9]
+   \w      A word character            [a-zA-Z0-9_]
+   \W      A non-word character        [^a-zA-Z0-9_]
+   \s      A whitespace character      [ \t\n\r\f]
+   \S      A non-whitespace character  [^ \t\n\r\f]</pre><pre class="verbatim">   \C      Match a byte (with Unicode, '.' matches a character)
+   \pP     Match P-named (Unicode) property
+   \p{...} Match Unicode property with long name
+   \PP     Match non-P
+   \P{...} Match lack of Unicode property with long name
+   \X      Match extended unicode sequence</pre><p>POSIX character classes and their Unicode and Perl equivalents:</p>
+<pre class="verbatim">   alnum   IsAlnum              Alphanumeric
+   alpha   IsAlpha              Alphabetic
+   ascii   IsASCII              Any ASCII char
+   blank   IsSpace  [ \t]       Horizontal whitespace (GNU extension)
+   cntrl   IsCntrl              Control characters
+   digit   IsDigit  \d          Digits
+   graph   IsGraph              Alphanumeric and punctuation
+   lower   IsLower              Lowercase chars (locale and Unicode aware)
+   print   IsPrint              Alphanumeric, punct, and space
+   punct   IsPunct              Punctuation
+   space   IsSpace  [\s\ck]     Whitespace
+           IsSpacePerl   \s     Perl's whitespace definition
+   upper   IsUpper              Uppercase chars (locale and Unicode aware)
+   word    IsWord   \w          Alphanumeric plus _ (Perl extension)
+   xdigit  IsXDigit [0-9A-Fa-f] Hexadecimal digit</pre><p>Within a character class:</p>
+<pre class="verbatim">    POSIX       traditional   Unicode
+    [:digit:]       \d        \p{IsDigit}
+    [:^digit:]      \D        \P{IsDigit}</pre><a name="ANCHORS"></a><h2>ANCHORS</h2>
+<p>All are zero-width assertions.</p>
+<pre class="verbatim">   ^  Match string start (or line, if /m is used)
+   $  Match string end (or line, if /m is used) or before newline
+   \b Match word boundary (between \w and \W)
+   \B Match except at word boundary (between \w and \w or \W and \W)
+   \A Match string start (regardless of /m)
+   \Z Match string end (before optional newline)
+   \z Match absolute string end
+   \G Match where previous m//g left off</pre><a name="QUANTIFIERS"></a><h2>QUANTIFIERS</h2>
+<p>Quantifiers are greedy by default -- match the <b>longest</b> leftmost.</p>
+<pre class="verbatim">   Maximal Minimal Allowed range
+   ------- ------- -------------
+   {n,m}   {n,m}?  Must occur at least n times but no more than m times
+   {n,}    {n,}?   Must occur at least n times
+   {n}     {n}?    Must occur exactly n times
+   *       *?      0 or more times (same as {0,})
+   +       +?      1 or more times (same as {1,})
+   ?       ??      0 or 1 time (same as {0,1})</pre><p>There is no quantifier {,n} -- that gets understood as a literal string.</p>
+<a name="EXTENDED-CONSTRUCTS"></a><h2>EXTENDED CONSTRUCTS</h2>
+<pre class="verbatim">   (?#text)         A comment
+   (?imxs-imsx:...) Enable/disable option (as per m// modifiers)
+   (?=...)          Zero-width positive lookahead assertion
+   (?!...)          Zero-width negative lookahead assertion
+   (?&lt;=...)         Zero-width positive lookbehind assertion
+   (?&lt;!...)         Zero-width negative lookbehind assertion
+   (?&gt;...)          Grab what we can, prohibit backtracking
+   (?{ code })      Embedded code, return value becomes $^R
+   (??{ code })     Dynamic regex, return value used as regex
+   (?(cond)yes|no)  cond being integer corresponding to capturing parens
+   (?(cond)yes)        or a lookaround/eval zero-width assertion</pre><a name="VARIABLES"></a><h2>VARIABLES</h2>
+<pre class="verbatim">   $_    Default variable for operators to use
+   $*    Enable multiline matching (deprecated; not in 5.9.0 or later)</pre><pre class="verbatim">   $&amp;    Entire matched string
+   $`    Everything prior to matched string
+   $'    Everything after to matched string</pre><p>The use of those last three will slow down <b>all</b> regex use
+within your program. Consult <a href="perlvar.html">perlvar</a> for <code class="inline"><span class="i">@LAST_MATCH_START</span></code>
+
+to see equivalent expressions that won't cause slow down.
+See also <a href="http://search.cpan.org/perldoc/Devel::SawAmpersand">Devel::SawAmpersand</a>.</p>
+<pre class="verbatim">   $1, $2 ...  hold the Xth captured expr
+   $+    Last parenthesized pattern match
+   $^N   Holds the most recently closed capture
+   $^R   Holds the result of the last (?{...}) expr
+   @-    Offsets of starts of groups. $-[0] holds start of whole match
+   @+    Offsets of ends of groups. $+[0] holds end of whole match</pre><p>Captured groups are numbered according to their <i>opening</i> paren.</p>
+<a name="FUNCTIONS"></a><h2>FUNCTIONS</h2>
+<pre class="verbatim">   <a class="l_k" href="functions/lc.html">lc</a>          Lowercase a string
+   <a class="l_k" href="functions/lcfirst.html">lcfirst</a>     Lowercase first char of a string
+   <a class="l_k" href="functions/uc.html">uc</a>          Uppercase a string
+   <a class="l_k" href="functions/ucfirst.html">ucfirst</a>     Titlecase first char of a string</pre>
+<pre class="verbatim">   pos         Return or set current match position
+   quotemeta   Quote metacharacters
+   reset       Reset ?pattern? status
+   study       Analyze string for optimizing matching</pre><pre class="verbatim">   <a class="l_k" href="functions/split.html">split</a>       Use regex to <a class="l_k" href="functions/split.html">split</a> a string into parts</pre>
+<p>The first four of these are like the escape sequences <code class="inline">\L</code>
+, <code class="inline">\l</code>
+,
+<code class="inline">\U</code>
+, and <code class="inline">\u</code>
+.  For Titlecase, see <a href="#Titlecase">"Titlecase"</a>.</p>
+<a name="TERMINOLOGY"></a><h2>TERMINOLOGY</h2>
+<h3>Titlecase</h3>
+<p>Unicode concept which most often is equal to uppercase, but for
+certain characters like the German "sharp s" there is a difference.</p>
+<a name="AUTHOR"></a><h1>AUTHOR</h1>
+<p>Iain Truskett.</p>
+<p>This document may be distributed under the same terms as Perl itself.</p>
+<a name="SEE-ALSO"></a><h1>SEE ALSO</h1>
+<ul>
+<li>
+<p><a href="perlretut.html">perlretut</a> for a tutorial on regular expressions.</p>
+</li>
+<li>
+<p><a href="perlrequick.html">perlrequick</a> for a rapid tutorial.</p>
+</li>
+<li>
+<p><a href="perlre.html">perlre</a> for more details.</p>
+</li>
+<li>
+<p><a href="perlvar.html">perlvar</a> for details on the variables.</p>
+</li>
+<li>
+<p><a href="perlop.html">perlop</a> for details on the operators.</p>
+</li>
+<li>
+<p><a href="perlfunc.html">perlfunc</a> for details on the functions.</p>
+</li>
+<li>
+<p><a href="perlfaq6.html">perlfaq6</a> for FAQs on regular expressions.</p>
+</li>
+<li>
+<p>The <a href="re.html">re</a> module to alter behaviour and aid
+debugging.</p>
+</li>
+<li>
+<p><a href="perldebug.html#Debugging-regular-expressions">"Debugging regular expressions" in perldebug</a></p>
+</li>
+<li>
+<p><a href="perluniintro.html">perluniintro</a>, <a href="perlunicode.html">perlunicode</a>, <a href="charnames.html">charnames</a> and <a href="locale.html">locale</a>
+for details on regexes and internationalisation.</p>
+</li>
+<li>
+<p><i>Mastering Regular Expressions</i> by Jeffrey Friedl
+(<i><a href="http://regex.info/">http://regex.info/</a></i>) for a thorough grounding and
+reference on the topic.</p>
+</li>
+</ul>
+<a name="THANKS"></a><h1>THANKS</h1>
+<p>David P.C. Wollmann,
+Richard Soderberg,
+Sean M. Burke,
+Tom Christiansen,
+Jim Cromie,
+and
+Jeffrey Goff
+for useful advice.</p>
+</div>
+      <div id="contentFooter"><a href="http://www.perl.org"><img src="perlpowered.png" border=0></a></div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div id="rightContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeRight()" title="Hide toolbar" onmouseover="rightCloseIcon.src='close_purple.gif';" onmouseout="rightCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="rightCloseIcon" id="rightCloseIcon" border=0></a>
+      </div>
+      <h1>Search:</h1>
+      <p>
+        <form action="search.html" name="perldoc_search">
+	  <input type="text" name="q" size="10" class="grey"><br>
+	  <!--<select name="r"><option value="1" selected>Go to top result<option value="0">Show results list</select>-->
+	</form>
+      </p>
+      <h2>Labels:</h2>
+      <p>
+        <a href="#" onClick="addLabel('perlreref','perlreref.html')">Add this page</a>
+      </p>
+      <div class="labels" id="labels">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

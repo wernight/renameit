@@ -1,0 +1,2 @@
+Holds specific versions of components of external libraries used by an application. 
+If you have multiple binaries in a project, consider using tools that download the correct versions of dependent binaries at build time.

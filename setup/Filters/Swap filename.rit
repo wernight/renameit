@@ -1,0 +1,6 @@
+[Search and replace]
+search="(.*) - (.*)"
+replace="\2 - \1"
+use="0"
+casesensitive="0"
+once="1"

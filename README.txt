@@ -1,0 +1,1 @@
+Web application template for java. Builds an ear. It follows the Java BluePrints project conventions (http://java.sun.com/blueprints/code/projectconventions.html)

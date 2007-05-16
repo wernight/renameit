@@ -1,0 +1,12 @@
+[Search and replace]
+use="0"
+casesensitive="1"
+once="0"
+search="(.{10})(.*)"
+replace="\1_inserted_text_after_10th_character_\2"
+series="0"
+seriesStart="1"
+seriesStep="1"
+guid="DBBEE622-A8A4-B631-5FDE-E59709D6D6D6"
+id3tag="0"
+

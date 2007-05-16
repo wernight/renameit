@@ -1,0 +1,16 @@
+[ID3 reader]
+template="%1. %4 - %2 - %3 (%6)"
+[Search and replace]
+search=" ()"
+replace=""
+use="-1"
+casesensitive="1"
+once="1"
+[Case filter]
+type="3"
+[Search and replace]
+search="[*]"
+replace=""
+use="-1"
+casesensitive="0"
+once="1"

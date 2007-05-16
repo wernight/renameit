@@ -1,0 +1,46 @@
+HKCR
+{
+	Rename-It!.SimpleShlExt.1 = s 'Rename-It! SimpleShlExt Class'
+	{
+		CLSID = s '{A64BBF5F-1250-4083-924C-B79661B75AAE}'
+	}
+	Rename-It!.SimpleShlExt = s 'Rename-It! SimpleShlExt Class'
+	{
+		CLSID = s '{A64BBF5F-1250-4083-924C-B79661B75AAE}'
+		CurVer = s 'SimpleExt.SimpleShlExt.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {A64BBF5F-1250-4083-924C-B79661B75AAE} = s 'Rename-It! SimpleShlExt Class'
+		{
+			ProgID = s 'Rename-It!.SimpleShlExt.1'
+			VersionIndependentProgID = s 'Rename-It!.SimpleShlExt'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{5E2121E1-0300-11D4-8D3B-444553540000}'
+		}
+	}
+    NoRemove *
+    {
+        NoRemove ShellEx
+        {
+            NoRemove ContextMenuHandlers
+            {
+                ForceRemove Rename-It! = s '{A64BBF5F-1250-4083-924C-B79661B75AAE}'
+            }
+        }
+    }
+    NoRemove Directory
+    {
+        NoRemove ShellEx
+        {
+            NoRemove ContextMenuHandlers
+            {
+                ForceRemove Rename-It! = s '{A64BBF5F-1250-4083-924C-B79661B75AAE}'
+            }
+        }
+    }
+}

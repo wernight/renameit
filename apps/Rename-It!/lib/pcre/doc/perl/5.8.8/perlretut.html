@@ -1,0 +1,2527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>perlretut - perldoc.perl.org</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Language" content="en-gb" />
+  <link href="css.css" rel="stylesheet" rev="stylesheet" type="text/css" media="screen" />
+</head>
+
+<script language="JavaScript" type="text/javascript" src="label.js"></script>
+
+<script language="JavaScript">
+  pageDepth = 0;
+  setPath();
+</script>
+
+<body onLoad="showToolbars();loadLabels()">
+
+<div id="pageHeader">
+  <div id="pageHeaderLogo">
+    <img src="onion.gif">
+  </div>
+  <div id="pageHeaderText">
+    <a href="http://perldoc.perl.org">perldoc.perl.org</a>
+  </div>
+</div>
+
+<div id="pageBody">
+  <div id="left">
+    <div id="leftContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeLeft()" title="Hide navigation" onmouseover="leftCloseIcon.src='close_purple.gif';" onmouseout="leftCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="leftCloseIcon" id="leftCloseIcon" border=0></a>
+      </div>
+      <h1>Manual:</h1>
+      <ul>
+        <li><a href="index-overview.html">Overview</a></li>
+        <li><a href="index-tutorials.html">Tutorials</a></li>
+        <li><a href="index-faq.html">FAQs</a></li>
+        <li><a href="index-history.html">History / Changes</a></li>
+        <li><a href="index-licence.html">Licence</a></li>
+      </ul>
+      <h2>Reference:</h2>
+      <ul>
+        <li><a href="index-language.html">Language</a></li>
+        <li><a href="index-functions.html">Functions</a></li>
+        <li><a href="perlop.html">Operators</a></li>
+        <li><a href="perlvar.html">Special variables</a></li>
+        <li><a href="index-pragmas.html">Pragmas</a></li>
+        <li><a href="index-modules-A.html">Core modules</a></li>
+        <li><a href="index-utilities.html">Utilities</a></li>
+        <li><a href="index-internals.html">Internals</a></li>
+        <li><a href="index-platforms.html">Platform specific</a></li>
+      </ul>
+      <h2>Links:</h2>
+      <ul>
+        <li><a href="http://search.cpan.org">CPAN</a></li>
+        <li><a href="http://www.perl.com">Perl.com</a></li>
+        <li><a href="http://www.perl.org">Perl.org</a></li>
+        <li><a href="http://www.pm.org">Perl Mongers</a></li>
+        <li><a href="http://www.perlmonks.org">Perl Monks</a></li>
+        <li><a href="http://planet.perl.org">Planet Perl</a></li>
+        <li><a href="http://use.perl.org">Use Perl</a></li>
+      </ul>
+      <h2>Contact:</h2>
+      <ul>
+        <li>Site maintained by<br><a href="http://perl.jonallen.info">Jon Allen</a>
+            (<a href="http://perl.jonallen.info">JJ</a>)</li>
+        <li class="spaced">Last updated on<br>23 April 2006</li>
+	<li class="spaced">See the <a href="http://perl.jonallen.info/projects/perldoc">project page</a> for
+	more details</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="center">  
+    <div id="centerContent">
+      <div id="contentHeader">
+        <div id="contentHeaderLeft"><a href="#" onClick="showLeft()">Show navigation</a></div>
+        <div id="contentHeaderCentre">-- Perl 5.8.8 documentation --</div>
+        <div id="contentHeaderRight"><a href="#" onClick="showRight()">Show toolbar</a></div>
+      </div>
+      <div id="breadCrumbs"><a href="index.html">Home</a> &gt; <a href="index-tutorials.html">Tutorials</a> &gt; perlretut</div>
+      <script language="JavaScript">fromSearch();</script>
+      <div id="contentBody"><div class="title_container"><div class="page_title">perlretut</div><div class="pdf_link"><a href="perlretut.pdf">View as PDF</a></div><div class="pdf_img_link"><a href="perlretut.pdf"><img src="pdficon.gif" border=0></a></div></div><ul><li><a href="#NAME">NAME</a><li><a href="#DESCRIPTION">DESCRIPTION</a><li><a href="#Part-1%3a-The-basics">Part 1: The basics</a><ul><li><a href="#Simple-word-matching">Simple word matching</a><li><a href="#Using-character-classes">Using character classes</a><li><a href="#Matching-this-or-that">Matching this or that</a><li><a href="#Grouping-things-and-hierarchical-matching">Grouping things and hierarchical matching</a><li><a href="#Extracting-matches">Extracting matches</a><li><a href="#Matching-repetitions">Matching repetitions</a><li><a href="#Building-a-regexp">Building a regexp</a><li><a href="#Using-regular-expressions-in-Perl">Using regular expressions in Perl</a></ul><li><a href="#Part-2%3a-Power-tools">Part 2: Power tools</a><ul><li><a href="#More-on-characters%2c-strings%2c-and-character-classes">More on characters, strings, and character classes</a><li><a href="#Compiling-and-saving-regular-expressions">Compiling and saving regular expressions</a><li><a href="#Embedding-comments-and-modifiers-in-a-regular-expression">Embedding comments and modifiers in a regular expression</a><li><a href="#Non-capturing-groupings">Non-capturing groupings</a><li><a href="#Looking-ahead-and-looking-behind">Looking ahead and looking behind</a><li><a href="#Using-independent-subexpressions-to-prevent-backtracking">Using independent subexpressions to prevent backtracking</a><li><a href="#Conditional-expressions">Conditional expressions</a><li><a href="#A-bit-of-magic%3a-executing-Perl-code-in-a-regular-expression">A bit of magic: executing Perl code in a regular expression</a><li><a href="#Pragmas-and-debugging">Pragmas and debugging</a></ul><li><a href="#BUGS">BUGS</a><li><a href="#SEE-ALSO">SEE ALSO</a><li><a href="#AUTHOR-AND-COPYRIGHT">AUTHOR AND COPYRIGHT</a><ul><li><a href="#Acknowledgments">Acknowledgments</a></ul></ul><a name="NAME"></a><h1>NAME</h1>
+<p>perlretut - Perl regular expressions tutorial</p>
+<a name="DESCRIPTION"></a><h1>DESCRIPTION</h1>
+<p>This page provides a basic tutorial on understanding, creating and
+using regular expressions in Perl.  It serves as a complement to the
+reference page on regular expressions <a href="perlre.html">perlre</a>.  Regular expressions
+are an integral part of the <code class="inline"><a class="l_k" href="functions/m.html">m//</a></code>, <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code>, <code class="inline"><a class="l_k" href="functions/qr.html">qr//</a></code> and <code class="inline"><a class="l_k" href="functions/split.html">split</a></code>
+operators and so this tutorial also overlaps with
+<a href="perlop.html#Regexp-Quote-Like-Operators">"Regexp Quote-Like Operators" in perlop</a> and <a href="functions/split.html">split</a>.</p>
+<p>Perl is widely renowned for excellence in text processing, and regular
+expressions are one of the big factors behind this fame.  Perl regular
+expressions display an efficiency and flexibility unknown in most
+other computer languages.  Mastering even the basics of regular
+expressions will allow you to manipulate text with surprising ease.</p>
+<p>What is a regular expression?  A regular expression is simply a string
+that describes a pattern.  Patterns are in common use these days;
+examples are the patterns typed into a search engine to find web pages
+and the patterns used to list files in a directory, e.g., <code class="inline">ls *.txt</code>
+or <code class="inline">dir *.*</code>.  In Perl, the patterns described by regular expressions
+are used to search strings, extract desired parts of strings, and to
+do search and replace operations.</p>
+<p>Regular expressions have the undeserved reputation of being abstract
+and difficult to understand.  Regular expressions are constructed using
+simple concepts like conditionals and loops and are no more difficult
+to understand than the corresponding <code class="inline"><a class="l_w" href="if.html">if</a></code> conditionals and <code class="inline">while</code>
+
+loops in the Perl language itself.  In fact, the main challenge in
+learning regular expressions is just getting used to the terse
+notation used to express these concepts.</p>
+<p>This tutorial flattens the learning curve by discussing regular
+expression concepts, along with their notation, one at a time and with
+many examples.  The first part of the tutorial will progress from the
+simplest word searches to the basic regular expression concepts.  If
+you master the first part, you will have all the tools needed to solve
+about 98% of your needs.  The second part of the tutorial is for those
+comfortable with the basics and hungry for more power tools.  It
+discusses the more advanced regular expression operators and
+introduces the latest cutting edge innovations in 5.6.0.</p>
+<p>A note: to save time, 'regular expression' is often abbreviated as
+regexp or regex.  Regexp is a more natural abbreviation than regex, but
+is harder to pronounce.  The Perl pod documentation is evenly split on
+regexp vs regex; in Perl, there is more than one way to abbreviate it.
+We'll use regexp in this tutorial.</p>
+<a name="Part-1%3a-The-basics"></a><h1>Part 1: The basics</h1>
+<a name="Simple-word-matching"></a><h2>Simple word matching</h2>
+<p>The simplest regexp is simply a word, or more generally, a string of
+characters.  A regexp consisting of a word matches any string that
+contains that word:</p>
+<pre class="verbatim">    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/World/</span><span class="sc">;</span>  <span class="c"># matches</span></pre>
+<p>What is this perl statement all about? <code class="inline"><span class="q">&quot;Hello World&quot;</span></code>
+ is a simple
+double quoted string.  <code class="inline">World</code>
+ is the regular expression and the
+<code class="inline"><span class="q">//</span></code>
+ enclosing <code class="inline"><span class="q">/World/</span></code>
+ tells perl to search a string for a match.
+The operator <code class="inline">=~</code>
+ associates the string with the regexp match and
+produces a true value if the regexp matched, or false if the regexp
+did not match.  In our case, <code class="inline">World</code>
+ matches the second word in
+<code class="inline"><span class="q">&quot;Hello World&quot;</span></code>
+, so the expression is true.  Expressions like this
+are useful in conditionals:</p>
+<pre class="verbatim">    if <span class="s">(</span><span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/World/</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It matches\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span>
+    else <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It doesn&#39;t match\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>There are useful variations on this theme.  The sense of the match can
+be reversed by using <code class="inline">!~</code>
+ operator:</p>
+<pre class="verbatim">    if <span class="s">(</span><span class="q">&quot;Hello World&quot;</span> !~ <span class="q">/World/</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It doesn&#39;t match\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span>
+    else <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It matches\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>The literal string in the regexp can be replaced by a variable:</p>
+<pre class="verbatim">    <span class="i">$greeting</span> = <span class="q">&quot;World&quot;</span><span class="sc">;</span>
+    if <span class="s">(</span><span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/$greeting/</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It matches\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span>
+    else <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It doesn&#39;t match\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>If you're matching against the special default variable <code class="inline"><span class="i">$_</span></code>
+, the
+<code class="inline"><span class="i">$_</span> =~</code>
+ part can be omitted:</p>
+<pre class="verbatim">    <span class="i">$_</span> = <span class="q">&quot;Hello World&quot;</span><span class="sc">;</span>
+    if <span class="s">(</span><span class="q">/World/</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It matches\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span>
+    else <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It doesn&#39;t match\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>And finally, the <code class="inline"><span class="q">//</span></code>
+ default delimiters for a match can be changed
+to arbitrary delimiters by putting an <code class="inline"><span class="q">&#39;m&#39;</span></code>
+ out front:</p>
+<pre class="verbatim">    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">m!World!</span><span class="sc">;</span>   <span class="c"># matches, delimited by &#39;!&#39;</span>
+    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">m{World}</span><span class="sc">;</span>   <span class="c"># matches, note the matching &#39;{}&#39;</span>
+    <span class="q">&quot;/usr/bin/perl&quot;</span> =~ <span class="q">m&quot;/perl&quot;</span><span class="sc">;</span> <span class="c"># matches after &#39;/usr/bin&#39;,</span>
+                                 <span class="c"># &#39;/&#39; becomes an ordinary char</span></pre>
+<p><code class="inline"><span class="q">/World/</span></code>
+, <code class="inline"><a class="l_k" href="functions/m.html">m!World!</a></code>, and <code class="inline"><a class="l_k" href="functions/m.html">m{World}</a></code> all represent the
+same thing.  When, e.g., <code class="inline"><span class="q">&quot;&quot;</span></code>
+ is used as a delimiter, the forward
+slash <code class="inline"><span class="q">&#39;/&#39;</span></code>
+ becomes an ordinary character and can be used in a regexp
+without trouble.</p>
+<p>Let's consider how different regexps would match <code class="inline"><span class="q">&quot;Hello World&quot;</span></code>
+:</p>
+<pre class="verbatim">    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/world/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match</span>
+    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/o W/</span><span class="sc">;</span>    <span class="c"># matches</span>
+    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/oW/</span><span class="sc">;</span>     <span class="c"># doesn&#39;t match</span>
+    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/World /</span><span class="sc">;</span> <span class="c"># doesn&#39;t match</span></pre>
+<p>The first regexp <code class="inline">world</code>
+ doesn't match because regexps are
+case-sensitive.  The second regexp matches because the substring
+<code&nbsp;class="inline">'o&nbsp;W'</code>&nbsp; occurs in the string <code&nbsp;class="inline">"Hello&nbsp;World"</code>&nbsp;.  The space
+character ' ' is treated like any other character in a regexp and is
+needed to match in this case.  The lack of a space character is the
+reason the third regexp <code class="inline"><span class="q">&#39;oW&#39;</span></code>
+ doesn't match.  The fourth regexp
+<code class="inline"><span class="q">&#39;World &#39;</span></code>
+ doesn't match because there is a space at the end of the
+regexp, but not at the end of the string.  The lesson here is that
+regexps must match a part of the string <i>exactly</i> in order for the
+statement to be true.</p>
+<p>If a regexp matches in more than one place in the string, perl will
+always match at the earliest possible point in the string:</p>
+<pre class="verbatim">    <span class="q">&quot;Hello World&quot;</span> =~ <span class="q">/o/</span><span class="sc">;</span>       <span class="c"># matches &#39;o&#39; in &#39;Hello&#39;</span>
+    <span class="q">&quot;That hat is red&quot;</span> =~ <span class="q">/hat/</span><span class="sc">;</span> <span class="c"># matches &#39;hat&#39; in &#39;That&#39;</span></pre>
+<p>With respect to character matching, there are a few more points you
+need to know about.   First of all, not all characters can be used 'as
+is' in a match.  Some characters, called <b>metacharacters</b>, are reserved
+for use in regexp notation.  The metacharacters are</p>
+<pre class="verbatim">    {}[]()^$.|*+?\</pre><p>The significance of each of these will be explained
+in the rest of the tutorial, but for now, it is important only to know
+that a metacharacter can be matched by putting a backslash before it:</p>
+<pre class="verbatim">    "2+2=4" =~ /2+2/;    # doesn't match, + is a metacharacter
+    "2+2=4" =~ /2\+2/;   # matches, \+ is treated like an ordinary +
+    "The interval is [0,1)." =~ /[0,1)./     # is a syntax error!
+    "The interval is [0,1)." =~ /\[0,1\)\./  # matches
+    "/usr/bin/perl" =~ /\/usr\/bin\/perl/;  # matches</pre><p>In the last regexp, the forward slash <code class="inline"><span class="q">&#39;/&#39;</span></code>
+ is also backslashed,
+because it is used to delimit the regexp.  This can lead to LTS
+(leaning toothpick syndrome), however, and it is often more readable
+to change delimiters.</p>
+<pre class="verbatim">    <span class="q">&quot;/usr/bin/perl&quot;</span> =~ <span class="q">m!/usr/bin/perl!</span><span class="sc">;</span>    <span class="c"># easier to read</span></pre>
+<p>The backslash character <code class="inline">'\'</code> is a metacharacter itself and needs to
+be backslashed:</p>
+<pre class="verbatim">    <span class="q">&#39;C:\WIN32&#39;</span> =~ <span class="q">/C:\\WIN/</span><span class="sc">;</span>   <span class="c"># matches</span></pre>
+<p>In addition to the metacharacters, there are some ASCII characters
+which don't have printable character equivalents and are instead
+represented by <b>escape sequences</b>.  Common examples are <code class="inline">\t</code>
+ for a
+tab, <code class="inline">\n</code>
+ for a newline, <code class="inline">\r</code>
+ for a carriage return and <code class="inline">\a</code>
+ for a
+bell.  If your string is better thought of as a sequence of arbitrary
+bytes, the octal escape sequence, e.g., <code class="inline">\<span class="n">033</span></code>
+, or hexadecimal escape
+sequence, e.g., <code class="inline">\x1B</code>
+ may be a more natural representation for your
+bytes.  Here are some examples of escapes:</p>
+<pre class="verbatim">    "1000\t2000" =~ m(0\t2)   # matches
+    "1000\n2000" =~ /0\n20/   # matches
+    "1000\t2000" =~ /\000\t2/ # doesn't match, "0" ne "\000"
+    "cat"        =~ /\143\x61\x74/ # matches, but a weird way to spell cat</pre><p>If you've been around Perl a while, all this talk of escape sequences
+may seem familiar.  Similar escape sequences are used in double-quoted
+strings and in fact the regexps in Perl are mostly treated as
+double-quoted strings.  This means that variables can be used in
+regexps as well.  Just like double-quoted strings, the values of the
+variables in the regexp will be substituted in before the regexp is
+evaluated for matching purposes.  So we have:</p>
+<pre class="verbatim">    <span class="i">$foo</span> = <span class="q">&#39;house&#39;</span><span class="sc">;</span>
+    <span class="q">&#39;housecat&#39;</span> =~ <span class="q">/$foo/</span><span class="sc">;</span>      <span class="c"># matches</span>
+    <span class="q">&#39;cathouse&#39;</span> =~ <span class="q">/cat$foo/</span><span class="sc">;</span>   <span class="c"># matches</span>
+    <span class="q">&#39;housecat&#39;</span> =~ <span class="q">/${foo}cat/</span><span class="sc">;</span> <span class="c"># matches</span></pre>
+<p>So far, so good.  With the knowledge above you can already perform
+searches with just about any literal string regexp you can dream up.
+Here is a <i>very simple</i> emulation of the Unix grep program:</p>
+<pre class="verbatim">    <span class="i">% cat</span> &gt; simple_grep
+    <span class="c">#!/usr/bin/perl</span>
+    <span class="i">$regexp</span> = <a class="l_k" href="functions/shift.html">shift</a><span class="sc">;</span>
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> if <span class="q">/$regexp/</span><span class="sc">;</span>
+    <span class="s">}</span>
+    ^D</pre>
+<pre class="verbatim">    <span class="i">% chmod</span> +x simple_grep</pre>
+<pre class="verbatim">    % simple_grep abba /usr/dict/words
+    Babbage
+    cabbage
+    cabbages
+    sabbath
+    Sabbathize
+    Sabbathizes
+    sabbatical
+    scabbard
+    scabbards</pre><p>This program is easy to understand.  <code class="inline">#!/usr/bin/perl</code>
+ is the standard
+way to invoke a perl program from the shell.
+<code&nbsp;class="inline">$regexp&nbsp;=&nbsp;shift;</code>&nbsp; saves the first command line argument as the
+regexp to be used, leaving the rest of the command line arguments to
+be treated as files.  <code&nbsp;class="inline">while&nbsp;(&lt;&gt;)</code>&nbsp; loops over all the lines in
+all the files.  For each line, <code&nbsp;class="inline">print&nbsp;if&nbsp;/$regexp/;</code>&nbsp; prints the
+line if the regexp matches the line.  In this line, both <code class="inline"><a class="l_k" href="functions/print.html">print</a></code> and
+<code class="inline"><span class="q">/$regexp/</span></code>
+ use the default variable <code class="inline"><span class="i">$_</span></code>
+ implicitly.</p>
+<p>With all of the regexps above, if the regexp matched anywhere in the
+string, it was considered a match.  Sometimes, however, we'd like to
+specify <i>where</i> in the string the regexp should try to match.  To do
+this, we would use the <b>anchor</b> metacharacters <code class="inline">^</code> and <code class="inline"><span class="i">$</span></code>
+.  The
+anchor <code class="inline">^</code> means match at the beginning of the string and the anchor
+<code class="inline"><span class="i">$</span></code>
+ means match at the end of the string, or before a newline at the
+end of the string.  Here is how they are used:</p>
+<pre class="verbatim">    <span class="q">&quot;housekeeper&quot;</span> =~ <span class="q">/keeper/</span><span class="sc">;</span>    <span class="c"># matches</span>
+    <span class="q">&quot;housekeeper&quot;</span> =~ <span class="q">/^keeper/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t match</span>
+    <span class="q">&quot;housekeeper&quot;</span> =~ <span class="q">/keeper$/</span><span class="sc">;</span>   <span class="c"># matches</span>
+    <span class="q">&quot;housekeeper\n&quot;</span> =~ <span class="q">/keeper$/</span><span class="sc">;</span> <span class="c"># matches</span></pre>
+<p>The second regexp doesn't match because <code class="inline">^</code> constrains <code class="inline">keeper</code>
+ to
+match only at the beginning of the string, but <code class="inline"><span class="q">&quot;housekeeper&quot;</span></code>
+ has
+keeper starting in the middle.  The third regexp does match, since the
+<code class="inline"><span class="i">$</span></code>
+ constrains <code class="inline">keeper</code>
+ to match only at the end of the string.</p>
+<p>When both <code class="inline">^</code> and <code class="inline"><span class="i">$</span></code>
+ are used at the same time, the regexp has to
+match both the beginning and the end of the string, i.e., the regexp
+matches the whole string.  Consider</p>
+<pre class="verbatim">    <span class="q">&quot;keeper&quot;</span> =~ <span class="q">/^keep$/</span><span class="sc">;</span>      <span class="c"># doesn&#39;t match</span>
+    <span class="q">&quot;keeper&quot;</span> =~ <span class="q">/^keeper$/</span><span class="sc">;</span>    <span class="c"># matches</span>
+    <span class="q">&quot;&quot;</span>       =~ <span class="q">/^$/</span><span class="sc">;</span>          <span class="c"># ^$ matches an empty string</span></pre>
+<p>The first regexp doesn't match because the string has more to it than
+<code class="inline">keep</code>
+.  Since the second regexp is exactly the string, it
+matches.  Using both <code class="inline">^</code> and <code class="inline"><span class="i">$</span></code>
+ in a regexp forces the complete
+string to match, so it gives you complete control over which strings
+match and which don't.  Suppose you are looking for a fellow named
+bert, off in a string by himself:</p>
+<pre class="verbatim">    <span class="q">&quot;dogbert&quot;</span> =~ <span class="q">/bert/</span><span class="sc">;</span>   <span class="c"># matches, but not what you want</span></pre>
+<pre class="verbatim">    <span class="q">&quot;dilbert&quot;</span> =~ <span class="q">/^bert/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, but ..</span>
+    <span class="q">&quot;bertram&quot;</span> =~ <span class="q">/^bert/</span><span class="sc">;</span>  <span class="c"># matches, so still not good enough</span></pre>
+<pre class="verbatim">    <span class="q">&quot;bertram&quot;</span> =~ <span class="q">/^bert$/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match, good</span>
+    <span class="q">&quot;dilbert&quot;</span> =~ <span class="q">/^bert$/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match, good</span>
+    <span class="q">&quot;bert&quot;</span>    =~ <span class="q">/^bert$/</span><span class="sc">;</span> <span class="c"># matches, perfect</span></pre>
+<p>Of course, in the case of a literal string, one could just as easily
+use the string equivalence <code&nbsp;class="inline">$string&nbsp;eq&nbsp;'bert'</code>&nbsp; and it would be
+more efficient.   The  <code class="inline">^...$</code> regexp really becomes useful when we
+add in the more powerful regexp tools below.</p>
+<a name="Using-character-classes"></a><h2>Using character classes</h2>
+<p>Although one can already do quite a lot with the literal string
+regexps above, we've only scratched the surface of regular expression
+technology.  In this and subsequent sections we will introduce regexp
+concepts (and associated metacharacter notations) that will allow a
+regexp to not just represent a single character sequence, but a <i>whole
+class</i> of them.</p>
+<p>One such concept is that of a <b>character class</b>.  A character class
+allows a set of possible characters, rather than just a single
+character, to match at a particular point in a regexp.  Character
+classes are denoted by brackets <code class="inline"><span class="s">[</span>...<span class="s">]</span></code>
+, with the set of characters
+to be possibly matched inside.  Here are some examples:</p>
+<pre class="verbatim">    <span class="q">/cat/</span><span class="sc">;</span>       <span class="c"># matches &#39;cat&#39;</span>
+    <span class="q">/[bcr]at/</span><span class="sc">;</span>   <span class="c"># matches &#39;bat, &#39;cat&#39;, or &#39;rat&#39;</span>
+    <span class="q">/item[0123456789]/</span><span class="sc">;</span>  <span class="c"># matches &#39;item0&#39; or ... or &#39;item9&#39;</span>
+    <span class="q">&quot;abc&quot;</span> =~ <span class="q">/[cab]/</span><span class="sc">;</span>    <span class="c"># matches &#39;a&#39;</span></pre>
+<p>In the last statement, even though <code class="inline"><span class="q">&#39;c&#39;</span></code>
+ is the first character in
+the class, <code class="inline"><span class="q">&#39;a&#39;</span></code>
+ matches because the first character position in the
+string is the earliest point at which the regexp can match.</p>
+<pre class="verbatim">    <span class="q">/[yY][eE][sS]/</span><span class="sc">;</span>      <span class="c"># match &#39;yes&#39; in a case-insensitive way</span>
+                         <span class="c"># &#39;yes&#39;, &#39;Yes&#39;, &#39;YES&#39;, etc.</span></pre>
+<p>This regexp displays a common task: perform a case-insensitive
+match.  Perl provides away of avoiding all those brackets by simply
+appending an <code class="inline"><span class="q">&#39;i&#39;</span></code>
+ to the end of the match.  Then <code class="inline"><span class="q">/[yY][eE][sS]/</span><span class="sc">;</span></code>
+
+can be rewritten as <code class="inline"><span class="q">/yes/i</span><span class="sc">;</span></code>
+.  The <code class="inline"><span class="q">&#39;i&#39;</span></code>
+ stands for
+case-insensitive and is an example of a <b>modifier</b> of the matching
+operation.  We will meet other modifiers later in the tutorial.</p>
+<p>We saw in the section above that there were ordinary characters, which
+represented themselves, and special characters, which needed a
+backslash <code class="inline">\</code>
+ to represent themselves.  The same is true in a
+character class, but the sets of ordinary and special characters
+inside a character class are different than those outside a character
+class.  The special characters for a character class are <code class="inline">-]\^$</code>.  <code class="inline">]</code>
+is special because it denotes the end of a character class.  <code class="inline"><span class="i">$</span></code>
+ is
+special because it denotes a scalar variable.  <code class="inline">\</code>
+ is special because
+it is used in escape sequences, just like above.  Here is how the
+special characters <code class="inline">]$\</code> are handled:</p>
+<pre class="verbatim">   <span class="q">/[\]c]def/</span><span class="sc">;</span> <span class="c"># matches &#39;]def&#39; or &#39;cdef&#39;</span>
+   <span class="i">$x</span> = <span class="q">&#39;bcr&#39;</span><span class="sc">;</span>
+   <span class="q">/[$x]at/</span><span class="sc">;</span>   <span class="c"># matches &#39;bat&#39;, &#39;cat&#39;, or &#39;rat&#39;</span>
+   <span class="q">/[\$x]at/</span><span class="sc">;</span>  <span class="c"># matches &#39;$at&#39; or &#39;xat&#39;</span>
+   <span class="q">/[\\$x]at/</span><span class="sc">;</span> <span class="c"># matches &#39;\at&#39;, &#39;bat, &#39;cat&#39;, or &#39;rat&#39;</span></pre>
+<p>The last two are a little tricky.  in <code class="inline"><span class="s">[</span>\<span class="i">$x</span><span class="s">]</span></code>
+, the backslash protects
+the dollar sign, so the character class has two members <code class="inline"><span class="i">$</span></code>
+ and <code class="inline">x</code>
+.
+In <code class="inline"><span class="s">[</span>\\<span class="i">$x</span><span class="s">]</span></code>
+, the backslash is protected, so <code class="inline"><span class="i">$x</span></code>
+ is treated as a
+variable and substituted in double quote fashion.</p>
+<p>The special character <code class="inline"><span class="q">&#39;-&#39;</span></code>
+ acts as a range operator within character
+classes, so that a contiguous set of characters can be written as a
+range.  With ranges, the unwieldy <code class="inline">[0123456789]</code> and <code class="inline"><span class="s">[</span>abc...xyz<span class="s">]</span></code>
+
+become the svelte <code class="inline"><span class="s">[</span><span class="n">0</span>-<span class="n">9</span><span class="s">]</span></code>
+ and <code class="inline"><span class="s">[</span>a-z<span class="s">]</span></code>
+.  Some examples are</p>
+<pre class="verbatim">    <span class="q">/item[0-9]/</span><span class="sc">;</span>  <span class="c"># matches &#39;item0&#39; or ... or &#39;item9&#39;</span>
+    <span class="q">/[0-9bx-z]aa/</span><span class="sc">;</span>  <span class="c"># matches &#39;0aa&#39;, ..., &#39;9aa&#39;,</span>
+                    <span class="c"># &#39;baa&#39;, &#39;xaa&#39;, &#39;yaa&#39;, or &#39;zaa&#39;</span>
+    <span class="q">/[0-9a-fA-F]/</span><span class="sc">;</span>  <span class="c"># matches a hexadecimal digit</span>
+    <span class="q">/[0-9a-zA-Z_]/</span><span class="sc">;</span> <span class="c"># matches a &quot;word&quot; character,</span>
+                    <span class="c"># like those in a perl variable name</span></pre>
+<p>If <code class="inline"><span class="q">&#39;-&#39;</span></code>
+ is the first or last character in a character class, it is
+treated as an ordinary character; <code class="inline"><span class="s">[</span>-ab<span class="s">]</span></code>
+, <code class="inline"><span class="s">[</span>ab-<span class="s">]</span></code>
+ and <code class="inline"><span class="s">[</span>a\-b<span class="s">]</span></code>
+ are
+all equivalent.</p>
+<p>The special character <code class="inline">^</code> in the first position of a character class
+denotes a <b>negated character class</b>, which matches any character but
+those in the brackets.  Both <code class="inline"><span class="s">[</span>...<span class="s">]</span></code>
+ and <code class="inline">[^...]</code> must match a
+character, or the match fails.  Then</p>
+<pre class="verbatim">    <span class="q">/[^a]at/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match &#39;aat&#39; or &#39;at&#39;, but matches</span>
+               <span class="c"># all other &#39;bat&#39;, &#39;cat, &#39;0at&#39;, &#39;%at&#39;, etc.</span>
+    <span class="q">/[^0-9]/</span><span class="sc">;</span>  <span class="c"># matches a non-numeric character</span>
+    <span class="q">/[a^]at/</span><span class="sc">;</span>  <span class="c"># matches &#39;aat&#39; or &#39;^at&#39;; here &#39;^&#39; is ordinary</span></pre>
+<p>Now, even <code class="inline"><span class="s">[</span><span class="n">0</span>-<span class="n">9</span><span class="s">]</span></code>
+ can be a bother the write multiple times, so in the
+interest of saving keystrokes and making regexps more readable, Perl
+has several abbreviations for common character classes:</p>
+<ul>
+<li>
+<p>\d is a digit and represents [0-9]</p>
+</li>
+<li>
+<p>\s is a whitespace character and represents [\ \t\r\n\f]</p>
+</li>
+<li>
+<p>\w is a word character (alphanumeric or _) and represents [0-9a-zA-Z_]</p>
+</li>
+<li>
+<p>\D is a negated \d; it represents any character but a digit [^0-9]</p>
+</li>
+<li>
+<p>\S is a negated \s; it represents any non-whitespace character [^\s]</p>
+</li>
+<li>
+<p>\W is a negated \w; it represents any non-word character [^\w]</p>
+</li>
+<li>
+<p>The period '.' matches any character but "\n"</p>
+</li>
+</ul>
+<p>The <code class="inline">\d\s\w\D\S\W</code> abbreviations can be used both inside and outside
+of character classes.  Here are some in use:</p>
+<pre class="verbatim">    <span class="q">/\d\d:\d\d:\d\d/</span><span class="sc">;</span> <span class="c"># matches a hh:mm:ss time format</span>
+    <span class="q">/[\d\s]/</span><span class="sc">;</span>         <span class="c"># matches any digit or whitespace character</span>
+    <span class="q">/\w\W\w/</span><span class="sc">;</span>         <span class="c"># matches a word char, followed by a</span>
+                      <span class="c"># non-word char, followed by a word char</span>
+    <span class="q">/..rt/</span><span class="sc">;</span>           <span class="c"># matches any two chars, followed by &#39;rt&#39;</span>
+    <span class="q">/end\./</span><span class="sc">;</span>          <span class="c"># matches &#39;end.&#39;</span>
+    <span class="q">/end[.]/</span><span class="sc">;</span>         <span class="c"># same thing, matches &#39;end.&#39;</span></pre>
+<p>Because a period is a metacharacter, it needs to be escaped to match
+as an ordinary period. Because, for example, <code class="inline">\d</code>
+ and <code class="inline">\w</code>
+ are sets
+of characters, it is incorrect to think of <code class="inline">[^\d\w]</code> as <code class="inline"><span class="s">[</span>\D\W<span class="s">]</span></code>
+; in
+fact <code class="inline">[^\d\w]</code> is the same as <code class="inline">[^\w]</code>, which is the same as
+<code class="inline"><span class="s">[</span>\W<span class="s">]</span></code>
+. Think DeMorgan's laws.</p>
+<p>An anchor useful in basic regexps is the <b>word&nbsp;anchor</b>&nbsp;
+<code class="inline">\b</code>
+.  This matches a boundary between a word character and a non-word
+character <code class="inline">\w\W</code>
+ or <code class="inline">\W\w</code>
+:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;Housecat catenates house and cat&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/cat/</span><span class="sc">;</span>    <span class="c"># matches cat in &#39;housecat&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/\bcat/</span><span class="sc">;</span>  <span class="c"># matches cat in &#39;catenates&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/cat\b/</span><span class="sc">;</span>  <span class="c"># matches cat in &#39;housecat&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/\bcat\b/</span><span class="sc">;</span>  <span class="c"># matches &#39;cat&#39; at end of string</span></pre>
+<p>Note in the last example, the end of the string is considered a word
+boundary.</p>
+<p>You might wonder why <code class="inline"><span class="q">&#39;.&#39;</span></code>
+ matches everything but <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+ - why not
+every character? The reason is that often one is matching against
+lines and would like to ignore the newline characters.  For instance,
+while the string <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+ represents one line, we would like to think
+of as empty.  Then</p>
+<pre class="verbatim">    <span class="q">&quot;&quot;</span>   =~ <span class="q">/^$/</span><span class="sc">;</span>    <span class="c"># matches</span>
+    <span class="q">&quot;\n&quot;</span> =~ <span class="q">/^$/</span><span class="sc">;</span>    <span class="c"># matches, &quot;\n&quot; is ignored</span></pre>
+<pre class="verbatim">    <span class="q">&quot;&quot;</span>   =~ <span class="q">/./</span><span class="sc">;</span>      <span class="c"># doesn&#39;t match; it needs a char</span>
+    <span class="q">&quot;&quot;</span>   =~ <span class="q">/^.$/</span><span class="sc">;</span>    <span class="c"># doesn&#39;t match; it needs a char</span>
+    <span class="q">&quot;\n&quot;</span> =~ <span class="q">/^.$/</span><span class="sc">;</span>    <span class="c"># doesn&#39;t match; it needs a char other than &quot;\n&quot;</span>
+    <span class="q">&quot;a&quot;</span>  =~ <span class="q">/^.$/</span><span class="sc">;</span>    <span class="c"># matches</span>
+    <span class="q">&quot;a\n&quot;</span>  =~ <span class="q">/^.$/</span><span class="sc">;</span>  <span class="c"># matches, ignores the &quot;\n&quot;</span></pre>
+<p>This behavior is convenient, because we usually want to ignore
+newlines when we count and match characters in a line.  Sometimes,
+however, we want to keep track of newlines.  We might even want <code class="inline">^</code>
+and <code class="inline"><span class="i">$</span></code>
+ to anchor at the beginning and end of lines within the
+string, rather than just the beginning and end of the string.  Perl
+allows us to choose between ignoring and paying attention to newlines
+by using the <code class="inline"><span class="q">//s</span></code>
+ and <code class="inline"><span class="q">//m</span></code>
+ modifiers.  <code class="inline"><span class="q">//s</span></code>
+ and <code class="inline"><span class="q">//m</span></code>
+ stand for
+single line and multi-line and they determine whether a string is to
+be treated as one continuous string, or as a set of lines.  The two
+modifiers affect two aspects of how the regexp is interpreted: 1) how
+the <code class="inline"><span class="q">&#39;.&#39;</span></code>
+ character class is defined, and 2) where the anchors <code class="inline">^</code>
+and <code class="inline"><span class="i">$</span></code>
+ are able to match.  Here are the four possible combinations:</p>
+<ul>
+<li>
+<p>no modifiers (//): Default behavior.  <code class="inline"><span class="q">&#39;.&#39;</span></code>
+ matches any character
+except <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+.  <code class="inline">^</code> matches only at the beginning of the string and
+<code class="inline"><span class="i">$</span></code>
+ matches only at the end or before a newline at the end.</p>
+</li>
+<li>
+<p>s modifier (//s): Treat string as a single long line.  <code class="inline"><span class="q">&#39;.&#39;</span></code>
+ matches
+any character, even <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+.  <code class="inline">^</code> matches only at the beginning of
+the string and <code class="inline"><span class="i">$</span></code>
+ matches only at the end or before a newline at the
+end.</p>
+</li>
+<li>
+<p>m modifier (//m): Treat string as a set of multiple lines.  <code class="inline"><span class="q">&#39;.&#39;</span></code>
+
+matches any character except <code class="inline"><span class="q">&quot;\n&quot;</span></code>
+.  <code class="inline">^</code> and <code class="inline"><span class="i">$</span></code>
+ are able to match
+at the start or end of <i>any</i> line within the string.</p>
+</li>
+<li>
+<p>both s and m modifiers (//sm): Treat string as a single long line, but
+detect multiple lines.  <code class="inline"><span class="q">&#39;.&#39;</span></code>
+ matches any character, even
+<code class="inline"><span class="q">&quot;\n&quot;</span></code>
+.  <code class="inline">^</code> and <code class="inline"><span class="i">$</span></code>
+, however, are able to match at the start or end
+of <i>any</i> line within the string.</p>
+</li>
+</ul>
+<p>Here are examples of <code class="inline"><span class="q">//s</span></code>
+ and <code class="inline"><span class="q">//m</span></code>
+ in action:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;There once was a girl\nWho programmed in Perl\n&quot;</span><span class="sc">;</span></pre>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/^Who/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t match, &quot;Who&quot; not at start of string</span>
+    <span class="i">$x</span> =~ <span class="q">/^Who/s</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, &quot;Who&quot; not at start of string</span>
+    <span class="i">$x</span> =~ <span class="q">/^Who/m</span><span class="sc">;</span>  <span class="c"># matches, &quot;Who&quot; at start of second line</span>
+    <span class="i">$x</span> =~ <span class="q">/^Who/sm</span><span class="sc">;</span> <span class="c"># matches, &quot;Who&quot; at start of second line</span></pre>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/girl.Who/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t match, &quot;.&quot; doesn&#39;t match &quot;\n&quot;</span>
+    <span class="i">$x</span> =~ <span class="q">/girl.Who/s</span><span class="sc">;</span>  <span class="c"># matches, &quot;.&quot; matches &quot;\n&quot;</span>
+    <span class="i">$x</span> =~ <span class="q">/girl.Who/m</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, &quot;.&quot; doesn&#39;t match &quot;\n&quot;</span>
+    <span class="i">$x</span> =~ <span class="q">/girl.Who/sm</span><span class="sc">;</span> <span class="c"># matches, &quot;.&quot; matches &quot;\n&quot;</span></pre>
+<p>Most of the time, the default behavior is what is want, but <code class="inline"><span class="q">//s</span></code>
+ and
+<code class="inline"><span class="q">//m</span></code>
+ are occasionally very useful.  If <code class="inline"><span class="q">//m</span></code>
+ is being used, the start
+of the string can still be matched with <code class="inline">\A</code>
+ and the end of string
+can still be matched with the anchors <code class="inline">\Z</code>
+ (matches both the end and
+the newline before, like <code class="inline"><span class="i">$</span></code>
+), and <code class="inline">\z</code>
+ (matches only the end):</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/^Who/m</span><span class="sc">;</span>   <span class="c"># matches, &quot;Who&quot; at start of second line</span>
+    <span class="i">$x</span> =~ <span class="q">/\AWho/m</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, &quot;Who&quot; is not at start of string</span></pre>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/girl$/m</span><span class="sc">;</span>  <span class="c"># matches, &quot;girl&quot; at end of first line</span>
+    <span class="i">$x</span> =~ <span class="q">/girl\Z/m</span><span class="sc">;</span> <span class="c"># doesn&#39;t match, &quot;girl&quot; is not at end of string</span></pre>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/Perl\Z/m</span><span class="sc">;</span> <span class="c"># matches, &quot;Perl&quot; is at newline before end</span>
+    <span class="i">$x</span> =~ <span class="q">/Perl\z/m</span><span class="sc">;</span> <span class="c"># doesn&#39;t match, &quot;Perl&quot; is not at end of string</span></pre>
+<p>We now know how to create choices among classes of characters in a
+regexp.  What about choices among words or character strings? Such
+choices are described in the next section.</p>
+<a name="Matching-this-or-that"></a><h2>Matching this or that</h2>
+<p>Sometimes we would like to our regexp to be able to match different
+possible words or character strings.  This is accomplished by using
+the <b>alternation</b> metacharacter <code class="inline">|</code>.  To match <code class="inline">dog</code>
+ or <code class="inline">cat</code>
+, we
+form the regexp <code class="inline">dog|cat</code>
+.  As before, perl will try to match the
+regexp at the earliest possible point in the string.  At each
+character position, perl will first try to match the first
+alternative, <code class="inline">dog</code>
+.  If <code class="inline">dog</code>
+ doesn't match, perl will then try the
+next alternative, <code class="inline">cat</code>
+.  If <code class="inline">cat</code>
+ doesn't match either, then the
+match fails and perl moves to the next position in the string.  Some
+examples:</p>
+<pre class="verbatim">    <span class="q">&quot;cats and dogs&quot;</span> =~ <span class="q">/cat|dog|bird/</span><span class="sc">;</span>  <span class="c"># matches &quot;cat&quot;</span>
+    <span class="q">&quot;cats and dogs&quot;</span> =~ <span class="q">/dog|cat|bird/</span><span class="sc">;</span>  <span class="c"># matches &quot;cat&quot;</span></pre>
+<p>Even though <code class="inline">dog</code>
+ is the first alternative in the second regexp,
+<code class="inline">cat</code>
+ is able to match earlier in the string.</p>
+<pre class="verbatim">    <span class="q">&quot;cats&quot;</span>          =~ <span class="q">/c|ca|cat|cats/</span><span class="sc">;</span> <span class="c"># matches &quot;c&quot;</span>
+    <span class="q">&quot;cats&quot;</span>          =~ <span class="q">/cats|cat|ca|c/</span><span class="sc">;</span> <span class="c"># matches &quot;cats&quot;</span></pre>
+<p>Here, all the alternatives match at the first string position, so the
+first alternative is the one that matches.  If some of the
+alternatives are truncations of the others, put the longest ones first
+to give them a chance to match.</p>
+<pre class="verbatim">    <span class="q">&quot;cab&quot;</span> =~ <span class="q">/a|b|c/</span> <span class="c"># matches &quot;c&quot;</span>
+                     <span class="c"># /a|b|c/ == /[abc]/</span></pre>
+<p>The last example points out that character classes are like
+alternations of characters.  At a given character position, the first
+alternative that allows the regexp match to succeed will be the one
+that matches.</p>
+<a name="Grouping-things-and-hierarchical-matching"></a><h2>Grouping things and hierarchical matching</h2>
+<p>Alternation allows a regexp to choose among alternatives, but by
+itself it unsatisfying.  The reason is that each alternative is a whole
+regexp, but sometime we want alternatives for just part of a
+regexp.  For instance, suppose we want to search for housecats or
+housekeepers.  The regexp <code class="inline">housecat|housekeeper</code>
+ fits the bill, but is
+inefficient because we had to type <code class="inline">house</code>
+ twice.  It would be nice to
+have parts of the regexp be constant, like <code class="inline">house</code>
+, and some
+parts have alternatives, like <code class="inline">cat|keeper</code>
+.</p>
+<p>The <b>grouping</b> metacharacters <code class="inline"><span class="s">(</span><span class="s">)</span></code>
+ solve this problem.  Grouping
+allows parts of a regexp to be treated as a single unit.  Parts of a
+regexp are grouped by enclosing them in parentheses.  Thus we could solve
+the <code class="inline">housecat|housekeeper</code>
+ by forming the regexp as
+<code class="inline"><span class="i">house</span><span class="s">(</span>cat|keeper<span class="s">)</span></code>
+.  The regexp <code class="inline"><span class="i">house</span><span class="s">(</span>cat|keeper<span class="s">)</span></code>
+ means match
+<code class="inline">house</code>
+ followed by either <code class="inline">cat</code>
+ or <code class="inline">keeper</code>
+.  Some more examples
+are</p>
+<pre class="verbatim">    <span class="q">/(a|b)b/</span><span class="sc">;</span>    <span class="c"># matches &#39;ab&#39; or &#39;bb&#39;</span>
+    <span class="q">/(ac|b)b/</span><span class="sc">;</span>   <span class="c"># matches &#39;acb&#39; or &#39;bb&#39;</span>
+    <span class="q">/(^a|b)c/</span><span class="sc">;</span>   <span class="c"># matches &#39;ac&#39; at start of string or &#39;bc&#39; anywhere</span>
+    <span class="q">/(a|[bc])d/</span><span class="sc">;</span> <span class="c"># matches &#39;ad&#39;, &#39;bd&#39;, or &#39;cd&#39;</span></pre>
+<pre class="verbatim">    <span class="q">/house(cat|)/</span><span class="sc">;</span>  <span class="c"># matches either &#39;housecat&#39; or &#39;house&#39;</span>
+    <span class="q">/house(cat(s|)|)/</span><span class="sc">;</span>  <span class="c"># matches either &#39;housecats&#39; or &#39;housecat&#39; or</span>
+                        <span class="c"># &#39;house&#39;.  Note groups can be nested.</span></pre>
+<pre class="verbatim">    <span class="q">/(19|20|)\d\d/</span><span class="sc">;</span>  <span class="c"># match years 19xx, 20xx, or the Y2K problem, xx</span>
+    <span class="q">&quot;20&quot;</span> =~ <span class="q">/(19|20|)\d\d/</span><span class="sc">;</span>  <span class="c"># matches the null alternative &#39;()\d\d&#39;,</span>
+                             <span class="c"># because &#39;20\d\d&#39; can&#39;t match</span></pre>
+<p>Alternations behave the same way in groups as out of them: at a given
+string position, the leftmost alternative that allows the regexp to
+match is taken.  So in the last example at the first string position,
+<code class="inline"><span class="q">&quot;20&quot;</span></code>
+ matches the second alternative, but there is nothing left over
+to match the next two digits <code class="inline">\d\d</code>
+.  So perl moves on to the next
+alternative, which is the null alternative and that works, since
+<code class="inline"><span class="q">&quot;20&quot;</span></code>
+ is two digits.</p>
+<p>The process of trying one alternative, seeing if it matches, and
+moving on to the next alternative if it doesn't, is called
+<b>backtracking</b>.  The term 'backtracking' comes from the idea that
+matching a regexp is like a walk in the woods.  Successfully matching
+a regexp is like arriving at a destination.  There are many possible
+trailheads, one for each string position, and each one is tried in
+order, left to right.  From each trailhead there may be many paths,
+some of which get you there, and some which are dead ends.  When you
+walk along a trail and hit a dead end, you have to backtrack along the
+trail to an earlier point to try another trail.  If you hit your
+destination, you stop immediately and forget about trying all the
+other trails.  You are persistent, and only if you have tried all the
+trails from all the trailheads and not arrived at your destination, do
+you declare failure.  To be concrete, here is a step-by-step analysis
+of what perl does when it tries to match the regexp</p>
+<pre class="verbatim">    <span class="q">&quot;abcde&quot;</span> =~ <span class="q">/(abd|abc)(df|d|de)/</span><span class="sc">;</span></pre>
+<ol>
+<li>
+<p>Start with the first letter in the string 'a'.</p>
+</li>
+<li>
+<p>Try the first alternative in the first group 'abd'.</p>
+</li>
+<li>
+<p>Match 'a' followed by 'b'. So far so good.</p>
+</li>
+<li>
+<p>'d' in the regexp doesn't match 'c' in the string - a dead
+end.  So backtrack two characters and pick the second alternative in
+the first group 'abc'.</p>
+</li>
+<li>
+<p>Match 'a' followed by 'b' followed by 'c'.  We are on a roll
+and have satisfied the first group. Set $1 to 'abc'.</p>
+</li>
+<li>
+<p>Move on to the second group and pick the first alternative
+'df'.</p>
+</li>
+<li>
+<p>Match the 'd'.</p>
+</li>
+<li>
+<p>'f' in the regexp doesn't match 'e' in the string, so a dead
+end.  Backtrack one character and pick the second alternative in the
+second group 'd'.</p>
+</li>
+<li>
+<p>'d' matches. The second grouping is satisfied, so set $2 to
+'d'.</p>
+</li>
+<li>
+<p>We are at the end of the regexp, so we are done! We have
+matched 'abcd' out of the string "abcde".</p>
+</li>
+</ol>
+<p>There are a couple of things to note about this analysis.  First, the
+third alternative in the second group 'de' also allows a match, but we
+stopped before we got to it - at a given character position, leftmost
+wins.  Second, we were able to get a match at the first character
+position of the string 'a'.  If there were no matches at the first
+position, perl would move to the second character position 'b' and
+attempt the match all over again.  Only when all possible paths at all
+possible character positions have been exhausted does perl give
+up and declare <code&nbsp;class="inline">$string&nbsp;=~&nbsp;/(abd|abc)(df|d|de)/;</code>&nbsp; to be false.</p>
+<p>Even with all this work, regexp matching happens remarkably fast.  To
+speed things up, during compilation stage, perl compiles the regexp
+into a compact sequence of opcodes that can often fit inside a
+processor cache.  When the code is executed, these opcodes can then run
+at full throttle and search very quickly.</p>
+<a name="Extracting-matches"></a><h2>Extracting matches</h2>
+<p>The grouping metacharacters <code class="inline"><span class="s">(</span><span class="s">)</span></code>
+ also serve another completely
+different function: they allow the extraction of the parts of a string
+that matched.  This is very useful to find out what matched and for
+text processing in general.  For each grouping, the part that matched
+inside goes into the special variables <code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, etc.  They can be
+used just as ordinary variables:</p>
+<pre class="verbatim">    <span class="c"># extract hours, minutes, seconds</span>
+    if <span class="s">(</span><span class="i">$time</span> =~ <span class="q">/(\d\d):(\d\d):(\d\d)/</span><span class="s">)</span> <span class="s">{</span>    <span class="c"># match hh:mm:ss format</span>
+	<span class="i">$hours</span> = <span class="i">$1</span><span class="sc">;</span>
+	<span class="i">$minutes</span> = <span class="i">$2</span><span class="sc">;</span>
+	<span class="i">$seconds</span> = <span class="i">$3</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>Now, we know that in scalar context,
+<code&nbsp;class="inline">$time&nbsp;=~&nbsp;/(\d\d):(\d\d):(\d\d)/</code>&nbsp; returns a true or false
+value.  In list context, however, it returns the list of matched values
+<code class="inline"><span class="s">(</span><span class="i">$1</span><span class="cm">,</span><span class="i">$2</span><span class="cm">,</span><span class="i">$3</span><span class="s">)</span></code>
+.  So we could write the code more compactly as</p>
+<pre class="verbatim">    <span class="c"># extract hours, minutes, seconds</span>
+    <span class="s">(</span><span class="i">$hours</span><span class="cm">,</span> <span class="i">$minutes</span><span class="cm">,</span> <span class="i">$second</span><span class="s">)</span> = <span class="s">(</span><span class="i">$time</span> =~ <span class="q">/(\d\d):(\d\d):(\d\d)/</span><span class="s">)</span><span class="sc">;</span></pre>
+<p>If the groupings in a regexp are nested, <code class="inline"><span class="i">$1</span></code>
+ gets the group with the
+leftmost opening parenthesis, <code class="inline"><span class="i">$2</span></code>
+ the next opening parenthesis,
+etc.  For example, here is a complex regexp and the matching variables
+indicated below it:</p>
+<pre class="verbatim">    /(ab(cd|ef)((gi)|j))/;
+     1  2      34</pre><p>so that if the regexp matched, e.g., <code class="inline"><span class="i">$2</span></code>
+ would contain 'cd' or 'ef'. For
+convenience, perl sets <code class="inline"><span class="i">$+</span></code>
+ to the string held by the highest numbered
+<code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, ... that got assigned (and, somewhat related, <code class="inline"><span class="i">$^N</span></code>
+ to the
+value of the <code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, ... most-recently assigned; i.e. the <code class="inline"><span class="i">$1</span></code>
+,
+<code class="inline"><span class="i">$2</span></code>
+, ... associated with the rightmost closing parenthesis used in the
+match).</p>
+<p>Closely associated with the matching variables <code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, ... are
+the <b>backreferences</b> <code class="inline">\<span class="n">1</span></code>
+, <code class="inline">\<span class="n">2</span></code>
+, ... .  Backreferences are simply
+matching variables that can be used <i>inside</i> a regexp.  This is a
+really nice feature - what matches later in a regexp can depend on
+what matched earlier in the regexp.  Suppose we wanted to look
+for doubled words in text, like 'the the'.  The following regexp finds
+all 3-letter doubles with a space in between:</p>
+<pre class="verbatim">    <span class="q">/(\w\w\w)\s\1/</span><span class="sc">;</span></pre>
+<p>The grouping assigns a value to \1, so that the same 3 letter sequence
+is used for both parts.  Here are some words with repeated parts:</p>
+<pre class="verbatim">    % simple_grep '^(\w\w\w\w|\w\w\w|\w\w|\w)\1$' /usr/dict/words
+    beriberi
+    booboo
+    coco
+    mama
+    murmur
+    papa</pre><p>The regexp has a single grouping which considers 4-letter
+combinations, then 3-letter combinations, etc.  and uses <code class="inline">\<span class="n">1</span></code>
+ to look for
+a repeat.  Although <code class="inline"><span class="i">$1</span></code>
+ and <code class="inline">\<span class="n">1</span></code>
+ represent the same thing, care should be
+taken to use matched variables <code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, ... only outside a regexp
+and backreferences <code class="inline">\<span class="n">1</span></code>
+, <code class="inline">\<span class="n">2</span></code>
+, ... only inside a regexp; not doing
+so may lead to surprising and/or undefined results.</p>
+<p>In addition to what was matched, Perl 5.6.0 also provides the
+positions of what was matched with the <code class="inline"><span class="i">@-</span></code>
+ and <code class="inline"><span class="i">@+</span></code>
+
+arrays. <code class="inline"><span class="i">$-</span>[<span class="n">0</span>]</code>
+ is the position of the start of the entire match and
+<code class="inline"><span class="i">$+</span>[<span class="n">0</span>]</code>
+ is the position of the end. Similarly, <code class="inline"><span class="i">$-</span>[n]</code>
+ is the
+position of the start of the <code class="inline"><span class="i">$n</span></code>
+ match and <code class="inline"><span class="i">$+</span>[n]</code>
+ is the position
+of the end. If <code class="inline"><span class="i">$n</span></code>
+ is undefined, so are <code class="inline"><span class="i">$-</span>[n]</code>
+ and <code class="inline"><span class="i">$+</span>[n]</code>
+. Then
+this code</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;Mmm...donut, thought Homer&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^(Mmm|Yech)\.\.\.(donut|peas)/</span><span class="sc">;</span> <span class="c"># matches</span>
+    foreach <span class="i">$expr</span> <span class="s">(</span><span class="n">1</span>..<span class="i">$#-</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Match $expr: &#39;${$expr}&#39; at position ($-[$expr],$+[$expr])\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>prints</p>
+<pre class="verbatim">    Match 1: 'Mmm' at position (0,3)
+    Match 2: 'donut' at position (6,11)</pre><p>Even if there are no groupings in a regexp, it is still possible to
+find out what exactly matched in a string.  If you use them, perl
+will set <code class="inline"><span class="i">$`</span></code>
+ to the part of the string before the match, will set <code class="inline"><span class="i">$&amp;</span></code>
+
+to the part of the string that matched, and will set <code class="inline"><span class="i">$&#39;</span></code>
+ to the part
+of the string after the match.  An example:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;the cat caught the mouse&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/cat/</span><span class="sc">;</span>  <span class="c"># $` = &#39;the &#39;, $&amp; = &#39;cat&#39;, $&#39; = &#39; caught the mouse&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/the/</span><span class="sc">;</span>  <span class="c"># $` = &#39;&#39;, $&amp; = &#39;the&#39;, $&#39; = &#39; cat caught the mouse&#39;</span></pre>
+<p>In the second match, <code&nbsp;class="inline">$`&nbsp;=&nbsp;''</code>&nbsp; because the regexp matched at the
+first character position in the string and stopped, it never saw the
+second 'the'.  It is important to note that using <code class="inline"><span class="i">$`</span></code>
+ and <code class="inline"><span class="i">$&#39;</span></code>
+
+slows down regexp matching quite a bit, and <code class="inline"> <span class="i">$&amp;</span> </code>
+ slows it down to a
+lesser extent, because if they are used in one regexp in a program,
+they are generated for &lt;all&gt; regexps in the program.  So if raw
+performance is a goal of your application, they should be avoided.
+If you need them, use <code class="inline"><span class="i">@-</span></code>
+ and <code class="inline"><span class="i">@+</span></code>
+ instead:</p>
+<pre class="verbatim">    $` is the same as substr( $x, 0, $-[0] )
+    $&amp; is the same as substr( $x, $-[0], $+[0]-$-[0] )
+    $' is the same as substr( $x, $+[0] )</pre><a name="Matching-repetitions"></a><h2>Matching repetitions</h2>
+<p>The examples in the previous section display an annoying weakness.  We
+were only matching 3-letter words, or syllables of 4 letters or
+less.  We'd like to be able to match words or syllables of any length,
+without writing out tedious alternatives like
+<code class="inline">\w\w\w\w|\w\w\w|\w\w|\w</code>
+.</p>
+<p>This is exactly the problem the <b>quantifier</b> metacharacters <code class="inline">?</code>,
+<code class="inline"><span class="i">*</span></code>
+, <code class="inline">+</code>
+, and <code class="inline"><span class="s">{</span><span class="s">}</span></code>
+ were created for.  They allow us to determine the
+number of repeats of a portion of a regexp we consider to be a
+match.  Quantifiers are put immediately after the character, character
+class, or grouping that we want to specify.  They have the following
+meanings:</p>
+<ul>
+<li>
+<p><code class="inline">a?</code> = match 'a' 1 or 0 times</p>
+</li>
+<li>
+<p><code class="inline">a*</code>
+ = match 'a' 0 or more times, i.e., any number of times</p>
+</li>
+<li>
+<p><code class="inline">a+</code>
+ = match 'a' 1 or more times, i.e., at least once</p>
+</li>
+<li>
+<p><code class="inline">a{n,m}</code> = match at least <code class="inline">n</code>
+ times, but not more than <code class="inline"><a class="l_k" href="functions/m.html">m</a></code>
+times.</p>
+</li>
+<li>
+<p><code class="inline">a<span class="s">{</span>n<span class="cm">,</span><span class="s">}</span></code>
+ = match at least <code class="inline">n</code>
+ or more times</p>
+</li>
+<li>
+<p><code class="inline"><span class="i">a</span><span class="s">{</span>n<span class="s">}</span></code>
+ = match exactly <code class="inline">n</code>
+ times</p>
+</li>
+</ul>
+<p>Here are some examples:</p>
+<pre class="verbatim">    <span class="q">/[a-z]+\s+\d*/</span><span class="sc">;</span>  <span class="c"># match a lowercase word, at least some space, and</span>
+                     <span class="c"># any number of digits</span>
+    <span class="q">/(\w+)\s+\1/</span><span class="sc">;</span>    <span class="c"># match doubled words of arbitrary length</span>
+    <span class="q">/y(es)?/i</span><span class="sc">;</span>       <span class="c"># matches &#39;y&#39;, &#39;Y&#39;, or a case-insensitive &#39;yes&#39;</span>
+    <span class="i">$year</span> =~ <span class="q">/\d{2,4}/</span><span class="sc">;</span>  <span class="c"># make sure year is at least 2 but not more</span>
+                         <span class="c"># than 4 digits</span>
+    <span class="i">$year</span> =~ <span class="q">/\d{4}|\d{2}/</span><span class="sc">;</span>    <span class="c"># better match; throw out 3 digit dates</span>
+    <span class="i">$year</span> =~ <span class="q">/\d{2}(\d{2})?/</span><span class="sc">;</span>  <span class="c"># same thing written differently. However,</span>
+                               <span class="c"># this produces $1 and the other does not.</span></pre>
+<pre class="verbatim">    % simple_grep '^(\w+)\1$' /usr/dict/words   # isn't this easier?
+    beriberi
+    booboo
+    coco
+    mama
+    murmur
+    papa</pre><p>For all of these quantifiers, perl will try to match as much of the
+string as possible, while still allowing the regexp to succeed.  Thus
+with <code class="inline"><span class="q">/a?.../</span></code>
+, perl will first try to match the regexp with the <code class="inline">a</code>
+
+present; if that fails, perl will try to match the regexp without the
+<code class="inline">a</code>
+ present.  For the quantifier <code class="inline"><span class="i">*</span></code>
+, we get the following:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;the cat in the hat&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^(.*)(cat)(.*)$/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                             <span class="c"># $1 = &#39;the &#39;</span>
+                             <span class="c"># $2 = &#39;cat&#39;</span>
+                             <span class="c"># $3 = &#39; in the hat&#39;</span></pre>
+<p>Which is what we might expect, the match finds the only <code class="inline">cat</code>
+ in the
+string and locks onto it.  Consider, however, this regexp:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/^(.*)(at)(.*)$/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                            <span class="c"># $1 = &#39;the cat in the h&#39;</span>
+                            <span class="c"># $2 = &#39;at&#39;</span>
+                            <span class="c"># $3 = &#39;&#39;   (0 matches)</span></pre>
+<p>One might initially guess that perl would find the <code class="inline">at</code>
+ in <code class="inline">cat</code>
+ and
+stop there, but that wouldn't give the longest possible string to the
+first quantifier <code class="inline">.*</code>.  Instead, the first quantifier <code class="inline">.*</code> grabs as
+much of the string as possible while still having the regexp match.  In
+this example, that means having the <code class="inline">at</code>
+ sequence with the final <code class="inline">at</code>
+
+in the string.  The other important principle illustrated here is that
+when there are two or more elements in a regexp, the <i>leftmost</i>
+quantifier, if there is one, gets to grab as much the string as
+possible, leaving the rest of the regexp to fight over scraps.  Thus in
+our example, the first quantifier <code class="inline">.*</code> grabs most of the string, while
+the second quantifier <code class="inline">.*</code> gets the empty string.   Quantifiers that
+grab as much of the string as possible are called <b>maximal match</b> or
+<b>greedy</b> quantifiers.</p>
+<p>When a regexp can match a string in several different ways, we can use
+the principles above to predict which way the regexp will match:</p>
+<ul>
+<li>
+<p>Principle 0: Taken as a whole, any regexp will be matched at the
+earliest possible position in the string.</p>
+</li>
+<li>
+<p>Principle 1: In an alternation <code class="inline">a|b|c...</code>
+, the leftmost alternative
+that allows a match for the whole regexp will be the one used.</p>
+</li>
+<li>
+<p>Principle 2: The maximal matching quantifiers <code class="inline">?</code>, <code class="inline"><span class="i">*</span></code>
+, <code class="inline">+</code>
+ and
+<code class="inline">{n,m}</code> will in general match as much of the string as possible while
+still allowing the whole regexp to match.</p>
+</li>
+<li>
+<p>Principle 3: If there are two or more elements in a regexp, the
+leftmost greedy quantifier, if any, will match as much of the string
+as possible while still allowing the whole regexp to match.  The next
+leftmost greedy quantifier, if any, will try to match as much of the
+string remaining available to it as possible, while still allowing the
+whole regexp to match.  And so on, until all the regexp elements are
+satisfied.</p>
+</li>
+</ul>
+<p>As we have seen above, Principle 0 overrides the others - the regexp
+will be matched as early as possible, with the other principles
+determining how the regexp matches at that earliest character
+position.</p>
+<p>Here is an example of these principles in action:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;The programming republic of Perl&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^(.+)(e|r)(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                              <span class="c"># $1 = &#39;The programming republic of Pe&#39;</span>
+                              <span class="c"># $2 = &#39;r&#39;</span>
+                              <span class="c"># $3 = &#39;l&#39;</span></pre>
+<p>This regexp matches at the earliest string position, <code class="inline"><span class="q">&#39;T&#39;</span></code>
+.  One
+might think that <code class="inline">e</code>
+, being leftmost in the alternation, would be
+matched, but <code class="inline">r</code>
+ produces the longest string in the first quantifier.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(m{1,2})(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                            <span class="c"># $1 = &#39;mm&#39;</span>
+                            <span class="c"># $2 = &#39;ing republic of Perl&#39;</span></pre>
+<p>Here, The earliest possible match is at the first <code class="inline"><span class="q">&#39;m&#39;</span></code>
+ in
+<code class="inline">programming</code>
+. <code class="inline"><a class="l_k" href="functions/m.html">m{1,2}</a></code> is the first quantifier, so it gets to match
+a maximal <code class="inline">mm</code>
+.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/.*(m{1,2})(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                              <span class="c"># $1 = &#39;m&#39;</span>
+                              <span class="c"># $2 = &#39;ing republic of Perl&#39;</span></pre>
+<p>Here, the regexp matches at the start of the string. The first
+quantifier <code class="inline">.*</code> grabs as much as possible, leaving just a single
+<code class="inline"><span class="q">&#39;m&#39;</span></code>
+ for the second quantifier <code class="inline"><a class="l_k" href="functions/m.html">m{1,2}</a></code>.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(.?)(m{1,2})(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                <span class="c"># $1 = &#39;a&#39;</span>
+                                <span class="c"># $2 = &#39;mm&#39;</span>
+                                <span class="c"># $3 = &#39;ing republic of Perl&#39;</span></pre>
+<p>Here, <code class="inline">.?</code> eats its maximal one character at the earliest possible
+position in the string, <code class="inline"><span class="q">&#39;a&#39;</span></code>
+ in <code class="inline">programming</code>
+, leaving <code class="inline"><a class="l_k" href="functions/m.html">m{1,2}</a></code>
+the opportunity to match both <code class="inline"><a class="l_k" href="functions/m.html">m</a></code>'s. Finally,</p>
+<pre class="verbatim">    <span class="q">&quot;aXXXb&quot;</span> =~ <span class="q">/(X*)/</span><span class="sc">;</span> <span class="c"># matches with $1 = &#39;&#39;</span></pre>
+<p>because it can match zero copies of <code class="inline"><span class="q">&#39;X&#39;</span></code>
+ at the beginning of the
+string.  If you definitely want to match at least one <code class="inline"><span class="q">&#39;X&#39;</span></code>
+, use
+<code class="inline">X+</code>
+, not <code class="inline">X*</code>
+.</p>
+<p>Sometimes greed is not good.  At times, we would like quantifiers to
+match a <i>minimal</i> piece of string, rather than a maximal piece.  For
+this purpose, Larry Wall created the <b>minimal&nbsp;match</b>&nbsp; or
+<b>non-greedy</b> quantifiers <code class="inline"><span class="q">??</span></code>
+,<code class="inline"><span class="i">*?</span></code>
+, <code class="inline">+?</code>, and <code class="inline">{}?</code>.  These are
+the usual quantifiers with a <code class="inline">?</code> appended to them.  They have the
+following meanings:</p>
+<ul>
+<li>
+<p><code class="inline">a<span class="q">??</span></code>
+ = match 'a' 0 or 1 times. Try 0 first, then 1.</p>
+</li>
+<li>
+<p><code class="inline">a*?</code> = match 'a' 0 or more times, i.e., any number of times,
+but as few times as possible</p>
+</li>
+<li>
+<p><code class="inline">a+?</code> = match 'a' 1 or more times, i.e., at least once, but
+as few times as possible</p>
+</li>
+<li>
+<p><code class="inline">a{n,m}?</code> = match at least <code class="inline">n</code>
+ times, not more than <code class="inline"><a class="l_k" href="functions/m.html">m</a></code>
+times, as few times as possible</p>
+</li>
+<li>
+<p><code class="inline">a{n,}?</code> = match at least <code class="inline">n</code>
+ times, but as few times as
+possible</p>
+</li>
+<li>
+<p><code class="inline">a{n}?</code> = match exactly <code class="inline">n</code>
+ times.  Because we match exactly
+<code class="inline">n</code>
+ times, <code class="inline">a{n}?</code> is equivalent to <code class="inline"><span class="i">a</span><span class="s">{</span>n<span class="s">}</span></code>
+ and is just there for
+notational consistency.</p>
+</li>
+</ul>
+<p>Let's look at the example above, but with minimal quantifiers:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;The programming republic of Perl&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^(.+?)(e|r)(.*)$/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                              <span class="c"># $1 = &#39;Th&#39;</span>
+                              <span class="c"># $2 = &#39;e&#39;</span>
+                              <span class="c"># $3 = &#39; programming republic of Perl&#39;</span></pre>
+<p>The minimal string that will allow both the start of the string <code class="inline">^</code>
+and the alternation to match is <code class="inline">Th</code>
+, with the alternation <code class="inline">e|r</code>
+
+matching <code class="inline">e</code>
+.  The second quantifier <code class="inline">.*</code> is free to gobble up the
+rest of the string.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(m{1,2}?)(.*?)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                              <span class="c"># $1 = &#39;m&#39;</span>
+                              <span class="c"># $2 = &#39;ming republic of Perl&#39;</span></pre>
+<p>The first string position that this regexp can match is at the first
+<code class="inline"><span class="q">&#39;m&#39;</span></code>
+ in <code class="inline">programming</code>
+. At this position, the minimal <code class="inline"><a class="l_k" href="functions/m.html">m{1,2}?</a></code>
+matches just one <code class="inline"><span class="q">&#39;m&#39;</span></code>
+.  Although the second quantifier <code class="inline">.*?</code> would
+prefer to match no characters, it is constrained by the end-of-string
+anchor <code class="inline"><span class="i">$</span></code>
+ to match the rest of the string.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(.*?)(m{1,2}?)(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                  <span class="c"># $1 = &#39;The progra&#39;</span>
+                                  <span class="c"># $2 = &#39;m&#39;</span>
+                                  <span class="c"># $3 = &#39;ming republic of Perl&#39;</span></pre>
+<p>In this regexp, you might expect the first minimal quantifier <code class="inline">.*?</code>
+to match the empty string, because it is not constrained by a <code class="inline">^</code>
+anchor to match the beginning of the word.  Principle 0 applies here,
+however.  Because it is possible for the whole regexp to match at the
+start of the string, it <i>will</i> match at the start of the string.  Thus
+the first quantifier has to match everything up to the first <code class="inline"><a class="l_k" href="functions/m.html">m</a></code>.  The
+second minimal quantifier matches just one <code class="inline"><a class="l_k" href="functions/m.html">m</a></code> and the third
+quantifier matches the rest of the string.</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(.??)(m{1,2})(.*)$/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                 <span class="c"># $1 = &#39;a&#39;</span>
+                                 <span class="c"># $2 = &#39;mm&#39;</span>
+                                 <span class="c"># $3 = &#39;ing republic of Perl&#39;</span></pre>
+<p>Just as in the previous regexp, the first quantifier <code class="inline">.??</code> can match
+earliest at position <code class="inline"><span class="q">&#39;a&#39;</span></code>
+, so it does.  The second quantifier is
+greedy, so it matches <code class="inline">mm</code>
+, and the third matches the rest of the
+string.</p>
+<p>We can modify principle 3 above to take into account non-greedy
+quantifiers:</p>
+<ul>
+<li>
+<p>Principle 3: If there are two or more elements in a regexp, the
+leftmost greedy (non-greedy) quantifier, if any, will match as much
+(little) of the string as possible while still allowing the whole
+regexp to match.  The next leftmost greedy (non-greedy) quantifier, if
+any, will try to match as much (little) of the string remaining
+available to it as possible, while still allowing the whole regexp to
+match.  And so on, until all the regexp elements are satisfied.</p>
+</li>
+</ul>
+<p>Just like alternation, quantifiers are also susceptible to
+backtracking.  Here is a step-by-step analysis of the example</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;the cat in the hat&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^(.*)(at)(.*)$/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                            <span class="c"># $1 = &#39;the cat in the h&#39;</span>
+                            <span class="c"># $2 = &#39;at&#39;</span>
+                            <span class="c"># $3 = &#39;&#39;   (0 matches)</span></pre>
+<ol>
+<li>
+<p>Start with the first letter in the string 't'.</p>
+</li>
+<li>
+<p>The first quantifier '.*' starts out by matching the whole
+string 'the cat in the hat'.</p>
+</li>
+<li>
+<p>'a' in the regexp element 'at' doesn't match the end of the
+string.  Backtrack one character.</p>
+</li>
+<li>
+<p>'a' in the regexp element 'at' still doesn't match the last
+letter of the string 't', so backtrack one more character.</p>
+</li>
+<li>
+<p>Now we can match the 'a' and the 't'.</p>
+</li>
+<li>
+<p>Move on to the third element '.*'.  Since we are at the end of
+the string and '.*' can match 0 times, assign it the empty string.</p>
+</li>
+<li>
+<p>We are done!</p>
+</li>
+</ol>
+<p>Most of the time, all this moving forward and backtracking happens
+quickly and searching is fast.   There are some pathological regexps,
+however, whose execution time exponentially grows with the size of the
+string.  A typical structure that blows up in your face is of the form</p>
+<pre class="verbatim">    <span class="q">/(a|b+)*/</span><span class="sc">;</span></pre>
+<p>The problem is the nested indeterminate quantifiers.  There are many
+different ways of partitioning a string of length n between the <code class="inline">+</code>
+
+and <code class="inline"><span class="i">*</span></code>
+: one repetition with <code class="inline">b+</code>
+ of length n, two repetitions with
+the first <code class="inline">b+</code>
+ length k and the second with length n-k, m repetitions
+whose bits add up to length n, etc.  In fact there are an exponential
+number of ways to partition a string as a function of length.  A
+regexp may get lucky and match early in the process, but if there is
+no match, perl will try <i>every</i> possibility before giving up.  So be
+careful with nested <code class="inline"><span class="i">*</span></code>
+'s, <code class="inline">{n,m}</code>'s, and <code class="inline">+</code>
+'s.  The book
+<i>Mastering regular expressions</i> by Jeffrey Friedl gives a wonderful
+discussion of this and other efficiency issues.</p>
+<a name="Building-a-regexp"></a><h2>Building a regexp</h2>
+<p>At this point, we have all the basic regexp concepts covered, so let's
+give a more involved example of a regular expression.  We will build a
+regexp that matches numbers.</p>
+<p>The first task in building a regexp is to decide what we want to match
+and what we want to exclude.  In our case, we want to match both
+integers and floating point numbers and we want to reject any string
+that isn't a number.</p>
+<p>The next task is to break the problem down into smaller problems that
+are easily converted into a regexp.</p>
+<p>The simplest case is integers.  These consist of a sequence of digits,
+with an optional sign in front.  The digits we can represent with
+<code class="inline">\d+</code>
+ and the sign can be matched with <code class="inline"><span class="s">[</span>+-<span class="s">]</span></code>
+.  Thus the integer
+regexp is</p>
+<pre class="verbatim">    <span class="q">/[+-]?\d+/</span><span class="sc">;</span>  <span class="c"># matches integers</span></pre>
+<p>A floating point number potentially has a sign, an integral part, a
+decimal point, a fractional part, and an exponent.  One or more of these
+parts is optional, so we need to check out the different
+possibilities.  Floating point numbers which are in proper form include
+123., 0.345, .34, -1e6, and 25.4E-72.  As with integers, the sign out
+front is completely optional and can be matched by <code class="inline">[+-]?</code>.  We can
+see that if there is no exponent, floating point numbers must have a
+decimal point, otherwise they are integers.  We might be tempted to
+model these with <code class="inline">\d*\.\d*</code>, but this would also match just a single
+decimal point, which is not a number.  So the three cases of floating
+point number sans exponent are</p>
+<pre class="verbatim">   <span class="q">/[+-]?\d+\./</span><span class="sc">;</span>  <span class="c"># 1., 321., etc.</span>
+   <span class="q">/[+-]?\.\d+/</span><span class="sc">;</span>  <span class="c"># .1, .234, etc.</span>
+   <span class="q">/[+-]?\d+\.\d+/</span><span class="sc">;</span>  <span class="c"># 1.0, 30.56, etc.</span></pre>
+<p>These can be combined into a single regexp with a three-way alternation:</p>
+<pre class="verbatim">   <span class="q">/[+-]?(\d+\.\d+|\d+\.|\.\d+)/</span><span class="sc">;</span>  <span class="c"># floating point, no exponent</span></pre>
+<p>In this alternation, it is important to put <code class="inline"><span class="q">&#39;\d+\.\d+&#39;</span></code>
+ before
+<code class="inline"><span class="q">&#39;\d+\.&#39;</span></code>
+.  If <code class="inline"><span class="q">&#39;\d+\.&#39;</span></code>
+ were first, the regexp would happily match that
+and ignore the fractional part of the number.</p>
+<p>Now consider floating point numbers with exponents.  The key
+observation here is that <i>both</i> integers and numbers with decimal
+points are allowed in front of an exponent.  Then exponents, like the
+overall sign, are independent of whether we are matching numbers with
+or without decimal points, and can be 'decoupled' from the
+mantissa.  The overall form of the regexp now becomes clear:</p>
+<pre class="verbatim">    <span class="q">/^(optional sign)(integer | f.p. mantissa)(optional exponent)$/</span><span class="sc">;</span></pre>
+<p>The exponent is an <code class="inline">e</code>
+ or <code class="inline">E</code>
+, followed by an integer.  So the
+exponent regexp is</p>
+<pre class="verbatim">   <span class="q">/[eE][+-]?\d+/</span><span class="sc">;</span>  <span class="c"># exponent</span></pre>
+<p>Putting all the parts together, we get a regexp that matches numbers:</p>
+<pre class="verbatim">   <span class="q">/^[+-]?(\d+\.\d+|\d+\.|\.\d+|\d+)([eE][+-]?\d+)?$/</span><span class="sc">;</span>  <span class="c"># Ta da!</span></pre>
+<p>Long regexps like this may impress your friends, but can be hard to
+decipher.  In complex situations like this, the <code class="inline"><span class="q">//x</span></code>
+ modifier for a
+match is invaluable.  It allows one to put nearly arbitrary whitespace
+and comments into a regexp without affecting their meaning.  Using it,
+we can rewrite our 'extended' regexp in the more pleasing form</p>
+<pre class="verbatim">   <span class="q">/^</span>
+      <span class="q">      [+-]?         # first, match an optional sign</span>
+      <span class="q">      (             # then match integers or f.p. mantissas:</span>
+          <span class="q">          \d+\.\d+  # mantissa of the form a.b</span>
+         <span class="q">         |\d+\.     # mantissa of the form a.</span>
+         <span class="q">         |\.\d+     # mantissa of the form .b</span>
+         <span class="q">         |\d+       # integer of the form a</span>
+      <span class="q">      )</span>
+      <span class="q">      ([eE][+-]?\d+)?  # finally, optionally match an exponent</span>
+   <span class="q">   $/x</span><span class="sc">;</span></pre>
+<p>If whitespace is mostly irrelevant, how does one include space
+characters in an extended regexp? The answer is to backslash it
+<code&nbsp;class="inline">'\&nbsp;'</code>&nbsp; or put it in a character class <code&nbsp;class="inline">[&nbsp;]</code>&nbsp;.  The same thing
+goes for pound signs, use <code class="inline">\<span class="c">#</span></code>
+ or <code class="inline">[#]</code>.  For instance, Perl allows
+a space between the sign and the mantissa/integer, and we could add
+this to our regexp as follows:</p>
+<pre class="verbatim">   <span class="q">/^</span>
+      <span class="q">      [+-]?\ *      # first, match an optional sign *and space*</span>
+      <span class="q">      (             # then match integers or f.p. mantissas:</span>
+          <span class="q">          \d+\.\d+  # mantissa of the form a.b</span>
+         <span class="q">         |\d+\.     # mantissa of the form a.</span>
+         <span class="q">         |\.\d+     # mantissa of the form .b</span>
+         <span class="q">         |\d+       # integer of the form a</span>
+      <span class="q">      )</span>
+      <span class="q">      ([eE][+-]?\d+)?  # finally, optionally match an exponent</span>
+   <span class="q">   $/x</span><span class="sc">;</span></pre>
+<p>In this form, it is easier to see a way to simplify the
+alternation.  Alternatives 1, 2, and 4 all start with <code class="inline">\d+</code>
+, so it
+could be factored out:</p>
+<pre class="verbatim">   <span class="q">/^</span>
+      <span class="q">      [+-]?\ *      # first, match an optional sign</span>
+      <span class="q">      (             # then match integers or f.p. mantissas:</span>
+          <span class="q">          \d+       # start out with a ...</span>
+          <span class="q">          (</span>
+              <span class="q">              \.\d* # mantissa of the form a.b or a.</span>
+          <span class="q">          )?        # ? takes care of integers of the form a</span>
+         <span class="q">         |\.\d+     # mantissa of the form .b</span>
+      <span class="q">      )</span>
+      <span class="q">      ([eE][+-]?\d+)?  # finally, optionally match an exponent</span>
+   <span class="q">   $/x</span><span class="sc">;</span></pre>
+<p>or written in the compact form,</p>
+<pre class="verbatim">    <span class="q">/^[+-]?\ *(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/</span><span class="sc">;</span></pre>
+<p>This is our final regexp.  To recap, we built a regexp by</p>
+<ul>
+<li>
+<p>specifying the task in detail,</p>
+</li>
+<li>
+<p>breaking down the problem into smaller parts,</p>
+</li>
+<li>
+<p>translating the small parts into regexps,</p>
+</li>
+<li>
+<p>combining the regexps,</p>
+</li>
+<li>
+<p>and optimizing the final combined regexp.</p>
+</li>
+</ul>
+<p>These are also the typical steps involved in writing a computer
+program.  This makes perfect sense, because regular expressions are
+essentially programs written a little computer language that specifies
+patterns.</p>
+<a name="Using-regular-expressions-in-Perl"></a><h2>Using regular expressions in Perl</h2>
+<p>The last topic of Part 1 briefly covers how regexps are used in Perl
+programs.  Where do they fit into Perl syntax?</p>
+<p>We have already introduced the matching operator in its default
+<code class="inline"><span class="q">/regexp/</span></code>
+ and arbitrary delimiter <code class="inline"><a class="l_k" href="functions/m.html">m!regexp!</a></code> forms.  We have used
+the binding operator <code class="inline">=~</code>
+ and its negation <code class="inline">!~</code>
+ to test for string
+matches.  Associated with the matching operator, we have discussed the
+single line <code class="inline"><span class="q">//s</span></code>
+, multi-line <code class="inline"><span class="q">//m</span></code>
+, case-insensitive <code class="inline"><span class="q">//i</span></code>
+ and
+extended <code class="inline"><span class="q">//x</span></code>
+ modifiers.</p>
+<p>There are a few more things you might want to know about matching
+operators.  First, we pointed out earlier that variables in regexps are
+substituted before the regexp is evaluated:</p>
+<pre class="verbatim">    <span class="i">$pattern</span> = <span class="q">&#39;Seuss&#39;</span><span class="sc">;</span>
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> if <span class="q">/$pattern/</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>This will print any lines containing the word <code class="inline">Seuss</code>
+.  It is not as
+efficient as it could be, however, because perl has to re-evaluate
+<code class="inline"><span class="i">$pattern</span></code>
+ each time through the loop.  If <code class="inline"><span class="i">$pattern</span></code>
+ won't be
+changing over the lifetime of the script, we can add the <code class="inline"><span class="q">//o</span></code>
+
+modifier, which directs perl to only perform variable substitutions
+once:</p>
+<pre class="verbatim">    <span class="c">#!/usr/bin/perl</span>
+    <span class="c">#    Improved simple_grep</span>
+    <span class="i">$regexp</span> = <a class="l_k" href="functions/shift.html">shift</a><span class="sc">;</span>
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> if <span class="q">/$regexp/o</span><span class="sc">;</span>  <span class="c"># a good deal faster</span>
+    <span class="s">}</span></pre>
+<p>If you change <code class="inline"><span class="i">$pattern</span></code>
+ after the first substitution happens, perl
+will ignore it.  If you don't want any substitutions at all, use the
+special delimiter <code class="inline"><a class="l_k" href="functions/m.html">m''</a></code>:</p>
+<pre class="verbatim">    <span class="i">@pattern</span> = <span class="s">(</span><span class="q">&#39;Seuss&#39;</span><span class="s">)</span><span class="sc">;</span>
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> if <span class="q">m&#39;@pattern&#39;</span><span class="sc">;</span>  <span class="c"># matches literal &#39;@pattern&#39;, not &#39;Seuss&#39;</span>
+    <span class="s">}</span></pre>
+<p><code class="inline"><a class="l_k" href="functions/m.html">m''</a></code> acts like single quotes on a regexp; all other <code class="inline"><a class="l_k" href="functions/m.html">m</a></code> delimiters
+act like double quotes.  If the regexp evaluates to the empty string,
+the regexp in the <i>last successful match</i> is used instead.  So we have</p>
+<pre class="verbatim">    "dog" =~ /d/;  # 'd' matches
+    "dogbert =~ //;  # this matches the 'd' regexp used before</pre><p>The final two modifiers <code class="inline"><span class="q">//g</span></code>
+ and <code class="inline"><span class="q">//c</span></code>
+ concern multiple matches.
+The modifier <code class="inline"><span class="q">//g</span></code>
+ stands for global matching and allows the
+matching operator to match within a string as many times as possible.
+In scalar context, successive invocations against a string will have
+`<code class="inline"><span class="q">//g</span></code>
+ jump from match to match, keeping track of position in the
+string as it goes along.  You can get or set the position with the
+<code class="inline"><a class="l_k" href="functions/pos.html">pos()</a></code> function.</p>
+<p>The use of <code class="inline"><span class="q">//g</span></code>
+ is shown in the following example.  Suppose we have
+a string that consists of words separated by spaces.  If we know how
+many words there are in advance, we could extract the words using
+groupings:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;cat dog house&quot;</span><span class="sc">;</span> <span class="c"># 3 words</span>
+    <span class="i">$x</span> =~ <span class="q">/^\s*(\w+)\s+(\w+)\s+(\w+)\s*$/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                                           <span class="c"># $1 = &#39;cat&#39;</span>
+                                           <span class="c"># $2 = &#39;dog&#39;</span>
+                                           <span class="c"># $3 = &#39;house&#39;</span></pre>
+<p>But what if we had an indeterminate number of words? This is the sort
+of task <code class="inline"><span class="q">//g</span></code>
+ was made for.  To extract all words, form the simple
+regexp <code class="inline"><span class="s">(</span>\w+<span class="s">)</span></code>
+ and loop over all matches with <code class="inline"><span class="q">/(\w+)/g</span></code>
+:</p>
+<pre class="verbatim">    while <span class="s">(</span><span class="i">$x</span> =~ <span class="q">/(\w+)/g</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Word is $1, ends at position &quot;</span><span class="cm">,</span> <a class="l_k" href="functions/pos.html">pos</a> <span class="i">$x</span><span class="cm">,</span> <span class="q">&quot;\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>prints</p>
+<pre class="verbatim">    Word is cat, ends at position 3
+    Word is dog, ends at position 7
+    Word is house, ends at position 13</pre><p>A failed match or changing the target string resets the position.  If
+you don't want the position reset after failure to match, add the
+<code class="inline"><span class="q">//c</span></code>
+, as in <code class="inline"><span class="q">/regexp/gc</span></code>
+.  The current position in the string is
+associated with the string, not the regexp.  This means that different
+strings have different positions and their respective positions can be
+set or read independently.</p>
+<p>In list context, <code class="inline"><span class="q">//g</span></code>
+ returns a list of matched groupings, or if
+there are no groupings, a list of matches to the whole regexp.  So if
+we wanted just the words, we could use</p>
+<pre class="verbatim">    <span class="i">@words</span> = <span class="s">(</span><span class="i">$x</span> =~ <span class="q">/(\w+)/g</span><span class="s">)</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                <span class="c"># $word[0] = &#39;cat&#39;</span>
+                                <span class="c"># $word[1] = &#39;dog&#39;</span>
+                                <span class="c"># $word[2] = &#39;house&#39;</span></pre>
+<p>Closely associated with the <code class="inline"><span class="q">//g</span></code>
+ modifier is the <code class="inline">\G</code>
+ anchor.  The
+<code class="inline">\G</code>
+ anchor matches at the point where the previous <code class="inline"><span class="q">//g</span></code>
+ match left
+off.  <code class="inline">\G</code>
+ allows us to easily do context-sensitive matching:</p>
+<pre class="verbatim">    <span class="i">$metric</span> = <span class="n">1</span><span class="sc">;</span>  <span class="c"># use metric units</span>
+    ...
+    <span class="i">$x</span> = <span class="q">&lt;FILE&gt;</span><span class="sc">;</span>  <span class="c"># read in measurement</span>
+    <span class="i">$x</span> =~ <span class="q">/^([+-]?\d+)\s*/g</span><span class="sc">;</span>  <span class="c"># get magnitude</span>
+    <span class="i">$weight</span> = <span class="i">$1</span><span class="sc">;</span>
+    if <span class="s">(</span><span class="i">$metric</span><span class="s">)</span> <span class="s">{</span> <span class="c"># error checking</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Units error!&quot;</span> unless <span class="i">$x</span> =~ <span class="q">/\Gkg\./g</span><span class="sc">;</span>
+    <span class="s">}</span>
+    else <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Units error!&quot;</span> unless <span class="i">$x</span> =~ <span class="q">/\Glbs\./g</span><span class="sc">;</span>
+    <span class="s">}</span>
+    <span class="i">$x</span> =~ <span class="q">/\G\s+(widget|sprocket)/g</span><span class="sc">;</span>  <span class="c"># continue processing</span></pre>
+<p>The combination of <code class="inline"><span class="q">//g</span></code>
+ and <code class="inline">\G</code>
+ allows us to process the string a
+bit at a time and use arbitrary Perl logic to decide what to do next.
+Currently, the <code class="inline">\G</code>
+ anchor is only fully supported when used to anchor
+to the start of the pattern.</p>
+<p><code class="inline">\G</code>
+ is also invaluable in processing fixed length records with
+regexps.  Suppose we have a snippet of coding region DNA, encoded as
+base pair letters <code class="inline">ATCGTTGAAT...</code>
+ and we want to find all the stop
+codons <code class="inline">TGA</code>
+.  In a coding region, codons are 3-letter sequences, so
+we can think of the DNA snippet as a sequence of 3-letter records.  The
+naive regexp</p>
+<pre class="verbatim">    <span class="c"># expanded, this is &quot;ATC GTT GAA TGC AAA TGA CAT GAC&quot;</span>
+    <span class="i">$dna</span> = <span class="q">&quot;ATCGTTGAATGCAAATGACATGAC&quot;</span><span class="sc">;</span>
+    <span class="i">$dna</span> =~ <span class="q">/TGA/</span><span class="sc">;</span></pre>
+<p>doesn't work; it may match a <code class="inline">TGA</code>
+, but there is no guarantee that
+the match is aligned with codon boundaries, e.g., the substring
+<code&nbsp;class="inline">GTT&nbsp;GAA</code>&nbsp; gives a match.  A better solution is</p>
+<pre class="verbatim">    while <span class="s">(</span><span class="i">$dna</span> =~ <span class="q">/(\w\w\w)*?TGA/g</span><span class="s">)</span> <span class="s">{</span>  <span class="c"># note the minimal *?</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Got a TGA stop codon at position &quot;</span><span class="cm">,</span> <a class="l_k" href="functions/pos.html">pos</a> <span class="i">$dna</span><span class="cm">,</span> <span class="q">&quot;\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>which prints</p>
+<pre class="verbatim">    Got a TGA stop codon at position 18
+    Got a TGA stop codon at position 23</pre><p>Position 18 is good, but position 23 is bogus.  What happened?</p>
+<p>The answer is that our regexp works well until we get past the last
+real match.  Then the regexp will fail to match a synchronized <code class="inline">TGA</code>
+
+and start stepping ahead one character position at a time, not what we
+want.  The solution is to use <code class="inline">\G</code>
+ to anchor the match to the codon
+alignment:</p>
+<pre class="verbatim">    while <span class="s">(</span><span class="i">$dna</span> =~ <span class="q">/\G(\w\w\w)*?TGA/g</span><span class="s">)</span> <span class="s">{</span>
+        <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Got a TGA stop codon at position &quot;</span><span class="cm">,</span> <a class="l_k" href="functions/pos.html">pos</a> <span class="i">$dna</span><span class="cm">,</span> <span class="q">&quot;\n&quot;</span><span class="sc">;</span>
+    <span class="s">}</span></pre>
+<p>This prints</p>
+<pre class="verbatim">    Got a TGA stop codon at position <span class="n">18</span></pre>
+<p>which is the correct answer.  This example illustrates that it is
+important not only to match what is desired, but to reject what is not
+desired.</p>
+<p><b>search and replace</b></p>
+<p>Regular expressions also play a big role in <b>search and replace</b>
+operations in Perl.  Search and replace is accomplished with the
+<code class="inline"><a class="l_k" href="functions/s.html">s///</a></code> operator.  The general form is
+<code class="inline"><a class="l_k" href="functions/s.html">s/regexp/replacement/modifiers</a></code>, with everything we know about
+regexps and modifiers applying in this case as well.  The
+<code class="inline">replacement</code>
+ is a Perl double quoted string that replaces in the
+string whatever is matched with the <code class="inline">regexp</code>
+.  The operator <code class="inline">=~</code>
+ is
+also used here to associate a string with <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code>.  If matching
+against <code class="inline"><span class="i">$_</span></code>
+, the <code&nbsp;class="inline">$_&nbsp;=~</code>&nbsp; can be dropped.  If there is a match,
+<code class="inline"><a class="l_k" href="functions/s.html">s///</a></code> returns the number of substitutions made, otherwise it returns
+false.  Here are a few examples:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;Time to feed the cat!&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">s/cat/hacker/</span><span class="sc">;</span>   <span class="c"># $x contains &quot;Time to feed the hacker!&quot;</span>
+    if <span class="s">(</span><span class="i">$x</span> =~ <span class="q">s/^(Time.*hacker)!$/$1 now!/</span><span class="s">)</span> <span class="s">{</span>
+        <span class="i">$more_insistent</span> = <span class="n">1</span><span class="sc">;</span>
+    <span class="s">}</span>
+    <span class="i">$y</span> = <span class="q">&quot;&#39;quoted words&#39;&quot;</span><span class="sc">;</span>
+    <span class="i">$y</span> =~ <span class="q">s/^&#39;(.*)&#39;$/$1/</span><span class="sc">;</span>  <span class="c"># strip single quotes,</span>
+                           <span class="c"># $y contains &quot;quoted words&quot;</span></pre>
+<p>In the last example, the whole string was matched, but only the part
+inside the single quotes was grouped.  With the <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code> operator, the
+matched variables <code class="inline"><span class="i">$1</span></code>
+, <code class="inline"><span class="i">$2</span></code>
+, etc.  are immediately available for use
+in the replacement expression, so we use <code class="inline"><span class="i">$1</span></code>
+ to replace the quoted
+string with just what was quoted.  With the global modifier, <code class="inline"><a class="l_k" href="functions/s.html">s///g</a></code>
+will search and replace all occurrences of the regexp in the string:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;I batted 4 for 4&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">s/4/four/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t do it all:</span>
+                       <span class="c"># $x contains &quot;I batted four for 4&quot;</span>
+    <span class="i">$x</span> = <span class="q">&quot;I batted 4 for 4&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">s/4/four/g</span><span class="sc">;</span>  <span class="c"># does it all:</span>
+                       <span class="c"># $x contains &quot;I batted four for four&quot;</span></pre>
+<p>If you prefer 'regex' over 'regexp' in this tutorial, you could use
+the following program to replace it:</p>
+<pre class="verbatim">    <span class="i">% cat</span> &gt; simple_replace
+    <span class="c">#!/usr/bin/perl</span>
+    <span class="i">$regexp</span> = <a class="l_k" href="functions/shift.html">shift</a><span class="sc">;</span>
+    <span class="i">$replacement</span> = <a class="l_k" href="functions/shift.html">shift</a><span class="sc">;</span>
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        <span class="q">s/$regexp/$replacement/go</span><span class="sc">;</span>
+        <a class="l_k" href="functions/print.html">print</a><span class="sc">;</span>
+    <span class="s">}</span>
+    ^D</pre>
+<pre class="verbatim">    % simple_replace regexp regex perlretut.pod</pre><p>In <code class="inline">simple_replace</code>
+ we used the <code class="inline"><a class="l_k" href="functions/s.html">s///g</a></code> modifier to replace all
+occurrences of the regexp on each line and the <code class="inline"><a class="l_k" href="functions/s.html">s///o</a></code> modifier to
+compile the regexp only once.  As with <code class="inline">simple_grep</code>
+, both the
+<code class="inline"><a class="l_k" href="functions/print.html">print</a></code> and the <code class="inline"><a class="l_k" href="functions/s.html">s/$regexp/$replacement/go</a></code> use <code class="inline"><span class="i">$_</span></code>
+ implicitly.</p>
+<p>A modifier available specifically to search and replace is the
+<code class="inline"><a class="l_k" href="functions/s.html">s///e</a></code> evaluation modifier.  <code class="inline"><a class="l_k" href="functions/s.html">s///e</a></code> wraps an <code class="inline"><a class="l_k" href="functions/eval.html">eval{...}</a></code> around
+the replacement string and the evaluated result is substituted for the
+matched substring.  <code class="inline"><a class="l_k" href="functions/s.html">s///e</a></code> is useful if you need to do a bit of
+computation in the process of replacing text.  This example counts
+character frequencies in a line:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;Bill the cat&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">s/(.)/$chars{$1}++;$1/eg</span><span class="sc">;</span>  <span class="c"># final $1 replaces char with itself</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;frequency of &#39;$_&#39; is $chars{$_}\n&quot;</span>
+        foreach <span class="s">(</span><a class="l_k" href="functions/sort.html">sort</a> <span class="s">{</span><span class="i">$chars</span>{<span class="i">$b</span>} &lt;=&gt; <span class="i">$chars</span>{<span class="i">$a</span>}<span class="s">}</span> <a class="l_k" href="functions/keys.html">keys</a> <span class="i">%chars</span><span class="s">)</span><span class="sc">;</span></pre>
+<p>This prints</p>
+<pre class="verbatim">    frequency of ' ' is 2
+    frequency of 't' is 2
+    frequency of 'l' is 2
+    frequency of 'B' is 1
+    frequency of 'c' is 1
+    frequency of 'e' is 1
+    frequency of 'h' is 1
+    frequency of 'i' is 1
+    frequency of 'a' is 1</pre><p>As with the match <code class="inline"><a class="l_k" href="functions/m.html">m//</a></code> operator, <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code> can use other delimiters,
+such as <code class="inline"><a class="l_k" href="functions/s.html">s!!!</a></code> and <code class="inline"><a class="l_k" href="functions/s.html">s{}{}</a></code>, and even <code class="inline"><a class="l_k" href="functions/s.html">s{}//</a></code>.  If single quotes are
+used <code class="inline"><a class="l_k" href="functions/s.html">s'''</a></code>, then the regexp and replacement are treated as single
+quoted strings and there are no substitutions.  <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code> in list context
+returns the same thing as in scalar context, i.e., the number of
+matches.</p>
+<p><b>The split operator</b></p>
+<p>The <b><code class="inline"><a class="l_k" href="functions/split.html">split</a></code> </b> function can also optionally use a matching operator
+<code class="inline"><a class="l_k" href="functions/m.html">m//</a></code> to split a string.  <code class="inline"><a class="l_k" href="functions/split.html">split</a> <span class="q">/regexp/</span><span class="cm">,</span> string<span class="cm">,</span> limit</code>
+ splits
+<code class="inline">string</code>
+ into a list of substrings and returns that list.  The regexp
+is used to match the character sequence that the <code class="inline">string</code>
+ is split
+with respect to.  The <code class="inline">limit</code>
+, if present, constrains splitting into
+no more than <code class="inline">limit</code>
+ number of strings.  For example, to split a
+string into words, use</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;Calvin and Hobbes&quot;</span><span class="sc">;</span>
+    <span class="i">@words</span> = <a class="l_k" href="functions/split.html">split</a> <span class="q">/\s+/</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>  <span class="c"># $word[0] = &#39;Calvin&#39;</span>
+                               <span class="c"># $word[1] = &#39;and&#39;</span>
+                               <span class="c"># $word[2] = &#39;Hobbes&#39;</span></pre>
+<p>If the empty regexp <code class="inline"><span class="q">//</span></code>
+ is used, the regexp always matches and
+the string is split into individual characters.  If the regexp has
+groupings, then list produced contains the matched substrings from the
+groupings as well.  For instance,</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;/usr/bin/perl&quot;</span><span class="sc">;</span>
+    <span class="i">@dirs</span> = <a class="l_k" href="functions/split.html">split</a> <span class="q">m!/!</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>  <span class="c"># $dirs[0] = &#39;&#39;</span>
+                             <span class="c"># $dirs[1] = &#39;usr&#39;</span>
+                             <span class="c"># $dirs[2] = &#39;bin&#39;</span>
+                             <span class="c"># $dirs[3] = &#39;perl&#39;</span>
+    <span class="i">@parts</span> = <a class="l_k" href="functions/split.html">split</a> <span class="q">m!(/)!</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>  <span class="c"># $parts[0] = &#39;&#39;</span>
+                                <span class="c"># $parts[1] = &#39;/&#39;</span>
+                                <span class="c"># $parts[2] = &#39;usr&#39;</span>
+                                <span class="c"># $parts[3] = &#39;/&#39;</span>
+                                <span class="c"># $parts[4] = &#39;bin&#39;</span>
+                                <span class="c"># $parts[5] = &#39;/&#39;</span>
+                                <span class="c"># $parts[6] = &#39;perl&#39;</span></pre>
+<p>Since the first character of $x matched the regexp, <code class="inline"><a class="l_k" href="functions/split.html">split</a></code> prepended
+an empty initial element to the list.</p>
+<p>If you have read this far, congratulations! You now have all the basic
+tools needed to use regular expressions to solve a wide range of text
+processing problems.  If this is your first time through the tutorial,
+why not stop here and play around with regexps a while...  Part&nbsp;2
+concerns the more esoteric aspects of regular expressions and those
+concepts certainly aren't needed right at the start.</p>
+<a name="Part-2%3a-Power-tools"></a><h1>Part 2: Power tools</h1>
+<p>OK, you know the basics of regexps and you want to know more.  If
+matching regular expressions is analogous to a walk in the woods, then
+the tools discussed in Part 1 are analogous to topo maps and a
+compass, basic tools we use all the time.  Most of the tools in part 2
+are analogous to flare guns and satellite phones.  They aren't used
+too often on a hike, but when we are stuck, they can be invaluable.</p>
+<p>What follows are the more advanced, less used, or sometimes esoteric
+capabilities of perl regexps.  In Part 2, we will assume you are
+comfortable with the basics and concentrate on the new features.</p>
+<a name="More-on-characters%2c-strings%2c-and-character-classes"></a><h2>More on characters, strings, and character classes</h2>
+<p>There are a number of escape sequences and character classes that we
+haven't covered yet.</p>
+<p>There are several escape sequences that convert characters or strings
+between upper and lower case.  <code class="inline">\l</code>
+ and <code class="inline">\u</code>
+ convert the next
+character to lower or upper case, respectively:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;perl&quot;</span><span class="sc">;</span>
+    <span class="i">$string</span> =~ <span class="q">/\u$x/</span><span class="sc">;</span>  <span class="c"># matches &#39;Perl&#39; in $string</span>
+    <span class="i">$x</span> = <span class="q">&quot;M(rs?|s)\\.&quot;</span><span class="sc">;</span> <span class="c"># note the double backslash</span>
+    <span class="i">$string</span> =~ <span class="q">/\l$x/</span><span class="sc">;</span>  <span class="c"># matches &#39;mr.&#39;, &#39;mrs.&#39;, and &#39;ms.&#39;,</span></pre>
+<p><code class="inline">\L</code>
+ and <code class="inline">\U</code>
+ converts a whole substring, delimited by <code class="inline">\L</code>
+ or
+<code class="inline">\U</code>
+ and <code class="inline">\E</code>
+, to lower or upper case:</p>
+<pre class="verbatim">    $x = "This word is in lower case:\L SHOUT\E";
+    $x =~ /shout/;       # matches
+    $x = "I STILL KEYPUNCH CARDS FOR MY 360"
+    $x =~ /\Ukeypunch/;  # matches punch card string</pre><p>If there is no <code class="inline">\E</code>
+, case is converted until the end of the
+string. The regexps <code class="inline">\L\u<span class="i">$word</span></code>
+ or <code class="inline">\u\L<span class="i">$word</span></code>
+ convert the first
+character of <code class="inline"><span class="i">$word</span></code>
+ to uppercase and the rest of the characters to
+lowercase.</p>
+<p>Control characters can be escaped with <code class="inline">\c</code>
+, so that a control-Z
+character would be matched with <code class="inline">\cZ</code>
+.  The escape sequence
+<code class="inline">\Q</code>
+...<code class="inline">\E</code>
+ quotes, or protects most non-alphabetic characters.   For
+instance,</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;\QThat !^*&amp;%~&amp; cat!&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/\Q!^*&amp;%~&amp;\E/</span><span class="sc">;</span>  <span class="c"># check for rough language</span></pre>
+<p>It does not protect <code class="inline"><span class="i">$</span></code>
+ or <code class="inline"><span class="i">@</span></code>
+, so that variables can still be
+substituted.</p>
+<p>With the advent of 5.6.0, perl regexps can handle more than just the
+standard ASCII character set.  Perl now supports <b>Unicode</b>, a standard
+for encoding the character sets from many of the world's written
+languages.  Unicode does this by allowing characters to be more than
+one byte wide.  Perl uses the UTF-8 encoding, in which ASCII characters
+are still encoded as one byte, but characters greater than <code class="inline"><a class="l_k" href="functions/chr.html">chr(127)</a></code>
+may be stored as two or more bytes.</p>
+<p>What does this mean for regexps? Well, regexp users don't need to know
+much about perl's internal representation of strings.  But they do need
+to know 1) how to represent Unicode characters in a regexp and 2) when
+a matching operation will treat the string to be searched as a
+sequence of bytes (the old way) or as a sequence of Unicode characters
+(the new way).  The answer to 1) is that Unicode characters greater
+than <code class="inline"><a class="l_k" href="functions/chr.html">chr(127)</a></code> may be represented using the <code class="inline">\<span class="i">x</span><span class="s">{</span><a class="l_k" href="functions/hex.html">hex</a><span class="s">}</span></code>
+ notation,
+with <code class="inline"><a class="l_k" href="functions/hex.html">hex</a></code> a hexadecimal integer:</p>
+<pre class="verbatim">    <span class="q">/\x{263a}/</span><span class="sc">;</span>  <span class="c"># match a Unicode smiley face :)</span></pre>
+<p>Unicode characters in the range of 128-255 use two hexadecimal digits
+with braces: <code class="inline">\<span class="i">x</span><span class="s">{</span>ab<span class="s">}</span></code>
+.  Note that this is different than <code class="inline">\xab</code>
+,
+which is just a hexadecimal byte with no Unicode significance.</p>
+<p><b>NOTE</b>: in Perl 5.6.0 it used to be that one needed to say <code class="inline"><a class="l_k" href="functions/use.html">use</a>
+<a class="l_w" href="utf8.html">utf8</a></code>
+ to use any Unicode features.  This is no more the case: for
+almost all Unicode processing, the explicit <code class="inline"><a class="l_w" href="utf8.html">utf8</a></code> pragma is not
+needed.  (The only case where it matters is if your Perl script is in
+Unicode and encoded in UTF-8, then an explicit <code class="inline"><a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="utf8.html">utf8</a></code>
+ is needed.)</p>
+<p>Figuring out the hexadecimal sequence of a Unicode character you want
+or deciphering someone else's hexadecimal Unicode regexp is about as
+much fun as programming in machine code.  So another way to specify
+Unicode characters is to use the <b>named&nbsp;character</b>&nbsp; escape
+sequence <code class="inline">\<span class="i">N</span><span class="s">{</span>name<span class="s">}</span></code>
+.  <code class="inline">name</code>
+ is a name for the Unicode character, as
+specified in the Unicode standard.  For instance, if we wanted to
+represent or match the astrological sign for the planet Mercury, we
+could use</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&quot;:full&quot;</span><span class="sc">;</span> <span class="c"># use named chars with Unicode full names</span>
+    <span class="i">$x</span> = <span class="q">&quot;abc\N{MERCURY}def&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/\N{MERCURY}/</span><span class="sc">;</span>   <span class="c"># matches</span></pre>
+<p>One can also use short names or restrict names to a certain alphabet:</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&#39;:full&#39;</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;\N{GREEK SMALL LETTER SIGMA} is called sigma.\n&quot;</span><span class="sc">;</span></pre>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&quot;:short&quot;</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;\N{greek:Sigma} is an upper-case sigma.\n&quot;</span><span class="sc">;</span></pre>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">qw(greek)</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;\N{sigma} is Greek sigma\n&quot;</span><span class="sc">;</span></pre>
+<p>A list of full names is found in the file Names.txt in the
+lib/perl5/5.X.X/unicore directory.</p>
+<p>The answer to requirement 2), as of 5.6.0, is that if a regexp
+contains Unicode characters, the string is searched as a sequence of
+Unicode characters.  Otherwise, the string is searched as a sequence of
+bytes.  If the string is being searched as a sequence of Unicode
+characters, but matching a single byte is required, we can use the <code class="inline">\C</code>
+
+escape sequence.  <code class="inline">\C</code>
+ is a character class akin to <code class="inline">.</code> except that
+it matches <i>any</i> byte 0-255.  So</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&quot;:full&quot;</span><span class="sc">;</span> <span class="c"># use named chars with Unicode full names</span>
+    <span class="i">$x</span> = <span class="q">&quot;a&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/\C/</span><span class="sc">;</span>  <span class="c"># matches &#39;a&#39;, eats one byte</span>
+    <span class="i">$x</span> = <span class="q">&quot;&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/\C/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, no bytes to match</span>
+    <span class="i">$x</span> = <span class="q">&quot;\N{MERCURY}&quot;</span><span class="sc">;</span>  <span class="c"># two-byte Unicode character</span>
+    <span class="i">$x</span> =~ <span class="q">/\C/</span><span class="sc">;</span>  <span class="c"># matches, but dangerous!</span></pre>
+<p>The last regexp matches, but is dangerous because the string
+<i>character</i> position is no longer synchronized to the string <i>byte</i>
+position.  This generates the warning 'Malformed UTF-8
+character'.  The <code class="inline">\C</code>
+ is best used for matching the binary data in strings
+with binary data intermixed with Unicode characters.</p>
+<p>Let us now discuss the rest of the character classes.  Just as with
+Unicode characters, there are named Unicode character classes
+represented by the <code class="inline">\<span class="i">p</span><span class="s">{</span>name<span class="s">}</span></code>
+ escape sequence.  Closely associated is
+the <code class="inline">\<span class="i">P</span><span class="s">{</span>name<span class="s">}</span></code>
+ character class, which is the negation of the
+<code class="inline">\<span class="i">p</span><span class="s">{</span>name<span class="s">}</span></code>
+ class.  For example, to match lower and uppercase
+characters,</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&quot;:full&quot;</span><span class="sc">;</span> <span class="c"># use named chars with Unicode full names</span>
+    <span class="i">$x</span> = <span class="q">&quot;BOB&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/^\p{IsUpper}/</span><span class="sc">;</span>   <span class="c"># matches, uppercase char class</span>
+    <span class="i">$x</span> =~ <span class="q">/^\P{IsUpper}/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t match, char class sans uppercase</span>
+    <span class="i">$x</span> =~ <span class="q">/^\p{IsLower}/</span><span class="sc">;</span>   <span class="c"># doesn&#39;t match, lowercase char class</span>
+    <span class="i">$x</span> =~ <span class="q">/^\P{IsLower}/</span><span class="sc">;</span>   <span class="c"># matches, char class sans lowercase</span></pre>
+<p>Here is the association between some Perl named classes and the
+traditional Unicode classes:</p>
+<pre class="verbatim">    Perl class name  Unicode class name or regular expression</pre>
+<pre class="verbatim">    IsAlpha          /^[LM]/
+    IsAlnum          /^[LMN]/
+    IsASCII          $code &lt;= 127
+    IsCntrl          /^C/
+    IsBlank          $code =~ /^(0020|0009)$/ || /^Z[^lp]/
+    IsDigit          Nd
+    IsGraph          /^([LMNPS]|Co)/
+    IsLower          Ll
+    IsPrint          /^([LMNPS]|Co|Zs)/
+    IsPunct          /^P/
+    IsSpace          /^Z/ || ($code =~ /^(0009|000A|000B|000C|000D)$/
+    IsSpacePerl      /^Z/ || ($code =~ /^(0009|000A|000C|000D|0085|2028|2029)$/
+    IsUpper          /^L[ut]/
+    IsWord           /^[LMN]/ || $code eq "005F"
+    IsXDigit         $code =~ /^00(3[0-9]|[46][1-6])$/</pre><p>You can also use the official Unicode class names with the <code class="inline">\p</code>
+ and
+<code class="inline">\P</code>
+, like <code class="inline">\<span class="i">p</span><span class="s">{</span>L<span class="s">}</span></code>
+ for Unicode 'letters', or <code class="inline">\<span class="i">p</span><span class="s">{</span>Lu<span class="s">}</span></code>
+ for uppercase
+letters, or <code class="inline">\<span class="i">P</span><span class="s">{</span>Nd<span class="s">}</span></code>
+ for non-digits.  If a <code class="inline">name</code>
+ is just one
+letter, the braces can be dropped.  For instance, <code class="inline">\pM</code>
+ is the
+character class of Unicode 'marks', for example accent marks.
+For the full list see <a href="perlunicode.html">perlunicode</a>.</p>
+<p>The Unicode has also been separated into various sets of characters
+which you can test with <code class="inline">\<span class="i">p</span><span class="s">{</span>In...<span class="s">}</span></code>
+ (in) and <code class="inline">\<span class="i">P</span><span class="s">{</span>In...<span class="s">}</span></code>
+ (not in),
+for example <code class="inline">\<span class="i">p</span><span class="s">{</span>Latin<span class="s">}</span></code>
+, <code class="inline">\<span class="i">p</span><span class="s">{</span>Greek<span class="s">}</span></code>
+, or <code class="inline">\<span class="i">P</span><span class="s">{</span>Katakana<span class="s">}</span></code>
+.
+For the full list see <a href="perlunicode.html">perlunicode</a>.</p>
+<p><code class="inline">\X</code>
+ is an abbreviation for a character class sequence that includes
+the Unicode 'combining character sequences'.  A 'combining character
+sequence' is a base character followed by any number of combining
+characters.  An example of a combining character is an accent.   Using
+the Unicode full names, e.g., <code&nbsp;class="inline">A&nbsp;+&nbsp;COMBINING&nbsp;RING</code>&nbsp; is a combining
+character sequence with base character <code class="inline">A</code>
+ and combining character
+<code&nbsp;class="inline">COMBINING&nbsp;RING</code>&nbsp;, which translates in Danish to A with the circle
+atop it, as in the word Angstrom.  <code class="inline">\X</code>
+ is equivalent to <code class="inline">\PM\pM*}</code>,
+i.e., a non-mark followed by one or more marks.</p>
+<p>For the full and latest information about Unicode see the latest
+Unicode standard, or the Unicode Consortium's website <a href="http://www.unicode.org/">http://www.unicode.org/</a></p>
+<p>As if all those classes weren't enough, Perl also defines POSIX style
+character classes.  These have the form <code class="inline">[:name:]</code>, with <code class="inline">name</code>
+ the
+name of the POSIX class.  The POSIX classes are <code class="inline">alpha</code>
+, <code class="inline">alnum</code>
+,
+<code class="inline">ascii</code>
+, <code class="inline">cntrl</code>
+, <code class="inline">digit</code>
+, <code class="inline">graph</code>
+, <code class="inline">lower</code>
+, <code class="inline"><a class="l_k" href="functions/print.html">print</a></code>, <code class="inline">punct</code>
+,
+<code class="inline">space</code>
+, <code class="inline">upper</code>
+, and <code class="inline">xdigit</code>
+, and two extensions, <code class="inline">word</code>
+ (a Perl
+extension to match <code class="inline">\w</code>
+), and <code class="inline">blank</code>
+ (a GNU extension).  If <code class="inline"><a class="l_w" href="utf8.html">utf8</a></code>
+is being used, then these classes are defined the same as their
+corresponding perl Unicode classes: <code class="inline">[:upper:]</code> is the same as
+<code class="inline">\<span class="i">p</span><span class="s">{</span>IsUpper<span class="s">}</span></code>
+, etc.  The POSIX character classes, however, don't
+require using <code class="inline"><a class="l_w" href="utf8.html">utf8</a></code>.  The <code class="inline">[:digit:]</code>, <code class="inline">[:word:]</code>, and
+<code class="inline">[:space:]</code> correspond to the familiar <code class="inline">\d</code>
+, <code class="inline">\w</code>
+, and <code class="inline">\s</code>
+character classes.  To negate a POSIX class, put a <code class="inline">^</code> in front of
+the name, so that, e.g., <code class="inline">[:^digit:]</code> corresponds to <code class="inline">\D</code>
+ and under
+<code class="inline"><a class="l_w" href="utf8.html">utf8</a></code>, <code class="inline">\<span class="i">P</span><span class="s">{</span>IsDigit<span class="s">}</span></code>
+.  The Unicode and POSIX character classes can
+be used just like <code class="inline">\d</code>
+, with the exception that POSIX character
+classes can only be used inside of a character class:</p>
+<pre class="verbatim">    <span class="q">/\s+[abc[:digit:]xyz]\s*/</span><span class="sc">;</span>  <span class="c"># match a,b,c,x,y,z, or a digit</span>
+    <span class="q">/^=item\s[[:digit:]]/</span><span class="sc">;</span>      <span class="c"># match &#39;=item&#39;,</span>
+                                <span class="c"># followed by a space and a digit</span>
+    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="charnames.html">charnames</a> <span class="q">&quot;:full&quot;</span><span class="sc">;</span>
+    <span class="q">/\s+[abc\p{IsDigit}xyz]\s+/</span><span class="sc">;</span>  <span class="c"># match a,b,c,x,y,z, or a digit</span>
+    <span class="q">/^=item\s\p{IsDigit}/</span><span class="sc">;</span>        <span class="c"># match &#39;=item&#39;,</span>
+                                  <span class="c"># followed by a space and a digit</span></pre>
+<p>Whew! That is all the rest of the characters and character classes.</p>
+<a name="Compiling-and-saving-regular-expressions"></a><h2>Compiling and saving regular expressions</h2>
+<p>In Part 1 we discussed the <code class="inline"><span class="q">//o</span></code>
+ modifier, which compiles a regexp
+just once.  This suggests that a compiled regexp is some data structure
+that can be stored once and used again and again.  The regexp quote
+<code class="inline"><a class="l_k" href="functions/qr.html">qr//</a></code> does exactly that: <code class="inline"><a class="l_k" href="functions/qr.html">qr/string/</a></code> compiles the <code class="inline">string</code>
+ as a
+regexp and transforms the result into a form that can be assigned to a
+variable:</p>
+<pre class="verbatim">    <span class="i">$reg</span> = <span class="q">qr/foo+bar?/</span><span class="sc">;</span>  <span class="c"># reg contains a compiled regexp</span></pre>
+<p>Then <code class="inline"><span class="i">$reg</span></code>
+ can be used as a regexp:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;fooooba&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="i">$reg</span><span class="sc">;</span>     <span class="c"># matches, just like /foo+bar?/</span>
+    <span class="i">$x</span> =~ <span class="q">/$reg/</span><span class="sc">;</span>   <span class="c"># same thing, alternate form</span></pre>
+<p><code class="inline"><span class="i">$reg</span></code>
+ can also be interpolated into a larger regexp:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(abc)?$reg/</span><span class="sc">;</span>  <span class="c"># still matches</span></pre>
+<p>As with the matching operator, the regexp quote can use different
+delimiters, e.g., <code class="inline"><a class="l_k" href="functions/qr.html">qr!!</a></code>, <code class="inline"><a class="l_k" href="functions/qr.html">qr{}</a></code> and <code class="inline"><a class="l_k" href="functions/qr.html">qr~~</a></code>.  The single quote
+delimiters <code class="inline"><a class="l_k" href="functions/qr.html">qr''</a></code> prevent any interpolation from taking place.</p>
+<p>Pre-compiled regexps are useful for creating dynamic matches that
+don't need to be recompiled each time they are encountered.  Using
+pre-compiled regexps, <code class="inline">simple_grep</code>
+ program can be expanded into a
+program that matches multiple patterns:</p>
+<pre class="verbatim">    <span class="i">% cat</span> &gt; multi_grep
+    <span class="c">#!/usr/bin/perl</span>
+    <span class="c"># multi_grep - match any of &lt;number&gt; regexps</span>
+    <span class="c"># usage: multi_grep &lt;number&gt; regexp1 regexp2 ... file1 file2 ...</span></pre>
+<pre class="verbatim">    <span class="i">$number</span> = <a class="l_k" href="functions/shift.html">shift</a><span class="sc">;</span>
+    <span class="i">$regexp</span>[<span class="i">$_</span>] = <a class="l_k" href="functions/shift.html">shift</a> foreach <span class="s">(</span><span class="n">0</span>..<span class="i">$number</span>-<span class="n">1</span><span class="s">)</span><span class="sc">;</span>
+    <span class="i">@compiled</span> = <a class="l_k" href="functions/map.html">map</a> <span class="q">qr/$_/</span><span class="cm">,</span> <span class="i">@regexp</span><span class="sc">;</span>
+    while <span class="s">(</span><span class="i">$line</span> = &lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        foreach <span class="i">$pattern</span> <span class="s">(</span><span class="i">@compiled</span><span class="s">)</span> <span class="s">{</span>
+            if <span class="s">(</span><span class="i">$line</span> =~ <span class="q">/$pattern/</span><span class="s">)</span> <span class="s">{</span>
+                <a class="l_k" href="functions/print.html">print</a> <span class="i">$line</span><span class="sc">;</span>
+                <a class="l_k" href="functions/last.html">last</a><span class="sc">;</span>  <span class="c"># we matched, so move onto the next line</span>
+            <span class="s">}</span>
+        <span class="s">}</span>
+    <span class="s">}</span>
+    ^D</pre>
+<pre class="verbatim">    % multi_grep 2 last for multi_grep
+        $regexp[$_] = shift foreach (0..$number-1);
+            foreach $pattern (@compiled) {
+                    last;</pre><p>Storing pre-compiled regexps in an array <code class="inline"><span class="i">@compiled</span></code>
+ allows us to
+simply loop through the regexps without any recompilation, thus gaining
+flexibility without sacrificing speed.</p>
+<a name="Embedding-comments-and-modifiers-in-a-regular-expression"></a><h2>Embedding comments and modifiers in a regular expression</h2>
+<p>Starting with this section, we will be discussing Perl's set of
+<b>extended patterns</b>.  These are extensions to the traditional regular
+expression syntax that provide powerful new tools for pattern
+matching.  We have already seen extensions in the form of the minimal
+matching constructs <code class="inline"><span class="q">??</span></code>
+, <code class="inline"><span class="i">*?</span></code>
+, <code class="inline">+?</code>, <code class="inline">{n,m}?</code>, and <code class="inline">{n,}?</code>.  The
+rest of the extensions below have the form <code class="inline">(?char...)</code>, where the
+<code class="inline">char</code>
+ is a character that determines the type of extension.</p>
+<p>The first extension is an embedded comment <code class="inline">(?#text)</code>.  This embeds a
+comment into the regular expression without affecting its meaning.  The
+comment should not have any closing parentheses in the text.  An
+example is</p>
+<pre class="verbatim">    <span class="q">/(?# Match an integer:)[+-]?\d+/</span><span class="sc">;</span></pre>
+<p>This style of commenting has been largely superseded by the raw,
+freeform commenting that is allowed with the <code class="inline"><span class="q">//x</span></code>
+ modifier.</p>
+<p>The modifiers <code class="inline"><span class="q">//i</span></code>
+, <code class="inline"><span class="q">//m</span></code>
+, <code class="inline"><span class="q">//s</span></code>
+, and <code class="inline"><span class="q">//x</span></code>
+ can also embedded in
+a regexp using <code class="inline">(?i)</code>, <code class="inline">(?m)</code>, <code class="inline">(?s)</code>, and <code class="inline">(?x)</code>.  For instance,</p>
+<pre class="verbatim">    <span class="q">/(?i)yes/</span><span class="sc">;</span>  <span class="c"># match &#39;yes&#39; case insensitively</span>
+    <span class="q">/yes/i</span><span class="sc">;</span>     <span class="c"># same thing</span>
+    <span class="q">/(?x)(          # freeform version of an integer regexp</span>
+             <span class="q">             [+-]?  # match an optional sign</span>
+             <span class="q">             \d+    # match a sequence of digits</span>
+         <span class="q">         )</span>
+    <span class="q">    /x</span><span class="sc">;</span></pre>
+<p>Embedded modifiers can have two important advantages over the usual
+modifiers.  Embedded modifiers allow a custom set of modifiers to
+<i>each</i> regexp pattern.  This is great for matching an array of regexps
+that must have different modifiers:</p>
+<pre class="verbatim">    <span class="i">$pattern</span>[<span class="n">0</span>] = <span class="q">&#39;(?i)doctor&#39;</span><span class="sc">;</span>
+    <span class="i">$pattern</span>[<span class="n">1</span>] = <span class="q">&#39;Johnson&#39;</span><span class="sc">;</span>
+    ...
+    while <span class="s">(</span>&lt;&gt;<span class="s">)</span> <span class="s">{</span>
+        foreach <span class="i">$patt</span> <span class="s">(</span><span class="i">@pattern</span><span class="s">)</span> <span class="s">{</span>
+            <a class="l_k" href="functions/print.html">print</a> if <span class="q">/$patt/</span><span class="sc">;</span>
+        <span class="s">}</span>
+    <span class="s">}</span></pre>
+<p>The second advantage is that embedded modifiers only affect the regexp
+inside the group the embedded modifier is contained in.  So grouping
+can be used to localize the modifier's effects:</p>
+<pre class="verbatim">    <span class="q">/Answer: ((?i)yes)/</span><span class="sc">;</span>  <span class="c"># matches &#39;Answer: yes&#39;, &#39;Answer: YES&#39;, etc.</span></pre>
+<p>Embedded modifiers can also turn off any modifiers already present
+by using, e.g., <code class="inline">(?-i)</code>.  Modifiers can also be combined into
+a single expression, e.g., <code class="inline">(?s-i)</code> turns on single line mode and
+turns off case insensitivity.</p>
+<a name="Non-capturing-groupings"></a><h2>Non-capturing groupings</h2>
+<p>We noted in Part 1 that groupings <code class="inline"><span class="s">(</span><span class="s">)</span></code>
+ had two distinct functions: 1)
+group regexp elements together as a single unit, and 2) extract, or
+capture, substrings that matched the regexp in the
+grouping.  Non-capturing groupings, denoted by <code class="inline">(?:regexp)</code>, allow the
+regexp to be treated as a single unit, but don't extract substrings or
+set matching variables <code class="inline"><span class="i">$1</span></code>
+, etc.  Both capturing and non-capturing
+groupings are allowed to co-exist in the same regexp.  Because there is
+no extraction, non-capturing groupings are faster than capturing
+groupings.  Non-capturing groupings are also handy for choosing exactly
+which parts of a regexp are to be extracted to matching variables:</p>
+<pre class="verbatim">    <span class="c"># match a number, $1-$4 are set, but we only want $1</span>
+    <span class="q">/([+-]?\ *(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/</span><span class="sc">;</span></pre>
+<pre class="verbatim">    <span class="c"># match a number faster , only $1 is set</span>
+    <span class="q">/([+-]?\ *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)/</span><span class="sc">;</span></pre>
+<pre class="verbatim">    <span class="c"># match a number, get $1 = whole number, $2 = exponent</span>
+    <span class="q">/([+-]?\ *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE]([+-]?\d+))?)/</span><span class="sc">;</span></pre>
+<p>Non-capturing groupings are also useful for removing nuisance
+elements gathered from a split operation:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&#39;12a34b5&#39;</span><span class="sc">;</span>
+    <span class="i">@num</span> = <a class="l_k" href="functions/split.html">split</a> <span class="q">/(a|b)/</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>    <span class="c"># @num = (&#39;12&#39;,&#39;a&#39;,&#39;34&#39;,&#39;b&#39;,&#39;5&#39;)</span>
+    <span class="i">@num</span> = <a class="l_k" href="functions/split.html">split</a> <span class="q">/(?:a|b)/</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>  <span class="c"># @num = (&#39;12&#39;,&#39;34&#39;,&#39;5&#39;)</span></pre>
+<p>Non-capturing groupings may also have embedded modifiers:
+<code class="inline">(?i-m:regexp)</code> is a non-capturing grouping that matches <code class="inline">regexp</code>
+
+case insensitively and turns off multi-line mode.</p>
+<a name="Looking-ahead-and-looking-behind"></a><h2>Looking ahead and looking behind</h2>
+<p>This section concerns the lookahead and lookbehind assertions.  First,
+a little background.</p>
+<p>In Perl regular expressions, most regexp elements 'eat up' a certain
+amount of string when they match.  For instance, the regexp element
+<code class="inline">[abc}]</code> eats up one character of the string when it matches, in the
+sense that perl moves to the next character position in the string
+after the match.  There are some elements, however, that don't eat up
+characters (advance the character position) if they match.  The examples
+we have seen so far are the anchors.  The anchor <code class="inline">^</code> matches the
+beginning of the line, but doesn't eat any characters.  Similarly, the
+word boundary anchor <code class="inline">\b</code>
+ matches, e.g., if the character to the left
+is a word character and the character to the right is a non-word
+character, but it doesn't eat up any characters itself.  Anchors are
+examples of 'zero-width assertions'.  Zero-width, because they consume
+no characters, and assertions, because they test some property of the
+string.  In the context of our walk in the woods analogy to regexp
+matching, most regexp elements move us along a trail, but anchors have
+us stop a moment and check our surroundings.  If the local environment
+checks out, we can proceed forward.  But if the local environment
+doesn't satisfy us, we must backtrack.</p>
+<p>Checking the environment entails either looking ahead on the trail,
+looking behind, or both.  <code class="inline">^</code> looks behind, to see that there are no
+characters before.  <code class="inline"><span class="i">$</span></code>
+ looks ahead, to see that there are no
+characters after.  <code class="inline">\b</code>
+ looks both ahead and behind, to see if the
+characters on either side differ in their 'word'-ness.</p>
+<p>The lookahead and lookbehind assertions are generalizations of the
+anchor concept.  Lookahead and lookbehind are zero-width assertions
+that let us specify which characters we want to test for.  The
+lookahead assertion is denoted by <code class="inline">(?=regexp)</code> and the lookbehind
+assertion is denoted by <code class="inline">(?&lt;=fixed-regexp)</code>.  Some examples are</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;I catch the housecat &#39;Tom-cat&#39; with catnip&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/cat(?=\s+)/</span><span class="sc">;</span>  <span class="c"># matches &#39;cat&#39; in &#39;housecat&#39;</span>
+    <span class="i">@catwords</span> = <span class="s">(</span><span class="i">$x</span> =~ <span class="q">/(?&lt;=\s)cat\w+/g</span><span class="s">)</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                           <span class="c"># $catwords[0] = &#39;catch&#39;</span>
+                                           <span class="c"># $catwords[1] = &#39;catnip&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/\bcat\b/</span><span class="sc">;</span>  <span class="c"># matches &#39;cat&#39; in &#39;Tom-cat&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/(?&lt;=\s)cat(?=\s)/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match; no isolated &#39;cat&#39; in</span>
+                              <span class="c"># middle of $x</span></pre>
+<p>Note that the parentheses in <code class="inline">(?=regexp)</code> and <code class="inline">(?&lt;=regexp)</code> are
+non-capturing, since these are zero-width assertions.  Thus in the
+second regexp, the substrings captured are those of the whole regexp
+itself.  Lookahead <code class="inline">(?=regexp)</code> can match arbitrary regexps, but
+lookbehind <code class="inline">(?&lt;=fixed-regexp)</code> only works for regexps of fixed
+width, i.e., a fixed number of characters long.  Thus
+<code class="inline">(?&lt;=(ab|bc))</code> is fine, but <code class="inline">(?&lt;=(ab)*)</code> is not.  The
+negated versions of the lookahead and lookbehind assertions are
+denoted by <code class="inline">(?!regexp)</code> and <code class="inline">(?&lt;!fixed-regexp)</code> respectively.
+They evaluate true if the regexps do <i>not</i> match:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;foobar&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/foo(?!bar)/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match, &#39;bar&#39; follows &#39;foo&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/foo(?!baz)/</span><span class="sc">;</span>  <span class="c"># matches, &#39;baz&#39; doesn&#39;t follow &#39;foo&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/(?&lt;!\s)foo/</span><span class="sc">;</span>  <span class="c"># matches, there is no \s before &#39;foo&#39;</span></pre>
+<p>The <code class="inline">\C</code>
+ is unsupported in lookbehind, because the already
+treacherous definition of <code class="inline">\C</code>
+ would become even more so
+when going backwards.</p>
+<a name="Using-independent-subexpressions-to-prevent-backtracking"></a><h2>Using independent subexpressions to prevent backtracking</h2>
+<p>The last few extended patterns in this tutorial are experimental as of
+5.6.0.  Play with them, use them in some code, but don't rely on them
+just yet for production code.</p>
+<p><b>Independent&nbsp;subexpressions</b>&nbsp; are regular expressions, in the
+context of a larger regular expression, that function independently of
+the larger regular expression.  That is, they consume as much or as
+little of the string as they wish without regard for the ability of
+the larger regexp to match.  Independent subexpressions are represented
+by <code class="inline">(?&gt;regexp)</code>.  We can illustrate their behavior by first
+considering an ordinary regexp:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;ab&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/a*ab/</span><span class="sc">;</span>  <span class="c"># matches</span></pre>
+<p>This obviously matches, but in the process of matching, the
+subexpression <code class="inline">a*</code>
+ first grabbed the <code class="inline">a</code>
+.  Doing so, however,
+wouldn't allow the whole regexp to match, so after backtracking, <code class="inline">a*</code>
+
+eventually gave back the <code class="inline">a</code>
+ and matched the empty string.  Here, what
+<code class="inline">a*</code>
+ matched was <i>dependent</i> on what the rest of the regexp matched.</p>
+<p>Contrast that with an independent subexpression:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(?&gt;a*)ab/</span><span class="sc">;</span>  <span class="c"># doesn&#39;t match!</span></pre>
+<p>The independent subexpression <code class="inline">(?&gt;a*)</code> doesn't care about the rest
+of the regexp, so it sees an <code class="inline">a</code>
+ and grabs it.  Then the rest of the
+regexp <code class="inline">ab</code>
+ cannot match.  Because <code class="inline">(?&gt;a*)</code> is independent, there
+is no backtracking and the independent subexpression does not give
+up its <code class="inline">a</code>
+.  Thus the match of the regexp as a whole fails.  A similar
+behavior occurs with completely independent regexps:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;ab&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/a*/g</span><span class="sc">;</span>   <span class="c"># matches, eats an &#39;a&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/\Gab/g</span><span class="sc">;</span> <span class="c"># doesn&#39;t match, no &#39;a&#39; available</span></pre>
+<p>Here <code class="inline"><span class="q">//g</span></code>
+ and <code class="inline">\G</code>
+ create a 'tag team' handoff of the string from
+one regexp to the other.  Regexps with an independent subexpression are
+much like this, with a handoff of the string to the independent
+subexpression, and a handoff of the string back to the enclosing
+regexp.</p>
+<p>The ability of an independent subexpression to prevent backtracking
+can be quite useful.  Suppose we want to match a non-empty string
+enclosed in parentheses up to two levels deep.  Then the following
+regexp matches:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;abc(de(fg)h&quot;</span><span class="sc">;</span>  <span class="c"># unbalanced parentheses</span>
+    <span class="i">$x</span> =~ <span class="q">/\( ( [^()]+ | \([^()]*\) )+ \)/x</span><span class="sc">;</span></pre>
+<p>The regexp matches an open parenthesis, one or more copies of an
+alternation, and a close parenthesis.  The alternation is two-way, with
+the first alternative <code class="inline">[^()]+</code> matching a substring with no
+parentheses and the second alternative <code class="inline">\([^()]*\)</code>  matching a
+substring delimited by parentheses.  The problem with this regexp is
+that it is pathological: it has nested indeterminate quantifiers
+of the form <code class="inline">(a+|b)+</code>.  We discussed in Part 1 how nested quantifiers
+like this could take an exponentially long time to execute if there
+was no match possible.  To prevent the exponential blowup, we need to
+prevent useless backtracking at some point.  This can be done by
+enclosing the inner quantifier as an independent subexpression:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/\( ( (?&gt;[^()]+) | \([^()]*\) )+ \)/x</span><span class="sc">;</span></pre>
+<p>Here, <code class="inline">(?&gt;[^()]+)</code> breaks the degeneracy of string partitioning
+by gobbling up as much of the string as possible and keeping it.   Then
+match failures fail much more quickly.</p>
+<a name="Conditional-expressions"></a><h2>Conditional expressions</h2>
+<p>A <b>conditional&nbsp;expression</b>&nbsp; is a form of if-then-else statement
+that allows one to choose which patterns are to be matched, based on
+some condition.  There are two types of conditional expression:
+<code class="inline">(?(condition)yes-regexp)</code> and
+<code class="inline">(?(condition)yes-regexp|no-regexp)</code>.  <code class="inline">(?(condition)yes-regexp)</code> is
+like an <code&nbsp;class="inline">'if&nbsp;()&nbsp;{}'</code>&nbsp; statement in Perl.  If the <code class="inline">condition</code>
+ is true,
+the <code class="inline">yes-regexp</code>
+ will be matched.  If the <code class="inline">condition</code>
+ is false, the
+<code class="inline">yes-regexp</code>
+ will be skipped and perl will move onto the next regexp
+element.  The second form is like an <code&nbsp;class="inline">'if&nbsp;()&nbsp;{}&nbsp;else&nbsp;{}'</code>&nbsp; statement
+in Perl.  If the <code class="inline">condition</code>
+ is true, the <code class="inline">yes-regexp</code>
+ will be
+matched, otherwise the <code class="inline"><a class="l_k" href="functions/no.html">no-regexp</a></code> will be matched.</p>
+<p>The <code class="inline">condition</code>
+ can have two forms.  The first form is simply an
+integer in parentheses <code class="inline"><span class="s">(</span><a class="l_w" href="integer.html">integer</a><span class="s">)</span></code>
+.  It is true if the corresponding
+backreference <code class="inline">\<a class="l_w" href="integer.html">integer</a></code>
+ matched earlier in the regexp.  The second
+form is a bare zero width assertion <code class="inline">(?...)</code>, either a
+lookahead, a lookbehind, or a code assertion (discussed in the next
+section).</p>
+<p>The integer form of the <code class="inline">condition</code>
+ allows us to choose, with more
+flexibility, what to match based on what matched earlier in the
+regexp. This searches for words of the form <code class="inline"><span class="q">&quot;$x$x&quot;</span></code>
+ or
+<code class="inline"><span class="q">&quot;$x$y$y$x&quot;</span></code>
+:</p>
+<pre class="verbatim">    % simple_grep '^(\w+)(\w+)?(?(2)\2\1|\1)$' /usr/dict/words
+    beriberi
+    coco
+    couscous
+    deed
+    ...
+    toot
+    toto
+    tutu</pre><p>The lookbehind <code class="inline">condition</code>
+ allows, along with backreferences,
+an earlier part of the match to influence a later part of the
+match.  For instance,</p>
+<pre class="verbatim">    <span class="q">/[ATGC]+(?(?&lt;=AA)G|C)$/</span><span class="sc">;</span></pre>
+<p>matches a DNA sequence such that it either ends in <code class="inline">AAG</code>
+, or some
+other base pair combination and <code class="inline">C</code>
+.  Note that the form is
+<code class="inline">(?(?&lt;=AA)G|C)</code> and not <code class="inline">(?((?&lt;=AA))G|C)</code>; for the
+lookahead, lookbehind or code assertions, the parentheses around the
+conditional are not needed.</p>
+<a name="A-bit-of-magic%3a-executing-Perl-code-in-a-regular-expression"></a><h2>A bit of magic: executing Perl code in a regular expression</h2>
+<p>Normally, regexps are a part of Perl expressions.
+<b>Code&nbsp;evaluation</b>&nbsp; expressions turn that around by allowing
+arbitrary Perl code to be a part of a regexp.  A code evaluation
+expression is denoted <code class="inline">(?{code})</code>, with <code class="inline">code</code>
+ a string of Perl
+statements.</p>
+<p>Code expressions are zero-width assertions, and the value they return
+depends on their environment.  There are two possibilities: either the
+code expression is used as a conditional in a conditional expression
+<code class="inline">(?(condition)...)</code>, or it is not.  If the code expression is a
+conditional, the code is evaluated and the result (i.e., the result of
+the last statement) is used to determine truth or falsehood.  If the
+code expression is not used as a conditional, the assertion always
+evaluates true and the result is put into the special variable
+<code class="inline"><span class="i">$^R</span></code>
+.  The variable <code class="inline"><span class="i">$^R</span></code>
+ can then be used in code expressions later
+in the regexp.  Here are some silly examples:</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;abcdef&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/abc(?{print &quot;Hi Mom!&quot;;})def/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                                         <span class="c"># prints &#39;Hi Mom!&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/aaa(?{print &quot;Hi Mom!&quot;;})def/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match,</span>
+                                         <span class="c"># no &#39;Hi Mom!&#39;</span></pre>
+<p>Pay careful attention to the next example:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/abc(?{print &quot;Hi Mom!&quot;;})ddd/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match,</span>
+                                         <span class="c"># no &#39;Hi Mom!&#39;</span>
+                                         <span class="c"># but why not?</span></pre>
+<p>At first glance, you'd think that it shouldn't print, because obviously
+the <code class="inline">ddd</code>
+ isn't going to match the target string. But look at this
+example:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/abc(?{print &quot;Hi Mom!&quot;;})[d]dd/</span><span class="sc">;</span> <span class="c"># doesn&#39;t match,</span>
+                                           <span class="c"># but _does_ print</span></pre>
+<p>Hmm. What happened here? If you've been following along, you know that
+the above pattern should be effectively the same as the last one --
+enclosing the d in a character class isn't going to change what it
+matches. So why does the first not print while the second one does?</p>
+<p>The answer lies in the optimizations the REx engine makes. In the first
+case, all the engine sees are plain old characters (aside from the
+<code class="inline">?{}</code> construct). It's smart enough to realize that the string 'ddd'
+doesn't occur in our target string before actually running the pattern
+through. But in the second case, we've tricked it into thinking that our
+pattern is more complicated than it is. It takes a look, sees our
+character class, and decides that it will have to actually run the
+pattern to determine whether or not it matches, and in the process of
+running it hits the print statement before it discovers that we don't
+have a match.</p>
+<p>To take a closer look at how the engine does optimizations, see the
+section <a href="#Pragmas-and-debugging">"Pragmas and debugging"</a> below.</p>
+<p>More fun with <code class="inline">?{}</code>:</p>
+<pre class="verbatim">    <span class="i">$x</span> =~ <span class="q">/(?{print &quot;Hi Mom!&quot;;})/</span><span class="sc">;</span>       <span class="c"># matches,</span>
+                                         <span class="c"># prints &#39;Hi Mom!&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/(?{$c = 1;})(?{print &quot;$c&quot;;})/</span><span class="sc">;</span>  <span class="c"># matches,</span>
+                                           <span class="c"># prints &#39;1&#39;</span>
+    <span class="i">$x</span> =~ <span class="q">/(?{$c = 1;})(?{print &quot;$^R&quot;;})/</span><span class="sc">;</span> <span class="c"># matches,</span>
+                                           <span class="c"># prints &#39;1&#39;</span></pre>
+<p>The bit of magic mentioned in the section title occurs when the regexp
+backtracks in the process of searching for a match.  If the regexp
+backtracks over a code expression and if the variables used within are
+localized using <code class="inline"><a class="l_k" href="functions/local.html">local</a></code>, the changes in the variables produced by the
+code expression are undone! Thus, if we wanted to count how many times
+a character got matched inside a group, we could use, e.g.,</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;aaaa&quot;</span><span class="sc">;</span>
+    <span class="i">$count</span> = <span class="n">0</span><span class="sc">;</span>  <span class="c"># initialize &#39;a&#39; count</span>
+    <span class="i">$c</span> = <span class="q">&quot;bob&quot;</span><span class="sc">;</span>  <span class="c"># test if $c gets clobbered</span>
+    <span class="i">$x</span> =~ <span class="q">/(?{local $c = 0;})         # initialize count</span>
+           <span class="q">           ( a                        # match &#39;a&#39;</span>
+             <span class="q">             (?{local $c = $c + 1;})  # increment count</span>
+           <span class="q">           )*                         # do this any number of times,</span>
+           <span class="q">           aa                         # but match &#39;aa&#39; at the end</span>
+           <span class="q">           (?{$count = $c;})          # copy local $c var into $count</span>
+          <span class="q">          /x</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;&#39;a&#39; count is $count, \$c variable is &#39;$c&#39;\n&quot;</span><span class="sc">;</span></pre>
+<p>This prints</p>
+<pre class="verbatim">    'a' count is 2, $c variable is 'bob'</pre><p>If we replace the <code&nbsp;class="inline">&nbsp;(?{local&nbsp;$c&nbsp;=&nbsp;$c&nbsp;+&nbsp;1;})</code>&nbsp; with
+<code&nbsp;class="inline">&nbsp;(?{$c&nbsp;=&nbsp;$c&nbsp;+&nbsp;1;})</code>&nbsp;, the variable changes are <i>not</i> undone
+during backtracking, and we get</p>
+<pre class="verbatim">    'a' count is 4, $c variable is 'bob'</pre><p>Note that only localized variable changes are undone.  Other side
+effects of code expression execution are permanent.  Thus</p>
+<pre class="verbatim">    <span class="i">$x</span> = <span class="q">&quot;aaaa&quot;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/(a(?{print &quot;Yow\n&quot;;}))*aa/</span><span class="sc">;</span></pre>
+<p>produces</p>
+<pre class="verbatim">   Yow
+   Yow
+   Yow
+   Yow</pre>
+<p>The result <code class="inline"><span class="i">$^R</span></code>
+ is automatically localized, so that it will behave
+properly in the presence of backtracking.</p>
+<p>This example uses a code expression in a conditional to match the
+article 'the' in either English or German:</p>
+<pre class="verbatim">    <span class="i">$lang</span> = <span class="q">&#39;DE&#39;</span><span class="sc">;</span>  <span class="c"># use German</span>
+    ...
+    <span class="i">$text</span> = <span class="q">&quot;das&quot;</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;matched\n&quot;</span>
+        if <span class="i">$text</span> =~ <span class="q">/(?(?{</span>
+                          <span class="q">                          $lang eq &#39;EN&#39;; # is the language English?</span>
+                         <span class="q">                         })</span>
+                       <span class="q">                       the |             # if so, then match &#39;the&#39;</span>
+                       <span class="q">                       (die|das|der)     # else, match &#39;die|das|der&#39;</span>
+                     <span class="q">                     )</span>
+                    <span class="q">                    /xi</span><span class="sc">;</span></pre>
+<p>Note that the syntax here is <code class="inline">(?(?{...})yes-regexp|no-regexp)</code>, not
+<code class="inline">(?((?{...}))yes-regexp|no-regexp)</code>.  In other words, in the case of a
+code expression, we don't need the extra parentheses around the
+conditional.</p>
+<p>If you try to use code expressions with interpolating variables, perl
+may surprise you:</p>
+<pre class="verbatim">    <span class="i">$bar</span> = <span class="n">5</span><span class="sc">;</span>
+    <span class="i">$pat</span> = <span class="q">&#39;(?{ 1 })&#39;</span><span class="sc">;</span>
+    <span class="q">/foo(?{ $bar })bar/</span><span class="sc">;</span> <span class="c"># compiles ok, $bar not interpolated</span>
+    <span class="q">/foo(?{ 1 })$bar/</span><span class="sc">;</span>   <span class="c"># compile error!</span>
+    <span class="q">/foo${pat}bar/</span><span class="sc">;</span>      <span class="c"># compile error!</span></pre>
+<pre class="verbatim">    <span class="i">$pat</span> = <span class="q">qr/(?{ $foo = 1 })/</span><span class="sc">;</span>  <span class="c"># precompile code regexp</span>
+    <span class="q">/foo${pat}bar/</span><span class="sc">;</span>      <span class="c"># compiles ok</span></pre>
+<p>If a regexp has (1) code expressions and interpolating variables, or
+(2) a variable that interpolates a code expression, perl treats the
+regexp as an error. If the code expression is precompiled into a
+variable, however, interpolating is ok. The question is, why is this
+an error?</p>
+<p>The reason is that variable interpolation and code expressions
+together pose a security risk.  The combination is dangerous because
+many programmers who write search engines often take user input and
+plug it directly into a regexp:</p>
+<pre class="verbatim">    $regexp = &lt;&gt;;       # read user-supplied regexp
+    $chomp $regexp;     # get rid of possible newline
+    $text =~ /$regexp/; # search $text for the $regexp</pre><p>If the <code class="inline"><span class="i">$regexp</span></code>
+ variable contains a code expression, the user could
+then execute arbitrary Perl code.  For instance, some joker could
+search for <code&nbsp;class="inline">system('rm&nbsp;-rf&nbsp;*');</code>&nbsp; to erase your files.  In this
+sense, the combination of interpolation and code expressions <b>taints</b>
+your regexp.  So by default, using both interpolation and code
+expressions in the same regexp is not allowed.  If you're not
+concerned about malicious users, it is possible to bypass this
+security check by invoking <code&nbsp;class="inline">use&nbsp;re&nbsp;'eval'</code>&nbsp;:</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="re.html">re</a> <span class="q">&#39;eval&#39;</span><span class="sc">;</span>       <span class="c"># throw caution out the door</span>
+    <span class="i">$bar</span> = <span class="n">5</span><span class="sc">;</span>
+    <span class="i">$pat</span> = <span class="q">&#39;(?{ 1 })&#39;</span><span class="sc">;</span>
+    <span class="q">/foo(?{ 1 })$bar/</span><span class="sc">;</span>   <span class="c"># compiles ok</span>
+    <span class="q">/foo${pat}bar/</span><span class="sc">;</span>      <span class="c"># compiles ok</span></pre>
+<p>Another form of code expression is the <b>pattern&nbsp;code&nbsp;expression</b>&nbsp;.
+The pattern code expression is like a regular code expression, except
+that the result of the code evaluation is treated as a regular
+expression and matched immediately.  A simple example is</p>
+<pre class="verbatim">    <span class="i">$length</span> = <span class="n">5</span><span class="sc">;</span>
+    <span class="i">$char</span> = <span class="q">&#39;a&#39;</span><span class="sc">;</span>
+    <span class="i">$x</span> = <span class="q">&#39;aaaaabb&#39;</span><span class="sc">;</span>
+    <span class="i">$x</span> =~ <span class="q">/(??{$char x $length})/x</span><span class="sc">;</span> <span class="c"># matches, there are 5 of &#39;a&#39;</span></pre>
+<p>This final example contains both ordinary and pattern code
+expressions.   It detects if a binary string <code class="inline"><span class="n">1101010010001</span>...</code>
+ has a
+Fibonacci spacing 0,1,1,2,3,5,...  of the <code class="inline"><span class="n">1</span></code>
+'s:</p>
+<pre class="verbatim">    <span class="i">$s0</span> = <span class="n">0</span><span class="sc">;</span> <span class="i">$s1</span> = <span class="n">1</span><span class="sc">;</span> <span class="c"># initial conditions</span>
+    <span class="i">$x</span> = <span class="q">&quot;1101010010001000001&quot;</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;It is a Fibonacci sequence\n&quot;</span>
+        if <span class="i">$x</span> =~ <span class="q">/^1         # match an initial &#39;1&#39;</span>
+                    <span class="q">                    (</span>
+                       <span class="q">                       (??{&#39;0&#39; x $s0}) # match $s0 of &#39;0&#39;</span>
+                       <span class="q">                       1               # and then a &#39;1&#39;</span>
+                       <span class="q">                       (?{</span>
+                          <span class="q">                          $largest = $s0;   # largest seq so far</span>
+                          <span class="q">                          $s2 = $s1 + $s0;  # compute next term</span>
+                          <span class="q">                          $s0 = $s1;        # in Fibonacci sequence</span>
+                          <span class="q">                          $s1 = $s2;</span>
+                         <span class="q">                         })</span>
+                    <span class="q">                    )+   # repeat as needed</span>
+                  <span class="q">                  $      # that is all there is</span>
+                 <span class="q">                 /x</span><span class="sc">;</span>
+    <a class="l_k" href="functions/print.html">print</a> <span class="q">&quot;Largest sequence matched was $largest\n&quot;</span><span class="sc">;</span></pre>
+<p>This prints</p>
+<pre class="verbatim">    It is a Fibonacci sequence
+    Largest sequence matched was <span class="n">5</span></pre>
+<p>Ha! Try that with your garden variety regexp package...</p>
+<p>Note that the variables <code class="inline"><span class="i">$s0</span></code>
+ and <code class="inline"><span class="i">$s1</span></code>
+ are not substituted when the
+regexp is compiled, as happens for ordinary variables outside a code
+expression.  Rather, the code expressions are evaluated when perl
+encounters them during the search for a match.</p>
+<p>The regexp without the <code class="inline"><span class="q">//x</span></code>
+ modifier is</p>
+<pre class="verbatim">    <span class="q">/^1((??{&#39;0&#39;x$s0})1(?{$largest=$s0;$s2=$s1+$s0$s0=$s1;$s1=$s2;}))+$/</span><span class="sc">;</span></pre>
+<p>and is a great start on an Obfuscated Perl entry :-) When working with
+code and conditional expressions, the extended form of regexps is
+almost necessary in creating and debugging regexps.</p>
+<a name="Pragmas-and-debugging"></a><h2>Pragmas and debugging</h2>
+<p>Speaking of debugging, there are several pragmas available to control
+and debug regexps in Perl.  We have already encountered one pragma in
+the previous section, <code&nbsp;class="inline">use&nbsp;re&nbsp;'eval';</code>&nbsp;, that allows variable
+interpolation and code expressions to coexist in a regexp.  The other
+pragmas are</p>
+<pre class="verbatim">    use re 'taint';
+    $tainted = &lt;&gt;;
+    @parts = ($tainted =~ /(\w+)\s+(\w+)/; # @parts is now tainted</pre><p>The <code class="inline">taint</code>
+ pragma causes any substrings from a match with a tainted
+variable to be tainted as well.  This is not normally the case, as
+regexps are often used to extract the safe bits from a tainted
+variable.  Use <code class="inline">taint</code>
+ when you are not extracting safe bits, but are
+performing some other processing.  Both <code class="inline">taint</code>
+ and <code class="inline"><a class="l_k" href="functions/eval.html">eval</a></code> pragmas
+are lexically scoped, which means they are in effect only until
+the end of the block enclosing the pragmas.</p>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="re.html">re</a> <span class="q">&#39;debug&#39;</span><span class="sc">;</span>
+    <span class="q">/^(.*)$/s</span><span class="sc">;</span>       <span class="c"># output debugging info</span></pre>
+<pre class="verbatim">    <a class="l_k" href="functions/use.html">use</a> <a class="l_w" href="re.html">re</a> <span class="q">&#39;debugcolor&#39;</span><span class="sc">;</span>
+    <span class="q">/^(.*)$/s</span><span class="sc">;</span>       <span class="c"># output debugging info in living color</span></pre>
+<p>The global <code class="inline">debug</code>
+ and <code class="inline">debugcolor</code>
+ pragmas allow one to get
+detailed debugging info about regexp compilation and
+execution.  <code class="inline">debugcolor</code>
+ is the same as debug, except the debugging
+information is displayed in color on terminals that can display
+termcap color sequences.  Here is example output:</p>
+<pre class="verbatim">    % perl -e 'use re "debug"; "abc" =~ /a*b+c/;'
+    Compiling REx `a*b+c'
+    size 9 first at 1
+       1: STAR(4)
+       2:   EXACT &lt;a&gt;(0)
+       4: PLUS(7)
+       5:   EXACT &lt;b&gt;(0)
+       7: EXACT &lt;c&gt;(9)
+       9: END(0)
+    floating `bc' at 0..2147483647 (checking floating) minlen 2
+    Guessing start of match, REx `a*b+c' against `abc'...
+    Found floating substr `bc' at offset 1...
+    Guessed: match at offset 0
+    Matching REx `a*b+c' against `abc'
+      Setting an EVAL scope, savestack=3
+       0 &lt;&gt; &lt;abc&gt;             |  1:  STAR
+                               EXACT &lt;a&gt; can match 1 times out of 32767...
+      Setting an EVAL scope, savestack=3
+       1 &lt;a&gt; &lt;bc&gt;             |  4:    PLUS
+                               EXACT &lt;b&gt; can match 1 times out of 32767...
+      Setting an EVAL scope, savestack=3
+       2 &lt;ab&gt; &lt;c&gt;             |  7:      EXACT &lt;c&gt;
+       3 &lt;abc&gt; &lt;&gt;             |  9:      END
+    Match successful!
+    Freeing REx: `a*b+c'</pre><p>If you have gotten this far into the tutorial, you can probably guess
+what the different parts of the debugging output tell you.  The first
+part</p>
+<pre class="verbatim">    Compiling REx `a*b+c'
+    size 9 first at 1
+       1: STAR(4)
+       2:   EXACT &lt;a&gt;(0)
+       4: PLUS(7)
+       5:   EXACT &lt;b&gt;(0)
+       7: EXACT &lt;c&gt;(9)
+       9: END(0)</pre><p>describes the compilation stage.  <code class="inline"><span class="i">STAR</span><span class="s">(</span><span class="n">4</span><span class="s">)</span></code>
+ means that there is a
+starred object, in this case <code class="inline"><span class="q">&#39;a&#39;</span></code>
+, and if it matches, goto line 4,
+i.e., <code class="inline"><span class="i">PLUS</span><span class="s">(</span><span class="n">7</span><span class="s">)</span></code>
+.  The middle lines describe some heuristics and
+optimizations performed before a match:</p>
+<pre class="verbatim">    floating `bc' at 0..2147483647 (checking floating) minlen 2
+    Guessing start of match, REx `a*b+c' against `abc'...
+    Found floating substr `bc' at offset 1...
+    Guessed: match at offset 0</pre><p>Then the match is executed and the remaining lines describe the
+process:</p>
+<pre class="verbatim">    Matching REx `a*b+c' against `abc'
+      Setting an EVAL scope, savestack=3
+       0 &lt;&gt; &lt;abc&gt;             |  1:  STAR
+                               EXACT &lt;a&gt; can match 1 times out of 32767...
+      Setting an EVAL scope, savestack=3
+       1 &lt;a&gt; &lt;bc&gt;             |  4:    PLUS
+                               EXACT &lt;b&gt; can match 1 times out of 32767...
+      Setting an EVAL scope, savestack=3
+       2 &lt;ab&gt; &lt;c&gt;             |  7:      EXACT &lt;c&gt;
+       3 &lt;abc&gt; &lt;&gt;             |  9:      END
+    Match successful!
+    Freeing REx: `a*b+c'</pre><p>Each step is of the form <code&nbsp;class="inline">n&nbsp;&lt;x&gt;&nbsp;&lt;y&gt;</code>&nbsp;, with <code class="inline"><span class="q">&lt;x&gt;</span></code>
+ the
+part of the string matched and <code class="inline"><span class="q">&lt;y&gt;</span></code>
+ the part not yet
+matched.  The <code&nbsp;class="inline">|&nbsp;&nbsp;1:&nbsp;&nbsp;STAR</code>&nbsp; says that perl is at line number 1
+n the compilation list above.  See
+<a href="perldebguts.html#Debugging-regular-expressions">"Debugging regular expressions" in perldebguts</a> for much more detail.</p>
+<p>An alternative method of debugging regexps is to embed <code class="inline"><a class="l_k" href="functions/print.html">print</a></code>
+statements within the regexp.  This provides a blow-by-blow account of
+the backtracking in an alternation:</p>
+<pre class="verbatim">    <span class="q">&quot;that this&quot;</span> =~ <span class="q">m@(?{print &quot;Start at position &quot;, pos, &quot;\n&quot;;})</span>
+                     <span class="q">                     t(?{print &quot;t1\n&quot;;})</span>
+                     <span class="q">                     h(?{print &quot;h1\n&quot;;})</span>
+                     <span class="q">                     i(?{print &quot;i1\n&quot;;})</span>
+                     <span class="q">                     s(?{print &quot;s1\n&quot;;})</span>
+                         <span class="q">                         |</span>
+                     <span class="q">                     t(?{print &quot;t2\n&quot;;})</span>
+                     <span class="q">                     h(?{print &quot;h2\n&quot;;})</span>
+                     <span class="q">                     a(?{print &quot;a2\n&quot;;})</span>
+                     <span class="q">                     t(?{print &quot;t2\n&quot;;})</span>
+                     <span class="q">                     (?{print &quot;Done at position &quot;, pos, &quot;\n&quot;;})</span>
+                    <span class="q">                    @x</span><span class="sc">;</span></pre>
+<p>prints</p>
+<pre class="verbatim">    Start at position 0
+    t1
+    h1
+    t2
+    h2
+    a2
+    t2
+    Done at position 4</pre><a name="BUGS"></a><h1>BUGS</h1>
+<p>Code expressions, conditional expressions, and independent expressions
+are <b>experimental</b>.  Don't use them in production code.  Yet.</p>
+<a name="SEE-ALSO"></a><h1>SEE ALSO</h1>
+<p>This is just a tutorial.  For the full story on perl regular
+expressions, see the <a href="perlre.html">perlre</a> regular expressions reference page.</p>
+<p>For more information on the matching <code class="inline"><a class="l_k" href="functions/m.html">m//</a></code> and substitution <code class="inline"><a class="l_k" href="functions/s.html">s///</a></code>
+operators, see <a href="perlop.html#Regexp-Quote-Like-Operators">"Regexp Quote-Like Operators" in perlop</a>.  For
+information on the <code class="inline"><a class="l_k" href="functions/split.html">split</a></code> operation, see <a href="functions/split.html">split</a>.</p>
+<p>For an excellent all-around resource on the care and feeding of
+regular expressions, see the book <i>Mastering Regular Expressions</i> by
+Jeffrey Friedl (published by O'Reilly, ISBN 1556592-257-3).</p>
+<a name="AUTHOR-AND-COPYRIGHT"></a><h1>AUTHOR AND COPYRIGHT</h1>
+<p>Copyright (c) 2000 Mark Kvale
+All rights reserved.</p>
+<p>This document may be distributed under the same terms as Perl itself.</p>
+<a name="Acknowledgments"></a><h2>Acknowledgments</h2>
+<p>The inspiration for the stop codon DNA example came from the ZIP
+code example in chapter 7 of <i>Mastering Regular Expressions</i>.</p>
+<p>The author would like to thank Jeff Pinyan, Andrew Johnson, Peter
+Haworth, Ronald J Kimball, and Joe Smith for all their helpful
+comments.</p>
+</div>
+      <div id="contentFooter"><a href="http://www.perl.org"><img src="perlpowered.png" border=0></a></div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div id="rightContent">
+      <div id="leftClose">
+        <a href="#" onClick="closeRight()" title="Hide toolbar" onmouseover="rightCloseIcon.src='close_purple.gif';" onmouseout="rightCloseIcon.src='close_blue.gif';"><img src="close_blue.gif" name="rightCloseIcon" id="rightCloseIcon" border=0></a>
+      </div>
+      <h1>Search:</h1>
+      <p>
+        <form action="search.html" name="perldoc_search">
+	  <input type="text" name="q" size="10" class="grey"><br>
+	  <!--<select name="r"><option value="1" selected>Go to top result<option value="0">Show results list</select>-->
+	</form>
+      </p>
+      <h2>Labels:</h2>
+      <p>
+        <a href="#" onClick="addLabel('perlretut','perlretut.html')">Add this page</a>
+      </p>
+      <div class="labels" id="labels">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

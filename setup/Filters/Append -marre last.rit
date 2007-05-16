@@ -1,0 +1,6 @@
+[Search and replace]
+once="1"
+casesensitive="0"
+regexp="1"
+search="$"
+replace="-Marre"

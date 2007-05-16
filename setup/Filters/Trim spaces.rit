@@ -1,0 +1,21 @@
+[Search and replace]
+use="0"
+casesensitive="1"
+once="0"
+search=" +$"
+series="0"
+seriesStart="1"
+seriesStep="1"
+guid="9D76507E-5D81-A232-F982-1006E91DD321"
+id3tag="0"
+
+[Search and replace]
+use="0"
+casesensitive="1"
+once="0"
+search="^ +"
+series="0"
+seriesStart="1"
+seriesStep="1"
+guid="9D76507E-5D81-A232-F982-1006E91DD321"
+id3tag="0"

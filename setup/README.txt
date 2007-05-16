@@ -1,0 +1,2 @@
+Contains files that are relevant to the environment for a project or application. 
+This directory may contain database SQL files, or any other files that are used to configure a container for a project or application.

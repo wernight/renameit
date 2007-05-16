@@ -1,0 +1,4 @@
+PCRE can be downloaded from
+http://www.pcre.org/
+
+This is version 7.0

@@ -1,0 +1,222 @@
+Rename-It!
+
+
+Version 3.42 (?):
+
+ Changes:
+   o Use unicode version for unknow OS (wider unicode support).
+
+
+Version 3.41 (2005-12-05):
+
+ Bug Fixed:
+   o English crop filename dialog had a wrong control ID generating an error.
+
+
+Version 3.40 (2005-11-18):
+
+  Features Added:
+   o French translation.
+   o Support renaming files with cyclic filenames (a->b, b->c, c->a).
+   o Show how many files will be renamed next in a status bar.
+   o Search&Replace: Added start and step for series numbering.
+   o Search&Replace: Match-whole-word option.
+   o Include a short tutorial.
+   o Crop filter: Inverse mode.
+   o Show an error message when cannot load a set of filters with some unknown filters.
+   o Three new sample filters.
+   o File names to avoid are threated as warning instead of errors (so you can still rename).
+   
+ Changes:
+   o (De)Selecting a file from the list refresh the preview result list.
+   o Search&Replace: Wildcards don't match full filename.
+   o Use the filter's filename for filters load/save functions (instead of using their language dependant name).
+   o Use "Image %03d" as default replacement string for series.
+   o Filters dialogs are now like toolboxes.
+  
+ Bug Fixed:
+   o The "Add filter" drop list was displayed over the editing box of the default filter (if there was one defined).
+   o Crop filter: Didn't croped when count longer than file name's length.
+   o Search&Replace: Wildcard possible memory overflow, memory leak and bug fix.
+   o Search&Replace: Series didn't increment when the output filename was same as the input.
+   o Search&Replace: Safeguards for bad user inputs when series is active.
+   o Search&Replace: Do uptdate after pressing "series" when there is nothing in replace field.
+   o Update the files' list after manually renaming files.
+   o Use default filter values if none is defined.
+
+
+Version 3.32 (2004-10-08):
+
+  Features Added:
+   o Activate ID3Tag when people add an ID3 macro by using the replace context menu.
+  
+  Changes:
+   o Smaller minimum main window size.
+  
+  Bugs Fixed:
+   o Search&Replace: ID3Tag check box was always checked.
+   o Search&Replace: Replace context menu disabled wrong items.
+
+
+Version 3.31 (2004-10-06):
+
+  Features Added:
+   o Display a warning if a file's extension is going to be modified.
+   o Search&Replace: Display an invite text in search and replace edit boxes to help new users.
+   o Invite user to add a filter when started from Explorer or from command line.
+   o Feedback menu.
+  
+  Changes:
+   o `Add filter' is default button (it used to be `Rename files').
+   o Search&Replace: If no search string is provided, replace the whole file name.
+   o Search&Replace: If no replace string is provided, and "Series" is selected, then set replace string to "Image %3d".
+
+  Bugs Fixed:
+   o Change case: Didn't support unicode characters in Word or iNVERT mode.
+
+Version 3.30b (2004-09-20):
+
+  Features Added:
+   o Rename files manually from main dialog.
+   o Filters are plug-ins DLLs and provide an SDK to help the creation of new filters from any compiler.
+   o Numbering of files filter option in "Search and Replace" filter.
+   o Ability to drag&drop one or more files within a list to change order.
+
+  Changes:
+   o Better interface.
+   o ID3 Reader is now included in the Search&Replace filter. The old ID3 Reader is kept for compatibility.
+
+  Bugs Fixed:
+   o Move Up/Down filter function is not disabled when it should (affects context menu MoveUp/Down and Up/Down buttons).
+   o Corrected "File not found" message when adding files that already exist.
+   o When renaming file without extensions, the sample file is now "Sample_FileName" instead of "Sample_FileName.Ext".
+   o Editing a filter in "Filename with extension" mode didn't displayed the file's extension in sample string.
+   o Case filter now displays correct description for "iNVERT cASE" mode.
+
+
+Version 3.22 (2004-06-16):
+
+  Features Added:
+   o Move up/down buttons.
+   o Always on-top option in the "View" menu.
+   o Source code included in install program.
+
+  Bugs Fixed:
+   o Filter strings over 256 characters couldn't be loaded.
+   
+  Minor Changes:
+   o NewMenu version 1.20.
+   o Replace Once in the Search&Replace filter is NOT activated by default.
+   o Renamed buttons "Clear ..." to "Remove ..." in the main menu.
+   o Better move up/down handling.
+   o New install interface.
+
+
+Version 3.21 (2003-11-24):
+
+  Bugs Fixed:
+   o The "Filter" and "Cancel" buttons don't move along with the changing window size.
+   o ID3 Tag reader '%8' not working as implied.
+   o The install program don't fail if an old version of Rename-It! is already installed.
+   o Search&Replace filter: Using the new PCRE 4.4 library.
+
+  Minor Changes:
+   o Removed the separation line from the "Add filter" menu.
+   o Changed the ID3 Tag filter window's caption.
+
+
+Version 3.20 (2003-11-17):
+
+  Features Added:
+   o Better user interface:
+     - Starting Rename-It! from the Explorer's context menu leads directly to the Search&Replace dialog by default,
+     - "Rename files" button moved out of the filter's frame,
+     - Seperated "Add filter" menu's filters and filter list load/save functions (witch are now in a "Filters" menu).
+   o Edition of the "Before" string enabled in the Search&Replace filter's dialog.
+   
+  Bugs Fixed:
+   o Include the size of the null terminating character when using RegSetValueEx(..).
+   o Drag/Drop files on Rename-It.exe - unicode version - don't work.
+
+  Minor Changes:
+   o You can define the default filter to use in the configuration dialog.
+   o In the Search&Replace dialog: Changed "Before" to "Before renaming (sample):", and "After" to "After applying the filter:".
+   o Added a "Cancel" button on the main page.
+   o Clear the filters' list before loading a RIT file. If the list is not empty ask promp for saving.
+   o Focus the "Rename files" by default at program start (if the button is enabled).
+   o The GNU GPL is also installed with Rename-It!.
+
+
+Version 3.10 (2003-11-12):
+
+  Features Added:
+   o Can rename a virtually illimited number of files from the Windows Shell context menu.
+   o Unicode support for Windows 2000 and XP.
+   o Little help message for new users avaible from the main dialog help menu.
+
+  Changes:
+   o When adding files, all the files not added are displayed in a list in a new window.
+
+  Bugs Fixed:
+   o Wilcard bug for cases like: Search * and replace by *<ext> gives *<ext>* as result (and not *<ext>).
+
+
+Version 3.01 (2003-07-17):
+
+  Features Added:
+   o Word case filter define as new word anything after a space.
+     It doesn't anymore put something after a non-ascii character in uppercase.
+   o Use the new PCRE 4.3 (Perl Compatible Regular Expression) library code.
+   o Use the new NewMenu 1.16 code.
+   o Some code cleaning.
+
+
+Version 3.00 (2003-05-30):
+
+  Features Added:
+   o Context menu implementation in Windows Explorer (using a shell extension DLL).
+   o Created setup to install the program.
+   o Check before renaming the errors below and may show a dialog to invite user correcting them:
+     * Double output file name
+     * Bad output file name (ie: COM1, NUL, AB/\+*CDE, ... are invalid)
+     * Removed from disk intput file
+   o Check for double intput file name when adding items.
+   o Search&Replace Wildcard support.
+   o Case insensitive Search&Replace.
+   o ID3 tag filter
+   o "invert case" option in Case filter.
+   o Allow to rename file name with or without extension.
+   o When adding file, don't add files with System attribute set.
+   o Context menu for filter list, file list, report list, and more.
+   o Windows XP new look.
+   o Added "Add folder" button.
+   o Show an error message box when can't open recent file.
+   o "RenameIt!" is now "Rename-It!".
+   
+  Bugs Fixed:
+   o Search&Replace filter with RegExp and no match case bug: Replace with lowercase file names and never match even if it should.
+   o Case filter, "Word Case" conversion now detect well the new words.
+   o Case filter "Sentense case" and "Word Case" didn't changed some characters (like é -> É).
+   o Files starting with a dot are now renamed as well as others.
+
+  Minor Changes:
+   o Confirm before exit when some files are ready to rename.
+   o Added a ID3 tag RIT filter example.
+   o Saved filters are added to recent list.
+   o About dialog has now developpers e-mail and SourceForge web site.
+   o Search&Replace dialog look.
+   o Use the new PCRE (Perl Compatible Regular Expression) library code.
+   o Use the new id3lib version 3.8.3 library code.
+   o ID3 tag reader show more information in the list.
+   o Enable by default "Replace once" in "Search&Replace".
+   o Rename button is set as default.
+   o Some code cleaning.
+   o The filter folder and rename style options are now saved to the register.
+   o Project source files are now in Visual Studio .NET format.
+   o Removed some crappy unused constant from the resource file.
+   o A downgrade: This version only support rename files names but not folders names.
+   o A lot of smalls changes in source code.
+
+
+Version 2 (2002-02-19):
+   Started history report from there.

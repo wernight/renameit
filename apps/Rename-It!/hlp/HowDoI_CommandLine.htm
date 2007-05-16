@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<Title>Command-line options</Title>
+</HEAD>
+<BODY>
+
+<p>You can use <em>Rename-It!</em> in a batch to provide an automated advanced
+renaming.</p>
+
+<p>Define some filters and save them. You should add some comments to help you
+remember what the filters do. To rename some files/folders using those preset
+filters, execute:</p>
+
+<p align="center"><code>RENAMEIT /X filter_file path [/R] [/A] [path [/R] [/A] [...]] [/LOG log_file [/V]]</code></p>
+<table border="1">
+	<tr>
+		<td><strong>/X filter_file</strong></td>
+		<td>Path to your saved filter file (*.rit).</td>
+	</tr>
+	<tr>
+		<td><strong>path</strong></td>
+		<td>Path to a file or a folder to be renamed (can contain wildcards characters ? or *). The <b>/R</b> and <b>/A</b> are options that can be put after the <b>path</b>.</td>
+	</tr>
+	<tr>
+		<td><strong>/R</strong></td>
+		<td>Include the folders and sub-folders of the previous <b>path</b>.</td>
+	</tr>
+	<tr>
+		<td><strong>/A</strong></td>
+		<td>Include all files, even the system files of the previous <b>path</b>.</td>
+	</tr>
+	<tr>
+		<td><strong>/LOG log_file</strong></td>
+		<td>Don't stop on warnings or errors but log them in a file named <b>log_file</b> instead.</td>
+	</tr>
+	<tr>
+		<td><strong>/V</strong></td>
+		<td>Also include files correctly renamed in the log file.</td>
+	</tr>
+</table>
+
+<p>Sample 1: <code>Rename-It!.exe /x my_filter.rit image*.jpg</code></p>
+
+<p>Sample 2: <code>Rename-It!.exe /x ".\my_id3_filter.rit" "C:\My music folder\" "..\a_file.mp3" "D:\Zic\"</code></p>
+
+</BODY>
+</HTML>

@@ -1,0 +1,11 @@
+[Search and replace]
+use="-1"
+casesensitive="1"
+once="0"
+replace="$(FileName) %02d"
+series="1"
+seriesStart="1"
+seriesStep="1"
+guid="846EEC5B-4B3D-CD04-0354-7A957089A400"
+id3tag="0"
+

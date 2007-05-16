@@ -1,0 +1,35 @@
+[OPTIONS]
+Auto Index=Yes
+Compatibility=1.1 or later
+Compiled file=RenameIt.chm
+Contents file=RenameIt.hhc
+Default topic=HIDD_ROOT_DIALOG.HTM
+Display compile progress=No
+Full-text search=Yes
+Index file=RenameIt.hhk
+Language=0x409 Anglais (États-Unis)
+
+
+[FILES]
+HIDD_ROOT_DIALOG.HTM
+HIDD_RENAMEIT_DIALOG.HTM
+Flowchart.htm
+HIDD_SEARCH_REPLACE_DIALOG.htm
+HIDD_COMMENT_DIALOG.htm
+HIDD_EXTERNAL_PROCESSOR_DIALOG.htm
+HowDoI_Wizards.htm
+HowDoI_Adv_CustomFilter.htm
+HowDoI_CommandLine.htm
+
+[ALIAS]
+HIDD_RENAMEIT_DIALOG = HIDD_RENAMEIT_DIALOG.htm
+HIDD_SEARCH_REPLACE_DIALOG=IDD_SEARCH_REPLACE_DIALOG.htm
+
+[MAP]
+#include HTMLDefines.h
+
+[TEXT POPUPS]
+HTMLDefines.h
+
+[INFOTYPES]
+

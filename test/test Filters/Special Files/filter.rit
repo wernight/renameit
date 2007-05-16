@@ -1,0 +1,17 @@
+[General]
+RenameWhat="File"
+
+[Search and replace]
+use="-1"
+once="1"
+series="0"
+search="ABC "
+locale="english"
+seriesStep="1"
+replace=""
+casesensitive="1"
+id3tag="0"
+seriesStart="1"
+changeCase="-1"
+matchWholeText="0"
+

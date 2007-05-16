@@ -1,0 +1,1 @@
+Created by the build tasks and used to hold project-wide build items such as compiled source, assembled modules

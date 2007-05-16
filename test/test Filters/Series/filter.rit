@@ -1,0 +1,31 @@
+[General]
+RenameWhat="File"
+
+[Search and replace]
+use="0"
+once="1"
+series="1"
+search="^[0-9]{2}[A-Z]$"
+locale=""
+seriesStep="-2"
+replace="Image %03d"
+casesensitive="1"
+id3tag="0"
+seriesStart="3"
+changeCase="-1"
+matchWholeText="0"
+
+[Search and replace]
+use="1"
+once="1"
+series="1"
+search=""
+locale=""
+seriesStep="1"
+replace="%+d -- $(FilteredName)"
+casesensitive="1"
+id3tag="0"
+seriesStart="1"
+changeCase="-1"
+matchWholeText="0"
+

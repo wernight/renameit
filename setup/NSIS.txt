@@ -1,0 +1,3 @@
+NSIS - Nullsoft Script Install System
+
+http://nsis.sourceforge.net/
