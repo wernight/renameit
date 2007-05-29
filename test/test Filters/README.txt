@@ -2,7 +2,7 @@
 	WHAT IS IT?
 ========================================================================
 
-By executing "run_all.bat" it will test if "Rename-It!.exe" renames some files correctly using the batch mode.
+By executing "run.bat" it will test if Rename-It! renames some files correctly using some filters in batch mode.
 
 
 ========================================================================
@@ -25,10 +25,3 @@ Warning: Files in "before\" and "after.ref\" SHOULD be DIFFERENT.
 ========================================================================
 
 The filter is applyed to the files in the folder "before\" and then compared to the folder "after\". If one or more files/folders don't match, the test fails.
-
-
-========================================================================
-	UPDATES REMARQUES
-========================================================================
-
-"Rename-It!.exe" and "CompFold.exe" should be updated to the last version of those files.
