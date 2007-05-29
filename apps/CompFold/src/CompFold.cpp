@@ -154,7 +154,8 @@ vector<wstring> Dir(const wstring& strFolder)
 		do
 		{
 			if (_tcscmp(fd.cFileName, _T(".")) != 0 &&
-				_tcscmp(fd.cFileName, _T("..")) != 0)
+				_tcscmp(fd.cFileName, _T("..")) != 0 &&
+				_tcscmp(fd.cFileName, _T(".svn")) != 0)
 			{
 				// File or Folder?
 				if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
