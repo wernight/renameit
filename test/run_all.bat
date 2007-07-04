@@ -1,5 +1,13 @@
 @echo off
 
+if exist RenameIt.exe goto ready
+	echo RenameIt.exe is missing.
+	echo Please copy it in this folder to test it.
+	echo.
+	pause
+	exit 1
+:ready
+
 echo ==========================================
 echo TEST COMMAND-LINE
 echo ==========================================
