@@ -18,6 +18,7 @@
 #define IDS_MANUAL_RENAMING_ERROR       111
 #define IDS_NO_FILENAME_CHANGES         112
 #define IDS_RENAMED_ALL                 113
+#define IDS_CRITICAL_ERROR              114
 #define IDS_DONE                        115
 #define IDS_BEFORE                      116
 #define IDS_AFTER                       117
@@ -111,6 +112,7 @@
 #define IDD_WIZ_ID3TAG                  217
 #define IDD_WIZ_APPEND                  218
 #define IDD_WIZ_ENUM                    219
+#define IDD_RENAMING_PROGRESS           220
 #define IDC_SERIES_CHECK                1000
 #define IDS_SEARCH_AND_REPLACE          1000
 #define IDC_SERIES_BUTTON               1001
@@ -182,7 +184,6 @@
 #define IDC_REPORT_LIST                 1091
 #define IDC_NEW_EDIT                    1094
 #define IDC_ORIGINAL_EDIT               1095
-#define IDC_REFRESH_BUTTON              1095
 #define IDC_USE_COMBO                   1096
 #define IDC_CASE_COMBO                  1097
 #define IDC_LOCALE_COMBO                1098
@@ -201,6 +202,9 @@
 #define IDC_SEARCH_RICHEDIT             1130
 #define IDC_REPLACE_RICHEDIT            1131
 #define IDC_DEV_EDIT                    1132
+#define IDC_PROGRESS1                   1134
+#define IDC_PROGRESS2                   1135
+#define IDC_PROGRESS3                   1136
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000
 #define IDS_CMDLINE_LOG_FILE_MISSING    2001
 #define IDS_CMDLINE_NO_FILTER           2002
@@ -264,9 +268,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        220
+#define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1133
+#define _APS_NEXT_CONTROL_VALUE         1135
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

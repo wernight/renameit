@@ -49,7 +49,6 @@ private:
 	void ShowErrors();
 	static UINT CheckingThread(LPVOID lpParam);
 	void OnProgress(CRenamingList::EStage nStage, int nDone, int nTotal);
-	void UpdateStatus(void);
 	virtual void OnOK();
 	void RemoveItem(int nIndex);
 	bool RenameFiles();

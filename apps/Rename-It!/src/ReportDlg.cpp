@@ -90,9 +90,6 @@ BOOL CReportDlg::OnInitDialog()
 	// Display the errors.
 	ShowErrors();
 
-	// Update status.
-	UpdateStatus();
-
 	// Rename file if no errors found.
 	if (m_nErrors == 0 && m_nWarnings == 0)
 		OnOK();
@@ -216,6 +213,11 @@ void CReportDlg::ShowErrors()
 		m_ctlReportList.SetItem(i, 0, LVIF_IMAGE, NULL, nErrorFlag, 0, 0, NULL);
 		m_ctlReportList.SetItemText(i, 3, strErrorMsg);
 	}
+
+	// Update status.
+	CString	strStatus;
+	strStatus.Format(IDS_REPORT_BEFORE, m_renamingList.GetCount(), m_nErrors);
+	GetDlgItem(IDC_STATUS_STATIC)->SetWindowText(strStatus);
 }
 
 UINT CReportDlg::CheckingThread(LPVOID lpParam)
@@ -389,14 +391,6 @@ void CReportDlg::OnLvnKeydownReportList(NMHDR *pNMHDR, LRESULT *pResult)
 		break;
 	}
 	*pResult = 0;
-}
-
-void CReportDlg::UpdateStatus(void)
-{
-	CString	strStatus;
-
-	strStatus.Format(IDS_REPORT_BEFORE, m_renamingList.GetCount(), m_nErrors);
-	GetDlgItem(IDC_STATUS_STATIC)->SetWindowText(strStatus);
 }
 
 void CReportDlg::OnOK()

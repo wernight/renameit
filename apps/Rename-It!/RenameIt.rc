@@ -155,8 +155,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Rename file list",IDC_STATIC,7,7,360,170
     CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
-    PUSHBUTTON      "Refresh",IDC_REFRESH_BUTTON,205,185,50,14
-    DEFPUSHBUTTON   "Rename",IDOK,262,185,50,14,WS_DISABLED
+    DEFPUSHBUTTON   "Check and Rename",IDOK,243,185,69,14
     PUSHBUTTON      "Cancel",IDCANCEL,317,185,50,14
     LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
 END
@@ -228,14 +227,19 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,289,23,55,14
 END
 
-IDD_PROGRESS DIALOGEX 0, 0, 210, 83
+IDD_RENAMING_PROGRESS DIALOGEX 0, 0, 210, 83
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Progress"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,79,62,50,14,WS_DISABLED
     LTEXT           "$(Done) of $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
-    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,56,9
+    LTEXT           "1. Checking",IDC_STATIC,18,40,38,8
+    LTEXT           "2. Preparing",IDC_STATIC,76,40,40,8
+    LTEXT           "3. Renaming",IDC_STATIC,134,40,41,8
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER,76,28,56,9
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,134,28,58,9
 END
 
 IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
@@ -376,12 +380,14 @@ BEGIN
         BOTTOMMARGIN, 187
     END
 
-    IDD_PROGRESS, DIALOG
+    IDD_RENAMING_PROGRESS, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 203
+        LEFTMARGIN, 18
+        RIGHTMARGIN, 192
         TOPMARGIN, 7
         BOTTOMMARGIN, 76
+        HORZGUIDE, 32
+        HORZGUIDE, 48
     END
 
     IDD_WIZ_CASE, DIALOG
@@ -632,6 +638,7 @@ STRINGTABLE
 BEGIN
     IDS_NO_FILENAME_CHANGES "No file has to be renamed."
     IDS_RENAMED_ALL         "Done:\n%d files renamed."
+    IDS_CRITICAL_ERROR      "The application encountered a problem and cannot recover. If you get this error again please report it to the developper."
     IDS_DONE                "Done"
     IDS_BEFORE              "Before"
     IDS_AFTER               "After"
@@ -847,10 +854,9 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Liste des fichiers à renommer",IDC_STATIC,7,7,360,170
     CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
-    DEFPUSHBUTTON   "Renommer",IDOK,262,185,50,14,WS_DISABLED
+    DEFPUSHBUTTON   "Vérifier et renommer",IDOK,232,185,80,14
     PUSHBUTTON      "Annuler",IDCANCEL,317,185,50,14
     LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
-    PUSHBUTTON      "Rafraîchir",IDC_REFRESH_BUTTON,205,185,50,14
 END
 
 IDD_SEARCH_REPLACE_DIALOG DIALOGEX 0, 0, 347, 190
@@ -914,14 +920,19 @@ BEGIN
     CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | NOT WS_VISIBLE | WS_BORDER | WS_TABSTOP,8,80,210,18
 END
 
-IDD_PROGRESS DIALOGEX 0, 0, 210, 83
+IDD_RENAMING_PROGRESS DIALOGEX 0, 0, 210, 83
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Progression"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,79,62,50,14,WS_DISABLED
     LTEXT           "$(Done) de $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
-    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,56,9
+    LTEXT           "1. Vérifie",IDC_STATIC,18,40,30,8
+    LTEXT           "2. Prépare",IDC_STATIC,76,40,35,8
+    LTEXT           "3. Renomme",IDC_STATIC,134,40,41,8
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER,76,28,56,9
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,134,28,58,9
 END
 
 IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
@@ -1011,6 +1022,22 @@ BEGIN
     LTEXT           "TODO",IDC_STATIC,37,41,20,8
 END
 
+#if defined(APSTUDIO_INVOKED) || defined(NOT_DONE_YET)
+#if defined(APSTUDIO_INVOKED)
+IDD_PROGRESS$(NOT_DONE_YET) DIALOGEX 0, 0, 210, 83
+#else
+IDD_PROGRESS DIALOGEX 0, 0, 210, 83
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Progression"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Annuler",IDCANCEL,79,62,50,14,WS_DISABLED
+    LTEXT           "$(Done) de $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
+END
+#endif
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1081,12 +1108,14 @@ BEGIN
         BOTTOMMARGIN, 114
     END
 
-    IDD_PROGRESS, DIALOG
+    IDD_RENAMING_PROGRESS, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 203
+        LEFTMARGIN, 18
+        RIGHTMARGIN, 192
         TOPMARGIN, 7
         BOTTOMMARGIN, 76
+        HORZGUIDE, 32
+        HORZGUIDE, 48
     END
 
     IDD_WIZ_CASE, DIALOG
@@ -1127,6 +1156,14 @@ BEGIN
         RIGHTMARGIN, 183
         TOPMARGIN, 7
         BOTTOMMARGIN, 87
+    END
+
+    "IDD_PROGRESS$(NOT_DONE_YET)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1354,6 +1391,7 @@ STRINGTABLE
 BEGIN
     IDS_NO_FILENAME_CHANGES "Aucun fichier à renommer."
     IDS_RENAMED_ALL         "Terminé:\n%d fichiers renommés."
+    IDS_CRITICAL_ERROR      "L'application a rencontré une erreur critique. L'application va maintenant se fermer. Si vous rencontrez cette erreur à plusieurs reprises vous pouvez en faire part au développeur."
     IDS_DONE                "Terminé"
     IDS_BEFORE              "Avant"
     IDS_AFTER               "Après"

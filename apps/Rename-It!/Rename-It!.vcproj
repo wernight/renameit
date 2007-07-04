@@ -436,10 +436,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ProgressDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\src\RenameDlg.cpp"
 				>
 			</File>
@@ -464,7 +460,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\RenamingManager.cpp"
+				RelativePath=".\src\RenamingList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RenamingProgressDlg.cpp"
 				>
 			</File>
 			<File
@@ -658,10 +658,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ProgressDlg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\RenameDlg.h"
 				>
 			</File>
@@ -686,7 +682,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\RenamingManager.h"
+				RelativePath=".\src\RenamingList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RenamingProgressDlg.h"
 				>
 			</File>
 			<File
