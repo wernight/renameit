@@ -5,7 +5,7 @@ rem = Simply execute all the run.bat =
 rem ==================================
 
 set ALL_PASSED=1
-for /D %%d in (*.*) do call .run_test.bat "%%d"
+for %%d in (*.rar) do call .run_test.bat "%%~nd"
 if not %ALL_PASSED%==1 goto one_failed
 
 rem =====================
