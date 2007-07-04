@@ -6,7 +6,7 @@
  * Handle the renaming of a set of renaming operations.
  * The renaming order is handled internally.
  */
-class CRenamingManager
+class CRenamingList
 {
 // Definitions
 public:
@@ -23,6 +23,9 @@ public:
 		stageChecking,		// It's looking for possibly problems.
 		stagePreRenaming,	// It's preparing the renaming (but no renaming done at this stage).
 		stageRenaming,		// It's renaming the files.
+	};
+	enum {
+		stageCount = 3		// Number of possible stages.
 	};
 
 	struct CRenamingOperation
@@ -42,9 +45,9 @@ public:
 	};
 
 // Construction
-	CRenamingManager(void);
-	CRenamingManager(const CFileList& flBefore, const CFileList& flAfter);
-	~CRenamingManager(void);
+	CRenamingList(void);
+	CRenamingList(const CFileList& flBefore, const CFileList& flAfter);
+	~CRenamingList(void);
 
 	void Create(const CFileList& flBefore, const CFileList& flAfter);
 

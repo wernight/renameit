@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RenamingManager.h"
-#include "ProgressDlg.h"
+#include "RenamingList.h"
+#include "RenamingProgressDlg.h"
 #include "RenameErrorDlg.h"
 
 /**
@@ -41,12 +41,16 @@ private:
 	static UINT RenamingThread(LPVOID lpParam);
 
 	void OnRenamed(int nIndex, DWORD dwErrorCode);
-	void OnProgress(CRenamingManager::EStage nStage, int nDone, int nTotal);
+	void OnProgress(CRenamingList::EStage nStage, int nDone, int nTotal);
 	void DisplayError(UINT nMsgID, EErrorLevel nErrorLevel) const;
 	void DisplayError(const CString& strErrorMsg, EErrorLevel nErrorLevel) const;
 
-	CRenamingManager m_rmRenamingManager;
+	CRenamingList m_renamingList;
 	CProgressDlg m_dlgProgress;
 	CRenameErrorDlg m_dlgRenameError;
 	unsigned m_nErrorLevel;
+	unsigned m_nFilesToRename;
+	vector<unsigned> m_uvErrorFlag;
+	int m_nCurrentStage; // The current stage of the renaming process.
+	int m_nPreviousStage; // The last stage for which the progress has been displayed.
 };

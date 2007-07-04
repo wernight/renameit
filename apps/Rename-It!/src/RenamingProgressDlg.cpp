@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "ProgressDlg.h"
+#include "RenamingProgressDlg.h"
 
 
 // CProgressDlg dialog
@@ -11,6 +11,7 @@ IMPLEMENT_DYNAMIC(CProgressDlg, CDialog)
 
 CProgressDlg::CProgressDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CProgressDlg::IDD, pParent)
+	, m_nStage((CRenamingList::EStage) 0)
 	, m_bEnableCancel(false)
 	, m_nDone(0)
 	, m_nTotal(1)
@@ -26,7 +27,9 @@ void CProgressDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PROGRESS_STATIC, m_ctlProgressStatic);
-	DDX_Control(pDX, IDC_PROGRESS, m_ctlProgress);
+	DDX_Control(pDX, IDC_PROGRESS1, m_ctlProgress[0]);
+	DDX_Control(pDX, IDC_PROGRESS2, m_ctlProgress[1]);
+	DDX_Control(pDX, IDC_PROGRESS3, m_ctlProgress[2]);
 }
 
 
@@ -53,6 +56,8 @@ BOOL CProgressDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	m_bRefreshEverything = true;
+
 	// Use default title?
 	if (m_strDialogTitle.IsEmpty())
 		GetWindowText(m_strDialogTitle);
@@ -60,9 +65,6 @@ BOOL CProgressDlg::OnInitDialog()
 	// Use default caption?
 	if (m_strProgressCaption.IsEmpty())
 		m_ctlProgressStatic.GetWindowText(m_strProgressCaption);
-
-	// Enable/Disable cancelling possibility.
-	GetDlgItem(IDCANCEL)->EnableWindow(m_bEnableCancel);
 
 	// Create a timer that will display the current progress.
 	SetTimer(0, 200, NULL);
@@ -99,10 +101,32 @@ void CProgressDlg::UpdateProgress()
 {
 	CString strText;
 
-	// Update the window title.
-	GetWindowText(strText);
-	if (strText != m_strDialogTitle)
+	// Update all the window.
+	if (m_bRefreshEverything)
+	{
 		SetWindowText(m_strDialogTitle);
+
+		// Enable/Disable cancelling possibility.
+		GetDlgItem(IDCANCEL)->EnableWindow(m_bEnableCancel);
+		// We mark the preview ones as completed.
+		for (int i=0; i<m_nStage; ++i)
+		{
+			m_ctlProgress[i].SetRange32(0, 100);
+			m_ctlProgress[i].SetPos(100);
+		}
+
+		// We mark the following ones as not done.
+		for (int i=m_nStage+1; i<CRenamingList::stageCount; ++i)
+		{
+			m_ctlProgress[i].SetRange32(0, 100);
+			m_ctlProgress[i].SetPos(0);
+		}
+
+		// Set the total of the current stage.
+		m_ctlProgress[m_nStage].SetRange32(0, (int)m_nTotal);
+
+		m_bRefreshEverything = false;
+	}
 
 	// Update the progression caption.
 	CString strCurrentProgressCaption = m_strProgressCaption;
@@ -114,8 +138,7 @@ void CProgressDlg::UpdateProgress()
 		m_ctlProgressStatic.SetWindowText(strCurrentProgressCaption);
 
 	// Update the progression bar.
-	m_ctlProgress.SetRange32(0, (int)m_nTotal);
-	m_ctlProgress.SetPos(m_nDone);
+	m_ctlProgress[m_nStage].SetPos(m_nDone);
 }
 
 INT_PTR CProgressDlg::DoModal()

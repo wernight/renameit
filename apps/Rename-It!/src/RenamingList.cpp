@@ -1,22 +1,23 @@
 #include "StdAfx.h"
-#include "RenamingManager.h"
+#include "RenamingList.h"
 #include "OrientedGraph.h"
+#include <math.h>
 
-CRenamingManager::CRenamingManager(void)
+CRenamingList::CRenamingList(void)
 {
-	m_fOnProgress = boost::bind(&CRenamingManager::DefaultProgressCallback, this, _1, _2, _3);
+	m_fOnProgress = boost::bind(&CRenamingList::DefaultProgressCallback, this, _1, _2, _3);
 }
 
-CRenamingManager::CRenamingManager(const CFileList& flBefore, const CFileList& flAfter)
+CRenamingList::CRenamingList(const CFileList& flBefore, const CFileList& flAfter)
 {
 	Create(flBefore, flAfter);
 }
 
-CRenamingManager::~CRenamingManager(void)
+CRenamingList::~CRenamingList(void)
 {
 }
 
-void CRenamingManager::Create(const CFileList& flBefore, const CFileList& flAfter)
+void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 {
 	if (flBefore.GetFileCount() != flAfter.GetFileCount())
 		throw logic_error("The number of files before and after renaming must be the same.");
@@ -27,7 +28,7 @@ void CRenamingManager::Create(const CFileList& flBefore, const CFileList& flAfte
 		m_vRenamingOperations[i] = CRenamingOperation(flBefore[i], flAfter[i]);
 }
 
-vector<unsigned> CRenamingManager::FindErrors() const
+vector<unsigned> CRenamingList::FindErrors() const
 {
 	// Declarations.
 	const int	nFilesCount = (int) m_vRenamingOperations.size();
@@ -41,7 +42,8 @@ vector<unsigned> CRenamingManager::FindErrors() const
 	for (int i=0; i<nFilesCount; ++i)
 	{
 		// Report progress
-		m_fOnProgress(stageChecking, i*95/nFilesCount, 100);
+		const float fBias = 100.0f;
+		m_fOnProgress(stageChecking, (int)((log(i + fBias) - log(fBias))*100.0f/(log(nFilesCount + fBias) - log(fBias)) + 0.5f), 100);
 
 		// If that file isn't already marked as conflicting with another,
 		// test if it's going to conflict with another file.
@@ -155,7 +157,7 @@ vector<unsigned> CRenamingManager::FindErrors() const
 	return uvErrors;
 }
 
-bool CRenamingManager::PerformRenaming()
+bool CRenamingList::PerformRenaming()
 {
 	// Avoid possible strange behaviours for empty lists.
 	if (m_vRenamingOperations.size() == 0)
@@ -230,6 +232,7 @@ bool CRenamingManager::PerformRenaming()
 	// Rename files in topological order.
 	int nDone = 0;
 	int nTotal = (int) m_vRenamingOperations.size();
+	m_fOnProgress(stageRenaming, 0, nTotal);	// Inform we start renaming.
 	bool bError = false;
 	for (int i=0; i<nTotal; ++i)
 		if (!graph[i].HasAntecedent())
@@ -254,7 +257,7 @@ bool CRenamingManager::PerformRenaming()
 	return !bError;
 }
 
-bool CRenamingManager::RenameFile(int nIndex)
+bool CRenamingList::RenameFile(int nIndex)
 {
 	ASSERT(m_vRenamingOperations[nIndex].fnBefore.GetDrive() == m_vRenamingOperations[nIndex].fnAfter.GetDrive());
 

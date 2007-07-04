@@ -10,8 +10,8 @@ CReport::~CReport(void)
 {
 }
 
-bool CReport::SearchAndFixErrors(CRenamingManager& renamingList)
+bool CReport::ShowReportFixErrors(CRenamingList& renamingList, vector<unsigned>& uvErrorFlag)
 {
-	CReportDlg dlgReport(renamingList);
+	CReportDlg dlgReport(renamingList, uvErrorFlag);
 	return dlgReport.DoModal() == IDOK;
 }
