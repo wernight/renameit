@@ -50,8 +50,12 @@
 #define HID_REPLACE_UNFILTEREDNAME              0x18041
 #define HID_WILD_0ORMORE                        0x18042
 #define HID_WILD_1MATCH                         0x18043
-#define HID_SEARCHWILDCARD_ANYSINGLEDIGIT       0x18044
-#define HID_SEARCHWILDCARD_ESCAPESPECIALCHARACTER	0x18045
+#define HID_FILTERS_SEARCHREPLACE               0x18048
+#define HID_FILTERS_CHANGECASE                  0x18049
+#define HID_FILTERS_APPEND                      0x1804A
+#define HID_FILTERS_CROP                        0x1804B
+#define HID_FILTERS_ENUMERATION                 0x1804C
+#define HID_FILTERS_ID3TAG                      0x1804D
  
 // Prompts (IDP_*) 
  
@@ -60,6 +64,8 @@
 #define HIDR_MAINMENU                           0x20087
 #define HIDR_SEARCH_REGEXP                      0x20088
 #define HIDR_SEARCH_WILD                        0x200BB
+#define HIDR_FILTERS_MENU                       0x200CE
+#define HIDR_FILTERS_TOOLBAR                    0x200D4
 #define HIDR_REPLACE                            0x203EB
  
 // Dialogs (IDD_*) 
@@ -71,6 +77,11 @@
 #define HIDD_RENAME                             0x200C5
 #define HIDD_RENAME_ERROR                       0x200CB
 #define HIDD_PROGRESS                           0x200CD
+#define HIDD_WIZ_CASE                           0x200D7
+#define HIDD_WIZ_CROP                           0x200D8
+#define HIDD_WIZ_ID3TAG                         0x200D9
+#define HIDD_WIZ_APPEND                         0x200DA
+#define HIDD_WIZ_ENUM                           0x200DB
 #define HIDD_SEARCH_REPLACE_DIALOG              0x203EE
  
 // Frame Controls (IDW_*) 

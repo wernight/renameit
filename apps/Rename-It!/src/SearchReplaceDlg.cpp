@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 // CSearchReplaceDlg dialog
 
 
-CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, const CFileName& fnOriginalFilename, const CString &filename, CWnd* pParent /*=NULL*/)
+CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileList& previewSamples, CWnd* pParent /*=NULL*/)
 	: CDialog(CSearchReplaceDlg::IDD, pParent)
 	, m_bInitialized(false)
 	, m_filter(filter)
@@ -42,7 +42,6 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, const CFileNa
 	, m_bUse(FALSE)
 	, m_bCaseSensitive(TRUE)
 	, m_bAllOccurences(TRUE)
-	, m_strAfter("")
 	, m_strBefore("")
 	, m_strReplace("")
 	, m_strSearch("")
@@ -55,12 +54,9 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, const CFileNa
 	, m_pToolTip(NULL)
 	, m_strLocale(_T(""))
 	, m_bAdvanced(FALSE)
+	, m_previewSamples(previewSamples)
 {
-	m_fnOriginalFileName = fnOriginalFilename;
-	m_strOriginalRenamedPart = filename;
-
-	m_strBefore = filename;
-	m_strAfter = filename;
+	m_strBefore = previewSamples.GetOriginalFileName().GetFilteredSubstring();
 
 	m_strSearch = m_filter.GetSearch();
 	m_strReplace = m_filter.GetReplace();
@@ -116,7 +112,6 @@ void CSearchReplaceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_REPLACEBUTTON, m_ctlReplaceButton);
 	DDX_Text(pDX, IDC_SEARCH_RICHEDIT, m_strSearch);
 	DDX_Text(pDX, IDC_REPLACE_RICHEDIT, m_strReplace);
-	DDX_Text(pDX, IDC_AFTER, m_strAfter);
 	DDX_Text(pDX, IDC_BEFORE, m_strBefore);
 	DDX_Check(pDX, IDC_MATCHCASE, m_bCaseSensitive);
 	DDX_Check(pDX, IDC_ALL_OCCURRENCES_CHECK, m_bAllOccurences);
@@ -169,7 +164,7 @@ END_MESSAGE_MAP()
 
 BOOL CSearchReplaceDlg::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	__super::OnInitDialog();
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -532,44 +527,32 @@ void CSearchReplaceDlg::UpdateView()
 {
 	UpdateData();
 
+	// Update renaming sample.
+	UpdateSample();
+
 	// Colour the syntax.
 	ColorSearchText();
 	ColorReplacementText();
-
-	// Update renaming sample.
-	UpdateSample();
 }
 
 void CSearchReplaceDlg::ColorSearchText()
 {
 	// Color the search text syntax.
 	SyntaxColor::CSyntaxColor::ClearColoring(m_ctlSearchRichEdit);
-	switch (m_nUse)
-	{
-	case CSearchReplaceFilter::useRegExp:
+	if (m_bUse && m_nUse == CSearchReplaceFilter::useRegExp)
 		m_vSyntaxColor[scRegExpSearch]->ColorSyntax(m_ctlSearchRichEdit);
-		break;
-
-	case CSearchReplaceFilter::useWildcards:
+	if (m_bUse && m_nUse == CSearchReplaceFilter::useWildcards)
 		m_vSyntaxColor[scWildcardsSearch]->ColorSyntax(m_ctlSearchRichEdit);
-		break;
-	}
 }
 
 void CSearchReplaceDlg::ColorReplacementText()
 {
 	// Color the replace text syntax.
 	SyntaxColor::CSyntaxColor::ClearColoring(m_ctlReplaceRichEdit);
-	switch (m_nUse)
-	{
-	case CSearchReplaceFilter::useRegExp:
+	if (m_bUse && m_nUse == CSearchReplaceFilter::useRegExp)
 		m_vSyntaxColor[scRegExpReplace]->ColorSyntax(m_ctlReplaceRichEdit);
-		break;
-
-	case CSearchReplaceFilter::useWildcards:
+	if (m_bUse && m_nUse == CSearchReplaceFilter::useWildcards)
 		m_vSyntaxColor[scWildcardsReplace]->ColorSyntax(m_ctlReplaceRichEdit);
-		break;
-	}
 
 	if (m_bSeries)
 		m_vSyntaxColor[scEnumeration]->ColorSyntax(m_ctlReplaceRichEdit);
@@ -646,13 +629,7 @@ void CSearchReplaceDlg::UpdateSample()
 	m_filter.SetID3TagEnabled(m_bID3Tag != 0);
 
 	// Update the sample
-	m_strAfter = m_strBefore;
-	m_filter.OnStartRenamingList(IFilter::rpFullPath);	// TODO: Not used (but should be fixed, in case it's used later).
-	m_filter.OnStartRenamingFile(m_fnOriginalFileName, m_strOriginalRenamedPart);
-	m_filter.FilterPath(m_fnOriginalFileName, m_strAfter);
-	m_filter.OnEndRenamingFile();
-	m_filter.OnEndRenamingList();
-	GetDlgItem(IDC_AFTER)->SetWindowText( m_strAfter );
+	GetDlgItem(IDC_AFTER)->SetWindowText( m_previewSamples.PreviewRenaming(&m_filter).GetFilteredSubstring() );
 }
 
 void CSearchReplaceDlg::OnMatchWholeText()

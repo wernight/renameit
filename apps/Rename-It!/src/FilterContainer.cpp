@@ -14,69 +14,38 @@ CFilterContainer::CFilterContainer(void)
 {
 }
 
+CFilterContainer::CFilterContainer(const CFilterContainer& copy)
+{
+	m_nPathRenamePart = copy.m_nPathRenamePart;
+
+	// Copy the filters.
+	for (POSITION pos=copy.m_clFilters.GetHeadPosition(); pos!=NULL; )
+		AddFilter(copy.m_clFilters.GetNext(pos));
+}
+
 CFilterContainer::~CFilterContainer(void)
 {
 	RemoveAllFilters();
 }
 
-void CFilterContainer::AddFilter(IFilter* filter)
+void CFilterContainer::AddFilter(const IFilter* filter)
 {
-	m_clFilters.AddTail(filter);
-}
+	// Create a copy of the filter.
+	IFilter* pClone = NULL;
+	if (filter->GetFilterCodeName() == _T("Search and replace"))
+		pClone = new CSearchReplaceFilter();
+	else
+		ASSERT(FALSE);
 
-CString CFilterContainer::FilterString(const CFileName& fnPath) const
-{
-	// What is the filtered part of the path
-	CString strBeforeFilteredPart;
-	CString strFilteredPart;
-	CString strAfterFilteredPart;
-	GetFilteredPart(fnPath, strBeforeFilteredPart, strFilteredPart, strAfterFilteredPart);
-
-	// OnStartRenamingFile
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnStartRenamingFile(fnPath, strFilteredPart);
-
-	// Filter the name through all filters.
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->FilterPath(fnPath, strFilteredPart);
-
-	// OnEndRenamingFile
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnEndRenamingFile();
-
-	return strBeforeFilteredPart + strFilteredPart + strAfterFilteredPart;
-}
-
-int CFilterContainer::ShowDialog(int nFilterIndex, const CFileName& fnSamplePath)
-{
-	// Check that the filter exist
-	POSITION posFilter = m_clFilters.FindIndex(nFilterIndex);
-	if (posFilter == NULL)
+	if (pClone != NULL)
 	{
-		ASSERT(false);
-		return 0;
+		CMapStringToString mapArgs;
+		filter->GetArgs(mapArgs);
+		pClone->SetArgs(mapArgs);
+
+		// Add to the list.
+		m_clFilters.AddTail(pClone);
 	}
-
-	// What is the filtered part of the path
-	CString strBeforeFilteredPart;
-	CString strFilteredPart;
-	CString strAfterFilteredPart;
-	GetFilteredPart(fnSamplePath, strBeforeFilteredPart, strFilteredPart, strAfterFilteredPart);
-
-	// OnStartRenamingFile
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnStartRenamingFile(fnSamplePath, strFilteredPart);
-
-	// Filter the name through all filters.
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=posFilter; )
-		m_clFilters.GetNext(pos)->FilterPath(fnSamplePath, strFilteredPart);
-
-	// OnEndRenamingFile
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnEndRenamingFile();
-
-	// Show Dialog
-	return m_clFilters.GetAt(posFilter)->ShowDialog(fnSamplePath, strFilteredPart);
 }
 
 void CFilterContainer::RemoveFilter(int nFilterIndex)
@@ -176,11 +145,11 @@ BOOL CFilterContainer::SaveFilters(const CString &filename)
 	_ftprintf(file, _T("[General]\n"));
 	{
 		CString strRenameWhat;
-		if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameFolders)
+		if (m_nPathRenamePart & CFilteredFileName::renameFolders)
 			strRenameWhat += "Dir";
-		if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameFilename)
+		if (m_nPathRenamePart & CFilteredFileName::renameFilename)
 			strRenameWhat += "File";
-		if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameExtension)
+		if (m_nPathRenamePart & CFilteredFileName::renameExtension)
 			strRenameWhat += "Ext";
 		_ftprintf(file, _T("RenameWhat=\"%s\"\n"), (LPCTSTR)strRenameWhat);
 		_ftprintf(file, _T("\n"));
@@ -325,75 +294,4 @@ int CFilterContainer::LoadFilters(const CString &filename)
 		m_nPathRenamePart = filterRenameWhat.GetRenameWhat();
 
 	return nFiltersAdded;
-}
-
-void CFilterContainer::OnStartRenamingList() const
-{
-	// OnStartRenamingList
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnStartRenamingList((IFilter::ERenamePart) m_nPathRenamePart);
-}
-
-void CFilterContainer::OnEndRenamingList() const
-{
-	// OnEndRenamingList
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-		m_clFilters.GetNext(pos)->OnEndRenamingList();
-}
-
-// What is the filtered part of the path
-void CFilterContainer::GetFilteredPart(const CFileName& fnFullPath, CString& strBeforePartToRename, CString& strPartToRename, CString& strAfterPartToRename) const
-{
-	// Clear
-	strBeforePartToRename = fnFullPath.GetDrive();
-	strPartToRename.Empty();
-	strAfterPartToRename.Empty();
-
-	// For the special case, if there is only the extension
-	if (m_nPathRenamePart == CRenamePartSelectionCtrl::renameExtension)
-	{
-		strBeforePartToRename = fnFullPath.GetDrive();
-		strBeforePartToRename += fnFullPath.GetDirectory();
-		strBeforePartToRename += fnFullPath.GetFileName();
-		strBeforePartToRename += _T(".");
-		strPartToRename = fnFullPath.GetExtension().Mid(1);
-		strAfterPartToRename.Empty();
-		return;
-	}
-
-	if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameFolders)
-		strPartToRename += fnFullPath.GetDirectory();
-	else
-		if (strPartToRename.IsEmpty())
-			strBeforePartToRename += fnFullPath.GetDirectory();
-		else
-			strAfterPartToRename += fnFullPath.GetDirectory();
-
-	if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameFilename)
-		strPartToRename += fnFullPath.GetFileName();
-	else
-		if (strPartToRename.IsEmpty())
-			strBeforePartToRename += fnFullPath.GetFileName();
-		else
-			strAfterPartToRename += fnFullPath.GetFileName();
-
-	if (m_nPathRenamePart & CRenamePartSelectionCtrl::renameExtension)
-		strPartToRename += fnFullPath.GetExtension();
-	else
-		if (strPartToRename.IsEmpty())
-			strBeforePartToRename += fnFullPath.GetExtension();
-		else
-			strAfterPartToRename += fnFullPath.GetExtension();
-}
-
-CFileList CFilterContainer::FilterFileNames(const CFileList& fileList) const
-{
-	CFileList filteredFileNames;
-
-	OnStartRenamingList();
-	for (int i=0; i<fileList.GetFileCount(); ++i)
-		filteredFileNames.AddFile( FilterString(fileList[i]) );
-	OnEndRenamingList();
-
-	return filteredFileNames;
 }

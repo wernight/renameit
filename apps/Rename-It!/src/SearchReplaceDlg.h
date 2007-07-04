@@ -37,7 +37,7 @@ class CSearchReplaceDlg : public CDialog
 {
 // Construction
 public:
-	CSearchReplaceDlg(CSearchReplaceFilter& filter, const CFileName& fnOriginalFilename, const CString &filename, CWnd* pParent = NULL);   // standard constructor
+	CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileList& previewSamples, CWnd* pParent = NULL);   // standard constructor
 	~CSearchReplaceDlg();
 
 // Dialog Data
@@ -50,7 +50,6 @@ public:
 	CInviteRichEdit m_ctlReplaceRichEdit;
 	CMenuButton	m_ctlSearchButton;
 	CMenuButton	m_ctlReplaceButton;
-	CString	m_strAfter;
 	CString	m_strBefore;
 	CString	m_strReplace;
 	CString	m_strSearch;
@@ -97,8 +96,9 @@ protected:
 	void ColorReplacementText();
 	void UpdateSample();
 
-	CFileName m_fnOriginalFileName;
-	CString m_strOriginalRenamedPart;
+//	CFileName m_fnOriginalFileName;
+//	CString m_strOriginalRenamedPart;
+	IPreviewFileList& m_previewSamples;
 	CToolTipCtrl* m_pToolTip;
 	vector<SyntaxColor::CSyntaxColor*> m_vSyntaxColor;
 

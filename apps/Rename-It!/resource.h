@@ -104,6 +104,13 @@
 #define IDD_RENAME_ERROR                203
 #define IDI_WIN_ERROR                   204
 #define IDD_PROGRESS                    205
+#define IDR_FILTERS_MENU                206
+#define IDR_FILTERS_TOOLBAR             212
+#define IDD_WIZ_CASE                    215
+#define IDD_WIZ_CROP                    216
+#define IDD_WIZ_ID3TAG                  217
+#define IDD_WIZ_APPEND                  218
+#define IDD_WIZ_ENUM                    219
 #define IDC_SERIES_CHECK                1000
 #define IDS_SEARCH_AND_REPLACE          1000
 #define IDC_SERIES_BUTTON               1001
@@ -114,9 +121,11 @@
 #define IDC_SERIE_START_EDIT            1003
 #define IDR_REPLACE                     1003
 #define IDS_SEARCH_INVITE               1003
+#define IDC_CROPCOUNT_SPIN              1003
 #define IDC_RULES_LIST                  1004
 #define IDC_SERIE_STEP_EDIT             1004
 #define IDS_REPLACE_INVITE              1004
+#define IDC_CROPSTARTFROM_SPIN          1004
 #define IDI_RENAMER                     1005
 #define IDS_DESCR_REPLACE_REGEXP        1005
 #define IDC_WHOLE_TEXT                  1006
@@ -125,6 +134,7 @@
 #define IDC_BUTTON_ADDRULE              1007
 #define IDC_MATCHCASE                   1007
 #define IDS_DESCR_REPLACE               1007
+#define IDC_INVERT_CHECK                1007
 #define IDC_BUTTON_ADDFILE              1008
 #define IDC_SEARCHBUTTON                1008
 #define IDS_DESCR_WITH                  1008
@@ -140,6 +150,7 @@
 #define IDS_DESCR_SERIES                1012
 #define IDC_SERIE_STEP_SPIN             1013
 #define IDS_SERIES_DEFAULT_REPLACE      1013
+#define IDC_BUTTON_ADDFILTER2           1013
 #define IDC_BUTTON_ADDFOLDER            1014
 #define IDS_DESCR_WHOLE_TEXT            1014
 #define IDS_TT_BEFORE                   1015
@@ -148,14 +159,25 @@
 #define IDS_TT_ID3                      1017
 #define IDS_TT_LOCALE                   1018
 #define IDS_TT_ALLOCCURENCES            1019
+#define IDC_NATURALCASE                 1020
 #define IDC_ALL_OCCURRENCES_CHECK       1021
+#define IDC_NAMECASE                    1021
+#define IDC_LOWERCASE                   1022
+#define IDC_UPPERCASE                   1023
+#define IDC_INVERTCASE                  1024
+#define IDC_CROPCOUNT                   1025
 #define IDC_USE_CHECK                   1029
 #define IDC_CASE_CHECK                  1030
 #define IDC_BEFORE                      1037
 #define IDC_AFTER                       1038
+#define IDC_SMARTCROP                   1040
+#define IDC_CROPSTARTFROM               1042
 #define IDC_STATIC_RULES                1052
 #define IDC_EDIRECTORY                  1063
 #define IDC_BROWSE                      1064
+#define IDC_LEFTSIDE                    1069
+#define IDC_RIGHTSIDE                   1070
+#define IDC_ID3FORMAT                   1079
 #define IDC_WEB_EDIT                    1082
 #define IDC_REPORT_LIST                 1091
 #define IDC_NEW_EDIT                    1094
@@ -231,15 +253,19 @@
 #define ID_REPLACE_UNFILTEREDNAME       32833
 #define ID_WILD_0ORMORE                 32834
 #define ID_WILD_1MATCH                  32835
-#define ID_SEARCHWILDCARD_ANYSINGLEDIGIT 32836
-#define ID_SEARCHWILDCARD_ESCAPESPECIALCHARACTER 32837
+#define ID_FILTERS_SEARCHREPLACE        32840
+#define ID_FILTERS_CHANGECASE           32841
+#define ID_FILTERS_APPEND               32842
+#define ID_FILTERS_CROP                 32843
+#define ID_FILTERS_ENUMERATION          32844
+#define ID_FILTERS_ID3TAG               32845
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        206
-#define _APS_NEXT_COMMAND_VALUE         32840
+#define _APS_NEXT_RESOURCE_VALUE        220
+#define _APS_NEXT_COMMAND_VALUE         32863
 #define _APS_NEXT_CONTROL_VALUE         1133
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Rename-It!"
 	ProjectGUID="{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}"
 	RootNamespace="RenameIt"
@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Unicode Release|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			CharacterSet="1"
@@ -107,7 +107,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			CharacterSet="2"
@@ -196,7 +196,7 @@
 		<Configuration
 			Name="Unicode Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -283,7 +283,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			CharacterSet="2"
@@ -376,6 +376,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\AppendWizard.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CaseWizard.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\CommandLineAnalyser.cpp"
 				>
 			</File>
@@ -384,11 +392,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\CropWizard.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\EnumWizard.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\ExplorerListCtrl.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\FilterContainer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FilterWizard.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ID3TagWizard.cpp"
 				>
 			</File>
 			<File
@@ -538,6 +562,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\src\AppendWizard.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CaseWizard.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\CommandLineAnalyser.h"
 				>
 			</File>
@@ -546,7 +578,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\CropWizard.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\DetectNonDotNetCC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\EnumWizard.h"
 				>
 			</File>
 			<File
@@ -566,6 +606,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\FilteredFileName.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FilterWizard.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ID3TagWizard.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\IFilter.h"
 				>
 			</File>
@@ -575,6 +627,14 @@
 			</File>
 			<File
 				RelativePath=".\src\InviteRichEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\IPreviewFileList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MemoryFileList.h"
 				>
 			</File>
 			<File
@@ -591,6 +651,10 @@
 			</File>
 			<File
 				RelativePath=".\src\OrientedGraph.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\PreviewFileList.h"
 				>
 			</File>
 			<File
@@ -833,6 +897,10 @@
 			</File>
 			<File
 				RelativePath=".\res\WinError.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\wiz_toolbar.bmp"
 				>
 			</File>
 		</Filter>

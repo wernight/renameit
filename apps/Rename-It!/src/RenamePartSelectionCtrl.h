@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 
 // Notification message sent every time the part to be renamed is modified
 #define RPS_SELCHANGE 0x1000
@@ -13,13 +12,6 @@ class CRenamePartSelectionCtrl : public CRichEditCtrl
 public:
 	CRenamePartSelectionCtrl();
 	virtual ~CRenamePartSelectionCtrl();
-
-	// Parts to be renamed
-	enum ERenamePartFlags {
-		renameFolders = 0x01,
-		renameFilename = 0x02,
-		renameExtension = 0x04
-	};
 
 	// Retrieve the selected parts to be renamed
 	UINT GetRenameParts() const {
@@ -52,5 +44,5 @@ protected:
 		}
 	};
 	std::vector<POSSIBLE_SELECTION> m_vPossibleSelections;
-	UINT	m_nRenamePart;
+	UINT	m_nRenamePart;	// A set of bit flags of ERenamePartFlags
 };

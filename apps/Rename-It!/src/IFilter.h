@@ -17,43 +17,42 @@
 */
 
 #pragma once
+class IFilter;
 
 #include "FileName.h"
+#include "IPreviewFileList.h"
 
 class IFilter
 {
 	friend class CFilterContainer;
 
-// Definitions
-public:
-	enum ERenamePart
-	{
-		rpFileNameWithoutExtension = 0,		// Rename only the file name without it's extension. If it's a folder, rename the last sub-folder only.
-		rpFileNameWithExtension,			// Rename the file name, taking in count it's extension. If it's a folder, rename the last sub-folder only (same as rpFileNameWithoutExtension).
-		rpFullPath							// Rename the full path.
-	};
-
 // Constructors
+public:
 	virtual ~IFilter() {};
 
 // Operations
-protected:// Shouldn't access to this because the OnStart/End have to be managed by FilterContainer.
+protected:	// Protected to make sure the caller uses OnStartRenamingList and OnEndRenamingList.
+	// Should be called before filtering a list of files with FilterPath.
+	virtual void OnStartRenamingList() = 0;
+
 	/** Filter the file name.
-	 * @param originalFilename	Path to the original file name.
-	 * @param filename			Current new file name, without extension.
-	 * @param ext				Current new extension.
+	 * OnStartRenamingList and OnEndRenamingList should be called.
+	 * @param[in,out] strFileName		Current new part being renamed of the file name. Contains the new name after.
+	 * @param[in] fnOriginalFilename	Path to the original file name (the file should exist).
+	 * @param[in] strUnfilteredName		The part being renaming, before any filter is applied.
 	 * @return True if file should be renamed.
 	 */
-	virtual void FilterPath(const CFileName& fnOriginalFilename, CString &strFilename) = 0;
-public:
+	virtual void FilterPath(CString& strFileName, const CFileName& fnOriginalFilename, const CString& strUnfilteredName) = 0;
 
-	/** Display a window to configure the filter.
-	 * @param originalFilename	Original sample file name.
-	 * @param filename			Current sample file name.
-	 * @param ext				Current sample file extension.
+	// Should be called after filtering a list of files.
+	virtual void OnEndRenamingList() = 0;
+
+public:
+	/** Show the filter edition dialog.
+	 * @param previewSamples	An object that can preview the effect of the filter.
 	 * @return The value returned by CDialog::DoModal().
 	 */
-	virtual int ShowDialog(const CFileName& fnOriginalFilename, const CString& strFilename) = 0;
+	virtual int ShowDialog(IPreviewFileList& previewSamples) = 0;
 
 // Attributes
 	// Return the unique name of the filter.
@@ -73,11 +72,4 @@ public:
 
 	// Define filter's parameters.
 	virtual void SetArgs(const CMapStringToString& mapArgs) = 0;
-
-// Events
-protected:
-	virtual void OnStartRenamingList(ERenamePart nPathRenamePart) = 0;
-	virtual void OnStartRenamingFile(const CFileName& fnPath, const CString& strName) = 0;
-	virtual void OnEndRenamingFile() = 0;
-	virtual void OnEndRenamingList() = 0;
 };

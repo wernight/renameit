@@ -32,10 +32,6 @@ public:
 		m_strExtension.ReleaseBuffer();
 	}
 
-	~CFileName(void)
-	{
-	}
-
 // Attributes
 	inline const CString& GetFullPath() const {
 		return m_strFullPath;
@@ -70,6 +66,32 @@ public:
 		return _tcsicmp_l(m_strFullPath, other.m_strFullPath, m_liFileSystemLocale);
 	}
 
+	inline int FSCompare(const CFileName& other, int nLength) const {
+		static const _locale_t m_liFileSystemLocale = _create_locale(LC_ALL, "");
+		return _tcsnicmp_l(m_strFullPath, other.m_strFullPath, nLength, m_liFileSystemLocale);
+	}
+
+	inline void SetTo(const CString& strFullPath)
+	{
+		// Save the full path.
+		m_strFullPath = strFullPath;
+
+		// Split the path into components.
+		_tsplitpath_s((LPCTSTR)m_strFullPath,
+			m_strDrive.GetBuffer(_MAX_DRIVE),
+			_MAX_DRIVE,
+			m_strDirectory.GetBuffer(_MAX_DIR),
+			_MAX_DIR,
+			m_strFileName.GetBuffer(_MAX_FNAME),
+			_MAX_FNAME,
+			m_strExtension.GetBuffer(_MAX_EXT),
+			_MAX_EXT);
+		m_strDrive.ReleaseBuffer();
+		m_strDirectory.ReleaseBuffer();
+		m_strFileName.ReleaseBuffer();
+		m_strExtension.ReleaseBuffer();
+	}
+
 	inline operator const CString&() const {
 		return m_strFullPath;
 	}
@@ -83,7 +105,7 @@ public:
 	}
 
 // Private
-private:
+protected:
 	CString	m_strFullPath;
 
 	CString m_strDrive;

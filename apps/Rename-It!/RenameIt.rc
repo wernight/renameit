@@ -46,6 +46,7 @@ IDB_DELALL              BITMAP                  "res\\delete all.bmp"
 IDB_UNSELECT_ALL        BITMAP                  "res\\unselect all.bmp"
 IDB_INVERSE_SELECTION   BITMAP                  "res\\inverse selection.bmp"
 IDB_SELECT_ALL          BITMAP                  "res\\select all.bmp"
+IDR_FILTERS_TOOLBAR     BITMAP                  "res\\wiz_toolbar.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -63,6 +64,21 @@ IDI_REN_ERROR           ICON                    "res\\error.ico"
 IDI_INVALIDNAME         ICON                    "res\\badname.ico"
 IDI_RENAMER             ICON                    "res\\renamer.ico"
 IDI_WIN_ERROR           ICON                    "res\\WinError.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_FILTERS_TOOLBAR TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILTERS_CHANGECASE
+    BUTTON      ID_FILTERS_APPEND
+    BUTTON      ID_FILTERS_CROP
+    BUTTON      ID_FILTERS_ENUMERATION
+    BUTTON      ID_FILTERS_ID3TAG
+END
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -107,8 +123,9 @@ BEGIN
     PUSHBUTTON      "&Up",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
     PUSHBUTTON      "&Dd",IDC_BUTTON_MOVEDOWN,211,60,14,14,WS_DISABLED
     DEFPUSHBUTTON   "Add &filter",IDC_BUTTON_ADDRULE,15,78,50,14
-    PUSHBUTTON      "Filters",IDC_BUTTON_FILTERLIST,70,78,50,14
-    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVERULE,125,78,50,14
+    PUSHBUTTON      "v",IDC_BUTTON_ADDFILTER2,64,78,11,14
+    PUSHBUTTON      "Filters",IDC_BUTTON_FILTERLIST,79,78,43,14
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVERULE,126,78,50,14
     PUSHBUTTON      "Remove all",IDC_BUTTON_CLEARRULE,180,78,50,14
     PUSHBUTTON      "Add f&iles",IDC_BUTTON_ADDFILE,7,108,50,14
     PUSHBUTTON      "Add f&olders",IDC_BUTTON_ADDFOLDER,62,108,50,14
@@ -221,6 +238,73 @@ BEGIN
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
 END
 
+IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Case"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Type",IDC_STATIC,3,7,155,55
+    CONTROL         "&lowercase",IDC_LOWERCASE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,13,18,48,10
+    CONTROL         "&UPPERCASE",IDC_UPPERCASE,"Button",BS_AUTORADIOBUTTON,13,31,55,10
+    CONTROL         "&Sentence case",IDC_NATURALCASE,"Button",BS_AUTORADIOBUTTON,83,18,64,10
+    CONTROL         "&Word Case",IDC_NAMECASE,"Button",BS_AUTORADIOBUTTON,83,31,51,10
+    CONTROL         "&iNVERT cASE",IDC_INVERTCASE,"Button",BS_AUTORADIOBUTTON,83,44,62,10
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,72,235,1
+    LTEXT           "Before:",IDC_STATIC,3,85,25,8
+    EDITTEXT        IDC_BEFORE,36,82,201,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "After:",IDC_STATIC,3,104,20,8
+    EDITTEXT        IDC_AFTER,36,101,201,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,187,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,187,24,50,14
+END
+
+IDD_WIZ_CROP DIALOGEX 0, 0, 240, 148
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Crop the Name"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Crop from",IDC_STATIC,3,7,115,25
+    CONTROL         "Left side",IDC_LEFTSIDE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,13,17,43,10
+    CONTROL         "Right side",IDC_RIGHTSIDE,"Button",BS_AUTORADIOBUTTON,63,17,47,10
+    LTEXT           "Start",IDC_STATIC,3,36,31,8
+    EDITTEXT        IDC_CROPSTARTFROM,3,47,32,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_CROPSTARTFROM_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,37,47,11,14
+    LTEXT           "Count",IDC_STATIC,61,36,20,8
+    EDITTEXT        IDC_CROPCOUNT,61,47,32,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_CROPCOUNT_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT,93,47,11,14
+    CONTROL         "Invert",IDC_INVERT_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,49,36,10
+    LTEXT           "Smart Crop:",IDC_STATIC,3,68,40,8
+    EDITTEXT        IDC_SMARTCROP,3,79,235,14,ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY,WS_EX_NOPARENTNOTIFY
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,102,235,1
+    LTEXT           "Before:",IDC_STATIC,3,115,25,8
+    EDITTEXT        IDC_BEFORE,36,112,202,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "After:",IDC_STATIC,3,134,20,8
+    EDITTEXT        IDC_AFTER,36,131,202,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,188,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,188,24,50,14
+END
+
+IDD_WIZ_ID3TAG DIALOGEX 0, 0, 326, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ID3 Tag (v1 and v2) Reader"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,273,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,273,24,50,14
+    LTEXT           "Rename to this:",IDC_STATIC,3,7,52,8
+    EDITTEXT        IDC_ID3FORMAT,3,17,185,14,ES_AUTOHSCROLL
+    GROUPBOX        "Information",IDC_STATIC,3,44,320,83
+    LTEXT           "%1 = ID3 Track\n%2 = ID3 Artist\n%3 = ID3 Title\n%4 = ID3 Album\n%5 = ID3 Year\n%6 = ID3 Comment\n%7 = ID3 Genre\n%8 = Original filename",IDC_STATIC,11,57,86,67
+    LTEXT           "You can use any of these id3-tags. If you have used another id3-tagger earlier you shouldn't have any troubles with these.",IDC_STATIC,103,57,201,22
+    LTEXT           "Example:\n""%1 - %3"" will get you a filename like this ""01 - Songtitle""",IDC_STATIC,103,81,201,20
+    LTEXT           "If a file doesn't contain an id3-tag it will keep the original filename.",IDC_STATIC,103,104,213,19
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,137,320,1
+    LTEXT           "Before:",IDC_STATIC,3,150,25,8
+    EDITTEXT        IDC_BEFORE,36,147,287,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "After:",IDC_STATIC,3,169,20,8
+    EDITTEXT        IDC_AFTER,36,166,287,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -298,6 +382,30 @@ BEGIN
         RIGHTMARGIN, 203
         TOPMARGIN, 7
         BOTTOMMARGIN, 76
+    END
+
+    IDD_WIZ_CASE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 115
+    END
+
+    IDD_WIZ_CROP, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 145
+    END
+
+    IDD_WIZ_ID3TAG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 323
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 180
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -665,21 +773,22 @@ CAPTION "Rename-It!"
 MENU IDR_MAINMENU
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
+    LTEXT           "Partie à renommer :",IDC_STATIC,7,10,63,8
     CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,73,7,119,14
     GROUPBOX        "Filtres de renommage",IDC_STATIC_RULES,7,25,223,72
     CONTROL         "List4",IDC_RULES_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,15,35,195,39
     PUSHBUTTON      "^",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
     PUSHBUTTON      "v",IDC_BUTTON_MOVEDOWN,211,60,14,14,WS_DISABLED
     DEFPUSHBUTTON   "Ajouter filtre",IDC_BUTTON_ADDRULE,15,78,50,14
-    PUSHBUTTON      "Filtres",IDC_BUTTON_FILTERLIST,70,78,50,14
-    PUSHBUTTON      "Retirer",IDC_BUTTON_REMOVERULE,125,78,50,14
+    PUSHBUTTON      "v",IDC_BUTTON_ADDFILTER2,64,78,11,14
+    PUSHBUTTON      "Filtres",IDC_BUTTON_FILTERLIST,80,78,39,14
+    PUSHBUTTON      "Retirer",IDC_BUTTON_REMOVERULE,124,78,50,14
     PUSHBUTTON      "Tout retirer",IDC_BUTTON_CLEARRULE,180,78,50,14
     PUSHBUTTON      "Ajouter fichier",IDC_BUTTON_ADDFILE,7,108,50,14
     PUSHBUTTON      "Ajouter dossier",IDC_BUTTON_ADDFOLDER,62,108,50,14
     CONTROL         "List3",IDC_FILENAMES_IN,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_EDITLABELS | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,0,125,237,53
     PUSHBUTTON      "Renommer",IDOK,114,108,60,14,WS_DISABLED
     PUSHBUTTON      "Annuler",IDCANCEL,180,108,50,14
-    LTEXT           "Partie à renommer :",IDC_STATIC,7,10,63,8
 END
 
 IDD_NOT_ADDED_FILES DIALOGEX 0, 0, 288, 193
@@ -815,6 +924,93 @@ BEGIN
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,18,27,173,14
 END
 
+IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Changer la casse"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Type",IDC_STATIC,2,7,155,55
+    CONTROL         "minuscu&le",IDC_LOWERCASE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,12,18,47,10
+    CONTROL         "MAJ&USCULE",IDC_UPPERCASE,"Button",BS_AUTORADIOBUTTON,12,31,55,10
+    CONTROL         "&Phrase complète",IDC_NATURALCASE,"Button",BS_AUTORADIOBUTTON,82,18,70,10
+    CONTROL         "&Mot Unique",IDC_NAMECASE,"Button",BS_AUTORADIOBUTTON,82,31,52,10
+    CONTROL         "&iNVERSER",IDC_INVERTCASE,"Button",BS_AUTORADIOBUTTON,82,44,50,10
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,72,235,1
+    LTEXT           "Avant :",IDC_STATIC,2,85,25,8
+    EDITTEXT        IDC_BEFORE,36,82,201,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Après :",IDC_STATIC,2,104,24,8
+    EDITTEXT        IDC_AFTER,36,101,201,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,187,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,187,24,50,14
+END
+
+IDD_WIZ_CROP DIALOGEX 0, 0, 240, 148
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rogneur de nom"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Rogner depuis la",IDC_STATIC,3,7,115,25
+    CONTROL         "Gauche",IDC_LEFTSIDE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,13,17,40,10
+    CONTROL         "Droite",IDC_RIGHTSIDE,"Button",BS_AUTORADIOBUTTON,63,17,35,10
+    LTEXT           "Début",IDC_STATIC,3,36,31,8
+    EDITTEXT        IDC_CROPSTARTFROM,3,47,32,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_CROPSTARTFROM_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS,37,47,11,14
+    LTEXT           "Compte",IDC_STATIC,61,36,26,8
+    EDITTEXT        IDC_CROPCOUNT,61,47,32,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_CROPCOUNT_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT,93,47,11,14
+    CONTROL         "Inverser",IDC_INVERT_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,132,49,43,10
+    LTEXT           "Rogneur intelligent :",IDC_STATIC,3,68,66,8
+    EDITTEXT        IDC_SMARTCROP,3,79,234,14,ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY,WS_EX_NOPARENTNOTIFY
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,102,233,1
+    LTEXT           "Avant :",IDC_STATIC,3,115,25,8
+    EDITTEXT        IDC_BEFORE,36,112,201,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Après :",IDC_STATIC,3,134,24,8
+    EDITTEXT        IDC_AFTER,36,131,201,14,ES_AUTOHSCROLL | ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,187,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,187,24,50,14
+END
+
+IDD_WIZ_ID3TAG DIALOGEX 0, 0, 326, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Lecteur de tags ID3 (v1 et v2)"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,273,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,273,24,50,14
+    LTEXT           "Expression de renommage :",IDC_STATIC,3,7,90,8
+    EDITTEXT        IDC_ID3FORMAT,3,17,185,14,ES_AUTOHSCROLL
+    GROUPBOX        "Information",IDC_STATIC,3,44,320,83
+    LTEXT           "%1 = ID3 Track\n%2 = ID3 Artist\n%3 = ID3 Title\n%4 = ID3 Album\n%5 = ID3 Year\n%6 = ID3 Comment\n%7 = ID3 Genre\n%8 = Original filename",IDC_STATIC,11,57,86,67
+    LTEXT           "You can use any of these id3-tags. If you have used another id3-tagger earlier you shouldn't have any troubles with these.",IDC_STATIC,103,57,201,22
+    LTEXT           "Example:\n""%1 - %3"" will get you a filename like this ""01 - Songtitle""",IDC_STATIC,103,81,201,20
+    LTEXT           "If a file doesn't contain an id3-tag it will keep the original filename.",IDC_STATIC,103,104,213,19
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,137,320,1
+    LTEXT           "Avant :",IDC_STATIC,3,150,25,8
+    EDITTEXT        IDC_BEFORE,36,147,287,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Après :",IDC_STATIC,3,169,24,8
+    EDITTEXT        IDC_AFTER,36,166,287,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
+IDD_WIZ_APPEND DIALOGEX 0, 0, 186, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Append Name"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,133,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,133,24,50,14
+    LTEXT           "TODO",IDC_STATIC,37,41,20,8
+END
+
+IDD_WIZ_ENUM DIALOGEX 0, 0, 186, 90
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Append Name"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,133,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,133,24,50,14
+    LTEXT           "TODO",IDC_STATIC,37,41,20,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -891,6 +1087,46 @@ BEGIN
         RIGHTMARGIN, 203
         TOPMARGIN, 7
         BOTTOMMARGIN, 76
+    END
+
+    IDD_WIZ_CASE, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 115
+    END
+
+    IDD_WIZ_CROP, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 145
+    END
+
+    IDD_WIZ_ID3TAG, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 323
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 180
+    END
+
+    IDD_WIZ_APPEND, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
+    END
+
+    IDD_WIZ_ENUM, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1001,6 +1237,20 @@ BEGIN
         BEGIN
             MENUITEM "Tagget expression (characters matching '*')\t*", ID_TAGGETBYSTAR
         END
+    END
+END
+
+IDR_FILTERS_MENU MENU 
+BEGIN
+    POPUP "Filters"
+    BEGIN
+        MENUITEM "Search && Replace",           ID_FILTERS_SEARCHREPLACE
+        MENUITEM SEPARATOR
+        MENUITEM "Change Case",                 ID_FILTERS_CHANGECASE
+        MENUITEM "Append",                      ID_FILTERS_APPEND
+        MENUITEM "Crop",                        ID_FILTERS_CROP
+        MENUITEM "Enumeration",                 ID_FILTERS_ENUMERATION
+        MENUITEM "MP3 ID3 Tag",                 ID_FILTERS_ID3TAG
     END
 END
 

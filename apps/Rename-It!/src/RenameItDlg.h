@@ -31,7 +31,8 @@
 #include "NotAddedFilesDlg.h"
 #include "ExplorerListCtrl.h"
 #include "RenamePartSelectionCtrl.h"
-#include "FileList.h"
+#include "MemoryFileList.h"
+#include "PreviewFileList.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CRenameItDlg dialog
@@ -48,13 +49,7 @@ private:
 	//{{AFX_DATA(CRenameItDlg)
 	enum { IDD = IDD_RENAMEIT_DIALOG };
 
-	struct RENAME_FILE
-	{
-		bool bChecked;
-		CFileName fnBefore;
-		CFileName fnAfter;
-	};
-
+	CMemoryFileList m_flFiles;
 	bool m_bDialogInit;
 	HICON m_hIcon;
 	CButton	m_ctlButtonMoveUp;
@@ -62,7 +57,6 @@ private:
 	CListCtrl m_ctlListFilters;
 	CFilterContainer m_fcFilters;
 	CExplorerListCtrl m_ctlListFilenames;
-	vector<RENAME_FILE> m_vFilesNames;
 	int m_nUpdatesFreeze;	// When >0 the UpdateFilelist() does nothing. See Push/PopFileListUpdateFreeze.
 	CNotAddedFilesDlg m_dlgNotAddedFiles;
 	CStatusBarCtrl m_statusBar;
@@ -81,6 +75,7 @@ private:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnButtonAddRenamer();
+	afx_msg void OnBnClickedButtonAddfilter2();
 	afx_msg void OnButtonFilterlist();
 	afx_msg void OnHelpAbout();
 	afx_msg void OnFileOpen();
@@ -168,6 +163,7 @@ private:
 	afx_msg void OnContextHelp();
 	bool RenameAllFiles(unsigned nRenamingControllerErrorLevel=0xFFFF);
 	void ToggleCheckBox(int nItem);
+	IPreviewFileList* GetPreviewSamples();
 };
 
 //{{AFX_INSERT_LOCATION}}

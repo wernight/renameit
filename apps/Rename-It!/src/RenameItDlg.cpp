@@ -18,7 +18,7 @@
 // RenameItDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "RenameIt.h"
 #include "RenameItDlg.h"
 
@@ -39,6 +39,13 @@
 
 #include "SearchReplaceFilter.h"
 #include "CommandLineAnalyser.h"
+
+// Wizards
+#include "CaseWizard.h"
+#include "AppendWizard.h"
+#include "CropWizard.h"
+#include "EnumWizard.h"
+#include "ID3TagWizard.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -187,6 +194,7 @@ BEGIN_MESSAGE_MAP(CRenameItDlg, CResizingDialog)
 	ON_NOTIFY(NM_CLICK, IDC_FILENAMES_IN, &CRenameItDlg::OnNMClickFilenamesIn)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_FILENAMES_IN, &CRenameItDlg::OnLvnKeydownFilenamesIn)
 	ON_WM_KEYDOWN()
+	ON_BN_CLICKED(IDC_BUTTON_ADDFILTER2, &CRenameItDlg::OnBnClickedButtonAddfilter2)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -235,7 +243,7 @@ BOOL CRenameItDlg::OnInitDialog()
 	ProcessCommandLine( strCmd );
 
 	// If there are files to rename.
-	if (!m_vFilesNames.empty())
+	if (!m_flFiles.IsEmpty())
 	{
 		CConfigure		config;
 		if (m_fcFilters.GetFilterCount() == 0 && config.AutoAddRenamer())
@@ -329,7 +337,7 @@ void CRenameItDlg::OnOK()
 
 void CRenameItDlg::OnCancel() 
 {
-	if (m_vFilesNames.empty()
+	if (m_flFiles.IsEmpty()
 		|| m_ctlListFilters.GetItemCount() == 0
 		|| AfxMessageBox(IDS_CONFIRM_EXIT, MB_YESNO) == IDYES)
 		OnFileExit();
@@ -337,7 +345,64 @@ void CRenameItDlg::OnCancel()
 
 void CRenameItDlg::OnButtonAddRenamer() 
 {
-	AddFilter( new CSearchReplaceFilter() );
+	boost::scoped_ptr<IFilter> filter(new CSearchReplaceFilter());
+	AddFilter(filter.get());
+}
+
+void CRenameItDlg::OnBnClickedButtonAddfilter2()
+{
+	// Get the point where the menu is to be displayed.
+	CRect rect;
+	GetDlgItem(IDC_BUTTON_ADDRULE)->GetWindowRect(rect);
+	POINT point;
+	point.x = rect.left;
+	point.y = rect.bottom-1;
+
+	// Show menu
+	CNewMenu menu;
+    VERIFY( menu.LoadMenu(IDR_FILTERS_MENU) );
+	CNewMenu* pmenuPopup = (CNewMenu*) menu.GetSubMenu(0);
+    ASSERT(pmenuPopup != NULL);
+	pmenuPopup->LoadToolBar(IDR_FILTERS_TOOLBAR);
+	pmenuPopup->SetDefaultItem(ID_FILTERS_SEARCHREPLACE);
+    DWORD dwSelectionMade = pmenuPopup->TrackPopupMenu(
+		(TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_NONOTIFY|TPM_RETURNCMD),
+		point.x, point.y, this);
+
+	// Clean Up and Return
+    pmenuPopup->DestroyMenu();
+
+	// Clean Up
+	menu.DestroyMenu();
+
+	std::auto_ptr<CFilterWizard> wizard;
+	switch (dwSelectionMade)
+	{
+	case 0:
+		// Nothing selected...
+		break;
+
+	case ID_FILTERS_SEARCHREPLACE:
+		OnButtonAddRenamer();
+		break;
+
+	case ID_FILTERS_CHANGECASE:		wizard.reset(new Wizard::CCaseWizard()); break;
+	case ID_FILTERS_APPEND:			wizard.reset(new Wizard::CAppendWizard()); break;
+	case ID_FILTERS_CROP:			wizard.reset(new Wizard::CCropWizard()); break;
+	case ID_FILTERS_ENUMERATION:	wizard.reset(new Wizard::CEnumWizard()); break;
+	case ID_FILTERS_ID3TAG:			wizard.reset(new Wizard::CID3TagWizard()); break;
+
+	default:
+		ASSERT(false);
+	}
+
+	if (wizard.get() != NULL)
+	{
+		scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples());
+		shared_ptr<IFilter> filter(wizard->Execute(*previewSamples));
+		if (filter.get() != NULL)
+			AddFilter(filter.get());
+	}
 }
 
 void CRenameItDlg::OnButtonFilterlist() 
@@ -550,27 +615,31 @@ void CRenameItDlg::UpdateFilelist()
 	ASSERT(m_nUpdatesFreeze == 0);
 
 	// "Insert/Remove" items in our virtual list.
-	m_ctlListFilenames.SetItemCount((int) m_vFilesNames.size());
+	m_ctlListFilenames.SetItemCount(m_flFiles.GetFileCount());
 
-	// Preview the renaming.
+	// Filter all the checked files.
+	m_fcFilters.FilterFileNames(
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// Begin
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// First
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),		// Last
+		m_flFiles.GetOutputIteratorAt(m_flFiles.GetFirstChecked()));	// Result
+
+	// Find how many files will be renamed, and keep the same name for unchecked files.
 	int nRenameCount = 0;	// Number of files affected.
-	m_fcFilters.OnStartRenamingList();
-	for (vector<RENAME_FILE>::iterator iter=m_vFilesNames.begin(); iter!=m_vFilesNames.end(); ++iter)
+	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
 	{
-		if (iter->bChecked)
+		if (item.bChecked)
 		{
 			// Preview the renamed file name.
-			iter->fnAfter = m_fcFilters.FilterString(iter->fnBefore);
-			if (iter->fnAfter != iter->fnBefore)
+			if (item.fnAfter != item.fnBefore)
 				++nRenameCount;
 		}
 		else
 		{
 			// Keep the same name as before.
-			iter->fnAfter = iter->fnBefore;
+			item.fnAfter = item.fnBefore;
 		}
 	}
-	m_fcFilters.OnEndRenamingList();
 
 	// Update the view.
 	m_ctlListFilenames.RedrawItems(0, m_ctlListFilenames.GetItemCount());
@@ -581,13 +650,13 @@ void CRenameItDlg::UpdateFilelist()
 				strFilesCount,
 				strStatus;
 		strRenameCount.Format(_T("%d"), nRenameCount);
-		strFilesCount.Format(_T("%d"), m_vFilesNames.size());
+		strFilesCount.Format(_T("%d"), m_flFiles.GetFileCount());
 		AfxFormatString2(strStatus, IDS_STATUS_RENAME_COUNT, strRenameCount, strFilesCount);
 		m_statusBar.SetText(strStatus, 0, 0);
 	}
 
 	// Enable the renaming only when there are some files to rename.
-	GetDlgItem(IDOK)->EnableWindow( !m_vFilesNames.empty() );
+	GetDlgItem(IDOK)->EnableWindow( !m_flFiles.IsEmpty() );
 }
 
 // Update the filter list control with the new filters and their descriptions
@@ -656,7 +725,7 @@ void CRenameItDlg::OnButtonClearfiles()
 	PushUpdatesFreeze();
 
 	// Clear the files in the list.
-	m_vFilesNames.clear();
+	m_flFiles.RemoveAll();
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -688,7 +757,7 @@ void CRenameItDlg::OnButtonRemovefile()
 	// Erase them starting for the last one so that the index always match.
 	sort(vIndexesToErase.begin(), vIndexesToErase.end(), greater<int>());
 	for (unsigned i=0; i<vIndexesToErase.size(); ++i)
-		m_vFilesNames.erase(m_vFilesNames.begin() + vIndexesToErase[i]);
+		m_flFiles.RemoveAt(m_flFiles.GetIteratorAt(vIndexesToErase[i]));
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -791,14 +860,13 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	}
 
 	// Check if already in the list
-	for (vector<RENAME_FILE>::iterator iter=m_vFilesNames.begin(); iter!=m_vFilesNames.end(); ++iter)
-		if (iter->fnBefore == fnFileName)
-		{
-			CString	strErrorMessage;
-			strErrorMessage.LoadString(IDS_FILE_ALREADY_EXIST);
-			m_dlgNotAddedFiles.AddFile(strFileName, strErrorMessage);
-			return false;
-		}
+	if (m_flFiles.FindFile(fnFileName) != m_flFiles.GetTail())
+	{
+		CString	strErrorMessage;
+		strErrorMessage.LoadString(IDS_FILE_ALREADY_EXIST);
+		m_dlgNotAddedFiles.AddFile(strFileName, strErrorMessage);
+		return false;
+	}
 
 	// Check file's attributes
 	DWORD dwAttr = GetFileAttributes(fnFileName.GetFullPath());
@@ -811,8 +879,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	}
 
 	// Add file name to memory list
-	RENAME_FILE rf = {true, fnFileName, fnFileName};
-	m_vFilesNames.push_back(rf);
+	m_flFiles.AddFile(fnFileName);
 	return true;
 }
 
@@ -1311,32 +1378,11 @@ BOOL CRenameItDlg::OnContextMenuRules(CPoint point)
 
 BOOL CRenameItDlg::EditRule(int nRuleItem)
 {
-	CConfigure	config;
-	IFilter *filter;
-
-	// Get the sample file name
-	CFileName fnOriginalFileName;
-	if (m_vFilesNames.empty())
-	{
-		// Load sample path is none is provided.
-		CString strSamplePath;
-		strSamplePath.LoadString(IDS_SAMPLE_PATH);
-		fnOriginalFileName = strSamplePath;
-	}
-	else
-	{
-		int nFocusedItem = m_ctlListFilenames.GetNextItem(-1, LVNI_FOCUSED);
-		if (nFocusedItem >= 0)
-			// Use the focused file.
-			fnOriginalFileName = m_vFilesNames[nFocusedItem].fnBefore;
-		else
-			// By default select the first file.
-			fnOriginalFileName = m_vFilesNames[0].fnBefore;
-	}
-
 	// Show filter dialog
-	filter = m_fcFilters.GetFilter(nRuleItem);
-	if (m_fcFilters.ShowDialog(nRuleItem, fnOriginalFileName) == IDOK)
+	boost::scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples());
+	IFilter* filter = m_fcFilters.GetFilter(nRuleItem);
+	ASSERT(filter != NULL);
+	if (filter->ShowDialog(*previewSamples) == IDOK)
 	{
 		// Freeze the updates.
 		PushUpdatesFreeze();
@@ -1658,17 +1704,17 @@ void CRenameItDlg::OnLvnEndlabeleditFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	if (pDispInfo->item.pszText != NULL)
 	{
 		// Get new file path.
-		CFileName fnRenamed = m_vFilesNames[pDispInfo->item.iItem].fnBefore;
-		CString strNewPath = fnRenamed.GetDrive() + fnRenamed.GetDirectory() + pDispInfo->item.pszText;
+		CFileName fnBefore = m_flFiles.GetIteratorAt(pDispInfo->item.iItem)->fnBefore;
+		CString strNewPath = fnBefore.GetDrive() + fnBefore.GetDirectory() + pDispInfo->item.pszText;
 		
 		// Rename file.
-		if (MoveFile(fnRenamed.GetFullPath(), strNewPath))
+		if (MoveFile(fnBefore.GetFullPath(), strNewPath))
 		{
 			// Freeze the updates.
 			PushUpdatesFreeze();
 
 			// Set the new name.
-			m_vFilesNames[pDispInfo->item.iItem].fnBefore = strNewPath;
+			m_flFiles.GetIteratorAt(pDispInfo->item.iItem)->fnBefore = strNewPath;
 
 			// Un-freeze the updates.
 			PopUpdatesFreeze();
@@ -1712,8 +1758,8 @@ void CRenameItDlg::SelectAllFiles()
 	PushUpdatesFreeze();
 
 	// Check all files.
-	for (vector<RENAME_FILE>::iterator iter=m_vFilesNames.begin(); iter!=m_vFilesNames.end(); ++iter)
-		iter->bChecked = true;
+	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
+		item.bChecked = true;
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -1725,8 +1771,8 @@ void CRenameItDlg::UnselectAllFiles()
 	PushUpdatesFreeze();
 
 	// Uncheck all files.
-	for (vector<RENAME_FILE>::iterator iter=m_vFilesNames.begin(); iter!=m_vFilesNames.end(); ++iter)
-		iter->bChecked = false;
+	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
+		item.bChecked = false;
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -1738,8 +1784,8 @@ void CRenameItDlg::InverseFileSelection()
 	PushUpdatesFreeze();
 
 	// Toggle check all files.
-	for (vector<RENAME_FILE>::iterator iter=m_vFilesNames.begin(); iter!=m_vFilesNames.end(); ++iter)
-		iter->bChecked = !iter->bChecked;
+	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
+		item.bChecked = !item.bChecked;
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -1787,12 +1833,11 @@ void CRenameItDlg::OnMovedItemFileNamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 		// Freeze the updates.
 		PushUpdatesFreeze();
 
-		RENAME_FILE rfFrom = m_vFilesNames[pMoveItem->nFrom];
-		m_vFilesNames.erase(m_vFilesNames.begin() + pMoveItem->nFrom);
-		if (pMoveItem->nTo < pMoveItem->nFrom)
-			m_vFilesNames.insert(m_vFilesNames.begin() + pMoveItem->nTo, rfFrom);
-		else
-			m_vFilesNames.insert(m_vFilesNames.begin() + pMoveItem->nTo + 1, rfFrom);
+		CMemoryFileList::iterator iterFrom = m_flFiles.GetIteratorAt(pMoveItem->nFrom);
+		m_flFiles.ReorderFiles(
+			m_flFiles.GetIteratorAt(pMoveItem->nTo), 
+			iterFrom,
+			iterFrom);
 
 		// Un-freeze the updates.
 		PopUpdatesFreeze();
@@ -1884,19 +1929,24 @@ void CRenameItDlg::OnContextHelp()
 bool CRenameItDlg::RenameAllFiles(unsigned nRenamingControllerErrorLevel)
 {
 	// Pre-condition.
-	ASSERT(m_vFilesNames.size() == m_ctlListFilenames.GetItemCount());
+	ASSERT(m_flFiles.GetFileCount() == m_ctlListFilenames.GetItemCount());
 
-	// Define the files to rename.
+	// Filter all the checked files (this is optional since it's kept up to date by UpdateFilelist).
+	m_fcFilters.FilterFileNames(
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// Begin
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// First
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),	// Last
+		m_flFiles.GetOutputIteratorAt(m_flFiles.GetFirstChecked()));	// Result
+
+	// Generate the file list of original and new file names.
 	CFileList flBefore;
-	for (unsigned i=0; i<m_vFilesNames.size(); ++i)
-	{
-		// Add checked files.
-		if (m_vFilesNames[i].bChecked)
-			flBefore.AddFile( m_vFilesNames[i].fnBefore );
-	}
-
-	// Generate the new file names.
-	CFileList flAfter = m_fcFilters.FilterFileNames(flBefore);
+	CFileList flAfter;
+	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
+		if (item.bChecked)
+		{
+			flBefore.AddFile(item.fnBefore);
+			flAfter.AddFile(item.fnAfter);
+		}
 	ASSERT(flBefore.GetFileCount() == flAfter.GetFileCount());
 
 	// Do the renaming.
@@ -1921,7 +1971,7 @@ void CRenameItDlg::OnLvnGetdispinfoFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 
 	// Which item number?
 	int itemid = pItem->iItem;
-	if (itemid >= (int)m_vFilesNames.size())	// There should never be a call to an un-existing item.
+	if (itemid >= m_flFiles.GetFileCount())	// There should never be a call to an un-existing item.
 	{
 		ASSERT(FALSE);
 		*pResult = 0;
@@ -1931,25 +1981,13 @@ void CRenameItDlg::OnLvnGetdispinfoFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	// Do the list need text information?
 	if (pItem->mask & LVIF_TEXT)
 	{
-		CString strText;
-
 		// Which column?
+		CFileName fnToRename;
 		if (pItem->iSubItem == 0)
-		{
-			CString strBefore;
-			CString strRenamedPart;
-			CString strAfter;
-			m_fcFilters.GetFilteredPart(m_vFilesNames[itemid].fnBefore, strBefore, strRenamedPart, strAfter);
-			strText = strRenamedPart;
-		}
-		else if (pItem->iSubItem == 1)
-		{
-			CString strBefore;
-			CString strRenamedPart;
-			CString strAfter;
-			m_fcFilters.GetFilteredPart(m_vFilesNames[itemid].fnAfter, strBefore, strRenamedPart, strAfter);
-			strText = strRenamedPart;
-		}
+			fnToRename = m_flFiles.GetIteratorAt(itemid)->fnBefore;
+		else
+			fnToRename = m_flFiles.GetIteratorAt(itemid)->fnAfter;
+		CString strText = CFilteredFileName(fnToRename, m_fcFilters.GetPathRenamePart()).GetFilteredSubstring();
 
 		// Copy the text to the LV_ITEM structure
 		// Maximum number of characters is in pItem->cchTextMax
@@ -1968,7 +2006,7 @@ void CRenameItDlg::OnLvnGetdispinfoFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 			pItem->mask |= LVIF_STATE;
 			pItem->stateMask = LVIS_STATEIMAGEMASK;
 
-			if (m_vFilesNames[itemid].bChecked)
+			if (m_flFiles.GetIteratorAt(itemid)->bChecked)
 			{
 				// Turn check box on
 				pItem->state = INDEXTOSTATEIMAGEMASK(2);
@@ -2014,31 +2052,31 @@ void CRenameItDlg::OnLvnOdfinditemFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 
 	int startPos = pFindInfo->iStart;
 	// Is startPos outside the list (happens if last item is selected).
-	if (startPos >= (int)m_vFilesNames.size())
+	if (startPos >= m_flFiles.GetFileCount())
 		startPos = 0;
-
-	int currentPos = startPos;
+	CMemoryFileList::iterator iterStart = m_flFiles.GetIteratorAt(startPos);
 
 	// Let's search...
+	CMemoryFileList::iterator iter = iterStart;
 	do
 	{        
 		// Do this word begins with all characters in strSearch?
-		if (_tcsnicmp(m_vFilesNames[currentPos].fnBefore.GetFileName(), strSearch, strSearch.GetLength()) == 0)
+		if (iter->fnBefore.FSCompare(strSearch, strSearch.GetLength()) == 0)
 		{
 			// Select this item and stop search.
-			*pResult = currentPos;
+			*pResult = m_flFiles.FindIndexOf(iter);
 			break;
 		}
 
 		// Go to next item.
-		++currentPos;
+		++iter;
 
 		// Need to restart at top?
-		if (currentPos >= (int)m_vFilesNames.size())
-			currentPos = 0;
+		if (iter == m_flFiles.GetTail())
+			iter = m_flFiles.GetHead();
 
 		// Stop if back to start.
-	} while (currentPos != startPos);
+	} while (iter != iterStart);
 }
 
 void CRenameItDlg::ToggleCheckBox(int nItem)
@@ -2047,7 +2085,8 @@ void CRenameItDlg::ToggleCheckBox(int nItem)
 	PushUpdatesFreeze();
 
 	// Change check box
-	m_vFilesNames[nItem].bChecked = !m_vFilesNames[nItem].bChecked;
+	CMemoryFileList::iterator iter = m_flFiles.GetIteratorAt(nItem);
+	iter->bChecked = !iter->bChecked;
 
  	// Un-freeze the updates.
 	PopUpdatesFreeze();
@@ -2116,4 +2155,52 @@ void CRenameItDlg::OnNMClickFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 	*pResult = 0;
+}
+
+// Create an object that can preview the effect of a new filter on any one of the checked files.
+IPreviewFileList* CRenameItDlg::GetPreviewSamples()
+{
+	// Find the default sample to use.
+	CMemoryFileList::const_iterator iterDefault;
+	int nFocusedItem = m_ctlListFilenames.GetNextItem(-1, LVNI_FOCUSED);
+	if (nFocusedItem >= 0)
+		// Use the focused file.
+		iterDefault = m_flFiles.GetIteratorAt(nFocusedItem);
+	else
+		// By default use the first file.
+		iterDefault = m_flFiles.GetHead();
+
+	// If the focused item is not checked, find the next checked item.
+	while (iterDefault != m_flFiles.GetTail() && !iterDefault->bChecked)
+		++iterDefault;
+	if (iterDefault == m_flFiles.GetTail())
+		iterDefault = m_flFiles.GetFirstChecked();
+
+	// When no item is checked (or when the list is empty),
+	// use a default sample.
+	if (iterDefault == m_flFiles.GetTail())
+	{
+		// Load sample path is none is provided.
+		CString strSamplePath;
+		strSamplePath.LoadString(IDS_SAMPLE_PATH);
+		static CFileName fnSamplePath = strSamplePath;
+		
+		// Return the created object.
+		return new CPreviewFileList<CFileName*>(
+			&fnSamplePath,		// Begin
+			&fnSamplePath,		// First
+			&fnSamplePath + 1,	// Last
+			&fnSamplePath,		// Default sample
+			m_fcFilters);		// Filters BEFORE the new coming one
+	}
+	else
+	{
+		// Return the created object.
+		return new CPreviewFileList<CMemoryFileList::InputIterator>(
+			m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// Begin
+			m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// First
+			m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),	// Last
+			m_flFiles.GetInputIteratorAt(iterDefault),		// Default sample
+			m_fcFilters);			// Filters BEFORE the new coming one
+	}
 }

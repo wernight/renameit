@@ -6,16 +6,8 @@
  */
 class CFileList
 {
-public:
-	CFileList(void)
-	{
-	}
-
-	~CFileList(void)
-	{
-	}
-
 // Attributes
+public:
 	int GetFileCount() const {
 		return (int) m_vfnFiles.size();
 	}

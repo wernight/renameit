@@ -6,8 +6,6 @@
 class CSearchReplaceFilter :
 	public IFilter
 {
-	friend class CSearchReplaceDlg;
-
 // Construction
 public:
 	CSearchReplaceFilter(void);
@@ -15,49 +13,34 @@ public:
 
 // IFilter implementation
 // IFilter Operations
-protected:// Shouldn't access to this because the OnStart/End have to be managed by FilterContainer.
-	/** Filter the file name.
-	 * @param originalFilename	Path to the original file name.
-	 * @param filename			Current new file name, without extension.
-	 * @param ext				Current new extension.
-	 * @return True if file should be renamed.
-	 */
-	void FilterPath(const CFileName& fnOriginalFilename, CString& strFilename);
-public:
+protected:
+	virtual void OnStartRenamingList();
 
-	/** Display a window to configure the filter.
-	 * @param originalFilename	Original sample file name.
-	 * @param filename			Current sample file name.
-	 * @param ext				Current sample file extension.
-	 * @return The value returned by CDialog::DoModal().
-	 */
-	int ShowDialog(const CFileName& fnOriginalFilename, const CString& strFilename);
+	virtual void FilterPath(CString& strFileName, const CFileName& fnOriginalFilename, const CString& strUnfilteredName);
+
+	virtual void OnEndRenamingList();
+
+public:
+	virtual int ShowDialog(IPreviewFileList& previewSamples);
 
 // IFilter Attributes
 	// Return the unique name of the filter.
-	CString GetFilterCodeName() const;
+	virtual CString GetFilterCodeName() const;
 
 	// Return the human name of the filter in user language.
-	CString GetFilterName() const;
+	virtual CString GetFilterName() const;
 
 	// User friendly description of the filter's actions over file's name.
-	CString GetFilterDescription() const;
+	virtual CString GetFilterDescription() const;
 
 	// Return filter's parameters to be exported/saved.
-	void GetArgs(CMapStringToString& mapArgs) const;
+	virtual void GetArgs(CMapStringToString& mapArgs) const;
 
 	// Load default filter's parameters.
-	void LoadDefaultArgs();
+	virtual void LoadDefaultArgs();
 
 	// Define some or all of filter's parameters (for import/load).
-	void SetArgs(const CMapStringToString& mapArgs);
-
-// Events
-protected:
-	virtual void OnStartRenamingList(ERenamePart nPathRenamePart);
-	virtual void OnStartRenamingFile(const CFileName& fnPath, const CString& strName);
-	virtual void OnEndRenamingFile();
-	virtual void OnEndRenamingList();
+	virtual void SetArgs(const CMapStringToString& mapArgs);
 
 // Attributes
 public:
@@ -123,7 +106,6 @@ public:
 	bool IsID3TagEnabled() const {
 		return m_bID3Tag;
 	}
-
 
 	void SetSearch(const CString& strValue) {
 		if (m_strSearch != strValue)
@@ -262,8 +244,6 @@ private:
 	pcre_extra*	m_regexpExtra;
 	CString		m_strRegExpCompileError;
 
-	// Variables used during the process of renaming a list of files.
-	CFileName	m_fnOriginalFile;
-	CString		m_strUnfilteredName;
-	int			m_nSeriesCounter;
+	// Variable used between OnStartRenamingList and OnEndRenamingList.
+	int m_nSeriesCounter;
 };

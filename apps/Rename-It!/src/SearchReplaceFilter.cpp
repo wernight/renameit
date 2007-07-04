@@ -4,14 +4,15 @@
 #include "id3/readers.h"
 
 // ID3Lib fix: END_OF_READER unreferenced
-const ID3_Reader::int_type ID3_Reader::END_OF_READER = std::char_traits<ID3_Reader::char_type>::eof();
+const ID3_Reader::int_type ID3_Reader::END_OF_READER = std::char_traits<ID3_Reader::int_type>::eof();
 
 const LPCTSTR CSearchReplaceFilter::CASE_MARKER = _T("\x06\x03\x05");
 const int CSearchReplaceFilter::CASE_MARKER_LENGTH = (int) _tcslen(CASE_MARKER);
 
 CSearchReplaceFilter::CSearchReplaceFilter(void) :
 	m_regexpCompiled(NULL),
-	m_regexpExtra(NULL)
+	m_regexpExtra(NULL),
+	m_nSeriesCounter(0)
 {
 	LoadDefaultArgs();
 }
@@ -21,15 +22,9 @@ CSearchReplaceFilter::~CSearchReplaceFilter(void)
 	RegExpFree();
 }
 
-/** Filter the file name.
- * @param strOriginalFilename	Path to the original file name.
- * @param strFilename		Current new file name, without extension.
- * @param ext				Current new extension.
- * @return True if file should be renamed.
- */
-void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CString& strFilename)
+void CSearchReplaceFilter::FilterPath(CString& strFilename, const CFileName& fnOriginalFilename, const CString& strUnfilteredName)
 {
-	bool bIncrementCounter = false;	// Some replacement done, so we should increment the enumeration counter?
+	bool bMatchesSearch = false;	// True when the string to filter matches the search pattern.
 	CStringList	slMacros,
 				slValues;
 
@@ -44,11 +39,19 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 	CString strOldLocale = _tsetlocale(LC_ALL, NULL);
 	_tsetlocale(LC_ALL, m_strLocale);
 
-	// If search and replace are empty but change case is activated
-	if (m_strSearch.IsEmpty() && m_strReplace.IsEmpty() && m_nChangeCase != caseNone)
+	// When search at replace are empty, nothing is replaced.
+	if (m_strSearch.IsEmpty() && m_strReplace.IsEmpty())
 	{
-		ChangeCase(strFilename, m_nChangeCase);
-		bIncrementCounter = true;
+		bMatchesSearch = true;
+
+		// If search and replace are empty but change case is activated
+		if (m_nChangeCase != caseNone)
+		{
+			// Add markers in the replacement string.
+			CString strResult = CASE_MARKER + strFilename + CASE_MARKER;
+			if (ChangeCase(strResult, m_nChangeCase))
+				strFilename = strResult;
+		}
 	}
 	else
 	{
@@ -60,15 +63,16 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 				// Replace %d by 123 in strReplace.
 				ReplaceSeries(strReplace, m_nSeriesCounter);
 
+			// TODO: Change macros so that they are called only when they are used.
 			// Replace special macros.
 			slMacros.AddHead( _T("$(FileDir)") );
-			slValues.AddHead( m_fnOriginalFile.GetDrive() + m_fnOriginalFile.GetDirectory() );
+			slValues.AddHead( fnOriginalFilename.GetDrive() + fnOriginalFilename.GetDirectory() );
 			slMacros.AddHead( _T("$(FileName)") );
-			slValues.AddHead( m_fnOriginalFile.GetFileName() );
+			slValues.AddHead( fnOriginalFilename.GetFileName() );
 			slMacros.AddHead( _T("$(FileExt)") );
-			slValues.AddHead( m_fnOriginalFile.GetExtension() );
+			slValues.AddHead( fnOriginalFilename.GetExtension() );
 			slMacros.AddHead( _T("$(UnfilteredName)") );
-			slValues.AddHead( m_strUnfilteredName );
+			slValues.AddHead( strUnfilteredName );
 			slMacros.AddHead( _T("$(FilteredName)") );
 			slValues.AddHead( strFilename );
 			ReplaceMacrosIn( strReplace, slMacros, slValues );
@@ -101,9 +105,9 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 			{
 				CString strOutput = strFilename;
 				if (FilterRegExp(strFilename, strOutput, strReplace) > 0)
-				{
+				{// when the search expression is matches.
 					strFilename = strOutput;
-					bIncrementCounter = true;
+					bMatchesSearch = true;
 				}
 			}
 			break;
@@ -116,11 +120,14 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 				if (strSearch.IsEmpty())
 				{
 					// Replace the whole file name.
-					if (m_nUse == useNone)	// Other uses are dealt with in CompileRegExp();
-						strSearch = strFilename;
+					ASSERT(m_nUse == useNone);
+					strSearch = strFilename;
 				}
 
-				FilterString(strFilename, strSearch, strReplace);
+				if (FilterString(strFilename, strSearch, strReplace))
+				{// when the search expression is matches.
+					bMatchesSearch = true;
+				}
 			}
 		}
 
@@ -128,7 +135,7 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 		if (m_nChangeCase != caseNone)
 		{
 			if (ChangeCase(strFilename, m_nChangeCase))
-				bIncrementCounter = true;
+				bMatchesSearch = true;
 		}
 	}
 
@@ -136,11 +143,20 @@ void CSearchReplaceFilter::FilterPath(const CFileName& fnOriginalFilename, CStri
 	_tsetlocale(LC_ALL, strOldLocale);
 
 	// Number series
-	if (m_bSeries && bIncrementCounter)
+	if (m_bSeries && bMatchesSearch)
 	{
 		// Increment counter's value
 		m_nSeriesCounter += m_nSeriesStep;
 	}
+}
+
+void CSearchReplaceFilter::OnStartRenamingList()
+{
+	m_nSeriesCounter = m_nSeriesStart;
+}
+
+void CSearchReplaceFilter::OnEndRenamingList()
+{
 }
 
 bool CSearchReplaceFilter::AddID3TagMacros(const CFileName& fnOriginalFilename, CStringList& slMacros, CStringList& slValues)
@@ -286,15 +302,9 @@ void CSearchReplaceFilter::ReplaceSeries(CString& strReplace, int nCounterValue)
 	strReplace.Format(strReplace, nCounterValue);
 }
 
-/** Display a window to configure the filter.
- * @param strOriginalFilename	Original sample file name.
- * @param strFilename		Current sample file name.
- * @param ext				Current sample file extension.
- * @return The value returned by CDialog::DoModal().
- */
-int CSearchReplaceFilter::ShowDialog(const CFileName& fnOriginalFilename, const CString& strFilename)
+int CSearchReplaceFilter::ShowDialog(IPreviewFileList& previewSamples)
 {
-	CSearchReplaceDlg dlg(*this, fnOriginalFilename, strFilename);
+	CSearchReplaceDlg dlg(*this, previewSamples);
 	return (int) dlg.DoModal();
 }
 
@@ -464,26 +474,6 @@ void CSearchReplaceFilter::SetArgs(const CMapStringToString& mapArgs)
 
 	// Re-compile the regexp.
 	CompileRegExp();
-}
-
-void CSearchReplaceFilter::OnStartRenamingList(ERenamePart nPathRenamePart)
-{
-	// Initialize counter
-	m_nSeriesCounter = m_nSeriesStart;
-}
-
-void CSearchReplaceFilter::OnStartRenamingFile(const CFileName& fnPath, const CString& strName)
-{
-	m_fnOriginalFile = fnPath;
-	m_strUnfilteredName = strName;
-}
-
-void CSearchReplaceFilter::OnEndRenamingFile()
-{
-}
-
-void CSearchReplaceFilter::OnEndRenamingList()
-{
 }
 
 void CSearchReplaceFilter::RegExpFree()
@@ -717,7 +707,7 @@ bool CSearchReplaceFilter::FilterString(CString& strSubject, const CString& strS
 				break;
 			// Replace
 			bReplacedString = true;
-			strOutput += strSearch.Mid(nStart, nFoundPos-nStart);
+			strOutput += strSubject.Mid(nStart, nFoundPos-nStart);
 			strOutput += strReplace;
 			nStart = nFoundPos + strCaseSearch.GetLength();
 			// Only replace once
@@ -798,7 +788,7 @@ bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChan
 {
 	// Search for the markers.
 	int nStartMarker = strSubject.Find(CASE_MARKER);
-	int nEndMarker = -1;
+	int nEndMarker = nStartMarker;
 	do
 	{
 		int nFound = strSubject.Find(CASE_MARKER, nEndMarker+1);
@@ -806,7 +796,7 @@ bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChan
 			break;
 		nEndMarker = nFound;
 	} while (true);
-	if (nStartMarker == -1 || nEndMarker == -1)
+	if (nStartMarker == -1 || nStartMarker == nEndMarker)
 		return false;
 
 	// Change the case between the markers.
