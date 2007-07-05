@@ -59,6 +59,7 @@
 #define IDS_MENU_SELECT_NONE            149
 #define IDS_MENU_SELECT_INVERT          150
 #define IDD_CONFIGURE                   151
+#define IDS_REPORT_ERROR_REMAIN         151
 #define IDS_MODIFY_EXTENSION_WARNING    152
 #define IDS_NO_FILTER                   153
 #define IDS_SCAN_FOR_PLUGINS            154
@@ -68,6 +69,7 @@
 #define IDS_UNKNOWN                     157
 #define IDS_COLUMN_FILE_NAME            158
 #define IDS_COLUMN_ERROR_MESSAGE        159
+#define IDS_REPORT_ERROR_DETECTED       160
 #define IDS_RIT_OFN_FILTER              161
 #define IDB_DEL                         162
 #define IDS_FILES_OFN_FILTER            162

@@ -400,7 +400,12 @@ void CReportDlg::OnOK()
 	{
 		FindErrors();
 		if (m_nErrors > 0)
+		{
+			// Alert the user.
+			AfxMessageBox(IDS_REPORT_ERROR_REMAIN, MB_ICONINFORMATION);
+
 			return;	// No errors must be left.
+		}
 	}
 
 	// Display a warning if the extension of one or more files is going to change.

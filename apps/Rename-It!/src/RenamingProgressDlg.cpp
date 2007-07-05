@@ -138,7 +138,7 @@ void CProgressDlg::UpdateProgress()
 		m_ctlProgressStatic.SetWindowText(strCurrentProgressCaption);
 
 	// Update the progression bar.
-	m_ctlProgress[m_nStage].SetPos(m_nDone);
+	m_ctlProgress[m_nStage].SetPos(m_nDone + m_nTotal/10);	// Keep a little bit ahead
 }
 
 INT_PTR CProgressDlg::DoModal()

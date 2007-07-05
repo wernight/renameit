@@ -234,12 +234,12 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,79,62,50,14,WS_DISABLED
     LTEXT           "$(Done) of $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,56,9
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,57,9
     LTEXT           "1. Checking",IDC_STATIC,18,40,38,8
     LTEXT           "2. Preparing",IDC_STATIC,76,40,40,8
     LTEXT           "3. Renaming",IDC_STATIC,134,40,41,8
     CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER,76,28,56,9
-    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,134,28,58,9
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,133,28,59,9
 END
 
 IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
@@ -384,7 +384,7 @@ BEGIN
     BEGIN
         LEFTMARGIN, 18
         RIGHTMARGIN, 192
-        TOPMARGIN, 7
+        TOPMARGIN, 8
         BOTTOMMARGIN, 76
         HORZGUIDE, 32
         HORZGUIDE, 48
@@ -684,6 +684,7 @@ BEGIN
     IDS_MENU_SELECT_ALL     "Select All"
     IDS_MENU_SELECT_NONE    "Unselect All"
     IDS_MENU_SELECT_INVERT  "Inverse Selection"
+    IDS_REPORT_ERROR_REMAIN "Some errors are remaining.\nYou have to fix them before you can rename the files."
     IDS_MODIFY_EXTENSION_WARNING 
                             "You are going to change the extension of one or more files.\nIf you change a file name extension, the file may become unusable.\n\nAre you sure you want to change it?"
     IDS_NO_FILTER           "<No filter>"
@@ -697,6 +698,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_REPORT_ERROR_DETECTED 
+                            "Some problems have been detected that may affect your renaming. No file has been renamed yet.\n\nPlease take a look and fix the errors before continuing."
     IDS_RIT_OFN_FILTER      "Rename-It Filters (*.rit)|*.rit||"
     IDS_FILES_OFN_FILTER    "Files to rename (*.*)|*.*||"
     IDS_FILES_OFN_TITLE     "Select files"
@@ -912,8 +915,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,84,99,50,15
     LTEXT           "$(Files) files or folders could not be correctly renamed.",IDC_DESCR_STATIC,45,9,173,19
     CONTROL         "Keep the current files names",IDC_ACTION_RADIO,"Button",BS_AUTORADIOBUTTON | WS_GROUP,31,51,107,10
-    CONTROL         "Try to revert back to original files names",IDC_ACTION2_RADIO,
-                    "Button",BS_AUTORADIOBUTTON,31,65,145,10
+    CONTROL         "Try to revert back to the original files names",IDC_ACTION2_RADIO,
+                    "Button",BS_AUTORADIOBUTTON,31,65,157,10
     PUSHBUTTON      "Show details",IDC_DETAILS_BUTTON,168,82,50,14
     ICON            IDI_WIN_ERROR,IDC_STATIC,8,7,20,20
     LTEXT           "What do you want to do?",IDC_STATIC,31,38,82,8
@@ -927,12 +930,12 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,79,62,50,14,WS_DISABLED
     LTEXT           "$(Done) de $(Total)...",IDC_PROGRESS_STATIC,18,14,136,8
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,56,9
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,18,28,57,9
     LTEXT           "1. Vérifie",IDC_STATIC,18,40,30,8
     LTEXT           "2. Prépare",IDC_STATIC,76,40,35,8
     LTEXT           "3. Renomme",IDC_STATIC,134,40,41,8
     CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER,76,28,56,9
-    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,134,28,58,9
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER,133,28,59,9
 END
 
 IDD_WIZ_CASE DIALOGEX 0, 0, 240, 118
@@ -1437,6 +1440,7 @@ BEGIN
     IDS_MENU_SELECT_ALL     "Tout Sélectionner"
     IDS_MENU_SELECT_NONE    "Tout Désélectionner"
     IDS_MENU_SELECT_INVERT  "Inverser la Sélection"
+    IDS_REPORT_ERROR_REMAIN "Il reste encore des erreurs à corriger.\nVeuillez les corriger avant de renommer les fichiers."
     IDS_MODIFY_EXTENSION_WARNING 
                             "Si vous modifiez l'extension d'un fichier, le fichier risque d'être inutilisable.\n\nVoulez-vous vraiment modifier l'extension ?"
     IDS_NO_FILTER           "<Aucun filre>"
@@ -1450,6 +1454,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_REPORT_ERROR_DETECTED 
+                            "Des problèmes qui pourraient affecter le renommage des fichiers ont été détectés. Aucun fichier n'a été renommé pour l'instant.\n\nVeuillez vérifier et corriger les erreurs avant de continuer."
     IDS_RIT_OFN_FILTER      "Filtres Rename-It (*.rit)|*.rit||"
     IDS_FILES_OFN_FILTER    "Fichiers à renommer (*.*)|*.*||"
     IDS_FILES_OFN_TITLE     "Selectionner les fichiers"

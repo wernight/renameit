@@ -58,6 +58,9 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 		{
 		case CRenamingList::stageChecking:	// The checking failed
 			{
+			// Alert the user.
+			AfxMessageBox(IDS_REPORT_ERROR_DETECTED, MB_ICONINFORMATION);
+
 			// Show the report dialog.
 			CReport report;
 			ASSERT(m_renamingList.GetCount() == m_uvErrorFlag.size());
