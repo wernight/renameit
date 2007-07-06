@@ -424,6 +424,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\KTM.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MenuButton.cpp"
 				>
 			</File>
@@ -631,6 +635,10 @@
 			</File>
 			<File
 				RelativePath=".\src\IPreviewFileList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\KTM.h"
 				>
 			</File>
 			<File

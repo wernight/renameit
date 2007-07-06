@@ -163,6 +163,12 @@ public:
 		return m_vRenamingOperations.at(nIndex);
 	}
 
+	/**
+	 * Tells wether it's using the Vista KTM (Kernel Transaction Manager) to make
+	 * the renaming transactions.
+	 */
+	bool IsUsingKtm() const;
+
 // Operations
 	/**
 	 * Search for possible renaming problems before doing the renaming.
@@ -173,6 +179,8 @@ public:
 
 	/**
 	 * Perform the renaming of all the file.
+	 * When KTM is used and the operation fails, no file is renamed.
+	 * @return True on success, false if one or more files couldn't be renamed.
 	 */
 	bool PerformRenaming();
 
@@ -208,8 +216,6 @@ private:
 			ASSERT((iter->nErrorLevel==levelNone) ^ !iter->strMessage.IsEmpty());	// no error <=> no error message, an error <=> error message set
 		}
 	}
-
-	bool RenameFile(int nIndex);
 
 	// Default progress callback that does nothing.
 	void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}

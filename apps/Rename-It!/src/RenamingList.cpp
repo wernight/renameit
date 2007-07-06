@@ -3,6 +3,7 @@
 #include "OrientedGraph.h"
 #include <math.h>
 #include "../resource.h"
+#include "KTM.h"
 
 CRenamingList::CRenamingList(void)
 	: m_nWarnings(0)
@@ -32,6 +33,12 @@ void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 	m_vProblems.resize(flBefore.GetFileCount());
 	for (int i=0; i<flBefore.GetFileCount(); ++i)
 		m_vRenamingOperations[i] = CRenamingOperation(flBefore[i], flAfter[i]);
+}
+
+bool CRenamingList::IsUsingKtm() const
+{
+	KTMTransaction ktm;
+	return ktm.GetTransaction() != NULL;
 }
 
 bool CRenamingList::Check()
@@ -268,6 +275,9 @@ bool CRenamingList::PerformRenaming()
 		}
 	}
 
+	// Create a new transaction.
+	KTMTransaction ktm;
+
 	// Rename files in topological order.
 	int nDone = 0;
 	int nTotal = (int) m_vRenamingOperations.size();
@@ -276,39 +286,37 @@ bool CRenamingList::PerformRenaming()
 	for (int i=0; i<nTotal; ++i)
 		if (!graph[i].HasAntecedent())
 		{
-			int j = i;
+			int nIndex = i;
 			while (true)
 			{
 				// Rename file.
-				bError |= !RenameFile(j);
+				ASSERT(m_vRenamingOperations[nIndex].fnBefore.GetDrive() == m_vRenamingOperations[nIndex].fnAfter.GetDrive());
+
+				// Rename file
+				if (ktm.MoveFileEx(
+						m_vRenamingOperations[nIndex].fnBefore.GetFullPath(),
+						m_vRenamingOperations[nIndex].fnAfter.GetFullPath(),
+						0) == 0)
+				{
+					if (!m_fOnRenamed.empty())
+						m_fOnRenamed(nIndex, GetLastError());
+					bError = true;
+				}
+				else
+					m_fOnRenamed(nIndex, 0);
 
 				// Report progress
 				m_fOnProgress(stageRenaming, ++nDone, nTotal);
 
 				// Rename its successors.
-				if (graph[j].HasSuccessor())
-					j = graph[j].GetSuccessor(0);
+				if (graph[nIndex].HasSuccessor())
+					nIndex = graph[nIndex].GetSuccessor(0);
 				else
 					break;
 			}
 		}
 
-	return !bError;
-}
-
-bool CRenamingList::RenameFile(int nIndex)
-{
-	ASSERT(m_vRenamingOperations[nIndex].fnBefore.GetDrive() == m_vRenamingOperations[nIndex].fnAfter.GetDrive());
-
-	// Rename file
-	if (MoveFile(m_vRenamingOperations[nIndex].fnBefore.GetFullPath(), m_vRenamingOperations[nIndex].fnAfter.GetFullPath()) == 0)
-	{
-		if (!m_fOnRenamed.empty())
-			m_fOnRenamed(nIndex, GetLastError());
+	if (bError)
 		return false;
-	}
-
-	if (!m_fOnRenamed.empty())
-		m_fOnRenamed(nIndex, 0);
-	return true;
+	return ktm.Commit();
 }
