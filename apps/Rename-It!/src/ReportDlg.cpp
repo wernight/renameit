@@ -13,12 +13,11 @@ extern CRenameItApp	theApp;
 // CReportDlg dialog
 
 IMPLEMENT_DYNAMIC(CReportDlg, CDialog)
-CReportDlg::CReportDlg(CRenamingList& renamingList, vector<unsigned>& uvErrorFlag, CWnd* pParent /*=NULL*/)
+CReportDlg::CReportDlg(CRenamingList& renamingList, CWnd* pParent /*=NULL*/)
 	: CDialog(CReportDlg::IDD, pParent)
 	, m_renamingList(renamingList)
-	, m_uvErrorFlag(uvErrorFlag)
+	, m_bShowAllOperations(false)
 {
-	ASSERT(m_renamingList.GetCount() == m_uvErrorFlag.size());
 }
 
 CReportDlg::~CReportDlg()
@@ -36,6 +35,7 @@ BEGIN_MESSAGE_MAP(CReportDlg, CDialog)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_REPORT_LIST, OnLvnItemActivateReportList)
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(LVN_KEYDOWN, IDC_REPORT_LIST, OnLvnKeydownReportList)
+	ON_BN_CLICKED(IDC_SHOW_ALL_CHECK, &CReportDlg::OnBnClickedShowAllCheck)
 END_MESSAGE_MAP()
 
 
@@ -61,38 +61,8 @@ BOOL CReportDlg::OnInitDialog()
 	m_ctlReportList.SetImageList(&m_ilImages, LVSIL_SMALL);
 	ASSERT( &m_ilImages == m_ctlReportList.GetImageList(LVSIL_SMALL) );
 
-	// Create report list
-	for (int i=0; i<m_renamingList.GetCount(); ++i)
-	{
-		CFileName fnOriginalFileName = m_renamingList[i].fnBefore;
-		CString strOriFileName = fnOriginalFileName.GetFileName() + fnOriginalFileName.GetExtension();
-		CString strPath = fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory();
-
-		CFileName fnNewFileName = m_renamingList[i].fnAfter;
-		CString strNewFileName = fnNewFileName.GetFileName() + fnNewFileName.GetExtension();
-
-		ASSERT(	CFileName(fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory()).FSCompare(
-				CFileName(fnNewFileName.GetDrive() + fnNewFileName.GetDirectory())) == 0);	// Same path before/after renaming
-
-		// Add item to the report list.
-		int nItemIndex = m_ctlReportList.InsertItem(i, strOriFileName);
-		if (nItemIndex == -1)
-		{
-			// Show critical error and exit the application.
-			AfxMessageBox(IDS_CRITICAL_ERROR, MB_ICONSTOP);
-			PostQuitMessage(1);
-			return TRUE;
-		}
-		VERIFY( m_ctlReportList.SetItemText(nItemIndex, 1, strNewFileName) );
-		VERIFY( m_ctlReportList.SetItemText(nItemIndex, 2, strPath) );
-	}
-
 	// Display the errors.
 	ShowErrors();
-
-	// Rename file if no errors found.
-	if (m_nErrors == 0 && m_nWarnings == 0)
-		OnOK();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -101,27 +71,32 @@ BOOL CReportDlg::OnInitDialog()
 void CReportDlg::OnLvnItemActivateReportList(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	POSITION	pos;
-	int			nItem;
 
-	if ((pos=m_ctlReportList.GetFirstSelectedItemPosition()) != NULL &&
-		!(m_uvErrorFlag[nItem=m_ctlReportList.GetNextSelectedItem(pos)] & CRenamingList::errMissingFlag))
-		RenameItem(nItem);
+	// Rename on double click.
+	RenameItem(pNMIA->iItem);
+
 	*pResult = 0;
 }
 
-BOOL CReportDlg::RenameItem(int nItem)
+bool CReportDlg::RenameItem(int nItem)
 {
-	// Pre-condition.
-	ASSERT( !(m_uvErrorFlag[nItem] & CRenamingList::errMissingFlag) );
+	// Find the operation corresponding to this item.
+	int nOperationIndex = (int) m_ctlReportList.GetItemData(nItem);
+
+	// Show a message when the file doesn't exist.
+	if (m_renamingList.GetOperationProblem(nOperationIndex).nErrorCode == CRenamingList::errFileMissing)
+	{
+		AfxMessageBox(IDS_CANNOT_RENAME_MISSING, MB_ICONINFORMATION);
+		return false;
+	}
 
 	// Show renaming dialog
 	CRenameDlg	ren;
 
-	CFileName fnOriginalFileName = m_renamingList[nItem].fnBefore;
+	CFileName fnOriginalFileName = m_renamingList[nOperationIndex].fnBefore;
 	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() + fnOriginalFileName.GetExtension() );
 
-	CFileName fnNewFileName = m_renamingList[nItem].fnAfter;
+	CFileName fnNewFileName = m_renamingList[nOperationIndex].fnAfter;
 	ren.SetNewFileName( fnNewFileName.GetFileName() + fnNewFileName.GetExtension() );
 
 	ASSERT(fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory() == fnNewFileName.GetDrive() + fnNewFileName.GetDirectory());
@@ -129,18 +104,19 @@ BOOL CReportDlg::RenameItem(int nItem)
 
 	if (ren.DoModal() == IDOK)
 	{
-		// Change file name
-		CRenamingList::CRenamingOperation roRenamingOperation = m_renamingList[nItem];
+		// Change file name.
+		CRenamingList::CRenamingOperation roRenamingOperation = m_renamingList[nOperationIndex];
 		roRenamingOperation.fnAfter = strBaseFolder + ren.GetNewFileName();
-		m_renamingList.SetRenamingOperation(nItem, roRenamingOperation);
-		m_ctlReportList.SetItem(nItem, 1, LVIF_TEXT, ren.GetNewFileName(), NULL, NULL, NULL, NULL);
+		m_renamingList.SetRenamingOperation(nOperationIndex, roRenamingOperation);
+		m_ctlReportList.SetItemText(nItem, 1, ren.GetNewFileName());
 
-		// Check for errors and set icons
-		FindErrors();
-		return TRUE;
+		// Clear the error message.
+		m_ctlReportList.SetItem(nItem, 0, LVIF_IMAGE, NULL, -1, 0, 0, NULL);
+		m_ctlReportList.SetItemText(nItem, 3, _T(""));
+		return true;
 	}
 	else
-		return FALSE;
+		return false;
 }
 
 BOOL CReportDlg::FindErrors(void)
@@ -153,7 +129,6 @@ BOOL CReportDlg::FindErrors(void)
 	// Find errors in another thread and display the progress.
 	AfxBeginThread(CheckingThread, this);
 	m_dlgProgress.DoModal();
-	ASSERT(m_renamingList.GetCount() == m_uvErrorFlag.size());
 
 	// Show the problems.
 	ShowErrors();
@@ -163,60 +138,104 @@ BOOL CReportDlg::FindErrors(void)
 
 void CReportDlg::ShowErrors()
 {
-	ASSERT(m_renamingList.GetCount() == m_uvErrorFlag.size());
+	// Clear the displayed list.
+	m_ctlReportList.DeleteAllItems();
 
-	// Clear error list.
-	m_nErrors = 0;				// 0 errors found (until now)
-	m_nWarnings = 0;			// 0 warnings found (unit now)
-
-	// Look for detected problems.
-	for (int i=0; i<m_uvErrorFlag.size(); ++i)
+	// Add operations.
+	if (m_bShowAllOperations)
 	{
-		// Change icon in report list.
-		int nErrorFlag = -1;	// Icon to use (no icon by default).
-		CString strErrorMsg;
-		if (m_uvErrorFlag[i] == 0)
+		// Show all operations.
+		for (int i=0; i<m_renamingList.GetCount(); ++i)
+			InsertOperation(i);
+	}
+	else
+	{
+		// Show only errors.
+		for (int nOperationIndex=0; nOperationIndex<m_renamingList.GetCount(); ++nOperationIndex)
 		{
-			// Don't do anything
+			const CRenamingList::COperationProblem& problem = m_renamingList.GetOperationProblem(nOperationIndex);
+
+			if (problem.nErrorLevel != CRenamingList::levelNone)
+				InsertOperation(nOperationIndex);
 		}
-		else if (m_uvErrorFlag[i] & CRenamingList::errMissingFlag)
-		{
-			++m_nErrors;
-			nErrorFlag = iconRemoved;
-			strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
-		}
-		else if (m_uvErrorFlag[i] & CRenamingList::errInvalidNameFlag)
-		{
-			++m_nErrors;
-			nErrorFlag = iconInvalidName;
-			strErrorMsg.LoadString(IDS_INVALID_FILE_NAME);
-		}
-		else if (m_uvErrorFlag[i] & CRenamingList::errConflictFlag)
-		{
-			++m_nErrors;
-			nErrorFlag = iconConflict;
-			strErrorMsg.LoadString(IDS_CONFLICT);
-		}
-		else if (m_uvErrorFlag[i] & CRenamingList::errBadNameFlag)
-		{
-			++m_nWarnings;
-			nErrorFlag = iconBadName;
-			strErrorMsg.LoadString(IDS_BAD_FILE_NAME);
-		}
-		else
-		{
-			ASSERT(false);
-			++m_nErrors;
-			MsgBoxUnhandledError(__FILE__, __LINE__);
-			strErrorMsg = _T(" ? ? ? ");
-		}
-		m_ctlReportList.SetItem(i, 0, LVIF_IMAGE, NULL, nErrorFlag, 0, 0, NULL);
-		m_ctlReportList.SetItemText(i, 3, strErrorMsg);
 	}
 
 	// Update status.
+	UpdateStatus();
+}
+
+void CReportDlg::InsertOperation(int nRenamingOperationIndex)
+{
+	// Get the file name before and after to display.
+	CFileName fnOriginalFileName = m_renamingList[nRenamingOperationIndex].fnBefore;
+	CString strOriFileName = fnOriginalFileName.GetFileName() + fnOriginalFileName.GetExtension();
+	CString strPath = fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory();
+
+	CFileName fnNewFileName = m_renamingList[nRenamingOperationIndex].fnAfter;
+	CString strNewFileName = fnNewFileName.GetFileName() + fnNewFileName.GetExtension();
+
+	ASSERT(	CFileName(fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory()).FSCompare(
+			CFileName(fnNewFileName.GetDrive() + fnNewFileName.GetDirectory())) == 0);	// Same path before/after renaming
+
+	// Add item to the report list.
+	int nItemIndex = m_ctlReportList.InsertItem(LVIF_TEXT | LVIF_PARAM, m_ctlReportList.GetItemCount(), strOriFileName, 0, 0, -1, nRenamingOperationIndex);
+	if (nItemIndex == -1)
+	{
+		// Show critical error and exit the application.
+		ASSERT(false);
+		AfxMessageBox(IDS_CRITICAL_ERROR, MB_ICONSTOP);
+		PostQuitMessage(1);
+		return;
+	}
+	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 1, strNewFileName) );
+	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 2, strPath) );
+
+	// Update to show the problems.
+	const CRenamingList::COperationProblem& problem = m_renamingList.GetOperationProblem(nRenamingOperationIndex);
+
+	// Change icon in report list.
+	int nIcon = -1;
+	switch (problem.nErrorCode)
+	{
+	case CRenamingList::errNoError:
+		nIcon = -1;	// Icon to use (no icon by default).
+		break;
+	
+	case CRenamingList::errFileMissing:
+		nIcon = iconRemoved;
+		break;
+
+	case CRenamingList::errInvalidName:
+		nIcon = iconInvalidName;
+		break;
+
+	case CRenamingList::errConflict:
+		nIcon = iconConflict;
+		break;
+
+	case CRenamingList::errRiskyName:
+		nIcon = iconBadName;
+		break;
+
+	default:
+		ASSERT(false);
+		MsgBoxUnhandledError(__FILE__, __LINE__);
+	}
+
+	m_ctlReportList.SetItem(nRenamingOperationIndex, 0, LVIF_IMAGE, NULL, nIcon, 0, 0, NULL);
+	m_ctlReportList.SetItemText(nRenamingOperationIndex, 3, problem.strMessage);
+}
+
+void CReportDlg::UpdateStatus()
+{
+	// Update status.
+	CString str[3];
+	str[0].Format(_T("%d"), m_renamingList.GetCount());
+	str[1].Format(_T("%d"), m_renamingList.GetErrorCount());
+	str[2].Format(_T("%d"), m_renamingList.GetWarningCount());
+	LPCTSTR lpstr[] = {str[0], str[1], str[2]};
 	CString	strStatus;
-	strStatus.Format(IDS_REPORT_BEFORE, m_renamingList.GetCount(), m_nErrors);
+	AfxFormatStrings(strStatus, IDS_REPORT_BEFORE, lpstr, sizeof(lpstr)/sizeof(lpstr[0]));
 	GetDlgItem(IDC_STATUS_STATIC)->SetWindowText(strStatus);
 }
 
@@ -225,7 +244,7 @@ UINT CReportDlg::CheckingThread(LPVOID lpParam)
 	CReportDlg* pThis = static_cast<CReportDlg*>(lpParam);
 
 	// Do the checking.
-	pThis->m_uvErrorFlag = pThis->m_renamingList.FindErrors();
+	pThis->m_renamingList.Check();
 
 	// Hide the progress dialog to continue in the main thread.
 	pThis->m_dlgProgress.Done();
@@ -250,7 +269,6 @@ void CReportDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 				uFlagRen = 0,
 				uFlagDel = 0;
 	CRect		rect;
-	int			i;
 
 	// Report list context menu
 	if (pWnd->GetDlgCtrlID() != IDC_REPORT_LIST)
@@ -321,6 +339,7 @@ void CReportDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 	case 10:	// Rename
 		RenameItem(uSelItem);
 		break;
+
 	case 20:	// Remove
 		while (true)
 		{
@@ -334,16 +353,18 @@ void CReportDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 		FindErrors();	// Find if errors left
 		break;
+
 	case 30:	// Remove missing
-		for (i=0; i<(int)m_uvErrorFlag.size(); ++i)
-			if (m_uvErrorFlag[i] & CRenamingList::errMissingFlag)
+		for (int nOperationIndex=0; nOperationIndex<m_renamingList.GetCount(); ++nOperationIndex)
+		{
+			if (m_renamingList.GetOperationProblem(nOperationIndex).nErrorCode == CRenamingList::errFileMissing)
 			{
 				// Remove item
-				RemoveItem(i);
-				i--;
+				RemoveItem(FindIndexOf(nOperationIndex));
 			}
-		FindErrors();	// Find if errors left
+		}
 		break;
+
 	case 40:	// Refresh report list
 		FindErrors();
 		break;
@@ -396,10 +417,10 @@ void CReportDlg::OnLvnKeydownReportList(NMHDR *pNMHDR, LRESULT *pResult)
 void CReportDlg::OnOK()
 {
 	// If there are some errors, re-check.
-	if (m_nErrors > 0)
+	if (m_renamingList.GetErrorCount() > 0)
 	{
 		FindErrors();
-		if (m_nErrors > 0)
+		if (m_renamingList.GetErrorCount() > 0)
 		{
 			// Alert the user.
 			AfxMessageBox(IDS_REPORT_ERROR_REMAIN, MB_ICONINFORMATION);
@@ -427,14 +448,47 @@ void CReportDlg::OnOK()
 
 void CReportDlg::RemoveItem(int nIndex)
 {
-	// Pre-conditions.
-	ASSERT(m_ctlReportList.GetItemCount() == m_renamingList.GetCount());
-	ASSERT(m_uvErrorFlag.size() == m_renamingList.GetCount());
-
-	if (nIndex < m_renamingList.GetCount())
-		m_renamingList.RemoveRenamingOperation(nIndex);
-	if (nIndex < (int)m_uvErrorFlag.size())
-		m_uvErrorFlag.erase(m_uvErrorFlag.begin() + nIndex);
+	// Check the index.
 	if (nIndex < m_ctlReportList.GetItemCount())
+	{
+		int nRenamingOperation = (int) m_ctlReportList.GetItemData(nIndex);
+		m_renamingList.RemoveRenamingOperation(nRenamingOperation);
 		m_ctlReportList.DeleteItem(nIndex);
+
+		// After removing an operation of index X,
+		// the index any operation Y > X must be indexed as Y-1.
+		for (int i=nIndex; i<m_ctlReportList.GetItemCount(); ++i)
+		{
+			// We assume that items are ordered by increasing index.
+			ASSERT((int) m_ctlReportList.GetItemData(i) > nRenamingOperation);
+
+			m_ctlReportList.SetItemData(i, (int) m_ctlReportList.GetItemData(i) - 1);
+		}
+
+		// Update the status.
+		UpdateStatus();
+	}
+}
+
+void CReportDlg::OnBnClickedShowAllCheck()
+{
+	m_bShowAllOperations = (IsDlgButtonChecked(IDC_SHOW_ALL_CHECK) != 0);
+	ShowErrors();
+}
+
+int CReportDlg::FindIndexOf(int nRenamingOperation) const
+{
+	// Find the item index corresponding to this operation.
+	if (m_bShowAllOperations)
+		return nRenamingOperation;
+	else
+	{
+		LVFINDINFO findInfo;
+		ZeroMemory(&findInfo, sizeof(LVFINDINFO));
+		findInfo.flags = LVFI_PARAM;
+		findInfo.lParam = nRenamingOperation;
+		int nItemIndex = m_ctlReportList.FindItem(&findInfo);
+		ASSERT(nItemIndex != -1);
+		return nItemIndex;
+	}
 }

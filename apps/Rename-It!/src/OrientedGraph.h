@@ -22,23 +22,24 @@ namespace Beroux{ namespace Math{
 			~Iterator(void) {}
 
 		// Operations
-			void operator=(const Iterator& that) {
+			inline void operator=(const Iterator& that) {
 				m_iter = that.m_iter;
 			}
 
-			void operator++(void) {
+			inline void operator++(void) {
 				++m_iter;
 			}
 
-			bool operator!=(const Iterator& other) {
+			inline bool operator!=(const Iterator& other) {
 				return other.m_iter != m_iter;
 			}
 
-			unsigned operator*(void) {
+			inline unsigned operator*(void) {
 				return m_iter->first;
 			}
 
 		// Implementation
+		private:
 			std::map<unsigned, Node>::iterator	m_iter;
 		};
 
@@ -54,32 +55,32 @@ namespace Beroux{ namespace Math{
 			~Node(void) {};
 
 		// Attributes
-			bool HasSuccessor(void) const
+			inline bool HasSuccessor(void) const
 			{
 				return !m_vSuccessors.empty();
 			}
 
-			bool HasAntecedent(void) const
+			inline bool HasAntecedent(void) const
 			{
 				return !m_vAntecedents.empty();
 			}
 
-			unsigned GetSuccessorsCount(void)
+			inline unsigned GetSuccessorsCount(void)
 			{
 				return (unsigned) m_vSuccessors.size();
 			}
 
-			unsigned GetAntecedentsCount(void)
+			inline unsigned GetAntecedentsCount(void)
 			{
 				return (unsigned) m_vAntecedents.size();
 			}
 
-			unsigned GetSuccessor(unsigned n) const
+			inline unsigned GetSuccessor(unsigned n) const
 			{
 				return m_vSuccessors[n];
 			}
 
-			unsigned GetAntecedent(unsigned n) const
+			inline unsigned GetAntecedent(unsigned n) const
 			{
 				return m_vAntecedents[n];
 			}

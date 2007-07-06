@@ -4,18 +4,42 @@
 
 /**
  * Handle the renaming of a set of renaming operations.
- * The renaming order is handled internally.
+ *
+ * Let note A->B the renaming operation of a file named "A" to "B"; here are some features supported:
+ * - The renaming order is handled internally: A->B, B->C will rename B first and then A.
+ * - Temporary file names for cycles: A->B, B->A will rename by using a temporary file name A->T, B->A, T->B.
+ * 
+ * Can detect renaming problem before renaming files, including:
+ * - System forbidden file names and most dangerous file names[1]
+ * - When two files are going to have to same file name
+ * - When files have been removed
+ *
+ * [1]: Note that "C:\program.txt" when "C:\Program Files\" exits is not checked by should give a warning
+ *      See http://www.cs.rpi.edu/courses/fall01/os/CreateProcess.html
+ *
+ * @todo Check for more dangerous file names and check if files are opened by another process.
  */
 class CRenamingList
 {
 // Definitions
 public:
-	enum EErrorFlag
+	enum EErrorLevel
 	{
-		errMissingFlag		= 0x0001,	// The original file is missing from the storage.
-		errConflictFlag		= 0x0002,	// The renaming preview shows a conflict with other files (existing or in the renaming list).
-		errBadNameFlag		= 0x0004,	// The previewed new file name should be avoided.
-		errInvalidNameFlag	= 0x0008,	// The previewed new file name is invalid.
+		levelNone,		// No error detected.
+		levelWarning,	// This is a warning, so the renaming is still possible.
+		levelError,		// This is an error, so the renaming would be impossible.
+	};
+
+	/**
+	 * The higher, the higher the error level.
+	 */
+	enum EErrorCode
+	{
+		errNoError,			// No error.
+		errRiskyName,		// The new file name should be avoided.
+		errConflict,		// The renaming preview shows a conflict with other files (existing or in the renaming list).
+		errInvalidName,		// The new file name is invalid.
+		errFileMissing,		// The original file is missing from the storage.
 	};
 
 	enum EStage
@@ -44,6 +68,19 @@ public:
 		CFileName	fnAfter;
 	};
 
+	struct COperationProblem
+	{
+		COperationProblem()
+			: nErrorLevel(levelNone)
+			, nErrorCode(errNoError)
+		{
+		}
+
+		EErrorLevel nErrorLevel;	// How serious is the problem (if there is any).
+		EErrorCode nErrorCode;		// A code representing the general error reason.
+		CString strMessage;			// A short message describing the problem's reasons (in the user language).
+	};
+
 // Construction
 	CRenamingList(void);
 	CRenamingList(const CFileList& flBefore, const CFileList& flAfter);
@@ -51,41 +88,16 @@ public:
 
 	void Create(const CFileList& flBefore, const CFileList& flAfter);
 
-// Methods to access and modify the list
+// Attributes
 	/**
 	 * @return Number of renaming operations to perform.
 	 */
-	int GetCount() const {
-		return (int) m_vRenamingOperations.size();
-	}
+	int GetCount() const { return (int) m_vRenamingOperations.size(); }
 
-	const CRenamingOperation& GetRenamingOperation(int nIndex) const {
-		return m_vRenamingOperations.at(nIndex);
-	}
+	int GetWarningCount() const { return m_nWarnings; }
 
-	void AddRenamingOperation(const CRenamingOperation& roRenaming) {
-		m_vRenamingOperations.push_back(roRenaming);
-	}
+	int GetErrorCount() const { return m_nErrors; }
 
-	void AddRenamingOperation(const CFileName& fnBefore, const CFileName& fnAfter) {
-		AddRenamingOperation( CRenamingOperation(fnBefore, fnAfter) );
-	}
-
-	void SetRenamingOperation(int nIndex, const CRenamingOperation& roRenaming) {
-		m_vRenamingOperations.at(nIndex) = roRenaming;
-	}
-
-	void RemoveRenamingOperation(int nIndex) {
-		if (nIndex < 0 || nIndex >= (int) m_vRenamingOperations.size())
-			throw out_of_range("Index is out of range.");
-		m_vRenamingOperations.erase(m_vRenamingOperations.begin() + nIndex);
-	}
-
-	const CRenamingOperation& operator[](int nIndex) const {
-		return m_vRenamingOperations.at(nIndex);
-	}
-
-// Attributes
 	/**
 	 * See the declaration of m_fOnRenamed for more details about
 	 * the callback function arguments.
@@ -105,14 +117,59 @@ public:
 		m_fOnProgress = fOnRenameProgress;
 	}
 
-// Operations
+	/**
+	 * Return the problems found for a specific operation.
+	 * Call Check() to update the problems' list.
+	 */
+	inline const COperationProblem& GetOperationProblem(int nIndex)
+	{
+		return m_vProblems[nIndex];
+	}
 
+// Methods to access and modify the list
+	const CRenamingOperation& GetRenamingOperation(int nIndex) const {
+		return m_vRenamingOperations.at(nIndex);
+	}
+
+	void AddRenamingOperation(const CRenamingOperation& roRenaming) {
+		m_vRenamingOperations.push_back(roRenaming);
+		m_vProblems.push_back( COperationProblem() );
+	}
+
+	void AddRenamingOperation(const CFileName& fnBefore, const CFileName& fnAfter) {
+		AddRenamingOperation( CRenamingOperation(fnBefore, fnAfter) );
+	}
+
+	void SetRenamingOperation(int nIndex, const CRenamingOperation& roRenaming) {
+		m_vRenamingOperations.at(nIndex) = roRenaming;
+	}
+
+	void RemoveRenamingOperation(int nIndex) {
+		if (nIndex < 0 || nIndex >= (int) m_vRenamingOperations.size())
+			throw out_of_range("Index is out of range.");
+
+		switch (m_vProblems[nIndex].nErrorLevel)
+		{
+		case levelWarning:	--m_nWarnings; break;
+		case levelError:	--m_nErrors; break;
+		}
+
+		m_vRenamingOperations.erase(m_vRenamingOperations.begin() + nIndex);
+		m_vProblems.erase(m_vProblems.begin() + nIndex);
+		ASSERT(m_vRenamingOperations.size() == m_vProblems.size());
+	}
+
+	const CRenamingOperation& operator[](int nIndex) const {
+		return m_vRenamingOperations.at(nIndex);
+	}
+
+// Operations
 	/**
 	 * Search for possible renaming problems before doing the renaming.
-	 * @return A list of errors that is of same size as the files list,
-	 *         with for each file (of the same index) the value is a set of errors flags of EErrorFlag.
+	 * After calling Check, you can GetOperationProblems().
+	 * @return True when no problems (neither errors or warnings) have been detected.
 	 */
-	vector<unsigned> FindErrors() const;
+	bool Check();
 
 	/**
 	 * Perform the renaming of all the file.
@@ -121,12 +178,49 @@ public:
 
 // Implementation
 private:
+	void SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage)
+	{
+		vector<COperationProblem>::iterator iter = m_vProblems.begin() + nOperationIndex;
+
+		// Errors should always go up and keep the highest one only.
+		if (nErrorCode > iter->nErrorCode)
+		{
+			// Find the error level from the error code.
+			EErrorLevel nLevel;
+			switch (nErrorCode)
+			{
+			case errRiskyName:	nLevel = levelWarning; break;
+			default:			nLevel = levelError;
+			}
+
+			// Update error counters.
+			switch (nLevel)
+			{
+			case levelWarning:	++m_nWarnings; break;
+			case levelError:	++m_nErrors; break;
+			}
+			
+			// Save the problem in the report.
+			iter->nErrorLevel = nLevel;
+			iter->nErrorCode = nErrorCode;
+			iter->strMessage = strMessage;
+			ASSERT((iter->nErrorLevel==levelNone) ^ (iter->nErrorCode!=errNoError)); // no error <=> no error code, an error <=> error code set
+			ASSERT((iter->nErrorLevel==levelNone) ^ !iter->strMessage.IsEmpty());	// no error <=> no error message, an error <=> error message set
+		}
+	}
+
 	bool RenameFile(int nIndex);
 
 	// Default progress callback that does nothing.
 	void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}
 
-	vector<CRenamingOperation>	m_vRenamingOperations;
+	vector<CRenamingOperation> m_vRenamingOperations;
+
+	vector<COperationProblem> m_vProblems;
+
+	int m_nWarnings;
+
+	int m_nErrors;
 
 	/**
 	 * A callback function called after a file was renamed (also when it could not be renamed).

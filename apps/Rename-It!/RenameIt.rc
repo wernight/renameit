@@ -150,11 +150,12 @@ END
 
 IDD_REPORT DIALOGEX 0, 0, 374, 206
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Report"
+CAPTION "Pre-renaming Detected Problems Report"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Rename file list",IDC_STATIC,7,7,360,170
-    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
+    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,144
+    CONTROL         "Show all renaming operations",IDC_SHOW_ALL_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,161,109,10
     DEFPUSHBUTTON   "Check and Rename",IDOK,243,185,69,14
     PUSHBUTTON      "Cancel",IDCANCEL,317,185,50,14
     LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
@@ -629,7 +630,7 @@ BEGIN
                             "The file is marked as read only.\n\nAre you sure you want\nto overwrite it?"
     ID_RENAME_SYSTEM_FILE   "System file"
     IDS_CONFIRM_EXIT        "Some files haven't been renamed.\nAre you sure you want to exit?"
-    IDS_REPORT_BEFORE       "Files to rename: %d\nBad file names: %d"
+    IDS_REPORT_BEFORE       "Files to rename: %1\n%2 Error(s), %3 Warning(s)"
     IDS_MANUAL_RENAMING_ERROR 
                             "The file/folder could not be renamed like that."
 END
@@ -667,8 +668,10 @@ BEGIN
     IDS_DIR                 "Directory"
     IDS_ERROR               "Error"
     IDS_REMOVED_FROM_DISK   "Removed: File has been deleted from disk"
-    IDS_CONFLICT            "Conflict: Same file name has been found"
-    IDS_BAD_FILE_NAME       "Bad file name: This name should be avoided (probably reserved for the system)"
+    IDS_CONFLICT_WITH_EXISTING 
+                            "Conflict: A file with the same file name already exist on the disk."
+    IDS_CANNOT_RENAME_MISSING 
+                            "File missing: Cannot rename a file that doesn't exist on the disk."
     IDS_MENU_RENAME         "Rena&me\tF2"
     IDS_MENU_REMOVE_MISSING "Remove &all missing files"
     IDS_MENU_REFRESH        "&Refresh\tF5"
@@ -711,6 +714,14 @@ BEGIN
     IDS_TT_SELECT_RENAME_PARTS 
                             "Highlight the elements you would like to rename."
     IDS_NO_FILTER_TO_SAVE   "Nothing to save: No filter have been defined."
+    IDS_CONFLICT_SAME_AFTER "Conflict: The file '%1' is going to have the same file name as this one."
+    IDS_RISKY_FNAME_TOO_LONG 
+                            "Risky name: The file name is too long (exceeds 120 characters)."
+    IDS_RISKY_FNAME_CHARS   "Risky name: The file name contains characters that can cause problems."
+    IDS_RISKY_FNAME_RESERVED 
+                            "Risky name: This name should be avoided because it is reserved by the system."
+    IDS_RISKY_FNAME_TRIM_SPACES 
+                            "Risky name: Spaces before or after the file name should be avoided."
 END
 
 STRINGTABLE 
@@ -852,11 +863,13 @@ END
 
 IDD_REPORT DIALOGEX 0, 0, 374, 206
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Rapport"
+CAPTION "Rapport des problèmes détectés avant renommage"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Liste des fichiers à renommer",IDC_STATIC,7,7,360,170
-    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,155
+    CONTROL         "",IDC_REPORT_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,12,16,350,144
+    CONTROL         "Afficher toutes les opérations",IDC_SHOW_ALL_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,161,111,10
     DEFPUSHBUTTON   "Vérifier et renommer",IDOK,232,185,80,14
     PUSHBUTTON      "Annuler",IDCANCEL,317,185,50,14
     LTEXT           "<< IDC_STATUS_STATIC >>\n<< IDC_STATUS_STATIC >>",IDC_STATUS_STATIC,7,184,186,20
@@ -1385,7 +1398,7 @@ BEGIN
                             "Ce fichier est marqué comme lecture-seule.\n\nÊtes-vous sûr de vouloir l'écraser?"
     ID_RENAME_SYSTEM_FILE   "Fichier système"
     IDS_CONFIRM_EXIT        "Certains fichiers n'ont pas été renommé.\nÊtes-vous sûr de vouloir quitter?"
-    IDS_REPORT_BEFORE       "Fichiers à renommer: %d\nNoms de fichiers incorrects: %d"
+    IDS_REPORT_BEFORE       "Fichiers à renommer: %1\n%2 Erreur(s), %3 Avertissement(s)"
     IDS_MANUAL_RENAMING_ERROR 
                             "Le fichier/dossier n'a pas pu être renommé ainsi."
 END
@@ -1423,8 +1436,10 @@ BEGIN
     IDS_DIR                 "Dossier"
     IDS_ERROR               "Erreur"
     IDS_REMOVED_FROM_DISK   "Supprimé: Le fichier a été supprimé du disque"
-    IDS_CONFLICT            "Conflit: Le nom de fichier apparaît plusieurs fois"
-    IDS_BAD_FILE_NAME       "Nom à risque: Le nom du fichier peut poser des problèmes"
+    IDS_CONFLICT_WITH_EXISTING 
+                            "Conflit: Un fichier portant le même nom existe déjà sur le disque."
+    IDS_CANNOT_RENAME_MISSING 
+                            "Fichier manquant: Vous ne pouvez pas renommer un fichier qui n'existe pas (ou plus) sur le disque."
     IDS_MENU_RENAME         "Reno&mmer\tF2"
     IDS_MENU_REMOVE_MISSING "Retirer tous les fichiers &manquants"
     IDS_MENU_REFRESH        "&Rafraîchir\tF5"
@@ -1467,6 +1482,14 @@ BEGIN
     IDS_TT_SELECT_RENAME_PARTS 
                             "Mettez en surbrillance les éléments que vous souhaitez renommer."
     IDS_NO_FILTER_TO_SAVE   "Il n'y a rien à sauvegarder: Aucun filtre n'a été défini."
+    IDS_CONFLICT_SAME_AFTER "Conflit: Le fichier '%1' aura le même nom que celui-ci."
+    IDS_RISKY_FNAME_TOO_LONG 
+                            "Nom à risque: Nom de fichier trop long (excède 120 charactères)."
+    IDS_RISKY_FNAME_CHARS   "Nom à risque: Le nom du fichier contiendra des caractères à risque."
+    IDS_RISKY_FNAME_RESERVED 
+                            "Nom à risque: Utilise un nom réservé par le système."
+    IDS_RISKY_FNAME_TRIM_SPACES 
+                            "Nom à risque: Éviter les espaces en début ou fin de fichier."
 END
 
 STRINGTABLE 

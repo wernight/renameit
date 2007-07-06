@@ -50,7 +50,6 @@ private:
 	CRenameErrorDlg m_dlgRenameError;
 	unsigned m_nErrorLevel;
 	unsigned m_nFilesToRename;
-	vector<unsigned> m_uvErrorFlag;
 	int m_nCurrentStage; // The current stage of the renaming process.
 	int m_nPreviousStage; // The last stage for which the progress has been displayed.
 };

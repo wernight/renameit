@@ -63,8 +63,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 			// Show the report dialog.
 			CReport report;
-			ASSERT(m_renamingList.GetCount() == m_uvErrorFlag.size());
-			if (!report.ShowReportFixErrors(m_renamingList, m_uvErrorFlag))
+			if (!report.ShowReportFixErrors(m_renamingList))
 				return false;	// Some errors are left or the user cancelled.
 			else
 				// We continue at the next stage.
@@ -148,19 +147,11 @@ UINT CRenamingController::RenamingThread(LPVOID lpParam)
 	{
 	case CRenamingList::stageChecking:
 		// Check if there are some errors.
-		pThis->m_uvErrorFlag = pThis->m_renamingList.FindErrors();
-		ASSERT(pThis->m_renamingList.GetCount() == pThis->m_uvErrorFlag.size());
-
-		// Look if there are problems.
-		for (vector<unsigned>::iterator iter=pThis->m_uvErrorFlag.begin(); iter!=pThis->m_uvErrorFlag.end(); ++iter)
-		{
-			if (*iter != 0)
-			{// A problem has been found,
-				// Hide the progress window so the main thread can continue.
-				ASSERT(pThis->m_renamingList.GetCount() == pThis->m_uvErrorFlag.size());
-				pThis->m_dlgProgress.Done();
-				return 0;
-			}
+		if (!pThis->m_renamingList.Check())
+		{// A problem has been found.
+			// Hide the progress window so the main thread can continue.
+			pThis->m_dlgProgress.Done();
+			return 0;
 		}
 		pThis->m_nCurrentStage = CRenamingList::stagePreRenaming;
 

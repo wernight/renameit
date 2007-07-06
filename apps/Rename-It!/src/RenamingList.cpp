@@ -2,13 +2,18 @@
 #include "RenamingList.h"
 #include "OrientedGraph.h"
 #include <math.h>
+#include "../resource.h"
 
 CRenamingList::CRenamingList(void)
+	: m_nWarnings(0)
+	, m_nErrors(0)
 {
 	m_fOnProgress = boost::bind(&CRenamingList::DefaultProgressCallback, this, _1, _2, _3);
 }
 
 CRenamingList::CRenamingList(const CFileList& flBefore, const CFileList& flAfter)
+	: m_nWarnings(0)
+	, m_nErrors(0)
 {
 	Create(flBefore, flAfter);
 }
@@ -24,19 +29,26 @@ void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 
 	// Combine the two lists into a renaming list.
 	m_vRenamingOperations.resize(flBefore.GetFileCount());
+	m_vProblems.resize(flBefore.GetFileCount());
 	for (int i=0; i<flBefore.GetFileCount(); ++i)
 		m_vRenamingOperations[i] = CRenamingOperation(flBefore[i], flAfter[i]);
 }
 
-vector<unsigned> CRenamingList::FindErrors() const
+bool CRenamingList::Check()
 {
 	// Declarations.
 	const int	nFilesCount = (int) m_vRenamingOperations.size();
 	CFileFind	ffFileFind;
 
-	// Create a new error list.
-	vector<unsigned> uvErrors;
-	uvErrors.resize(nFilesCount);
+	// Reinitialize the error list.
+	ASSERT(m_vProblems.size() == m_vRenamingOperations.size());
+	m_nErrors = m_nWarnings = 0;
+	BOOST_FOREACH(COperationProblem& problem, m_vProblems)
+	{
+		problem.nErrorLevel = levelNone;
+		problem.nErrorCode = errNoError;
+		problem.strMessage.Empty();
+	}
 
 	// Check for file conflicts.
 	for (int i=0; i<nFilesCount; ++i)
@@ -47,7 +59,7 @@ vector<unsigned> CRenamingList::FindErrors() const
 
 		// If that file isn't already marked as conflicting with another,
 		// test if it's going to conflict with another file.
-		if (!(uvErrors[i] & errConflictFlag))
+		if (m_vProblems[i].nErrorCode != errConflict)
 		{
 			/* Detect if it's going to be renamed to a file that already exists
 			   but that is not part of the files to rename... */
@@ -58,29 +70,36 @@ vector<unsigned> CRenamingList::FindErrors() const
 				for (int j=0; j<nFilesCount; ++j)
 					if (m_vRenamingOperations[j].fnBefore.FSCompare(m_vRenamingOperations[i].fnAfter) == 0)
 					{
-						// Yes it is (we are going if it conflicts below)
+						// Yes it is (we are going if it conflicts after renaming below)
 						bFound = true;
 						break;
 					}
 				if (!bFound)
 				{
 					// No it is not, so it will conflict with the existing file on the disk.
-					uvErrors[i] |= errConflictFlag;
+					CString strErrorMsg;
+					strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
+					SetProblem(i, errConflict, strErrorMsg);
 				}
 			}
 
 			/* If it doesn't conflict with a file not part of the
 			   files to rename, check if it conflicts with files
 			   that are going to be renamed... */
-			if (!(uvErrors[i] & errConflictFlag))
+			if (m_vProblems[i].nErrorCode != errConflict)
 			{
 				// Check if two files are going to have the same new file name
 				for (int j=i+1; j<nFilesCount; ++j)
 					if (m_vRenamingOperations[i].fnAfter.FSCompare(m_vRenamingOperations[j].fnAfter) == 0)
 					{
-						// Conflict found
-						uvErrors[i] |= errConflictFlag;
-						uvErrors[j] |= errConflictFlag;
+						// Conflict found: Two files are going to be renamed to the same new file name.
+						CString strErrorMsg;
+
+						AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[j].fnBefore.GetFullPath());
+						SetProblem(i, errConflict, strErrorMsg);
+
+						AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].fnBefore.GetFullPath());
+						SetProblem(j, errConflict, strErrorMsg);
 					}
 			}
 		}
@@ -88,7 +107,6 @@ vector<unsigned> CRenamingList::FindErrors() const
 
 	// Check if file name is valid
 	// and Check if file still exists
-	const int MAX_INVALID_NAME_LENGTH = (int) lstrlen(_T("CLOCK$"));
 	for (int i=0; i<nFilesCount; ++i)
 	{
 		// Report progress
@@ -97,64 +115,85 @@ vector<unsigned> CRenamingList::FindErrors() const
 		// Check if the file still exists
 		if (!ffFileFind.FindFile( m_vRenamingOperations[i].fnBefore.GetFullPath() ))
 		{
-			uvErrors[i] |= errMissingFlag;
+			CString strErrorMsg;
+			strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
+			SetProblem(i, errFileMissing, strErrorMsg);
 		}
 
-		CString strFileName = m_vRenamingOperations[i].fnAfter.GetFileName();
-		CString strExt = m_vRenamingOperations[i].fnAfter.GetExtension();
-		CString strFullFileName = strFileName + strExt;
+		CString strFilename = m_vRenamingOperations[i].fnAfter.GetFileName();
+		CString strFullFilename = strFilename + m_vRenamingOperations[i].fnAfter.GetExtension();
 
 		// Look for invalid file name (renaming impossible to one of those)
-		if ((strFullFileName.IsEmpty())	// Empty filename (including extension)
-			|| strFullFileName.FindOneOf(_T("\\/:*?\"<>|")) != -1)	// or, Forbidden characters
+		if ((strFullFilename.IsEmpty())	// Empty filename (including extension)
+			|| strFullFilename.FindOneOf(_T("\\/:*?\"<>|")) != -1)	// or, Forbidden characters
 		{
-			uvErrors[i] |= errInvalidNameFlag;
+			CString strErrorMsg;
+			strErrorMsg.LoadString(IDS_INVALID_FILE_NAME);
+			SetProblem(i, errInvalidName, strErrorMsg);
 		}
 
-		if (!(uvErrors[i] & errInvalidNameFlag))
+		if (m_vProblems[i].nErrorCode != errInvalidName)
 		{
-			// Look for some other characters that are usually forbidden (but not explicitely).
-			for (int j=0; j<strFullFileName.GetLength(); ++j)
+			// Over 120 characters (maximum allowed from the Explorer)
+			if (strFullFilename.GetLength() > 120)
 			{
-				if (strFullFileName[j] < 0x20)
+				CString strErrorMsg;
+				strErrorMsg.LoadString(IDS_RISKY_FNAME_TOO_LONG);
+				SetProblem(i, errRiskyName, strErrorMsg);
+			}
+
+			// Look for some other characters that are usually forbidden (but not explicitely).
+			for (int j=0; j<strFullFilename.GetLength(); ++j)
+			{
+				if (strFullFilename[j] < 0x20)
 				{
-					uvErrors[i] |= errBadNameFlag;	// Windows XP rejects any file name with a character below 32.
+					// Windows XP rejects any file name with a character below 32.
+					CString strErrorMsg;
+					strErrorMsg.LoadString(IDS_RISKY_FNAME_CHARS);
+					SetProblem(i, errRiskyName, strErrorMsg);
 					break;
 				}
 			}
 
-			// Look for bad file name
 			// The following reserved words cannot be used as the name of a file:
 			// CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9.
 			// Also, reserved words followed by an extension—for example, NUL.tx7—are invalid file names.
-			if (strFullFileName.GetLength() > 120			// Over 120 characters (maximum allowed from the Explorer)
-				|| strFullFileName.Left(0) == _T(' ')		// Files starting by a space is not good.
-				|| strFullFileName.Right(0) == _T(' ')		// Files ending by a space is not good.
-				|| strFullFileName.GetAt(0) == _T('.')		// Files starting by a dot not allowed by the Explorer.
-				|| (strFileName.GetLength() <= MAX_INVALID_NAME_LENGTH	// Fast remove any file name a bit long...
-					&& (   strFileName.CompareNoCase(_T("CON")) == 0	// to quickly detect system reserved file names.
-						|| strFileName.CompareNoCase(_T("PRN")) == 0
-						|| strFileName.CompareNoCase(_T("AUX")) == 0
-						|| strFileName.CompareNoCase(_T("CLOCK$")) == 0 
-						|| strFileName.CompareNoCase(_T("NUL")) == 0 
-						|| (strFileName.GetLength() == 4
-							&& (_tcsncicmp(strFileName, _T("COM"), 3) == 0 || _tcsncicmp(strFileName, _T("LPT"), 3) == 0)
-							&& (strFileName[3] >= _T('1') && strFileName[3] <= _T('9'))
+			const int MAX_INVALID_NAME_LENGTH = 6;	// = strlen("CLOCK$")
+			if ((strFilename.GetLength() <= MAX_INVALID_NAME_LENGTH	// Quickly remove any file name that can't be invalid...
+					&& (   strFilename.CompareNoCase(_T("CON")) == 0	// to quickly detect system reserved file names.
+						|| strFilename.CompareNoCase(_T("PRN")) == 0
+						|| strFilename.CompareNoCase(_T("AUX")) == 0
+						|| strFilename.CompareNoCase(_T("CLOCK$")) == 0 
+						|| strFilename.CompareNoCase(_T("NUL")) == 0 
+						|| (strFilename.GetLength() == 4
+							&& (_tcsncicmp(strFilename, _T("COM"), 3) == 0 || _tcsncicmp(strFilename, _T("LPT"), 3) == 0)
+							&& (strFilename[3] >= _T('1') && strFilename[3] <= _T('9'))
 						   )
 						)
 				   )
 			   )
 			{
-				uvErrors[i] |= errBadNameFlag;
+				CString strErrorMsg;
+				strErrorMsg.LoadString(IDS_RISKY_FNAME_RESERVED);
+				SetProblem(i, errRiskyName, strErrorMsg);
+			}
+
+			// Starting or ending by one or more spaces.
+			if (strFullFilename.GetAt(0) == _T(' ')			// Files starting by a space is not good.
+				|| strFullFilename.Right(0) == _T(' '))		// Files ending by a space is not good.
+			{
+				CString strErrorMsg;
+				strErrorMsg.LoadString(IDS_RISKY_FNAME_TRIM_SPACES);
+				SetProblem(i, errRiskyName, strErrorMsg);
 			}
 		}
 	}
 
 	// Post condition.
-	ASSERT(uvErrors.size() == uvErrors.size());
+	ASSERT(m_vProblems.size() == m_vRenamingOperations.size());
 
 	// Report the errors.
-	return uvErrors;
+	return m_nErrors == 0 && m_nWarnings == 0;
 }
 
 bool CRenamingList::PerformRenaming()

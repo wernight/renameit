@@ -46,8 +46,8 @@
 #define IDR_SEARCH_REGEXP               136
 #define IDS_ERROR                       137
 #define IDS_REMOVED_FROM_DISK           138
-#define IDS_CONFLICT                    139
-#define IDS_BAD_FILE_NAME               140
+#define IDS_CONFLICT_WITH_EXISTING      139
+#define IDS_CANNOT_RENAME_MISSING       140
 #define IDS_MENU_RENAME                 141
 #define IDS_MENU_REMOVE_MISSING         142
 #define IDS_MENU_REFRESH                143
@@ -88,7 +88,12 @@
 #define IDS_TT_SELECT_RENAME_PARTS      169
 #define IDS_NO_FILTER_TO_SAVE           170
 #define IDB_ADDFOLDER                   171
+#define IDS_CONFLICT_SAME_AFTER         171
+#define IDS_RISKY_FNAME_TOO_LONG        172
 #define IDB_ADDFILES                    173
+#define IDS_RISKY_FNAME_CHARS           173
+#define IDS_RISKY_FNAME_RESERVED        174
+#define IDS_RISKY_FNAME_TRIM_SPACES     175
 #define IDD_REPORT                      176
 #define IDI_REMOVED                     179
 #define IDI_REN_OK                      181
@@ -206,7 +211,9 @@
 #define IDC_DEV_EDIT                    1132
 #define IDC_PROGRESS1                   1134
 #define IDC_PROGRESS2                   1135
+#define IDC_CHECK1                      1135
 #define IDC_PROGRESS3                   1136
+#define IDC_SHOW_ALL_CHECK              1136
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000
 #define IDS_CMDLINE_LOG_FILE_MISSING    2001
 #define IDS_CMDLINE_NO_FILTER           2002
@@ -272,7 +279,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1135
+#define _APS_NEXT_CONTROL_VALUE         1137
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
