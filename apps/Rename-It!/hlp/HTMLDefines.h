@@ -82,6 +82,7 @@
 #define HIDD_WIZ_ID3TAG                         0x200D9
 #define HIDD_WIZ_APPEND                         0x200DA
 #define HIDD_WIZ_ENUM                           0x200DB
+#define HIDD_RENAMING_PROGRESS                  0x200DC
 #define HIDD_SEARCH_REPLACE_DIALOG              0x203EE
  
 // Frame Controls (IDW_*) 
