@@ -198,8 +198,13 @@ BOOL KTMTransaction::CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNe
 
 BOOL KTMTransaction::MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags){
 	// Overload - just calls other function
-	return MoveFileWithProgress(lpExistingFileName, lpNewFileName, NULL, NULL, dwFlags);
+	if (UseTransactedFunctions()){
+		return m_ProcAddress_MoveFileTransacted(lpExistingFileName, lpNewFileName, NULL, NULL, dwFlags, m_transaction);
+	}else{
+		return ::MoveFileEx(lpExistingFileName, lpNewFileName, dwFlags);
+	}
 }
+#if (_WIN32_WINNT >= 0x0500)
 BOOL KTMTransaction::MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags)
 {
 	if(UseTransactedFunctions()){
@@ -208,6 +213,7 @@ BOOL KTMTransaction::MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lp
 		return ::MoveFileWithProgress(lpExistingFileName, lpNewFileName, lpProgressRoutine, lpData, dwFlags);
 	}
 }
+#endif // (_WIN32_WINNT >= 0x0500)
 
 HANDLE KTMTransaction::CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, 
 	DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
@@ -246,6 +252,7 @@ DWORD KTMTransaction::GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath
 	}
 }
 
+#if (_WIN32_WINNT >= 0x0500)
 BOOL KTMTransaction::CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
 {
 	if(UseTransactedFunctions()){
@@ -254,6 +261,7 @@ BOOL KTMTransaction::CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileNa
 		return ::CreateHardLink(lpFileName, lpExistingFileName, lpSecurityAttributes);
 	}
 }
+#endif // (_WIN32_WINNT >= 0x0500)
 
 DWORD KTMTransaction::GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSizeHigh)
 {
