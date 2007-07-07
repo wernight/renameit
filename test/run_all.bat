@@ -13,6 +13,7 @@ echo TEST COMMAND-LINE
 echo ==========================================
 cd "test Command-line"
 call run.bat
+if %errorlevel%==0 goto end
 cd ..
 echo.
 
@@ -24,4 +25,5 @@ call run.bat
 cd ..
 echo.
 
+:end
 pause

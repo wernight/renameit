@@ -59,7 +59,7 @@ cd ..
 rmdir /s /q test_files
 color 2
 echo *** No errors detected
-goto end
+exit /B 1
 
 rem ===============
 rem = TEST FAILED =
@@ -70,10 +70,4 @@ set ALL_PASSED=0
 color c
 echo.
 echo *** errors detected in test suite; see standard output for details
-goto end
-
-rem =====================
-rem = End               =
-rem =====================
-:end
-pause
+exit /B
