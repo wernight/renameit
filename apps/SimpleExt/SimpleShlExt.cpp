@@ -6,9 +6,9 @@
 #include <memory>		// Used for auto_ptr
 
 #ifdef _UNICODE
-typedef std::wstring _tstring;
+typedef std::wstring tstring;
 #else
-typedef std::string _tstring;
+typedef std::string tstring;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	::RegCloseKey(hKey);
 
 	// Create file mapping
-	_tstring strMapFileName;
+	tstring strMapFileName;
 	while (true)
 	{
 		// Random name
@@ -213,7 +213,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	memcpy(lpMapAddress, m_szFiles, nMapSize);
 
 	// Create event
-	_tstring strEventName;
+	tstring strEventName;
 	while (true)
 	{
 		// Random name
@@ -233,7 +233,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	}
 
 	// Parameters
-	_tstring strApplication;
+	tstring strApplication;
 	strApplication = _T("\"");
 	strApplication += szDir;
 	strApplication += _T("\\RenameIt.exe\"");
@@ -241,7 +241,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	TCHAR szMaxSize[32];
 	_stprintf_s(szMaxSize, _T("%I64u"), nMapSize);
 
-	_tstring strCommandLine;
+	tstring strCommandLine;
 	strCommandLine += strApplication;
 	strCommandLine += _T(" /$shell$ext$ ");
 	strCommandLine += strMapFileName;
