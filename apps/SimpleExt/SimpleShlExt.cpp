@@ -2,7 +2,14 @@
 #include "stdafx.h"
 #include "SimpleExt.h"
 #include "SimpleShlExt.h"
-#include <stdio.h>		// Used for sprintf()
+#include <string>
+#include <memory>		// Used for auto_ptr
+
+#ifdef _UNICODE
+typedef std::wstring _tstring;
+#else
+typedef std::string _tstring;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CSimpleShlExt
@@ -134,136 +141,134 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 {
 	STARTUPINFO startupInfo;
 	PROCESS_INFORMATION	processInformation;
-	TCHAR	szDir[MAX_PATH],
-			szParameters[MAX_PATH],
-			szCommandLine[MAX_PATH*2],
-			szMapFileName[64],
-			szMapSize[32],
-			szEventName[64];
+	TCHAR	szDir[MAX_PATH];
 	HKEY	hKey;
 	DWORD	dwSize;
 	HANDLE	hMapFile,
 			hDoneEvent,
 			hWait[2];
 	LPVOID	lpMapAddress;
-	int		nMapSize = m_nFilesLength*sizeof(TCHAR),
-			nLength;
+	unsigned __int64 nMapSize = m_nFilesLength*sizeof(TCHAR);
 
 	// If lpVerb really points to a string, ignore this function call and bail out.
 	if ( 0 != HIWORD( pCmdInfo->lpVerb ))
 		return E_INVALIDARG;
 
 	// Get the command index - the only valid one is 0.
-	switch ( LOWORD( pCmdInfo->lpVerb ))
+	if (LOWORD(pCmdInfo->lpVerb) != 0)
+		return E_INVALIDARG;
+
+	// Get RenameIt.exe directory
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, _T("Software\\Rename-It!"), &hKey) != ERROR_SUCCESS)
 	{
-	case 0:
-		// Get RenameIt.exe directory
-		if (::RegOpenKey(HKEY_LOCAL_MACHINE, _T("Software\\Rename-It!"), &hKey) != ERROR_SUCCESS)
-		{
-			::MessageBox(pCmdInfo->hwnd, _T("Unable to open registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
-			return S_OK;
-		}
-		dwSize = sizeof(szDir)/sizeof(szDir[0]);
-		if (::RegQueryValueEx(hKey, _T("ExeDir"), NULL, NULL, (LPBYTE)szDir, &dwSize) != ERROR_SUCCESS)
-		{
-			::MessageBox(pCmdInfo->hwnd, _T("Unable to read registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
-			return S_OK;
-		}
-		::RegCloseKey(hKey);
+		::MessageBox(pCmdInfo->hwnd, _T("Unable to open registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		return S_OK;
+	}
+	dwSize = sizeof(szDir)/sizeof(szDir[0]);
+	if (::RegQueryValueEx(hKey, _T("ExeDir"), NULL, NULL, (LPBYTE)szDir, &dwSize) != ERROR_SUCCESS)
+	{
+		::MessageBox(pCmdInfo->hwnd, _T("Unable to read registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		return S_OK;
+	}
+	::RegCloseKey(hKey);
+
+	// Create file mapping
+	_tstring strMapFileName;
+	while (true)
+	{
+		// Random name
+		strMapFileName = _T("RenIt-MapFileEvent-");
+		for (int i=0; i<10; ++i)
+			strMapFileName += _T("0123456789ABCDEF")[rand() % 16];
 
 		// Create file mapping
-		while (true)
+		hMapFile = ::CreateFileMapping(
+			INVALID_HANDLE_VALUE,			// Current file handle
+			NULL,							// Default security
+			PAGE_READWRITE,					// Read/write permission
+			DWORD(nMapSize >> 32),			// Max. object size (high-order)
+			DWORD(nMapSize),				// Max. object size (low-order)
+			strMapFileName.c_str());		// Name of mapping object
+		if (hMapFile == NULL)
 		{
-			// Random name
-			_tcscpy(szMapFileName, _T("RenIt-MapFileEvent-"));
-			nLength = _tcslen(szMapFileName);
-			_stprintf(&szMapFileName[nLength], _T("%d"), rand());
-
-			// Create file mapping
-			hMapFile = ::CreateFileMapping(
-				INVALID_HANDLE_VALUE,			// Current file handle
-				NULL,							// Default security
-				PAGE_READWRITE,					// Read/write permission
-				DWORD(nMapSize >> 32),			// Max. object size (high-order)
-				DWORD(nMapSize),				// Max. object size (low-order)
-				szMapFileName);					// Name of mapping object
-			if (hMapFile == NULL)
-			{
-				::MessageBox(pCmdInfo->hwnd, _T("Unable to create file mapping."), _T("Rename-It!"), MB_ICONERROR);
-				return S_OK;
-			}
-			if (::GetLastError() != ERROR_ALREADY_EXISTS)
-				break;
-			::CloseHandle(hMapFile);
-		}
-		// Copy data
-		lpMapAddress = ::MapViewOfFile(
-			hMapFile,							// Handle to mapping object
-			FILE_MAP_ALL_ACCESS,				// Read/write permission
-			0,									// Max. object size (high-order)
-			0,									// Max. object size (low-order)
-			nMapSize);							// Map entire file
-		if (lpMapAddress == NULL)
-		{
-			::MessageBox(pCmdInfo->hwnd, _T("Could not map view of file."), _T("Rename-It!"), MB_ICONERROR);
+			::MessageBox(pCmdInfo->hwnd, _T("Unable to create file mapping."), _T("Rename-It!"), MB_ICONERROR);
 			return S_OK;
 		}
-		memcpy(lpMapAddress, m_szFiles, nMapSize);
+		if (::GetLastError() != ERROR_ALREADY_EXISTS)
+			break;
+		::CloseHandle(hMapFile);
+	}
+	// Copy data
+	lpMapAddress = ::MapViewOfFile(
+		hMapFile,							// Handle to mapping object
+		FILE_MAP_ALL_ACCESS,				// Read/write permission
+		0,									// Max. object size (high-order)
+		0,									// Max. object size (low-order)
+		nMapSize);							// Map entire file
+	if (lpMapAddress == NULL)
+	{
+		::MessageBox(pCmdInfo->hwnd, _T("Could not map view of file."), _T("Rename-It!"), MB_ICONERROR);
+		return S_OK;
+	}
+	memcpy(lpMapAddress, m_szFiles, nMapSize);
+
+	// Create event
+	_tstring strEventName;
+	while (true)
+	{
+		// Random name
+		strEventName = _T("RenIt-DoneEvent-");
+		for (int i=0; i<10; ++i)
+			strEventName += _T("0123456789ABCDEF")[rand() % 16];
 
 		// Create event
-		while (true)
+		if ((hDoneEvent=::CreateEvent(NULL, TRUE, FALSE, strEventName.c_str())) == NULL)
 		{
-			// Random name
-			_tcscpy(szEventName, _T("RenIt-DoneEvent-"));
-			nLength = _tcslen(szEventName);
-			_stprintf(&szEventName[nLength], _T("%d"), rand());
-
-			// Create event
-			if ((hDoneEvent=::CreateEvent(NULL, TRUE, FALSE, szEventName)) == NULL)
-			{
-				::MessageBox(pCmdInfo->hwnd, _T("Unable to create event."), _T("Rename-It!"), MB_ICONERROR);
-				return S_OK;
-			}
-			if (::GetLastError() != ERROR_ALREADY_EXISTS)
-				break;
-			::CloseHandle(hDoneEvent);
-		}
-
-		// Parameters
-		_tcscpy(szParameters, _T("/f "));
-		_tcscat(szParameters, szMapFileName);
-		_tcscat(szParameters, _T(":"));
-		_stprintf(szMapSize, _T("%d"), nMapSize);
-		_tcscat(szParameters, szMapSize);
-		_tcscat(szParameters, _T(":"));
-		_tcscat(szParameters, szEventName);
-
-		// Lauch the program
-		_tcscpy(szCommandLine, _T("\""));
-		_tcscat(szCommandLine, szDir);
-		_tcscat(szCommandLine, _T("\\RenameIt.exe"));
-		_tcscat(szCommandLine, _T("\" "));
-		_tcscat(szCommandLine, szParameters);
-
-		ZeroMemory(&startupInfo, sizeof(startupInfo));
-		startupInfo.cb = sizeof(startupInfo);
-
-		if (!::CreateProcess(NULL, szCommandLine, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation))
-		{
-			::MessageBox(pCmdInfo->hwnd, _T("Error: Can't launch RenameIt.exe.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+			::MessageBox(pCmdInfo->hwnd, _T("Unable to create event."), _T("Rename-It!"), MB_ICONERROR);
 			return S_OK;
 		}
-
-		// Wait
-		hWait[0] = processInformation.hProcess;
-		hWait[1] = hDoneEvent;
-		::WaitForMultipleObjects(sizeof(hWait)/sizeof(hWait[0]), hWait, FALSE, INFINITE);
-		::CloseHandle(processInformation.hThread);
-		::CloseHandle(processInformation.hProcess);
-		UnmapViewOfFile(lpMapAddress);
-		return S_OK;
-
-	default:
-		return E_INVALIDARG;
+		if (::GetLastError() != ERROR_ALREADY_EXISTS)
+			break;
+		::CloseHandle(hDoneEvent);
 	}
+
+	// Parameters
+	_tstring strApplication;
+	strApplication = _T("\"");
+	strApplication += szDir;
+	strApplication += _T("\\RenameIt.exe\"");
+
+	TCHAR szMaxSize[32];
+	_stprintf_s(szMaxSize, _T("%I64u"), nMapSize);
+
+	_tstring strCommandLine;
+	strCommandLine += strApplication;
+	strCommandLine += _T(" /$shell$ext$ ");
+	strCommandLine += strMapFileName;
+	strCommandLine += _T(":");
+	strCommandLine += szMaxSize;
+	strCommandLine += _T(":");
+	strCommandLine += strEventName;
+
+	// Lauch the program
+	ZeroMemory(&startupInfo, sizeof(startupInfo));
+	startupInfo.cb = sizeof(startupInfo);
+
+	std::auto_ptr<TCHAR> szCommandLine(new TCHAR[strCommandLine.length() + 1]);
+	_tcscpy(szCommandLine.get(), strCommandLine.c_str());
+
+	if (!::CreateProcess(strApplication.c_str(), szCommandLine.get(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation))
+	{
+		::MessageBox(pCmdInfo->hwnd, _T("Error: Can't launch RenameIt.exe.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		return S_OK;
+	}
+
+	// Wait
+	hWait[0] = processInformation.hProcess;
+	hWait[1] = hDoneEvent;
+	::WaitForMultipleObjects(sizeof(hWait)/sizeof(hWait[0]), hWait, FALSE, INFINITE);
+	::CloseHandle(processInformation.hThread);
+	::CloseHandle(processInformation.hProcess);
+	UnmapViewOfFile(lpMapAddress);
+	return S_OK;
 }

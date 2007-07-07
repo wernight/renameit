@@ -202,7 +202,6 @@ END_MESSAGE_MAP()
 BOOL CRenameItDlg::OnInitDialog()
 {
     CResizingDialog::OnInitDialog();
-	CString		str;
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -223,9 +222,12 @@ BOOL CRenameItDlg::OnInitDialog()
 
 	// Add columns...
 	m_ctlListFilenames.SetExtendedStyle(LVS_EX_CHECKBOXES);
-	str.LoadString(IDS_BEFORE);	m_ctlListFilenames.InsertColumn( 0, str, LVCFMT_LEFT, 100, 0 );
-	str.LoadString(IDS_AFTER);	m_ctlListFilenames.InsertColumn( 1, str, LVCFMT_LEFT, 100, 1 );
-	str.LoadString(IDS_FILTER);	m_ctlListFilters.InsertColumn( 0, str, LVCFMT_LEFT, 200, 0 );
+	{
+		CString	str;
+		str.LoadString(IDS_BEFORE);	m_ctlListFilenames.InsertColumn( 0, str, LVCFMT_LEFT, 100, 0 );
+		str.LoadString(IDS_AFTER);	m_ctlListFilenames.InsertColumn( 1, str, LVCFMT_LEFT, 100, 1 );
+		str.LoadString(IDS_FILTER);	m_ctlListFilters.InsertColumn( 0, str, LVCFMT_LEFT, 200, 0 );
+	}
 
 	// Set what part of the path to rename
 	CConfigure	config;
@@ -1052,9 +1054,9 @@ bool CRenameItDlg::ProcessCommandLine(LPCTSTR szArgs)
 	// Clear error list
 	m_dlgNotAddedFiles.ClearList();
 
-	if (!_tcsncmp(szArgs, _T("/f "), 3))
+	if (!_tcsncmp(szArgs, _T("/$shell$ext$ "), 13))
 		// Files provided by the shell extension
-		ProcessShellCommandLine(szArgs);
+		ProcessShellCommandLine(&szArgs[13]);
 	else
 		// User command-line or drag&drop files on the exe
 		ProcessUserCommandLine();
@@ -1067,7 +1069,7 @@ void CRenameItDlg::ProcessShellCommandLine(LPCTSTR szArgs)
 	TCHAR			szBuffer[MAX_PATH];
 
 	// File mapping
-	LPCTSTR pStart = &szArgs[3];
+	LPCTSTR pStart = szArgs;
 	LPCTSTR pEnd = _tcschr(&pStart[1], ':');
 	if (pEnd == NULL)
 	{
