@@ -19,8 +19,8 @@ CFilterContainer::CFilterContainer(const CFilterContainer& copy)
 	m_nPathRenamePart = copy.m_nPathRenamePart;
 
 	// Copy the filters.
-	for (POSITION pos=copy.m_clFilters.GetHeadPosition(); pos!=NULL; )
-		AddFilter(copy.m_clFilters.GetNext(pos));
+	for (const_iterator iter=copy.m_vFilters.begin(); iter!=copy.m_vFilters.end(); ++iter)
+		AddFilter(*iter);
 }
 
 CFilterContainer::~CFilterContainer(void)
@@ -30,89 +30,44 @@ CFilterContainer::~CFilterContainer(void)
 
 void CFilterContainer::AddFilter(const IFilter* filter)
 {
-	// Create a copy of the filter.
-	IFilter* pClone = NULL;
-	if (filter->GetFilterCodeName() == _T("Search and replace"))
-		pClone = new CSearchReplaceFilter();
-	else
-		ASSERT(FALSE);
-
-	if (pClone != NULL)
-	{
-		CMapStringToString mapArgs;
-		filter->GetArgs(mapArgs);
-		pClone->SetArgs(mapArgs);
-
-		// Add to the list.
-		m_clFilters.AddTail(pClone);
-	}
+	// Add to the list.
+	m_vFilters.push_back(CloneFilter(filter));
 }
 
 void CFilterContainer::RemoveFilter(int nFilterIndex)
 {
-	POSITION pos = m_clFilters.FindIndex(nFilterIndex);
-	if (pos != NULL)
-	{
-		delete m_clFilters.GetAt(pos);
-		m_clFilters.RemoveAt(pos);
-	}
+	iterator at = m_vFilters.begin() + nFilterIndex;
+	delete *at;
+	m_vFilters.erase(at);
 }
 
 void CFilterContainer::RemoveAllFilters()
 {
-	for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; )
-		delete m_clFilters.GetNext(pos);
-	m_clFilters.RemoveAll();
+	for (const_iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
+		delete *iter;
+	m_vFilters.clear();
 }
 
-IFilter* CFilterContainer::GetFilter(int nFilterIndex) const
+shared_ptr<IFilter> CFilterContainer::GetFilterAt(int nFilterIndex) const
 {
-	// Search the filter
-	POSITION pos = m_clFilters.FindIndex(nFilterIndex);
-	if (pos == NULL)
-		return NULL;	// Filter not found
-
-	// Return filter
-	return m_clFilters.GetAt(pos);
+	return shared_ptr<IFilter>( CloneFilter(m_vFilters[nFilterIndex]) );
 }
 
-void CFilterContainer::UpdateFilter(int nFilterIndex, IFilter* filter)
+void CFilterContainer::UpdateFilter(int nFilterIndex, const IFilter* filter)
 {
-	POSITION pos;
-	pos = m_clFilters.FindIndex(nFilterIndex);
-	if (pos != NULL)
-		m_clFilters.SetAt(pos, filter);
-	else
-		ASSERT(false);
+	delete m_vFilters[nFilterIndex];
+	m_vFilters[nFilterIndex] = CloneFilter(filter);
 }
 
 // Swap filter A with filter B.
-BOOL CFilterContainer::SwapFilters(UINT nItemA, UINT nItemB)
+void CFilterContainer::SwapFilters(UINT nItemA, UINT nItemB)
 {
-	POSITION	posA = m_clFilters.FindIndex(nItemA),
-				posB = m_clFilters.FindIndex(nItemB);
-
-	if (posA == NULL || posB == NULL)
-	{
-		ASSERT(false);
-		return FALSE;
-	}
-
-	if (nItemA == nItemB)
-		return TRUE;
-
-	// Swap both items
-	IFilter *filter = m_clFilters.GetAt(posA);
-	m_clFilters.RemoveAt(posA);
-	if (nItemA < nItemB)
-		m_clFilters.InsertAfter(posB, filter);
-	else
-		m_clFilters.InsertBefore(posB, filter);
-
-	return TRUE;
+	IFilter *tmp = m_vFilters[nItemA];
+	m_vFilters[nItemA] = m_vFilters[nItemB];
+	m_vFilters[nItemB] = tmp;
 }
 
-BOOL CFilterContainer::SaveFilters(const CString &filename)
+BOOL CFilterContainer::SaveFilters(const CString& filename)
 {
 	// Check attributes is file already exist
 	DWORD dwAttrib = GetFileAttributes(filename);
@@ -156,14 +111,12 @@ BOOL CFilterContainer::SaveFilters(const CString &filename)
 	}
 
 	// Write data
-	for (POSITION pos = m_clFilters.GetHeadPosition(); pos != NULL; )
+	for (const_iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
 	{
-		IFilter *filter = m_clFilters.GetNext(pos);
-
-		_ftprintf(file, _T("[%s]\n"), (LPCTSTR)filter->GetFilterCodeName());
+		_ftprintf(file, _T("[%s]\n"), (LPCTSTR)(*iter)->GetFilterCodeName());
 
 		CMapStringToString mapArgs;
-		filter->GetArgs(mapArgs);
+		(*iter)->GetArgs(mapArgs);
 		for (POSITION pos2 = mapArgs.GetStartPosition(); pos2 != NULL; )
 		{
 			CString strKey, strValue;
@@ -218,7 +171,7 @@ int CFilterContainer::LoadFilters(const CString &filename)
 				filter->SetArgs(mapArgs);
 				if (filter != &filterRenameWhat)
 				{
-					m_clFilters.AddTail(filter);
+					AddFilter(filter);
 					++nFiltersAdded;
 				}
 				filter = NULL;
@@ -280,7 +233,7 @@ int CFilterContainer::LoadFilters(const CString &filename)
 		filter->SetArgs(mapArgs);
 		if (filter != &filterRenameWhat)
 		{
-			m_clFilters.AddTail(filter);
+			AddFilter(filter);
 			++nFiltersAdded;
 		}
 		filter = NULL;
@@ -294,4 +247,22 @@ int CFilterContainer::LoadFilters(const CString &filename)
 		m_nPathRenamePart = filterRenameWhat.GetRenameWhat();
 
 	return nFiltersAdded;
+}
+
+IFilter* CFilterContainer::CloneFilter(const IFilter* filter)
+{
+	// Create a copy of the filter.
+	IFilter* pClone = NULL;
+	if (filter->GetFilterCodeName() == _T("Search and replace"))
+		pClone = new CSearchReplaceFilter();
+	else
+		ASSERT(FALSE);
+
+	if (pClone != NULL)
+	{
+		CMapStringToString mapArgs;
+		filter->GetArgs(mapArgs);
+		pClone->SetArgs(mapArgs);
+	}
+	return pClone;
 }

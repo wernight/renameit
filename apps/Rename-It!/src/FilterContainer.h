@@ -23,7 +23,7 @@ public:
 	void SetPathRenamePart(unsigned nPathRenamePart){ m_nPathRenamePart = nPathRenamePart; }
 	unsigned GetPathRenamePart() const { return m_nPathRenamePart; }
 
-	int GetFilterCount() const { return (int) m_clFilters.GetCount(); }
+	int GetFilterCount() const { return (int) m_vFilters.size(); }
 
 // Operations
 	// Add a filter at the end of the list.
@@ -45,13 +45,13 @@ public:
 	int LoadFilters(const CString &filename);
 
 	// Return the filter at the given index.
-	IFilter* GetFilter(int nFilterIndex) const;
+	shared_ptr<IFilter> GetFilterAt(int nFilterIndex) const;
 
 	// Set the filter nFilterIndex.
-	void UpdateFilter(int nFilterIndex, IFilter* filter);
+	void UpdateFilter(int nFilterIndex, const IFilter* filter);
 
 	// Swap filter A with filter B.
-	BOOL SwapFilters(UINT nItemA, UINT nItemB);
+	void SwapFilters(UINT nItemA, UINT nItemB);
 
 	/**
 	 * Filter a list of file names from [first, last) to [result, result + (last - first)).
@@ -64,41 +64,40 @@ public:
 	 * @return End of the output range (ie. result + (last - first)).
 	 */
 	template<class InputIterator, class OutputIterator>
-	OutputIterator FilterFileNames(InputIterator a_begin, InputIterator a_first, InputIterator a_last, OutputIterator b_result) const
+	OutputIterator FilterFileNames(InputIterator a_begin, InputIterator a_first, InputIterator a_last, OutputIterator b_result)
 	{
 		// Change the locale to fit the current user settings.
 		CString strLocaleBak = _tsetlocale(LC_ALL, NULL);
 		_tsetlocale(LC_ALL, _T(""));
 
 		// Tell all filters we're going to start renaming a list of files.
-		for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-			m_clFilters.GetNext(pos)->OnStartRenamingList();
+		for (iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
+			(*iter)->OnStartRenamingList();
 
 		// When one or more filter depend on previously filtered items...
-		POSITION posLastPastFilteredDependant = NULL;
-		for (POSITION pos=m_clFilters.GetTailPosition(); pos!=NULL; )
+		for (int i=(int)m_vFilters.size()-1; i>=0; --i)
 		{
-			POSITION cur = pos;
-			if (m_clFilters.GetPrev(pos)->IsPastFilteredDependant())
+			if (m_vFilters[i]->IsPastFilteredDependant())
 			{
-				POSITION posLastPastFilteredDependant = cur;
+				iterator iterLastPastFilteredDependant = m_vFilters.begin() + i;
+
+				// ... then, we filter without saving the result the files between "begin" and "first".
+				for (; a_begin!=a_first; ++a_begin)
+				{
+					// Get the filtered part of the path.
+					CString strFilteredPart = CFilteredFileName(*a_begin, m_nPathRenamePart).GetFilteredSubstring();
+					CString strUnfilteredName = strFilteredPart;
+		
+					// Filter the name through all filters.
+					for (iterator iter=m_vFilters.begin(); ; ++iter)
+					{
+						(*iter)->FilterPath(strFilteredPart, *a_begin, strUnfilteredName);
+						if (iter == iterLastPastFilteredDependant)
+							break;
+					}
+				}
+
 				break;
-			}
-		}
-		if (posLastPastFilteredDependant != NULL)
-		{	
-			// ... then, we filter without saving the result the files between "begin" and "first".
-			for (; a_begin!=a_first; ++a_begin)
-			{
-				// Get the filtered part of the path.
-				CString strFilteredPart = CFilteredFileName(*a_begin, m_nPathRenamePart).GetFilteredSubstring();
-				CString strUnfilteredName = strFilteredPart;
-	
-				// Filter the name through all filters.
-				POSITION pos = m_clFilters.GetHeadPosition();
-				do
-					m_clFilters.GetNext(pos)->FilterPath(strFilteredPart, *a_begin, strUnfilteredName);
-				while (pos != posLastPastFilteredDependant);
 			}
 		}
 
@@ -111,8 +110,8 @@ public:
 
 			// Filter the name through all filters.
 			CString strUnfilteredName = strFilteredPart;
-			for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-				m_clFilters.GetNext(pos)->FilterPath(strFilteredPart, *a_first, strUnfilteredName);
+			for (iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
+				(*iter)->FilterPath(strFilteredPart, *a_first, strUnfilteredName);
 
 			// Insert in the output container.
 			ffnFileName.SetFilteredSubstring(strFilteredPart);
@@ -121,8 +120,8 @@ public:
 		}
 
 		// Tell all filters we're done.
-		for (POSITION pos=m_clFilters.GetHeadPosition(); pos!=NULL; ) 
-			m_clFilters.GetNext(pos)->OnEndRenamingList();
+		for (iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
+			(*iter)->OnEndRenamingList();
 
 		// Restaure the locale.
 		_tsetlocale(LC_ALL, strLocaleBak);
@@ -132,6 +131,8 @@ public:
 
 // Implementation
 private:
+	static IFilter* CloneFilter(const IFilter* filter);
+
 	/**
 	 * A fake filter that doesn't filter files but which only purpose if to be keep the part to rename.
 	 */
@@ -183,7 +184,10 @@ private:
 		int m_nRenameWhat;
 	};
 
+	typedef vector<IFilter*>::iterator iterator;
+	typedef vector<IFilter*>::const_iterator const_iterator;
+
 	unsigned m_nPathRenamePart;	// Part to be renamed from the path; A set of flags from ERenamePartFlags
 
-	CTypedPtrList<CPtrList, IFilter*> m_clFilters;
+	vector<IFilter*> m_vFilters;
 };

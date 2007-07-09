@@ -685,11 +685,10 @@ void CRenameItDlg::UpdateFilterlist()
     LV_ITEM lvi = {LVIF_TEXT};
 	CString strRule;
 
-	for (int i=0; ; ++i)
+	for (int i=0; i<m_fcFilters.GetFilterCount(); ++i)
 	{
-		IFilter *filter = m_fcFilters.GetFilter(i);
-		if (filter == NULL)
-			break;
+		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(i);
+		ASSERT(filter.get() != NULL);
 
 		strRule = filter->GetFilterDescription();
 
@@ -716,24 +715,29 @@ void CRenameItDlg::SwapFilterItems(UINT itemIdx1, UINT itemIdx2)
     // the filter details entries (which were swapped earlier).
 
     // Update filter list box item specified by itemIdx1.
-    IFilter *filter = m_fcFilters.GetFilter(itemIdx1);
-    ASSERT(filter != NULL);
-    CString strRule = filter->GetFilterDescription();
-    LV_ITEM lvi = {(LVIF_TEXT | LVIF_STATE)}; // NOTE: Rest of struct init'd to 0's.
-    lvi.iItem = itemIdx1;
-    lvi.state = uState2;
-    lvi.stateMask = KAllStatesMask;
-    lvi.pszText = strRule.GetBuffer(0);
-    m_ctlListFilters.SetItem(&lvi);
+	{
+		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(itemIdx1);
+		ASSERT(filter.get() != NULL);
+		CString strRule = filter->GetFilterDescription();
+		LV_ITEM lvi = {(LVIF_TEXT | LVIF_STATE)}; // NOTE: Rest of struct init'd to 0's.
+		lvi.iItem = itemIdx1;
+		lvi.state = uState2;
+		lvi.stateMask = KAllStatesMask;
+		lvi.pszText = strRule.GetBuffer(0);
+		m_ctlListFilters.SetItem(&lvi);
+	}
 
     // Update filter list box item specified by itemIdx2.
-    filter = m_fcFilters.GetFilter(itemIdx2);
-    ASSERT(filter != NULL);
-    strRule = filter->GetFilterDescription();
-    lvi.iItem = itemIdx2;
-    lvi.state = uState1;
-    lvi.pszText = strRule.GetBuffer(0);
-    m_ctlListFilters.SetItem(&lvi);
+	{
+		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(itemIdx2);
+		ASSERT(filter.get() != NULL);
+		CString strRule = filter->GetFilterDescription();
+		LV_ITEM lvi = {(LVIF_TEXT | LVIF_STATE)}; // NOTE: Rest of struct init'd to 0's.
+		lvi.iItem = itemIdx2;
+		lvi.state = uState1;
+		lvi.pszText = strRule.GetBuffer(0);
+		m_ctlListFilters.SetItem(&lvi);
+	}
 }
 
 void CRenameItDlg::OnButtonClearfiles() 
@@ -1417,15 +1421,15 @@ BOOL CRenameItDlg::EditRule(int nRuleItem)
 {
 	// Show filter dialog
 	boost::scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples(nRuleItem));
-	IFilter* filter = m_fcFilters.GetFilter(nRuleItem);
-	ASSERT(filter != NULL);
+	shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(nRuleItem);
+	ASSERT(filter.get() != NULL);
 	if (filter->ShowDialog(*previewSamples) == IDOK)
 	{
 		// Freeze the updates.
 		PushUpdatesFreeze();
 
 		// Change the filter.
-		m_fcFilters.UpdateFilter(nRuleItem, filter);
+		m_fcFilters.UpdateFilter(nRuleItem, filter.get());
 
 		// Un-freeze the updates.
 		PopUpdatesFreeze();
