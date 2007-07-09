@@ -76,11 +76,13 @@ Section "!${PRODUCT}" SecProduct
 		; Unicode Install
 		SetOutPath "$INSTDIR"
 		File "..\build\Rename-It!\Unicode Release\RenameIt.exe"
+		File "..\build\Rename-It!\Unicode Release\RenameIt.chm"
 		GoTo lblEndSpecificOSInstall
 	lblAsciiInstall: 
 		; Non-Unicode Install
 		SetOutPath "$INSTDIR"
 		File "..\build\Rename-It!\Release\RenameIt.exe"
+		File "..\build\Rename-It!\Release\RenameIt.chm"
 		GoTo lblEndSpecificOSInstall
 	lblEndSpecificOSInstall:
 
@@ -90,7 +92,6 @@ Section "!${PRODUCT}" SecProduct
 	File "pcre3.dll"
 	File "History.txt"
 	File "gpl.txt"
-	File "..\build\Rename-It!\Unicode Release\Rename-It!.chm"
 	File "..\build\Tutorials\Tutorial.exe"
 	SetOutPath "$INSTDIR\Filters"
 	File "Filters\*.rit"
@@ -147,7 +148,7 @@ Section "Start Menu Shortcuts" SecShortcuts
 	;Add Shortcuts
 	CreateDirectory "$SMPROGRAMS\${PRODUCT}"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT}\${PRODUCT}.lnk" "$INSTDIR\RenameIt.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT}\Help.lnk" "$INSTDIR\Rename-It!.chm"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT}\Help.lnk" "$INSTDIR\RenameIt.chm"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT}\Tutorial.lnk" "$INSTDIR\Tutorial.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT}\What's new.lnk" "$INSTDIR\History.txt"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT}\Uninstall.lnk" "$INSTDIR\Uninst.exe"
@@ -187,6 +188,7 @@ Section Uninstall
 
 	;Delete Files
 	Delete /REBOOTOK "$INSTDIR\RenameIt.exe"
+	Delete /REBOOTOK "$INSTDIR\RenameIt.chm"
 	Delete /REBOOTOK "$INSTDIR\id3lib.dll"
 	Delete /REBOOTOK "$INSTDIR\pcre3.dll"
 	Delete "$INSTDIR\History.txt"
