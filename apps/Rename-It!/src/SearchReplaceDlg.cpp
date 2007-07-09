@@ -52,7 +52,6 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	, m_bChangeCase(FALSE)
 	, m_nChangeCase(0)
 	, m_pToolTip(NULL)
-	, m_strLocale(_T(""))
 	, m_bAdvanced(FALSE)
 	, m_previewSamples(previewSamples)
 {
@@ -69,7 +68,6 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	m_bChangeCase = m_filter.GetChangeCase() != CSearchReplaceFilter::caseNone;
 	if (m_bChangeCase)
 		m_nChangeCase = m_filter.GetChangeCase();
-	m_strLocale = m_filter.GetLocale();
 
 	m_bSeries = m_filter.IsSeriesEnabled();
 	m_nSerieStart = m_filter.GetSeriesStart();
@@ -78,7 +76,7 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	m_bID3Tag = m_filter.IsID3TagEnabled();
 
 	// Is it an advanced filter?
-	m_bAdvanced = (!m_strLocale.IsEmpty() || m_bMatchWholeText || m_bAllOccurences);
+	m_bAdvanced = (m_bMatchWholeText || m_bAllOccurences);
 
 	m_hIcon = AfxGetApp()->LoadIcon(IDI_RENAMER);
 
@@ -126,8 +124,6 @@ void CSearchReplaceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_CASE_COMBO, m_nChangeCase);
 	DDX_Control(pDX, IDC_SERIE_START_SPIN, m_ctrlSeriesStartSpin);
 	DDX_Control(pDX, IDC_SERIE_STEP_SPIN, m_ctrlSeriesStepSpin);
-	DDX_CBString(pDX, IDC_LOCALE_COMBO, m_strLocale);
-	DDX_Control(pDX, IDC_LOCALE_COMBO, m_ctrlLocaleCombo);
 	DDX_Check(pDX, IDC_ADVANCED_CHECK, m_bAdvanced);
 	//}}AFX_DATA_MAP
 }
@@ -152,8 +148,6 @@ BEGIN_MESSAGE_MAP(CSearchReplaceDlg, CDialog)
 	ON_BN_CLICKED(IDC_ID3TAG_CHECK, OnBnClickedID3TagCheck)
 	ON_BN_CLICKED(IDC_ADVANCED_CHECK, OnBnClickedAdvancedCheck)
 	ON_BN_CLICKED(IDC_WHOLE_TEXT, OnMatchWholeText)
-	ON_CBN_EDITCHANGE(IDC_LOCALE_COMBO, &CSearchReplaceDlg::OnCbnEditchangeLocaleCombo)
-	ON_CBN_SELCHANGE(IDC_LOCALE_COMBO, &CSearchReplaceDlg::OnCbnSelchangeLocaleCombo)
 	ON_BN_CLICKED(IDC_ADVANCED_CHECK, &CSearchReplaceDlg::OnBnClickedAdvancedCheck)
 	ON_WM_HELPINFO()
 	ON_WM_DESTROY()
@@ -175,13 +169,9 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 	m_ctlSearchRichEdit.SetInviteText( IDS_SEARCH_INVITE );
 	m_ctlReplaceRichEdit.SetInviteText( IDS_REPLACE_INVITE );
 
-	// Locale combo
-	m_ctrlLocaleCombo.LimitText(30);
-
 	// Set up the tooltip
 	m_pToolTip = new CToolTipCtrl();
 	VERIFY( m_pToolTip->Create(this) );
-	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_LOCALE_COMBO), IDS_TT_LOCALE) );
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_ID3TAG_CHECK), IDS_TT_ID3) );
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_BEFORE), IDS_TT_BEFORE) );
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_AFTER), IDS_TT_AFTER) );
@@ -476,19 +466,6 @@ void CSearchReplaceDlg::OnCbnSelchangeCaseCombo()
 	OnBnClickedCaseCheck();
 }
 
-void CSearchReplaceDlg::OnCbnEditchangeLocaleCombo()
-{
-	UpdateView();
-}
-
-void CSearchReplaceDlg::OnCbnSelchangeLocaleCombo()
-{
-	CString strItem;
-	m_ctrlLocaleCombo.GetLBText(m_ctrlLocaleCombo.GetCurSel(), strItem);
-	m_ctrlLocaleCombo.SetWindowText(strItem);
-	UpdateView();
-}
-
 void CSearchReplaceDlg::OnBnClickedSeriesButton()
 {
 	AfxMessageBox(IDS_SERIES_HELP, MB_ICONINFORMATION);
@@ -570,8 +547,6 @@ void CSearchReplaceDlg::UpdateSample()
 
 	GetDlgItem(IDC_USE_COMBO)->EnableWindow(m_bUse);
 
-	GetDlgItem(IDC_LOCALE_COMBO)->EnableWindow(m_bAdvanced);
-
 	GetDlgItem(IDC_WHOLE_TEXT)->EnableWindow(m_bAdvanced && (!m_bUse || m_nUse != CSearchReplaceFilter::useRegExp));	// If using regexp, disable the "whole text" option
 
 	GetDlgItem(IDC_CASE_COMBO)->EnableWindow(m_bChangeCase);
@@ -588,11 +563,6 @@ void CSearchReplaceDlg::UpdateSample()
 	{
 		m_bMatchWholeText = false;
 		GetDlgItem(IDC_WHOLE_TEXT)->SendMessage(BM_SETCHECK, BST_UNCHECKED);
-	}
-	if (!GetDlgItem(IDC_LOCALE_COMBO)->IsWindowEnabled())
-	{
-		m_strLocale.Empty();
-		m_ctrlLocaleCombo.SetWindowText(m_strLocale);
 	}
 	if (!GetDlgItem(IDC_ALL_OCCURRENCES_CHECK)->IsWindowEnabled())
 	{
@@ -619,8 +589,6 @@ void CSearchReplaceDlg::UpdateSample()
 		m_filter.SetChangeCase((CSearchReplaceFilter::EChangeCase) m_nChangeCase);
 	else
 		m_filter.SetChangeCase(CSearchReplaceFilter::caseNone);
-
-	m_filter.SetLocale(m_strLocale);
 
 	m_filter.SetSeriesEnabled(m_bSeries != 0);
 	m_filter.SetSeriesStart(m_nSerieStart);

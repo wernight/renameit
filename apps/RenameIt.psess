@@ -1,0 +1,49 @@
+<VSPerformanceSession Version="1.00">
+  <Options>
+    <Solution>Rename-It!.sln</Solution>
+    <CollectionMethod>Instrumentation</CollectionMethod>
+    <AllocationMethod>None</AllocationMethod>
+    <AddReport>true</AddReport>
+    <UniqueReport>Timestamp</UniqueReport>
+    <SamplingMethod>Cycles</SamplingMethod>
+    <CycleCount>10000000</CycleCount>
+    <PageFaultCount>10</PageFaultCount>
+    <SysCallCount>10</SysCallCount>
+    <SamplingCounter PlatformID="00000000" CounterID="0000000000000000" ReloadValue="00000000000f4240" />
+    <RelocateBinaries>false</RelocateBinaries>
+    <HardwareCounters EnableHWCounters="false" />
+    <EtwSettings />
+  </Options>
+  <PreinstrumentEvent>
+    <InstrEventExclude>false</InstrEventExclude>
+  </PreinstrumentEvent>
+  <PostinstrumentEvent>
+    <InstrEventExclude>false</InstrEventExclude>
+  </PostinstrumentEvent>
+  <Binaries>
+    <ProjBinary>
+      <Path>..\build\rename-it!\unicode debug\RenameIt.exe</Path>
+      <ArgumentTimestamp>01/01/0001 00:00:00</ArgumentTimestamp>
+      <Instrument>true</Instrument>
+      <LaunchProject>true</LaunchProject>
+      <LaunchMethod>Executable</LaunchMethod>
+      <ExecutablePath>..\build\rename-it!\unicode debug\RenameIt.exe</ExecutablePath>
+      <StartupDirectory>Rename-It!\</StartupDirectory>
+      <NetAppHost>IIS</NetAppHost>
+      <PreinstrumentEvent>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PreinstrumentEvent>
+      <PostinstrumentEvent>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PostinstrumentEvent>
+      <ProjRef>{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}|Rename-It!\Rename-It!.vcproj</ProjRef>
+      <ProjPath>Rename-It!\Rename-It!.vcproj</ProjPath>
+      <ProjName>Rename-It!</ProjName>
+    </ProjBinary>
+  </Binaries>
+  <Launches>
+    <ProjBinary>
+      <Path>:PB:{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}|Rename-It!\Rename-It!.vcproj</Path>
+    </ProjBinary>
+  </Launches>
+</VSPerformanceSession>

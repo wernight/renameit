@@ -43,6 +43,8 @@ bool CRenamingList::IsUsingKtm() const
 
 bool CRenamingList::Check()
 {
+	// Pre-condition: Foreach file to rename A: A.before != A.after.
+
 	// Declarations.
 	const int	nFilesCount = (int) m_vRenamingOperations.size();
 	CFileFind	ffFileFind;
@@ -57,67 +59,82 @@ bool CRenamingList::Check()
 		problem.strMessage.Empty();
 	}
 
-	// Check for file conflicts.
-	for (int i=0; i<nFilesCount; ++i)
+	// Change the locale to match the file system stricmp().
+	CString strLocaleBak = _tsetlocale(LC_CTYPE, NULL);
+	_tsetlocale(LC_CTYPE, _T(""));
+	
 	{
-		// Report progress
-		const float fBias = 100.0f;
-		m_fOnProgress(stageChecking, (int)((log(i + fBias) - log(fBias))*100.0f/(log(nFilesCount + fBias) - log(fBias)) + 0.5f), 100);
-
-		// If that file isn't already marked as conflicting with another,
-		// test if it's going to conflict with another file.
-		if (m_vProblems[i].nErrorCode != errConflict)
+		// TODO: Try with std::string instead of CString to see which one is faster.
+		
+		// Create a map of file names (in lower case) associated to the operation index.
+		set<CString> setBeforeLower;
+		for (int i=0; i<nFilesCount; ++i)
 		{
+			// Report progress
+			m_fOnProgress(stageChecking, i*30/nFilesCount, 100);
+
+			CString strName = m_vRenamingOperations[i].fnBefore.GetFullPath();
+			setBeforeLower.insert( strName.MakeLower() );
+		}	
+	
+		// Check for file conflicts.
+		map<CString, int> mapAfterLower;
+		for (int i=0; i<nFilesCount; ++i)
+		{
+			// Report progress
+			m_fOnProgress(stageChecking, 30 + i*50/nFilesCount, 100);
+	
+			// If that file isn't already marked as conflicting with another,
+			// test if it's going to conflict with another file.
+			if (m_vProblems[i].nErrorCode == errConflict)
+				continue;
+
+			CString strAfterLower = m_vRenamingOperations[i].fnAfter.GetFullPath();
+			strAfterLower.MakeLower();
+			
 			/* Detect if it's going to be renamed to a file that already exists
-			   but that is not part of the files to rename... */
-			if (ffFileFind.FindFile(m_vRenamingOperations[i].fnAfter.GetFullPath()) )	// But the destination exists on the disk
+			 * but that is not part of the files to rename...
+			 */
+			if (ffFileFind.FindFile(strAfterLower)		// The destination exists on the disk.
+				&& setBeforeLower.find(strAfterLower) == setBeforeLower.end())	// and it's not going to be renamed.
 			{
-				// Search if the new file name is in the part of the file to rename list.
-				bool bFound = false;
-				for (int j=0; j<nFilesCount; ++j)
-					if (m_vRenamingOperations[j].fnBefore.FSCompare(m_vRenamingOperations[i].fnAfter) == 0)
-					{
-						// Yes it is (we are going if it conflicts after renaming below)
-						bFound = true;
-						break;
-					}
-				if (!bFound)
+				// No it is not, so it will conflict with the existing file on the disk.
+				CString strErrorMsg;
+				strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
+				SetProblem(i, errConflict, strErrorMsg);
+			}
+			/* If it's not going to conflict with a file not part of the files to rename,
+			 * check if it conflicts with files that are going to be renamed...
+			 */
+			else
+			{
+				// Check if two files are going to have the same new file name.
+				map<CString, int>::const_iterator iterFound = mapAfterLower.find(strAfterLower);
+				if (iterFound != mapAfterLower.end())
 				{
-					// No it is not, so it will conflict with the existing file on the disk.
+					// Conflict found: Two files are going to be renamed to the same new file name.
 					CString strErrorMsg;
-					strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
+
+					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[iterFound->second].fnBefore.GetFullPath());
 					SetProblem(i, errConflict, strErrorMsg);
+
+					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].fnBefore.GetFullPath());
+					SetProblem(iterFound->second, errConflict, strErrorMsg);
+				}
+				else
+				{// We add this file to the map.
+					mapAfterLower[strAfterLower] = i;
 				}
 			}
-
-			/* If it doesn't conflict with a file not part of the
-			   files to rename, check if it conflicts with files
-			   that are going to be renamed... */
-			if (m_vProblems[i].nErrorCode != errConflict)
-			{
-				// Check if two files are going to have the same new file name
-				for (int j=i+1; j<nFilesCount; ++j)
-					if (m_vRenamingOperations[i].fnAfter.FSCompare(m_vRenamingOperations[j].fnAfter) == 0)
-					{
-						// Conflict found: Two files are going to be renamed to the same new file name.
-						CString strErrorMsg;
-
-						AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[j].fnBefore.GetFullPath());
-						SetProblem(i, errConflict, strErrorMsg);
-
-						AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].fnBefore.GetFullPath());
-						SetProblem(j, errConflict, strErrorMsg);
-					}
-			}
-		}
-	} // end: conflict check for-loop
+		} // end: conflict check for-loop
+	}
 
 	// Check if file name is valid
 	// and Check if file still exists
 	for (int i=0; i<nFilesCount; ++i)
 	{
 		// Report progress
-		m_fOnProgress(stageChecking, 95 + i*5/nFilesCount, 100);
+		m_fOnProgress(stageChecking, 80 + i*20/nFilesCount, 100);
 
 		// Check if the file still exists
 		if (!ffFileFind.FindFile( m_vRenamingOperations[i].fnBefore.GetFullPath() ))
@@ -132,7 +149,8 @@ bool CRenamingList::Check()
 
 		// Look for invalid file name (renaming impossible to one of those)
 		if ((strFullFilename.IsEmpty())	// Empty filename (including extension)
-			|| strFullFilename.FindOneOf(_T("\\/:*?\"<>|")) != -1)	// or, Forbidden characters
+			|| strFullFilename.FindOneOf(_T("\\/:*?\"<>|")) != -1	// Forbidden characters.
+			|| strFullFilename.Right(0) == _T("."))	// The OS doesn't support files ending by a dot.
 		{
 			CString strErrorMsg;
 			strErrorMsg.LoadString(IDS_INVALID_FILE_NAME);
@@ -196,6 +214,9 @@ bool CRenamingList::Check()
 		}
 	}
 
+	// Restaure the locale.
+	_tsetlocale(LC_CTYPE, strLocaleBak);
+
 	// Post condition.
 	ASSERT(m_vProblems.size() == m_vRenamingOperations.size());
 
@@ -205,6 +226,8 @@ bool CRenamingList::Check()
 
 bool CRenamingList::PerformRenaming()
 {
+	// Pre-condition: Foreach file to rename A: A.before != A.after.
+
 	// Avoid possible strange behaviours for empty lists.
 	if (m_vRenamingOperations.size() == 0)
 		return true;
@@ -214,32 +237,48 @@ bool CRenamingList::PerformRenaming()
 	{
 		const int nFilesCount = (int) m_vRenamingOperations.size();
 
+		// Change the locale to match the file system stricmp().
+		CString strLocaleBak = _tsetlocale(LC_CTYPE, NULL);
+		_tsetlocale(LC_CTYPE, _T(""));
+
 		// Create a first version of an oriented graph of conflicting renamings:
 		// Node(i) -edge-to-> Node(j)   <=>   File(i).originalFileName == File(j).newFileName (compare no case)
 		//                              <=>   File(i) must be renamed before File(j)
-		for (int i=0; i<nFilesCount; ++i)
-			graph.AddNode(i);
+		map<CString, int> mapAfterLower;
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stagePreRenaming, i*95/nFilesCount, 100);
+			m_fOnProgress(stagePreRenaming, i*30/nFilesCount, 100);
 
-			for (int j=0; j<nFilesCount; ++j)
-				if (i != j && m_vRenamingOperations[i].fnBefore.FSCompare(m_vRenamingOperations[j].fnAfter) == 0)
-				{
-					graph[i].AddSuccessor(j);
-					
-					// Assertion: There can be at most one successor,
-					// else it means that two files (or more) will have the same destination name.
-					break;	// A jump to speed-up the loop given the above assertion.
-				}
+			graph.AddNode(i);
+
+			CString strAfter = m_vRenamingOperations[i].fnAfter.GetFullPath();
+			mapAfterLower[strAfter.MakeLower()] = i;
 		}
+		for (int i=0; i<nFilesCount; ++i)
+		{
+			// Report progress
+			m_fOnProgress(stagePreRenaming, 30 + i*40/nFilesCount, 100);
+
+			CString strBefore = m_vRenamingOperations[i].fnBefore.GetFullPath();
+			map<CString, int>::const_iterator iterFound = mapAfterLower.find(strBefore.MakeLower());
+			if (iterFound != mapAfterLower.end())
+			{
+				graph[i].AddSuccessor(iterFound->second);
+				
+				// Assertion: There can be at most one successor,
+				// else it means that two files (or more) will have the same destination name.
+			}
+		}
+
+		// Restaure the locale.
+		_tsetlocale(LC_CTYPE, strLocaleBak);
 
 		// Find and remove cycles by adding new nodes.
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stagePreRenaming, 95 + i*5/nFilesCount, 100);
+			m_fOnProgress(stagePreRenaming, 70 + i*30/nFilesCount, 100);
 
 			if (graph[i].HasSuccessor() && graph[i].HasAntecedent())
 			{
@@ -255,7 +294,7 @@ bool CRenamingList::PerformRenaming()
 
 						CString strRandomName = _T("~");
 						for (int k=0; k<15; ++k)
-							strRandomName += (char)( rand()%('z'-'a') + 'a' );
+							strRandomName += _T("0123456789ABCDEF")[rand()%16];
 						CFileName fnTemp = fnFinal.GetFullPath() + strRandomName;
 
 						// Rename A -> TMP

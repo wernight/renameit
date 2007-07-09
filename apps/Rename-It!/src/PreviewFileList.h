@@ -112,5 +112,5 @@ private:
 	InputIterator m_firstSampleFile;
 	InputIterator m_lastSampleFile;
 	InputIterator m_defaultSample;
-	const CFilterContainer& m_fcFilters;
+	CFilterContainer m_fcFilters;
 };

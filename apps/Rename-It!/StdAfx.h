@@ -114,6 +114,8 @@
 // STL
 #include <vector>
 #include <list>
+#include <set>
+#include <map>
 #include <stdexcept>
 #include <fstream>
 using namespace std;

@@ -22,6 +22,9 @@ class IFilter;
 #include "FileName.h"
 #include "IPreviewFileList.h"
 
+/**
+ * Interface of filters.
+ */
 class IFilter
 {
 	friend class CFilterContainer;
@@ -72,4 +75,7 @@ public:
 
 	// Define filter's parameters.
 	virtual void SetArgs(const CMapStringToString& mapArgs) = 0;
+	
+	// Return true when the filter effect depends on previously filtered names in the list.
+	virtual bool IsPastFilteredDependant() = 0;
 };

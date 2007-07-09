@@ -193,7 +193,6 @@
 #define IDC_ORIGINAL_EDIT               1095
 #define IDC_USE_COMBO                   1096
 #define IDC_CASE_COMBO                  1097
-#define IDC_LOCALE_COMBO                1098
 #define IDC_STATUS_STATIC               1100
 #define IDC_LIST                        1102
 #define IDC_BUTTON_MOVEUP               1105
@@ -211,7 +210,6 @@
 #define IDC_DEV_EDIT                    1132
 #define IDC_PROGRESS1                   1134
 #define IDC_PROGRESS2                   1135
-#define IDC_CHECK1                      1135
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000

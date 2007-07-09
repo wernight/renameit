@@ -35,10 +35,6 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CFileName& fnO
 			return;
 	}
 
-	// Locale
-	CString strOldLocale = _tsetlocale(LC_ALL, NULL);
-	_tsetlocale(LC_ALL, m_strLocale);
-
 	// When search at replace are empty, nothing is replaced.
 	if (m_strSearch.IsEmpty() && m_strReplace.IsEmpty())
 	{
@@ -138,9 +134,6 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CFileName& fnO
 				bMatchesSearch = true;
 		}
 	}
-
-	// End Locale
-	_tsetlocale(LC_ALL, strOldLocale);
 
 	// Number series
 	if (m_bSeries && bMatchesSearch)
@@ -396,7 +389,6 @@ void CSearchReplaceFilter::GetArgs(CMapStringToString& mapArgs) const
 	mapArgs[_T("matchWholeText")].Format(_T("%d"), m_bMatchWholeText);
 	mapArgs[_T("use")].Format(_T("%d"),  m_nUse);
 	mapArgs[_T("changeCase")].Format(_T("%d"),  m_nChangeCase);
-	mapArgs[_T("locale")] = m_strLocale;
 	mapArgs[_T("series")].Format(_T("%d"),  m_bSeries);
 	mapArgs[_T("seriesStart")].Format(_T("%d"),  m_nSeriesStart);
 	mapArgs[_T("seriesStep")].Format(_T("%d"),  m_nSeriesStep);
@@ -413,7 +405,6 @@ void CSearchReplaceFilter::LoadDefaultArgs()
 	m_bMatchWholeText = false;
 	m_nUse = useWildcards;
 	m_nChangeCase = caseNone;
-	m_strLocale = _T("");
 	m_bSeries = false;
 	m_nSeriesStart = 1;
 	m_nSeriesStep = 1;
@@ -456,9 +447,6 @@ void CSearchReplaceFilter::SetArgs(const CMapStringToString& mapArgs)
 		if (nChangeCase >= caseNone && caseInvert <= caseInvert)
 			m_nChangeCase = (EChangeCase) nChangeCase;
 	}
-
-	if (mapArgs.Lookup(_T("locale"), strValue))
-		m_strLocale = strValue;
 
 	if (mapArgs.Lookup(_T("series"), strValue))
 		m_bSeries = _ttoi( (LPCTSTR) strValue ) != 0;

@@ -42,6 +42,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	// Keep the number of files the user would like to rename.
 	m_nFilesToRename = m_renamingList.GetCount();	// This value may change later, so we keep it.
 
+	bool bSuccess = false;	// Some errors are supposed.
 	do
 	{
 		// Define the callbacks for the renaming manager.
@@ -49,11 +50,24 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 		m_renamingList.SetProgressCallback(boost::bind(&CRenamingController::OnProgress, this, _1, _2, _3));
 
 		// Do/Continue the processing while showing the progress.
-		AfxBeginThread(RenamingThread, this);
-//FIXME: On cancelling the thread operation must be stopped.		m_dlgProgress.EnableCancel(m_nCurrentStage != CRenamingList::stageRenaming);
-		if (m_dlgProgress.DoModal() == IDCANCEL)
-			return false;
+		{
+			CWinThread thread(RenamingThread, this);
+			thread.m_bAutoDelete = FALSE;
+			thread.CreateThread();
+			/* FIXME: On cancelling the thread operation must be stopped.
+			 * m_dlgProgress.EnableCancel(m_nCurrentStage != CRenamingList::stageRenaming);
+			 */
+			if (m_dlgProgress.DoModal() == IDCANCEL)
+				return false;
 
+			// Wait for the working thread to terminate.
+			WaitForSingleObject(thread.m_hThread, INFINITE);
+			DWORD dwExitCode = 0;
+			::GetExitCodeThread(thread.m_hThread, &dwExitCode);
+			bSuccess = (dwExitCode == 0);
+		}
+
+		// Where are we?
 		switch (m_nCurrentStage)
 		{
 		case CRenamingList::stageChecking:	// The checking failed
@@ -80,7 +94,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	} while (m_nCurrentStage != CRenamingList::stageRenaming);
 
 	// No error?
-	if (m_dlgRenameError.GetErrorCount() == 0)
+	if (bSuccess)
 	{// All OK
 		// Show message box.
 		CString str;
@@ -88,21 +102,23 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 		DisplayError(str, elNotice);
 		return true;
 	}
+	else
+	{// Some errors
+		// Ask the user what he wants to do.
+		m_dlgRenameError.DoModal();
+		switch (m_dlgRenameError.GetUserAction())
+		{
+		case CRenameErrorDlg::uaKeepCurrentState:
+			return true;	// Just say it's been done as the user wanted.
 
-	// Ask the user what he wants to do.
-	m_dlgRenameError.DoModal();
-	switch (m_dlgRenameError.GetUserAction())
-	{
-	case CRenameErrorDlg::uaKeepCurrentState:
-		return true;	// Just say it's been done as the user wanted.
+		case CRenameErrorDlg::uaReverseToPreviousState:
+			// FIXME
+			return false;
 
-	case CRenameErrorDlg::uaReverseToPreviousState:
-		// FIXME
-		return false;
-
-	default:
-		ASSERT(false);
-		return false;
+		default:
+			ASSERT(false);
+			return false;
+		}
 	}
 }
 
@@ -160,12 +176,17 @@ UINT CRenamingController::RenamingThread(LPVOID lpParam)
 		pThis->m_nFilesToRename = pThis->m_renamingList.GetCount();	// This value may change later, so we keep it.
 
 		// Do the renaming.
-		pThis->m_renamingList.PerformRenaming();
-		pThis->m_nCurrentStage = CRenamingList::stageRenaming;
+		{
+			bool bSuccess = pThis->m_renamingList.PerformRenaming();
+			pThis->m_nCurrentStage = CRenamingList::stageRenaming;
 
-		// Now we are done, we can hide the progress dialog.
-		pThis->m_dlgProgress.Done();
-		return 0;
+			// Now we are done, we can hide the progress dialog.
+			pThis->m_dlgProgress.Done();
+			if (bSuccess)
+				return 0;
+			else
+				return 1;
+		}
 
 	default:
 		ASSERT(false);

@@ -55,7 +55,6 @@ public:
 	CString	m_strSearch;
 	BOOL	m_bCaseSensitive;
 	CComboBox m_ctrlLocaleCombo;
-	CString m_strLocale;
 	BOOL	m_bAllOccurences;
 	BOOL	m_bMatchWholeText;
 	BOOL	m_bUse;

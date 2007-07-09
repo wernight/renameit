@@ -42,6 +42,11 @@ public:
 	// Define some or all of filter's parameters (for import/load).
 	virtual void SetArgs(const CMapStringToString& mapArgs);
 
+	// Return true when the filter effect depends on previously filtered names in the list.
+	virtual bool IsPastFilteredDependant() {
+		return m_bSeries;
+	}
+
 // Attributes
 public:
 	enum EUse {
@@ -85,10 +90,6 @@ public:
 
 	EChangeCase GetChangeCase() const {
 		return m_nChangeCase;
-	}
-
-	CString GetLocale() const {
-		return m_strLocale;
 	}
 
 	bool IsSeriesEnabled() const {
@@ -151,10 +152,6 @@ public:
 		m_nChangeCase = nValue;
 	}
 
-	void SetLocale(const CString& strValue) {
-		m_strLocale = strValue;
-	}
-
 	void SetSeriesEnabled(bool bValue) {
 		m_bSeries = bValue;
 	}
@@ -181,7 +178,6 @@ private:
 	bool		m_bMatchWholeText;
 	EUse		m_nUse;
 	EChangeCase	m_nChangeCase;
-	CString		m_strLocale;
 	bool		m_bSeries;
 	int			m_nSeriesStart;
 	int			m_nSeriesStep;
