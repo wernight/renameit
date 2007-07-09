@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="CompFold"
 	ProjectGUID="{11A541D1-914B-42B6-81AB-AD79325ECCF2}"
 	RootNamespace="CompFold"
@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="build\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
@@ -91,7 +91,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="build\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
