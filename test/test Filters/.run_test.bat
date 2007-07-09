@@ -20,7 +20,7 @@ rem ==============
 
 if not exist "%TEST_NAME%" goto rmdir_end
 	rmdir /s /q "%TEST_NAME%"
-	if errorlevel 1 goto mkdir_end
+	if not errorlevel 1 goto rmdir_end
 		echo Command failed: rmdir "%TEST_NAME%"
 		goto failed
 :rmdir_end
@@ -36,12 +36,12 @@ rem ===============================================
 rem = COPY THE FILES IN "BEFORE" TO A TEMP FOLDER =
 rem ===============================================
 mkdir after.generated
-if errorlevel 1 goto mkdir_end
+if not errorlevel 1 goto mkdir_end
 	echo Command failed: mkdir after.generated
 	goto failed
 :mkdir_end
 xcopy before after.generated /S /E /Q /H /K >NUL
-if errorlevel 1 goto xcopy_end
+if not errorlevel 1 goto xcopy_end
 	echo Command failed: xcopy before after.generated
 	goto failed
 :xcopy_end

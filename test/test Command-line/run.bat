@@ -11,8 +11,8 @@ rem ==============
 rem = UNCOMPRESS =
 rem ==============
 if not exist test_files goto rmdir_end
-	rmdir /s /q "%TEST_NAME%"
-	if errorlevel 1 goto mkdir_end
+	rmdir /s /q test_files
+	if not errorlevel 1 goto rmdir_end
 		echo Command failed: rmdir test_files
 		goto failed
 :rmdir_end
@@ -23,23 +23,23 @@ rem ==================================================
 rem = COPY THE FILES IN "BEFORE" TO A TEMP FOLDER    =
 rem ==================================================
 mkdir after.normal.generated
-if errorlevel 1 goto mkdir1_end
+if not errorlevel 1 goto mkdir1_end
 	echo Command failed: mkdir after.normal.generated
 	goto failed
 :mkdir1_end
 xcopy before after.normal.generated /S /E /Q /H /K >NUL
-if errorlevel 1 goto xcopy1_end
+if not errorlevel 1 goto xcopy1_end
 	echo Command failed: xcopy before after.normal.generated
 	goto failed
 :xcopy1_end
 
 mkdir after.recursive.generated
-if errorlevel 1 goto mkdir2_end
+if not errorlevel 1 goto mkdir2_end
 	echo Command failed: mkdir after.recursive.generated
 	goto failed
 :mkdir2_end
 xcopy before after.recursive.generated /S /E /Q /H /K >NUL
-if errorlevel 1 goto xcopy2_end
+if not errorlevel 1 goto xcopy2_end
 	echo Command failed: xcopy before after.recursive.generated
 	goto failed
 :xcopy2_end
