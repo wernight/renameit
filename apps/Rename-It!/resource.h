@@ -163,7 +163,6 @@
 #define IDC_BUTTON_ADDFOLDER            1014
 #define IDS_DESCR_WHOLE_TEXT            1014
 #define IDS_TT_BEFORE                   1015
-#define IDC_ADVANCED_CHECK              1016
 #define IDS_TT_AFTER                    1016
 #define IDS_TT_ID3                      1017
 #define IDS_TT_LOCALE                   1018

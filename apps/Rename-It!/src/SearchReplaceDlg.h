@@ -67,7 +67,6 @@ public:
 	int		m_nSerieStep;
 	CSpinButtonCtrl m_ctrlSeriesStartSpin;
 	CSpinButtonCtrl m_ctrlSeriesStepSpin;
-	BOOL	m_bAdvanced;
 	//}}AFX_DATA
 
 // Overrides
@@ -120,7 +119,6 @@ protected:
 	afx_msg void OnBnClickedSeriesButton();
 	afx_msg void OnChangeSeries();
 	afx_msg void OnBnClickedID3TagCheck();
-	afx_msg void OnBnClickedAdvancedCheck();
 	afx_msg void OnMatchWholeText();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);

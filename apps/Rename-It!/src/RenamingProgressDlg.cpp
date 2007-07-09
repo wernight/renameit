@@ -111,19 +111,19 @@ void CProgressDlg::UpdateProgress()
 		// We mark the preview ones as completed.
 		for (int i=0; i<m_nStage; ++i)
 		{
-			m_ctlProgress[i].SetRange32(0, 100);
-			m_ctlProgress[i].SetPos(100);
-		}
-
-		// We mark the following ones as not done.
-		for (int i=m_nStage+1; i<CRenamingList::stageCount; ++i)
-		{
-			m_ctlProgress[i].SetRange32(0, 100);
-			m_ctlProgress[i].SetPos(0);
+			m_ctlProgress[i].SetRange32(0, 1);
+			m_ctlProgress[i].SetPos(1);
 		}
 
 		// Set the total of the current stage.
 		m_ctlProgress[m_nStage].SetRange32(0, (int)m_nTotal);
+
+		// We mark the following ones as not done.
+		for (int i=m_nStage+1; i<CRenamingList::stageCount; ++i)
+		{
+			m_ctlProgress[i].SetRange32(0, 1);
+			m_ctlProgress[i].SetPos(0);
+		}
 
 		m_bRefreshEverything = false;
 	}
@@ -144,7 +144,7 @@ void CProgressDlg::UpdateProgress()
 INT_PTR CProgressDlg::DoModal()
 {
 	// Don't show the dialog if it's a very fast operation.
-	Sleep(100);
+	Sleep(400);
 	if (m_bDone)
 		return IDOK;
 	else

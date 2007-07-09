@@ -52,7 +52,6 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	, m_bChangeCase(FALSE)
 	, m_nChangeCase(0)
 	, m_pToolTip(NULL)
-	, m_bAdvanced(FALSE)
 	, m_previewSamples(previewSamples)
 {
 	m_strBefore = previewSamples.GetOriginalFileName().GetFilteredSubstring();
@@ -74,9 +73,6 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	m_nSerieStep = m_filter.GetSeriesStep();
 
 	m_bID3Tag = m_filter.IsID3TagEnabled();
-
-	// Is it an advanced filter?
-	m_bAdvanced = (m_bMatchWholeText || m_bAllOccurences);
 
 	m_hIcon = AfxGetApp()->LoadIcon(IDI_RENAMER);
 
@@ -124,7 +120,6 @@ void CSearchReplaceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_CASE_COMBO, m_nChangeCase);
 	DDX_Control(pDX, IDC_SERIE_START_SPIN, m_ctrlSeriesStartSpin);
 	DDX_Control(pDX, IDC_SERIE_STEP_SPIN, m_ctrlSeriesStepSpin);
-	DDX_Check(pDX, IDC_ADVANCED_CHECK, m_bAdvanced);
 	//}}AFX_DATA_MAP
 }
 
@@ -132,23 +127,21 @@ void CSearchReplaceDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CSearchReplaceDlg, CDialog)
 	ON_EN_CHANGE(IDC_SEARCH_RICHEDIT, &CSearchReplaceDlg::OnEnChangeSearch)
 	ON_EN_CHANGE(IDC_REPLACE_RICHEDIT, &CSearchReplaceDlg::OnEnChangeReplace)
-	ON_EN_CHANGE(IDC_BEFORE, OnChangeBefore)
-	ON_BN_CLICKED(IDC_REPLACEBUTTON, OnReplaceButton)
-	ON_BN_CLICKED(IDC_SEARCHBUTTON, OnSearchButton)
-	ON_BN_CLICKED(IDC_MATCHCASE, OnMatchcase)
-	ON_BN_CLICKED(IDC_ALL_OCCURRENCES_CHECK, OnBnClickedAllOccurencesCheck)
-	ON_BN_CLICKED(IDC_USE_CHECK, OnBnClickedUseCheck)
-	ON_CBN_SELCHANGE(IDC_USE_COMBO, OnCbnSelchangeUseCombo)
-	ON_BN_CLICKED(IDC_CASE_CHECK, OnBnClickedCaseCheck)
-	ON_CBN_SELCHANGE(IDC_CASE_COMBO, OnCbnSelchangeCaseCombo)
-	ON_BN_CLICKED(IDC_SERIES_BUTTON, OnBnClickedSeriesButton)
-	ON_BN_CLICKED(IDC_SERIES_CHECK, OnChangeSeries)
+	ON_EN_CHANGE(IDC_BEFORE, &CSearchReplaceDlg::OnChangeBefore)
+	ON_BN_CLICKED(IDC_REPLACEBUTTON, &CSearchReplaceDlg::OnReplaceButton)
+	ON_BN_CLICKED(IDC_SEARCHBUTTON, &CSearchReplaceDlg::OnSearchButton)
+	ON_BN_CLICKED(IDC_MATCHCASE, &CSearchReplaceDlg::OnMatchcase)
+	ON_BN_CLICKED(IDC_ALL_OCCURRENCES_CHECK, &CSearchReplaceDlg::OnBnClickedAllOccurencesCheck)
+	ON_BN_CLICKED(IDC_USE_CHECK, &CSearchReplaceDlg::OnBnClickedUseCheck)
+	ON_CBN_SELCHANGE(IDC_USE_COMBO, &CSearchReplaceDlg::OnCbnSelchangeUseCombo)
+	ON_BN_CLICKED(IDC_CASE_CHECK, &CSearchReplaceDlg::OnBnClickedCaseCheck)
+	ON_CBN_SELCHANGE(IDC_CASE_COMBO, &CSearchReplaceDlg::OnCbnSelchangeCaseCombo)
+	ON_BN_CLICKED(IDC_SERIES_BUTTON, &CSearchReplaceDlg::OnBnClickedSeriesButton)
+	ON_BN_CLICKED(IDC_SERIES_CHECK, &CSearchReplaceDlg::OnChangeSeries)
 	ON_EN_CHANGE(IDC_SERIE_START_EDIT, &CSearchReplaceDlg::OnChangeSeries)
 	ON_EN_CHANGE(IDC_SERIE_STEP_EDIT, &CSearchReplaceDlg::OnChangeSeries)
-	ON_BN_CLICKED(IDC_ID3TAG_CHECK, OnBnClickedID3TagCheck)
-	ON_BN_CLICKED(IDC_ADVANCED_CHECK, OnBnClickedAdvancedCheck)
-	ON_BN_CLICKED(IDC_WHOLE_TEXT, OnMatchWholeText)
-	ON_BN_CLICKED(IDC_ADVANCED_CHECK, &CSearchReplaceDlg::OnBnClickedAdvancedCheck)
+	ON_BN_CLICKED(IDC_ID3TAG_CHECK, &CSearchReplaceDlg::OnBnClickedID3TagCheck)
+	ON_BN_CLICKED(IDC_WHOLE_TEXT, &CSearchReplaceDlg::OnMatchWholeText)
 	ON_WM_HELPINFO()
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
@@ -495,11 +488,6 @@ void CSearchReplaceDlg::OnBnClickedID3TagCheck()
 	UpdateView();
 }
 
-void CSearchReplaceDlg::OnBnClickedAdvancedCheck()
-{
-	UpdateView();
-}
-
 void CSearchReplaceDlg::UpdateView()
 {
 	UpdateData();
@@ -547,16 +535,12 @@ void CSearchReplaceDlg::UpdateSample()
 
 	GetDlgItem(IDC_USE_COMBO)->EnableWindow(m_bUse);
 
-	GetDlgItem(IDC_WHOLE_TEXT)->EnableWindow(m_bAdvanced && (!m_bUse || m_nUse != CSearchReplaceFilter::useRegExp));	// If using regexp, disable the "whole text" option
-
 	GetDlgItem(IDC_CASE_COMBO)->EnableWindow(m_bChangeCase);
 
 	GetDlgItem(IDC_SERIE_START_EDIT)->EnableWindow(m_bSeries);
 	GetDlgItem(IDC_SERIE_STEP_EDIT)->EnableWindow(m_bSeries);
 	m_ctrlSeriesStartSpin.EnableWindow(m_bSeries);
 	m_ctrlSeriesStepSpin.EnableWindow(m_bSeries);
-
-	GetDlgItem(IDC_ALL_OCCURRENCES_CHECK)->EnableWindow(m_bAdvanced);
 
 	// For disabled controls, change their value to the default value
 	if (!GetDlgItem(IDC_WHOLE_TEXT)->IsWindowEnabled())
