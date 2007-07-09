@@ -19,9 +19,11 @@ if not exist test_files goto rmdir_end
 %RAR% x test_files.rar >NUL
 cd test_files
 
-rem ==================================================
-rem = COPY THE FILES IN "BEFORE" TO A TEMP FOLDER    =
-rem ==================================================
+rem ===============
+rem = NORMAL TEST =
+rem ===============
+echo Running normal test...
+
 mkdir after.normal.generated
 if not errorlevel 1 goto mkdir1_end
 	echo Command failed: mkdir after.normal.generated
@@ -32,6 +34,21 @@ if not errorlevel 1 goto xcopy1_end
 	echo Command failed: xcopy before after.normal.generated
 	goto failed
 :xcopy1_end
+
+%RENAMEIT% /x /f ..\filter.rit after.normal.generated /a
+if not errorlevel 1 goto passed1a
+	echo Rename-It! returned error code: %ERRORLEVEL%
+	goto failed
+:passed1a
+echo.
+
+%COMPFOLD% after.normal.ref after.normal.generated
+if errorlevel 1 goto failed
+
+rem ==================
+rem = RECURSIVE TEST =
+rem ==================
+echo Running recursive test...
 
 mkdir after.recursive.generated
 if not errorlevel 1 goto mkdir2_end
@@ -44,30 +61,12 @@ if not errorlevel 1 goto xcopy2_end
 	goto failed
 :xcopy2_end
 
-rem ==================================================
-rem = RENAME USING OUR FILTER                        =
-rem ==================================================
-echo Running normal test...
-%RENAMEIT% /x /f ..\filter.rit after.normal.generated /a
-if not errorlevel 1 goto passed1a
-	echo Rename-It! returned error code: %ERRORLEVEL%
-	goto failed
-:passed1a
-echo.
-
-echo Running recursive test...
 %RENAMEIT% /x /f ..\filter.rit after.recursive.generated /r /a
 if not errorlevel 1 goto passed1b
 	echo Rename-It! returned error code: %ERRORLEVEL%
 	goto failed
 :passed1b
 echo.
-
-rem ==================================================
-rem = COMPARE THE RESULT WITH THE EXPECTED RESULT    =
-rem ==================================================
-%COMPFOLD% after.normal.ref after.normal.generated
-if errorlevel 1 goto failed
 
 %COMPFOLD% after.recursive.ref after.recursive.generated
 if errorlevel 1 goto failed
