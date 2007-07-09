@@ -89,9 +89,22 @@ protected:
 		scCount
 	};
 
-	void UpdateView();
+	/**
+	 * Discard any call to UpdateFilelist() until the last PopUpdatesFreeze().
+	 */
+	void PushUpdatesFreeze();
+
+	/**
+	 * Refresh the display (files list and filters list preview)
+	 * when the last push is poped back.
+	 * Should be called each time m_vFilesNames or m_fcFilters are modified.
+	 */
+	void PopUpdatesFreeze();
+
 	void ColorSearchText();
+
 	void ColorReplacementText();
+
 	void UpdateSample();
 
 //	CFileName m_fnOriginalFileName;
@@ -99,6 +112,7 @@ protected:
 	IPreviewFileList& m_previewSamples;
 	CToolTipCtrl* m_pToolTip;
 	vector<SyntaxColor::CSyntaxColor*> m_vSyntaxColor;
+	int m_nUpdatesFreeze;
 
 	// Generated message map functions
 	//{{AFX_MSG(CConfigDlg)

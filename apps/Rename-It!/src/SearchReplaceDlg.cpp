@@ -158,6 +158,9 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	m_nUpdatesFreeze = 0;
+	PushUpdatesFreeze();
+
 	// Set invite strings.
 	m_ctlSearchRichEdit.SetInviteText( IDS_SEARCH_INVITE );
 	m_ctlReplaceRichEdit.SetInviteText( IDS_REPLACE_INVITE );
@@ -179,11 +182,11 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 	m_ctlSearchRichEdit.SetEventMask(ENM_CHANGE);
 	m_ctlReplaceRichEdit.SetEventMask(ENM_CHANGE);
 
+	// Update filter.
+	PopUpdatesFreeze();
+
 	// Now initialized.
 	m_bInitialized = true;
-
-	// Update filter.
-	UpdateView();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -193,27 +196,32 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 
 void CSearchReplaceDlg::OnEnChangeSearch() 
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnEnChangeReplace()
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnChangeBefore() 
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnMatchcase() 
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnBnClickedAllOccurencesCheck() 
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 #pragma warning( default : 4800 )  // Performance Warning
@@ -243,6 +251,8 @@ void CSearchReplaceDlg::OnSearchButton()
 		return;
 	}
 	dwSelectionMade = m_ctlSearchButton.DoSingleClick(menu);
+
+	PushUpdatesFreeze();
 
 	// Process command
 	switch(dwSelectionMade)
@@ -312,6 +322,8 @@ void CSearchReplaceDlg::OnSearchButton()
 	// Move back..
 	PrevDlgCtrl();
 	m_ctlSearchRichEdit.SetSel(nStartSel, nEndSel);
+
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnReplaceButton() 
@@ -334,6 +346,8 @@ void CSearchReplaceDlg::OnReplaceButton()
 		pmenuPopup->EnableMenuItem(9, MF_BYPOSITION | MF_GRAYED);
 	dwSelectionMade = m_ctlReplaceButton.DoSingleClick(menu);
 	
+	PushUpdatesFreeze();
+
 	// Process command
 	switch (dwSelectionMade)
 	{
@@ -437,11 +451,14 @@ void CSearchReplaceDlg::OnReplaceButton()
 	// Move back..
 	PrevDlgCtrl();
 	m_ctlReplaceRichEdit.SetSel(nStartSel, nEndSel);
+
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnBnClickedUseCheck()
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnCbnSelchangeUseCombo()
@@ -451,7 +468,8 @@ void CSearchReplaceDlg::OnCbnSelchangeUseCombo()
 
 void CSearchReplaceDlg::OnBnClickedCaseCheck()
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnCbnSelchangeCaseCombo()
@@ -471,6 +489,8 @@ void CSearchReplaceDlg::OnChangeSeries()
 
 	UpdateData();
 
+	PushUpdatesFreeze();
+
 	// If no replace string is provided, and "Series" is selected
 	if (m_bSeries && m_strReplace.IsEmpty())
 	{
@@ -480,24 +500,36 @@ void CSearchReplaceDlg::OnChangeSeries()
 		OnEnChangeReplace();
 	}
 
-	UpdateView();
+	PopUpdatesFreeze();
 }
 
 void CSearchReplaceDlg::OnBnClickedID3TagCheck()
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
-void CSearchReplaceDlg::UpdateView()
+void CSearchReplaceDlg::PushUpdatesFreeze()
 {
-	UpdateData();
+	++m_nUpdatesFreeze;
+	ASSERT(m_nUpdatesFreeze > 0);
+}
 
-	// Update renaming sample.
-	UpdateSample();
+void CSearchReplaceDlg::PopUpdatesFreeze()
+{
+	--m_nUpdatesFreeze;
+	ASSERT(m_nUpdatesFreeze >= 0);
+	if (m_nUpdatesFreeze == 0)
+	{
+		UpdateData();
 
-	// Colour the syntax.
-	ColorSearchText();
-	ColorReplacementText();
+		// Update renaming sample.
+		UpdateSample();
+
+		// Colour the syntax.
+		ColorSearchText();
+		ColorReplacementText();
+	}
 }
 
 void CSearchReplaceDlg::ColorSearchText()
@@ -586,7 +618,8 @@ void CSearchReplaceDlg::UpdateSample()
 
 void CSearchReplaceDlg::OnMatchWholeText()
 {
-	UpdateView();
+	PushUpdatesFreeze();
+	PopUpdatesFreeze();
 }
 
 BOOL CSearchReplaceDlg::PreTranslateMessage(MSG* pMsg)
