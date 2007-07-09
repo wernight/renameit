@@ -73,12 +73,14 @@ public:
 			// Index of the last character to rename.
 			int nEnd = m_strFullPath.GetLength();
 			if ((m_nRenamePart & renameExtension) == 0)
+			{
 				nEnd -= m_strExtension.GetLength();
 				if ((m_nRenamePart & renameFilename) == 0)
 				{
-					nEnd = m_strFileName.GetLength();
+					nEnd -= m_strFileName.GetLength();
 					ASSERT(m_nRenamePart & renameFolders);
 				}
+			}
 
 			// Change the renamed part.
 			SetTo(m_strFullPath.Mid(0, nStart) + strValue + m_strFullPath.Mid(nEnd));
