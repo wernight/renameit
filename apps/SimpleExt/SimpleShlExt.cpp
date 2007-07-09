@@ -174,6 +174,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 
 	// Create file mapping
 	tstring strMapFileName;
+	strMapFileName.reserve(32);
 	while (true)
 	{
 		// Random name
@@ -214,6 +215,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 
 	// Create event
 	tstring strEventName;
+	strEventName.reserve(32);
 	while (true)
 	{
 		// Random name
@@ -234,6 +236,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 
 	// Parameters
 	tstring strApplication;
+	strApplication.reserve(MAX_PATH);
 	strApplication = _T("\"");
 	strApplication += szDir;
 	strApplication += _T("\\RenameIt.exe\"");
@@ -242,6 +245,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	_stprintf_s(szMaxSize, _T("%I64u"), nMapSize);
 
 	tstring strCommandLine;
+	strCommandLine.reserve(MAX_PATH);
 	strCommandLine += strApplication;
 	strCommandLine += _T(" /$shell$ext$ ");
 	strCommandLine += strMapFileName;
