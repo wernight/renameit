@@ -132,7 +132,22 @@ CRenameItDlg::CRenameItDlg(CWnd* pParent /*=NULL*/)
 	CString strHomeDir;
 
 	// Get current exe directory.
-	strHomeDir.ReleaseBuffer( GetModuleFileName(NULL, strHomeDir.GetBuffer(MAX_PATH), MAX_PATH) );
+	DWORD dwSize = MAX_PATH;
+	DWORD dwRet = 0;
+	while ((dwRet = GetModuleFileName(NULL, strHomeDir.GetBuffer(dwSize), dwSize)) >= dwSize)
+	{
+		strHomeDir.ReleaseBuffer(0);
+		dwSize *= 2;
+	}
+	ASSERT(dwRet >= 0);
+	strHomeDir.ReleaseBuffer(dwRet);
+	if (dwRet == 0)
+	{
+		// Show critical error and exit the application.
+		ASSERT(false);
+		AfxMessageBox(IDS_CRITICAL_ERROR, MB_ICONSTOP);
+		PostQuitMessage(1);
+	}
 	strHomeDir = strHomeDir.Left( strHomeDir.ReverseFind('\\')+1 );
 }
 
@@ -400,7 +415,7 @@ void CRenameItDlg::OnBnClickedButtonAddfilter2()
 
 	if (wizard.get() != NULL)
 	{
-		scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples());
+		scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples(m_fcFilters.GetFilterCount()));
 		shared_ptr<IFilter> filter(wizard->Execute(*previewSamples));
 		if (filter.get() != NULL)
 			AddFilter(filter.get());
@@ -856,8 +871,35 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	CFileName fnFileName;
 	{
 		CString strFullPath;
-		_tfullpath(strFullPath.GetBuffer(_MAX_PATH), strFileName, _MAX_PATH);
+		DWORD dwRet = GetFullPathName(strFileName, MAX_PATH, strFullPath.GetBuffer(MAX_PATH), NULL);
 		strFullPath.ReleaseBuffer();
+		if (dwRet > MAX_PATH)	// The buffer is too small?
+		{
+			dwRet = GetFullPathName(strFileName, dwRet, strFullPath.GetBuffer(dwRet), NULL);
+			strFullPath.ReleaseBuffer();
+		}
+		if (dwRet == 0)	// Some error? (file not found?)
+		{
+			// Get error message
+			LPTSTR lpMsgBuf = NULL;
+			FormatMessage( 
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+				NULL,
+				GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+				(LPTSTR) &lpMsgBuf,
+				0,
+				NULL );
+	
+			// Add that error.
+			m_dlgNotAddedFiles.AddFile(strFileName, lpMsgBuf);
+	
+			// Free the buffer.
+			LocalFree( lpMsgBuf );
+			
+			return false;
+		}
+		
 		fnFileName = strFullPath;
 	}
 
@@ -1161,39 +1203,32 @@ void CRenameItDlg::ProcessUserCommandLine()
 	for (CCommandLineAnalyser::PathElement* pe = cmdLine.GetFirstPathElement(); pe!=NULL; pe = cmdLine.GetNextPathElement())
 	{
 		// Add to list
-		if (PathIsDirectory(pe->strPath))
+		CFileFind ffFileFind;
+		if (ffFileFind.FindFile(pe->strPath))	// Consider it as wildcard (may a single file as well)
 		{
-			// TODO: Add the folder also to enable renaming folders.
-
-			AddFilesInFolder(pe->strPath, pe->bRecursive);
-		}
-		else
-		{
-			CFileFind ffFileFind;
-			if (ffFileFind.FindFile(pe->strPath))	// Consider it as wildcard (may a single file as well)
+			// Add each file
+			BOOL bMoreFiles;
+			do
 			{
-				// Add each file
-				BOOL bMoreFiles;
-				do
+				bMoreFiles = ffFileFind.FindNextFile();
+				if (ffFileFind.GetFileName() != _T(".") &&
+					ffFileFind.GetFileName() != _T(".."))
 				{
-					bMoreFiles = ffFileFind.FindNextFile();
-					if (ffFileFind.GetFileName() != _T(".") &&
-						ffFileFind.GetFileName() != _T(".."))
+					if (ffFileFind.IsDirectory())
 					{
-						if (!ffFileFind.IsDirectory())
-							// Not a subdir...
-							AddFile(ffFileFind.GetFilePath());
-						else
-						{
-							// TODO: Add the folder itself.
-							if (pe->bRecursive)
-								// Add recurcively the subfolder
-								AddFilesInFolder(ffFileFind.GetFilePath(), true);
-						}
+						// TODO: Add the folder also to enable renaming folders.
+
+						// Add the folder
+						AddFilesInFolder(ffFileFind.GetFilePath(), pe->bRecursive);
 					}
-				} while (bMoreFiles);
-				ffFileFind.Close();
-			}
+					else
+					{
+						// Not a subdir...
+						AddFile(ffFileFind.GetFilePath());
+					}
+				}
+			} while (bMoreFiles);
+			ffFileFind.Close();
 		}
 	}
 
@@ -1381,7 +1416,7 @@ BOOL CRenameItDlg::OnContextMenuRules(CPoint point)
 BOOL CRenameItDlg::EditRule(int nRuleItem)
 {
 	// Show filter dialog
-	boost::scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples());
+	boost::scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples(nRuleItem));
 	IFilter* filter = m_fcFilters.GetFilter(nRuleItem);
 	ASSERT(filter != NULL);
 	if (filter->ShowDialog(*previewSamples) == IDOK)
@@ -2159,9 +2194,10 @@ void CRenameItDlg::OnNMClickFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-// Create an object that can preview the effect of a new filter on any one of the checked files.
-IPreviewFileList* CRenameItDlg::GetPreviewSamples()
+IPreviewFileList* CRenameItDlg::GetPreviewSamples(int nFilterIndex)
 {
+	ASSERT(0 <= nFilterIndex && nFilterIndex <= m_fcFilters.GetFilterCount());
+
 	// Find the default sample to use.
 	CMemoryFileList::const_iterator iterDefault;
 	int nFocusedItem = m_ctlListFilenames.GetNextItem(-1, LVNI_FOCUSED);
@@ -2178,6 +2214,12 @@ IPreviewFileList* CRenameItDlg::GetPreviewSamples()
 	if (iterDefault == m_flFiles.GetTail())
 		iterDefault = m_flFiles.GetFirstChecked();
 
+	// When the filter to preview is not the last filter,
+	// then we create a filter container will all the filter before that filter.
+	CFilterContainer fcFilters = m_fcFilters;
+	while (fcFilters.GetFilterCount() > nFilterIndex)
+		fcFilters.RemoveFilter(fcFilters.GetFilterCount() - 1);
+
 	// When no item is checked (or when the list is empty),
 	// use a default sample.
 	if (iterDefault == m_flFiles.GetTail())
@@ -2193,7 +2235,7 @@ IPreviewFileList* CRenameItDlg::GetPreviewSamples()
 			&fnSamplePath,		// First
 			&fnSamplePath + 1,	// Last
 			&fnSamplePath,		// Default sample
-			m_fcFilters);		// Filters BEFORE the new coming one
+			fcFilters);		// Filters BEFORE the new coming one
 	}
 	else
 	{
@@ -2203,6 +2245,6 @@ IPreviewFileList* CRenameItDlg::GetPreviewSamples()
 			m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// First
 			m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),	// Last
 			m_flFiles.GetInputIteratorAt(iterDefault),		// Default sample
-			m_fcFilters);			// Filters BEFORE the new coming one
+			fcFilters);			// Filters BEFORE the new coming one
 	}
 }

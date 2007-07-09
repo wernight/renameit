@@ -163,7 +163,13 @@ private:
 	afx_msg void OnContextHelp();
 	bool RenameAllFiles(unsigned nRenamingControllerErrorLevel=0xFFFF);
 	void ToggleCheckBox(int nItem);
-	IPreviewFileList* GetPreviewSamples();
+
+	/**
+	 * Create an object that can preview the effect of a new filter
+	 * on any one of the checked files.
+	 * @param nFilterIndex	Index of the filter in the filter container of the new filter to preview between [0, count].
+	 */
+	IPreviewFileList* GetPreviewSamples(int nFilterIndex);
 };
 
 //{{AFX_INSERT_LOCATION}}
