@@ -13,7 +13,7 @@ echo TEST COMMAND-LINE
 echo ==========================================
 cd "test Command-line"
 call run.bat
-if %errorlevel%==0 goto end
+if errorlevel 1 goto end
 cd ..
 echo.
 
