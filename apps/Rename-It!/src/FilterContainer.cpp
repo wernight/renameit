@@ -100,11 +100,11 @@ BOOL CFilterContainer::SaveFilters(const CString& filename)
 	_ftprintf(file, _T("[General]\n"));
 	{
 		CString strRenameWhat;
-		if (m_nPathRenamePart & CFilteredFileName::renameFolders)
+		if (m_nPathRenamePart & CFilteredPath::renameFolders)
 			strRenameWhat += "Dir";
-		if (m_nPathRenamePart & CFilteredFileName::renameFilename)
+		if (m_nPathRenamePart & CFilteredPath::renameFilename)
 			strRenameWhat += "File";
-		if (m_nPathRenamePart & CFilteredFileName::renameExtension)
+		if (m_nPathRenamePart & CFilteredPath::renameExtension)
 			strRenameWhat += "Ext";
 		_ftprintf(file, _T("RenameWhat=\"%s\"\n"), (LPCTSTR)strRenameWhat);
 		_ftprintf(file, _T("\n"));

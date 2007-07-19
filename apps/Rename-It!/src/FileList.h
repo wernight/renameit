@@ -1,5 +1,5 @@
 #pragma once
-#include "FileName.h"
+#include "Path.h"
 
 /**
  * Contains a list of file names.
@@ -12,7 +12,7 @@ public:
 		return (int) m_vfnFiles.size();
 	}
 
-	const CFileName& GetFile(int nIndex) const {
+	const CPath& GetFile(int nIndex) const {
 		return m_vfnFiles.at(nIndex);
 	}
 
@@ -22,19 +22,19 @@ public:
 	 * @param[in] fnFileName	The file name of the file to be renamed.
 	 * @return The index of the added file.
 	 */
-	int AddFile(const CFileName& fnFileName)
+	int AddFile(const CPath& fnFileName)
 	{
 		m_vfnFiles.push_back(fnFileName);
 		return (int) m_vfnFiles.size() - 1;
 	}
 
 	/**
-	 * Overloaded method that constructs the CFileName from the path.
+	 * Overloaded method that constructs the CPath from the path.
 	 * @param[in] strFileName	Path to the file or folder to be renamed.
 	 * @return The index of the added file.
 	 */
 	inline int AddFile(const CString& strFileName) {
-		return AddFile(CFileName(strFileName));
+		return AddFile(CPath(strFileName));
 	}
 
 	/**
@@ -42,7 +42,7 @@ public:
 	 * @param[in] fnFileName	The file name of the file to be renamed.
 	 * @param[in] nIndex		Index position where the file should be insert (0 means first element of the list).
 	 */
-	void InsertFile(int nIndex, const CFileName& fnFileName)
+	void InsertFile(int nIndex, const CPath& fnFileName)
 	{
 		if (nIndex == (int) m_vfnFiles.size())
 			AddFile(fnFileName);
@@ -53,12 +53,12 @@ public:
 	}
 
 	/**
-	 * Overloaded method that constructs the CFileName from the path.
+	 * Overloaded method that constructs the CPath from the path.
 	 * @param[in] strFileName	Path to the file or folder to be renamed.
 	 * @param[in] nIndex		See InsertFile above.
 	 */
 	inline void InsertFile(int nIndex, const CString& strFileName) {
-		return InsertFile(nIndex, CFileName(strFileName));
+		return InsertFile(nIndex, CPath(strFileName));
 	}
 
 	/**
@@ -72,11 +72,11 @@ public:
 			m_vfnFiles.erase(m_vfnFiles.begin() + nIndex);
 	}
 
-	const CFileName& operator[](int nIndex) const {
+	const CPath& operator[](int nIndex) const {
 		return m_vfnFiles.at(nIndex);
 	}
 
 // Implementation
 private:
-	vector<CFileName> m_vfnFiles;
+	vector<CPath> m_vfnFiles;
 };

@@ -2,7 +2,7 @@
 
 #include "IFilter.h"
 #include "IPreviewFileList.h"
-#include "FilteredFileName.h"
+#include "FilteredPath.h"
 
 /** 
  * Contain a set of filters.
@@ -55,8 +55,8 @@ public:
 
 	/**
 	 * Filter a list of file names from [first, last) to [result, result + (last - first)).
-	 * InputIterator must follow concept of Input Iterator over an array of CFileName (ex: CFileName x[10]).
-	 * OutputIterator must follow concept of Output Iterator over an array of CFileName (ex: CFileName y[10]).
+	 * InputIterator must follow concept of Input Iterator over an array of CPath (ex: CPath x[10]).
+	 * OutputIterator must follow concept of Output Iterator over an array of CPath (ex: CPath y[10]).
 	 * @param[in] a_begin	The beginning of the file list.
 	 * @param[in] a_first	First file to filter.
 	 * @param[in] a_last	Last file to filter.
@@ -85,7 +85,7 @@ public:
 				for (; a_begin!=a_first; ++a_begin)
 				{
 					// Get the filtered part of the path.
-					CString strFilteredPart = CFilteredFileName(*a_begin, m_nPathRenamePart).GetFilteredSubstring();
+					CString strFilteredPart = CFilteredPath(*a_begin, m_nPathRenamePart).GetFilteredSubstring();
 					CString strUnfilteredName = strFilteredPart;
 		
 					// Filter the name through all filters.
@@ -105,7 +105,7 @@ public:
 		for (; a_first!=a_last; ++a_first)
 		{
 			// Get the filtered part of the path.
-			CFilteredFileName ffnFileName(*a_first, m_nPathRenamePart);
+			CFilteredPath ffnFileName(*a_first, m_nPathRenamePart);
 			CString strFilteredPart = ffnFileName.GetFilteredSubstring();
 
 			// Filter the name through all filters.
@@ -157,16 +157,16 @@ private:
 
 			m_nRenameWhat = 0;
 			if (strRenameWhat.Find(_T("Dir")) >= 0)
-				m_nRenameWhat |= CFilteredFileName::renameFolders;
+				m_nRenameWhat |= CFilteredPath::renameFolders;
 			if (strRenameWhat.Find(_T("File")) >= 0)
-				m_nRenameWhat |= CFilteredFileName::renameFilename;
+				m_nRenameWhat |= CFilteredPath::renameFilename;
 			if (strRenameWhat.Find(_T("Ext")) >= 0)
-				m_nRenameWhat |= CFilteredFileName::renameExtension;
+				m_nRenameWhat |= CFilteredPath::renameExtension;
 		}
 
 		// Functions that are not used.
 	protected:
-		virtual void FilterPath(CString& strFileName, const CFileName& fnOriginalFilename, const CString& strUnfilteredName) { ASSERT(FALSE); }
+		virtual void FilterPath(CString& strFileName, const CPath& fnOriginalFilename, const CString& strUnfilteredName) { ASSERT(FALSE); }
 	public:
 		virtual int ShowDialog(IPreviewFileList& previewSamples) { ASSERT(FALSE); return IDCANCEL; }
 		virtual CString GetFilterCodeName() const { return _T("RenameWhat"); }

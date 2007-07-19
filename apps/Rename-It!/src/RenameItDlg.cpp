@@ -612,7 +612,7 @@ void CRenameItDlg::OnDropFiles(HDROP hDropInfo)
 			}
 			else
 				// Not a subdir...
-				AddFile(CString(szFullPath));
+				AddFile(CString(_T("\\\\?\\")) + szFullPath);
 		}
 
 		// Un-freeze the updates.
@@ -834,7 +834,7 @@ void CRenameItDlg::OnButtonAddfile()
 		// Add each file...
 		pos = dlgFile.GetStartPosition();
 		while (pos)
-			AddFile( dlgFile.GetNextPathName(pos) );
+			AddFile( _T("\\\\?\\") + dlgFile.GetNextPathName(pos) );
 
 		// Un-freeze the updates.
 		PopUpdatesFreeze();
@@ -872,7 +872,7 @@ void CRenameItDlg::OnKeydownRulesList(NMHDR* pNMHDR, LRESULT* pResult)
 bool CRenameItDlg::AddFile(const CString &strFileName)
 {
 	// Get the full path
-	CFileName fnFileName;
+	CPath fnFileName;
 	{
 		CString strFullPath;
 		DWORD dwRet = GetFullPathName(strFileName, MAX_PATH, strFullPath.GetBuffer(MAX_PATH), NULL);
@@ -884,6 +884,8 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 		}
 		if (dwRet == 0)	// Some error? (file not found?)
 		{
+			fnFileName = strFileName;
+
 			// Get error message
 			LPTSTR lpMsgBuf = NULL;
 			FormatMessage( 
@@ -896,7 +898,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 				NULL );
 	
 			// Add that error.
-			m_dlgNotAddedFiles.AddFile(strFileName, lpMsgBuf);
+			m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), lpMsgBuf);
 	
 			// Free the buffer.
 			LocalFree( lpMsgBuf );
@@ -912,7 +914,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	{
 		CString	strErrorMessage;
 		strErrorMessage.LoadString(IDS_FILE_ALREADY_EXIST);
-		m_dlgNotAddedFiles.AddFile(strFileName, strErrorMessage);
+		m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), strErrorMessage);
 		return false;
 	}
 
@@ -922,7 +924,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	{
 		CString	strErrorMessage;
 		strErrorMessage.LoadString(ID_RENAME_SYSTEM_FILE);
-		m_dlgNotAddedFiles.AddFile(strFileName, strErrorMessage);
+		m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), strErrorMessage);
 		return false;
 	}
 
@@ -1087,7 +1089,7 @@ void CRenameItDlg::OnButtonAddfoler()
 	m_dlgNotAddedFiles.ClearList();
 
 	// Add the files in folder and subfolders to the list
-	AddFilesInFolder(strPath);
+	AddFilesInFolder(_T("\\\\?\\") + strPath);
 
 	// Display errors if there are some.
 	if (!m_dlgNotAddedFiles.HasErrors())
@@ -1173,9 +1175,9 @@ void CRenameItDlg::ProcessShellCommandLine(LPCTSTR szArgs)
 	{
 		// Add to list
 		if (PathIsDirectory(szFiles))
-			AddFilesInFolder(szFiles);
+			AddFilesInFolder(CString(_T("\\\\?\\")) + szFiles);
 		else
-			AddFile(szFiles);
+			AddFile(CString(_T("\\\\?\\")) + szFiles);
 
 		// Go to next file path
 		szFiles += _tcslen(szFiles)+1;
@@ -1745,8 +1747,8 @@ void CRenameItDlg::OnLvnEndlabeleditFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	if (pDispInfo->item.pszText != NULL)
 	{
 		// Get new file path.
-		CFileName fnBefore = m_flFiles.GetIteratorAt(pDispInfo->item.iItem)->fnBefore;
-		CString strNewPath = fnBefore.GetDrive() + fnBefore.GetDirectory() + pDispInfo->item.pszText;
+		CPath fnBefore = m_flFiles.GetIteratorAt(pDispInfo->item.iItem)->fnBefore;
+		CString strNewPath = fnBefore.GetDirectoryName() + pDispInfo->item.pszText;
 		
 		// Rename file.
 		if (MoveFile(fnBefore.GetFullPath(), strNewPath))
@@ -2023,12 +2025,12 @@ void CRenameItDlg::OnLvnGetdispinfoFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 	if (pItem->mask & LVIF_TEXT)
 	{
 		// Which column?
-		CFileName fnToRename;
+		CPath fnToRename;
 		if (pItem->iSubItem == 0)
 			fnToRename = m_flFiles.GetIteratorAt(itemid)->fnBefore;
 		else
 			fnToRename = m_flFiles.GetIteratorAt(itemid)->fnAfter;
-		CString strText = CFilteredFileName(fnToRename, m_fcFilters.GetPathRenamePart()).GetFilteredSubstring();
+		CString strText = CFilteredPath(fnToRename, m_fcFilters.GetPathRenamePart()).GetFilteredSubstring();
 
 		// Copy the text to the LV_ITEM structure
 		// Maximum number of characters is in pItem->cchTextMax
@@ -2231,10 +2233,10 @@ IPreviewFileList* CRenameItDlg::GetPreviewSamples(int nFilterIndex)
 		// Load sample path is none is provided.
 		CString strSamplePath;
 		strSamplePath.LoadString(IDS_SAMPLE_PATH);
-		static CFileName fnSamplePath = strSamplePath;
+		static CPath fnSamplePath = strSamplePath;
 		
 		// Return the created object.
-		return new CPreviewFileList<CFileName*>(
+		return new CPreviewFileList<CPath*>(
 			&fnSamplePath,		// Begin
 			&fnSamplePath,		// First
 			&fnSamplePath + 1,	// Last

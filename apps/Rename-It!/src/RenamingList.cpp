@@ -115,10 +115,10 @@ bool CRenamingList::Check()
 					// Conflict found: Two files are going to be renamed to the same new file name.
 					CString strErrorMsg;
 
-					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[iterFound->second].fnBefore.GetFullPath());
+					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[iterFound->second].fnBefore.GetDisplayPath());
 					SetProblem(i, errConflict, strErrorMsg);
 
-					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].fnBefore.GetFullPath());
+					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].fnBefore.GetDisplayPath());
 					SetProblem(iterFound->second, errConflict, strErrorMsg);
 				}
 				else
@@ -144,13 +144,13 @@ bool CRenamingList::Check()
 			SetProblem(i, errFileMissing, strErrorMsg);
 		}
 
-		CString strFilename = m_vRenamingOperations[i].fnAfter.GetFileName();
-		CString strFullFilename = strFilename + m_vRenamingOperations[i].fnAfter.GetExtension();
+		CString strFileNameWithoutExtension = m_vRenamingOperations[i].fnAfter.GetFileNameWithoutExtension();
+		CString strFileName = m_vRenamingOperations[i].fnAfter.GetFileName();
 
 		// Look for invalid file name (renaming impossible to one of those)
-		if ((strFullFilename.IsEmpty())	// Empty filename (including extension)
-			|| strFullFilename.FindOneOf(_T("\\/:*?\"<>|")) != -1	// Forbidden characters.
-			|| strFullFilename.Right(0) == _T("."))	// The OS doesn't support files ending by a dot.
+		if ((strFileName.IsEmpty())	// Empty filename (including extension)
+			|| strFileName.FindOneOf(_T("\\/:*?\"<>|")) != -1	// Forbidden characters.
+			|| strFileName.Right(0) == _T("."))	// The OS doesn't support files ending by a dot.
 		{
 			CString strErrorMsg;
 			strErrorMsg.LoadString(IDS_INVALID_FILE_NAME);
@@ -160,7 +160,7 @@ bool CRenamingList::Check()
 		if (m_vProblems[i].nErrorCode != errInvalidName)
 		{
 			// Over 120 characters (maximum allowed from the Explorer)
-			if (strFullFilename.GetLength() > 120)
+			if (strFileName.GetLength() > 120)
 			{
 				CString strErrorMsg;
 				strErrorMsg.LoadString(IDS_RISKY_FNAME_TOO_LONG);
@@ -168,9 +168,9 @@ bool CRenamingList::Check()
 			}
 
 			// Look for some other characters that are usually forbidden (but not explicitely).
-			for (int j=0; j<strFullFilename.GetLength(); ++j)
+			for (int j=0; j<strFileName.GetLength(); ++j)
 			{
-				if (strFullFilename[j] < 0x20)
+				if (strFileName[j] < 0x20)
 				{
 					// Windows XP rejects any file name with a character below 32.
 					CString strErrorMsg;
@@ -184,15 +184,15 @@ bool CRenamingList::Check()
 			// CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9.
 			// Also, reserved words followed by an extension—for example, NUL.tx7—are invalid file names.
 			const int MAX_INVALID_NAME_LENGTH = 6;	// = strlen("CLOCK$")
-			if ((strFilename.GetLength() <= MAX_INVALID_NAME_LENGTH	// Quickly remove any file name that can't be invalid...
-					&& (   strFilename.CompareNoCase(_T("CON")) == 0	// to quickly detect system reserved file names.
-						|| strFilename.CompareNoCase(_T("PRN")) == 0
-						|| strFilename.CompareNoCase(_T("AUX")) == 0
-						|| strFilename.CompareNoCase(_T("CLOCK$")) == 0 
-						|| strFilename.CompareNoCase(_T("NUL")) == 0 
-						|| (strFilename.GetLength() == 4
-							&& (_tcsncicmp(strFilename, _T("COM"), 3) == 0 || _tcsncicmp(strFilename, _T("LPT"), 3) == 0)
-							&& (strFilename[3] >= _T('1') && strFilename[3] <= _T('9'))
+			if ((strFileNameWithoutExtension.GetLength() <= MAX_INVALID_NAME_LENGTH	// Quickly remove any file name that can't be invalid...
+					&& (   strFileNameWithoutExtension.CompareNoCase(_T("CON")) == 0	// to quickly detect system reserved file names.
+						|| strFileNameWithoutExtension.CompareNoCase(_T("PRN")) == 0
+						|| strFileNameWithoutExtension.CompareNoCase(_T("AUX")) == 0
+						|| strFileNameWithoutExtension.CompareNoCase(_T("CLOCK$")) == 0 
+						|| strFileNameWithoutExtension.CompareNoCase(_T("NUL")) == 0 
+						|| (strFileNameWithoutExtension.GetLength() == 4
+							&& (_tcsncicmp(strFileNameWithoutExtension, _T("COM"), 3) == 0 || _tcsncicmp(strFileNameWithoutExtension, _T("LPT"), 3) == 0)
+							&& (strFileNameWithoutExtension[3] >= _T('1') && strFileNameWithoutExtension[3] <= _T('9'))
 						   )
 						)
 				   )
@@ -204,8 +204,8 @@ bool CRenamingList::Check()
 			}
 
 			// Starting or ending by one or more spaces.
-			if (strFullFilename.GetAt(0) == _T(' ')			// Files starting by a space is not good.
-				|| strFullFilename.Right(0) == _T(' '))		// Files ending by a space is not good.
+			if (strFileName.GetAt(0) == _T(' ')			// Files starting by a space is not good.
+				|| strFileName.Right(0) == _T(' '))		// Files ending by a space is not good.
 			{
 				CString strErrorMsg;
 				strErrorMsg.LoadString(IDS_RISKY_FNAME_TRIM_SPACES);
@@ -290,12 +290,12 @@ bool CRenamingList::PerformRenaming()
 						// so it doesn't conflict.
 
 						// Originally rename A -> B
-						CFileName fnFinal = m_vRenamingOperations[graph[i].GetSuccessor(0)].fnAfter;
+						CPath fnFinal = m_vRenamingOperations[graph[i].GetSuccessor(0)].fnAfter;
 
 						CString strRandomName = _T("~");
 						for (int k=0; k<15; ++k)
 							strRandomName += _T("0123456789ABCDEF")[rand()%16];
-						CFileName fnTemp = fnFinal.GetFullPath() + strRandomName;
+						CPath fnTemp = fnFinal.GetFullPath() + strRandomName;
 
 						// Rename A -> TMP
 						m_vRenamingOperations[graph[i].GetSuccessor(0)].fnAfter = fnTemp;
@@ -328,8 +328,7 @@ bool CRenamingList::PerformRenaming()
 			int nIndex = i;
 			while (true)
 			{
-				// Rename file.
-				ASSERT(m_vRenamingOperations[nIndex].fnBefore.GetDrive() == m_vRenamingOperations[nIndex].fnAfter.GetDrive());
+//				ASSERT(m_vRenamingOperations[nIndex].fnBefore.GetDrive() == m_vRenamingOperations[nIndex].fnAfter.GetDrive());
 
 				// Rename file
 				if (ktm.MoveFileEx(

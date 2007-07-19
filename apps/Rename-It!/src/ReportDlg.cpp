@@ -93,14 +93,14 @@ bool CReportDlg::RenameItem(int nItem)
 	// Show renaming dialog
 	CRenameDlg	ren;
 
-	CFileName fnOriginalFileName = m_renamingList[nOperationIndex].fnBefore;
-	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() + fnOriginalFileName.GetExtension() );
+	CPath fnOriginalFileName = m_renamingList[nOperationIndex].fnBefore;
+	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() );
 
-	CFileName fnNewFileName = m_renamingList[nOperationIndex].fnAfter;
-	ren.SetNewFileName( fnNewFileName.GetFileName() + fnNewFileName.GetExtension() );
+	CPath fnNewFileName = m_renamingList[nOperationIndex].fnAfter;
+	ren.SetNewFileName( fnNewFileName.GetFileName() );
 
-	ASSERT(fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory() == fnNewFileName.GetDrive() + fnNewFileName.GetDirectory());
-	CString strBaseFolder = fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory();
+	ASSERT(fnOriginalFileName.GetDirectoryName() == fnNewFileName.GetDirectoryName());
+	CString strBaseFolder = fnOriginalFileName.GetDirectoryName();
 
 	if (ren.DoModal() == IDOK)
 	{
@@ -167,15 +167,15 @@ void CReportDlg::ShowErrors()
 void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 {
 	// Get the file name before and after to display.
-	CFileName fnOriginalFileName = m_renamingList[nRenamingOperationIndex].fnBefore;
-	CString strOriFileName = fnOriginalFileName.GetFileName() + fnOriginalFileName.GetExtension();
-	CString strPath = fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory();
+	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].fnBefore;
+	CString strOriFileName = fnOriginalFileName.GetFileName();
+	CString strPath = fnOriginalFileName.GetDirectoryName();
 
-	CFileName fnNewFileName = m_renamingList[nRenamingOperationIndex].fnAfter;
-	CString strNewFileName = fnNewFileName.GetFileName() + fnNewFileName.GetExtension();
+	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].fnAfter;
+	CString strNewFileName = fnNewFileName.GetFileName();
 
-	ASSERT(	CFileName(fnOriginalFileName.GetDrive() + fnOriginalFileName.GetDirectory()).FSCompare(
-			CFileName(fnNewFileName.GetDrive() + fnNewFileName.GetDirectory())) == 0);	// Same path before/after renaming
+	ASSERT(	CPath(fnOriginalFileName.GetDirectoryName()).FSCompare(
+			CPath(fnNewFileName.GetDirectoryName())) == 0);	// Same path before/after renaming
 
 	// Add item to the report list.
 	int nItemIndex = m_ctlReportList.InsertItem(LVIF_TEXT | LVIF_PARAM, m_ctlReportList.GetItemCount(), strOriFileName, 0, 0, -1, nRenamingOperationIndex);
@@ -433,7 +433,7 @@ void CReportDlg::OnOK()
 	for (int i=0; i<m_renamingList.GetCount(); ++i)
 	{
 		// Is the extension going to change?
-		if (CFileName::FSCompare(m_renamingList[i].fnBefore.GetExtension(), m_renamingList[i].fnAfter.GetExtension()) != 0
+		if (CPath::FSCompare(m_renamingList[i].fnBefore.GetExtension(), m_renamingList[i].fnAfter.GetExtension()) != 0
 			&& m_renamingList[i].fnBefore.GetExtension().GetLength() < 5)	// Very long extensions are probably not system extensions
 		{
 			if (AfxMessageBox(IDS_MODIFY_EXTENSION_WARNING, MB_ICONWARNING | MB_YESNO) == IDNO)

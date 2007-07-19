@@ -19,7 +19,7 @@
 #pragma once
 class IFilter;
 
-#include "FileName.h"
+#include "Path.h"
 #include "IPreviewFileList.h"
 
 /**
@@ -45,7 +45,7 @@ protected:	// Protected to make sure the caller uses OnStartRenamingList and OnE
 	 * @param[in] strUnfilteredName		The part being renaming, before any filter is applied.
 	 * @return True if file should be renamed.
 	 */
-	virtual void FilterPath(CString& strFileName, const CFileName& fnOriginalFilename, const CString& strUnfilteredName) = 0;
+	virtual void FilterPath(CString& strFileName, const CPath& fnOriginalFilename, const CString& strUnfilteredName) = 0;
 
 	// Should be called after filtering a list of files.
 	virtual void OnEndRenamingList() = 0;

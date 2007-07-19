@@ -5,7 +5,7 @@
 #include "RenameIt.h"
 #include "RenamePartSelectionCtrl.h"
 #include "winuser.h"
-#include "FilteredFileName.h"
+#include "FilteredPath.h"
 
 
 // CRenamePartSelectionCtrl
@@ -44,12 +44,12 @@ void CRenamePartSelectionCtrl::PreSubclassWindow()
 			nPosFilenameEnd = strCaption.ReverseFind('.'),
 			nPosExtStart = nPosFilenameEnd + 1,
 			nPosExtEnd = strCaption.GetLength();
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosPathEnd, CFilteredFileName::renameFolders) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosFilenameEnd, CFilteredFileName::renameFilename) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosExtStart, nPosExtEnd, CFilteredFileName::renameExtension) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosFilenameEnd, CFilteredFileName::renameFolders | CFilteredFileName::renameFilename) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosExtEnd, CFilteredFileName::renameFilename | CFilteredFileName::renameExtension) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosExtEnd, CFilteredFileName::renameFolders | CFilteredFileName::renameFilename | CFilteredFileName::renameExtension) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosPathEnd, CFilteredPath::renameFolders) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosFilenameEnd, CFilteredPath::renameFilename) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosExtStart, nPosExtEnd, CFilteredPath::renameExtension) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosFilenameEnd, CFilteredPath::renameFolders | CFilteredPath::renameFilename) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosExtEnd, CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosExtEnd, CFilteredPath::renameFolders | CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
 
 	CRichEditCtrl::PreSubclassWindow();
 }

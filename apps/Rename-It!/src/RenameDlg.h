@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FileName.h"
+#include "Path.h"
 
 /** CRenameDlg dialog
  * Ask to manually rename a file.

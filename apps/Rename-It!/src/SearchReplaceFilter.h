@@ -16,7 +16,7 @@ public:
 protected:
 	virtual void OnStartRenamingList();
 
-	virtual void FilterPath(CString& strFileName, const CFileName& fnOriginalFilename, const CString& strUnfilteredName);
+	virtual void FilterPath(CString& strFileName, const CPath& fnOriginalFilename, const CString& strUnfilteredName);
 
 	virtual void OnEndRenamingList();
 
@@ -183,7 +183,7 @@ private:
 	int			m_nSeriesStep;
 	bool		m_bID3Tag;
 
-	static bool AddID3TagMacros(const CFileName& fnOriginalFilename, CStringList& slMacros, CStringList& slValues);
+	static bool AddID3TagMacros(const CPath& fnOriginalFilename, CStringList& slMacros, CStringList& slValues);
 
 	static void ReplaceInvalidChars(CString& strSubject);
 

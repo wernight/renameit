@@ -22,7 +22,7 @@ CSearchReplaceFilter::~CSearchReplaceFilter(void)
 	RegExpFree();
 }
 
-void CSearchReplaceFilter::FilterPath(CString& strFilename, const CFileName& fnOriginalFilename, const CString& strUnfilteredName)
+void CSearchReplaceFilter::FilterPath(CString& strFilename, const CPath& fnOriginalFilename, const CString& strUnfilteredName)
 {
 	bool bMatchesSearch = false;	// True when the string to filter matches the search pattern.
 	CStringList	slMacros,
@@ -62,9 +62,9 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CFileName& fnO
 			// TODO: Change macros so that they are called only when they are used.
 			// Replace special macros.
 			slMacros.AddHead( _T("$(FileDir)") );
-			slValues.AddHead( fnOriginalFilename.GetDrive() + fnOriginalFilename.GetDirectory() );
+			slValues.AddHead( fnOriginalFilename.GetDirectoryName() );
 			slMacros.AddHead( _T("$(FileName)") );
-			slValues.AddHead( fnOriginalFilename.GetFileName() );
+			slValues.AddHead( fnOriginalFilename.GetFileNameWithoutExtension() );
 			slMacros.AddHead( _T("$(FileExt)") );
 			slValues.AddHead( fnOriginalFilename.GetExtension() );
 			slMacros.AddHead( _T("$(UnfilteredName)") );
@@ -152,10 +152,10 @@ void CSearchReplaceFilter::OnEndRenamingList()
 {
 }
 
-bool CSearchReplaceFilter::AddID3TagMacros(const CFileName& fnOriginalFilename, CStringList& slMacros, CStringList& slValues)
+bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStringList& slMacros, CStringList& slValues)
 {
 	// Load ID3 tag info.
-#ifdef _UNICODE
+#if (defined _UNICODE || defined UNICODE)
 	// A workaround in VC7
 	FILE* f = NULL;
 	if (_wfopen_s(&f, fnOriginalFilename.GetFullPath(), _T("rb")) != 0)

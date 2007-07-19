@@ -1,7 +1,7 @@
 #pragma once
 #include "afxcmn.h"
 #include "../resource.h"
-#include "FileName.h"
+#include "Path.h"
 #include "afxwin.h"
 
 /** CRenameErrorDlg dialog
@@ -22,7 +22,7 @@ public:
 	 * @param fnAfter	File name after renaming (or supposed to be).
 	 * @param strError	When it's empty, it means the operation was successful.
 	 */
-	void Add(const CFileName& fnBefore, const CFileName& fnAfter, const CString& strError=_T("")) {
+	void Add(const CPath& fnBefore, const CPath& fnAfter, const CString& strError=_T("")) {
 		if (!strError.IsEmpty())
 			++m_nErrorCount;
 		m_vErrors.push_back( CError(fnBefore, fnAfter, strError) );
@@ -60,14 +60,14 @@ private:
 
 	struct CError
 	{
-		CError(const CFileName& fnBefore, const CFileName& fnAfter, const CString& strError) :
+		CError(const CPath& fnBefore, const CPath& fnAfter, const CString& strError) :
 			fnBefore(fnBefore),
 			fnAfter(fnAfter),
 			strError(strError)
 		{}
 
-		CFileName	fnBefore;
-		CFileName	fnAfter;
+		CPath	fnBefore;
+		CPath	fnAfter;
 		CString		strError;
 	};
 	vector<CError>	m_vErrors;

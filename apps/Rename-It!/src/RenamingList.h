@@ -1,5 +1,5 @@
 #pragma once
-#include "FileName.h"
+#include "Path.h"
 #include "FileList.h"
 
 /**
@@ -58,14 +58,14 @@ public:
 		{
 		}
 
-		CRenamingOperation(const CFileName& before, const CFileName& after) :
+		CRenamingOperation(const CPath& before, const CPath& after) :
 			fnBefore(before),
 			fnAfter(after)
 		{
 		}
 			
-		CFileName	fnBefore;
-		CFileName	fnAfter;
+		CPath	fnBefore;
+		CPath	fnAfter;
 	};
 
 	struct COperationProblem
@@ -136,7 +136,7 @@ public:
 		m_vProblems.push_back( COperationProblem() );
 	}
 
-	void AddRenamingOperation(const CFileName& fnBefore, const CFileName& fnAfter) {
+	void AddRenamingOperation(const CPath& fnBefore, const CPath& fnAfter) {
 		AddRenamingOperation( CRenamingOperation(fnBefore, fnAfter) );
 	}
 

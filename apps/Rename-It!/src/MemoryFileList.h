@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FileName.h"
+#include "Path.h"
 
 /**
  * Real content of the displayed virtual list of elements to rename.
@@ -16,8 +16,8 @@ public:
 	struct ITEM
 	{
 		bool bChecked;
-		CFileName fnBefore;
-		CFileName fnAfter;
+		CPath fnBefore;
+		CPath fnAfter;
 	};
 
 	typedef list<ITEM>::iterator iterator;
@@ -118,7 +118,7 @@ public:
 	 * @return An iterator positioned at the found file if it's found,
 	 *         or GetTail() if it's not found.
 	 */
-	const_iterator FindFile(const CFileName& fnFileName) const
+	const_iterator FindFile(const CPath& fnFileName) const
 	{
 		const_iterator iter;
 		for (iter=m_filesNames.begin(); iter!=m_filesNames.end(); ++iter)
@@ -127,7 +127,7 @@ public:
 		return iter;
 	}
 
-	void AddFile(CFileName fnFileName, bool bChecked=true)
+	void AddFile(CPath fnFileName, bool bChecked=true)
 	{
 		ITEM item = {bChecked, fnFileName, fnFileName};
 		m_filesNames.push_back(item);
@@ -181,8 +181,8 @@ private:
 		bool operator!=( const CInputIterator& value) const { return m_iter != value.m_iter; }
 
 		// Trivial Iterator:
-		const CFileName& operator* () const { return m_iter->fnBefore; }
-		const CFileName* operator->() const { return & operator*(); }
+		const CPath& operator* () const { return m_iter->fnBefore; }
+		const CPath* operator->() const { return & operator*(); }
 
 		// Input Iterator
 		CInputIterator& operator++()
@@ -226,8 +226,8 @@ private:
 		}
 
 		// Output Iterator
-		CFileName& operator* () const { return m_iter->fnAfter; }
-		CFileName* operator->() const { return & operator*(); }
+		CPath& operator* () const { return m_iter->fnAfter; }
+		CPath* operator->() const { return & operator*(); }
 
 		// Input Iterator
 		COutputIterator& operator++()

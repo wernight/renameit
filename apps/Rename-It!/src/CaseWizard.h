@@ -2,7 +2,7 @@
 
 #include "FilterWizard.h"
 #include "SearchReplaceFilter.h"
-#include "FileName.h"
+#include "Path.h"
 
 // CCaseWizard dialog
 

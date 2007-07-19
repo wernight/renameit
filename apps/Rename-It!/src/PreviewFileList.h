@@ -45,19 +45,19 @@ public:
 	}
 
 // Operations
-	CFilteredFileName GetOriginalFileName() const
+	CFilteredPath GetOriginalFileName() const
 	{
-		return CFilteredFileName(*m_defaultSample, m_fcFilters.GetPathRenamePart());
+		return CFilteredPath(*m_defaultSample, m_fcFilters.GetPathRenamePart());
 	}
 
-	CFilteredFileName PreviewRenaming(const IFilter* pFilterToPreview) const
+	CFilteredPath PreviewRenaming(const IFilter* pFilterToPreview) const
 	{
 		// Add the filter to preview at the end of the filters' list.
 		CFilterContainer fc = m_fcFilters;
 		fc.AddFilter(pFilterToPreview);
 
 		// Filter the current default sample file.
-		CFileName fnFileName;
+		CPath fnFileName;
 		InputIterator last = m_defaultSample; ++last;
 		fc.FilterFileNames(
 			m_beginSampleFile,
@@ -65,7 +65,7 @@ public:
 			last,
 			&fnFileName);
 
-		return CFilteredFileName(fnFileName, m_fcFilters.GetPathRenamePart());
+		return CFilteredPath(fnFileName, m_fcFilters.GetPathRenamePart());
 	}
 
 // Implementation
@@ -87,7 +87,7 @@ private:
 		}
 
 		// Return the current element and move to the next one.
-		virtual CFileName GetCurrent() const
+		virtual CPath GetCurrent() const
 		{
 			return *m_first;
 		}

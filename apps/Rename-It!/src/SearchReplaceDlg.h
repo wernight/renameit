@@ -107,7 +107,7 @@ protected:
 
 	void UpdateSample();
 
-//	CFileName m_fnOriginalFileName;
+//	CPath m_fnOriginalFileName;
 //	CString m_strOriginalRenamedPart;
 	IPreviewFileList& m_previewSamples;
 	CToolTipCtrl* m_pToolTip;

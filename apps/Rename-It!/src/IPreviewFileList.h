@@ -2,7 +2,7 @@
 class IPreviewFileList;
 
 #include "IFilter.h"
-#include "FilteredFileName.h"
+#include "FilteredPath.h"
 
 /**
  * Interface of CPreviewFileList to avoid templates (because templates don't work with CObject xxx_DYNAMIC).
@@ -18,7 +18,7 @@ public:
 		virtual bool HasNext() const = 0;
 
 		// Return the current element.
-		virtual CFileName GetCurrent() const = 0;
+		virtual CPath GetCurrent() const = 0;
 
 		// Move to the next element.
 		virtual void MoveNext() = 0;
@@ -39,7 +39,7 @@ public:
 	/**
 	 * Return the original file name of the current default sample file.
 	 */
-	virtual CFilteredFileName GetOriginalFileName() const = 0;
+	virtual CFilteredPath GetOriginalFileName() const = 0;
 
 	/**
 	 * Preview the effect of a filter on the sample file name.
@@ -47,5 +47,5 @@ public:
 	 * @param pFilterToPreview The filter that will be used to preview the filtered file name.
 	 * @return The new file name after filtering of the current default sample file.
 	 */
-	virtual CFilteredFileName PreviewRenaming(const IFilter* pFilterToPreview) const = 0;
+	virtual CFilteredPath PreviewRenaming(const IFilter* pFilterToPreview) const = 0;
 };
