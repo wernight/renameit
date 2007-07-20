@@ -21,7 +21,7 @@ public:
 		m_nRenamePart(nRenamedPart)
 	{
 		FindFilteredSubstring();
-		ASSERT(0 <= m_nFirst && m_nFirst < m_strPath.GetLength());
+		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
 		ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
 	}
 
@@ -32,7 +32,7 @@ public:
 	 */
 	CString GetFilteredSubstring() const 
 	{
-		ASSERT(0 <= m_nFirst && m_nFirst < m_strPath.GetLength());
+		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
 		ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
 
 		return m_strPath.Mid(m_nFirst, m_nEnd - m_nFirst);
@@ -44,7 +44,7 @@ public:
 	 */
 	void SetFilteredSubstring(const CString& strValue) 
 	{
-		ASSERT(0 <= m_nFirst && m_nFirst < m_strPath.GetLength());
+		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
 		ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
 
 		// Change the renamed part.
@@ -81,7 +81,7 @@ private:
 			m_nEnd = m_nFileNameFirst;
 		}
 
-		ASSERT(0 <= m_nFirst && m_nFirst < m_strPath.GetLength());
+		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
 		ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
 	}
 
