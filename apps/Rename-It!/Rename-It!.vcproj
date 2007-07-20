@@ -603,15 +603,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\FileName.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\FilterContainer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\FilteredFileName.h"
+				RelativePath=".\src\FilteredPath.h"
 				>
 			</File>
 			<File
@@ -660,6 +656,10 @@
 			</File>
 			<File
 				RelativePath=".\src\OrientedGraph.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Path.h"
 				>
 			</File>
 			<File
