@@ -567,6 +567,8 @@ void CSearchReplaceDlg::UpdateSample()
 
 	GetDlgItem(IDC_USE_COMBO)->EnableWindow(m_bUse);
 
+	GetDlgItem(IDC_WHOLE_TEXT)->EnableWindow(!m_bUse || m_nUse != CSearchReplaceFilter::useRegExp);	// If using regexp, disable the "whole text" option
+
 	GetDlgItem(IDC_CASE_COMBO)->EnableWindow(m_bChangeCase);
 
 	GetDlgItem(IDC_SERIE_START_EDIT)->EnableWindow(m_bSeries);
