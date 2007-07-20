@@ -47,13 +47,9 @@ Global
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Release|Win32.ActiveCfg = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Release|Win32.Build.0 = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Release MinDependency|Win32.ActiveCfg = Release|Win32
-		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Release MinDependency|Win32.Build.0 = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Release MinSize|Win32.ActiveCfg = Release|Win32
-		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Release MinSize|Win32.Build.0 = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Unicode Release MinDependency|Win32.ActiveCfg = Release|Win32
-		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Unicode Release MinDependency|Win32.Build.0 = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
-		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.SimpleExt Unicode Release MinSize|Win32.Build.0 = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Release|Win32.ActiveCfg = Release|Win32
