@@ -9,6 +9,10 @@ const ID3_Reader::int_type ID3_Reader::END_OF_READER = std::char_traits<ID3_Read
 const LPCTSTR CSearchReplaceFilter::CASE_MARKER = _T("\x06\x03\x05");
 const int CSearchReplaceFilter::CASE_MARKER_LENGTH = (int) _tcslen(CASE_MARKER);
 
+const LPCTSTR CSearchReplaceFilter::MACRO_MARK = _T("\x07\x03\x05");
+const int CSearchReplaceFilter::MACRO_MARK_LENGTH = (int) _tcslen(MACRO_MARK);
+const int CSearchReplaceFilter::MACRO_CODE_LENGTH = 2;
+
 CSearchReplaceFilter::CSearchReplaceFilter(void) :
 	m_regexpCompiled(NULL),
 	m_regexpExtra(NULL),
@@ -25,18 +29,17 @@ CSearchReplaceFilter::~CSearchReplaceFilter(void)
 void CSearchReplaceFilter::FilterPath(CString& strFilename, const CPath& fnOriginalFilename, const CString& strUnfilteredName)
 {
 	bool bMatchesSearch = false;	// True when the string to filter matches the search pattern.
-	CStringList	slMacros,
-				slValues;
+	CString strvMacroValues[macrosCount];
 
 	// ID3 Tag mode?
 	if (m_bID3Tag)
 	{
-		if (!AddID3TagMacros(fnOriginalFilename, slMacros, slValues))
+		if (!AddID3TagMacros(fnOriginalFilename, strvMacroValues))
 			return;
 	}
 
 	// When search at replace are empty, nothing is replaced.
-	if (m_strSearch.IsEmpty() && m_strReplace.IsEmpty())
+	if (m_strSearch.IsEmpty() && m_strReplaceCompiled.IsEmpty())
 	{
 		bMatchesSearch = true;
 
@@ -52,26 +55,29 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CPath& fnOrigi
 	else
 	{
 		// Prepare the replacement string.
-		CString	strReplace = m_strReplace;
+		CString	strReplace = m_strReplaceCompiled;
 		{
 			// Number series.
 			if (m_bSeries)
 				// Replace %d by 123 in strReplace.
 				ReplaceSeries(strReplace, m_nSeriesCounter);
 
-			// TODO: Change macros so that they are called only when they are used.
 			// Replace special macros.
-			slMacros.AddHead( _T("$(FileDir)") );
-			slValues.AddHead( fnOriginalFilename.GetDirectoryName() );
-			slMacros.AddHead( _T("$(FileName)") );
-			slValues.AddHead( fnOriginalFilename.GetFileNameWithoutExtension() );
-			slMacros.AddHead( _T("$(FileExt)") );
-			slValues.AddHead( fnOriginalFilename.GetExtension() );
-			slMacros.AddHead( _T("$(UnfilteredName)") );
-			slValues.AddHead( strUnfilteredName );
-			slMacros.AddHead( _T("$(FilteredName)") );
-			slValues.AddHead( strFilename );
-			ReplaceMacrosIn( strReplace, slMacros, slValues );
+			if (m_nReplaceMacrosFlags != 0)
+			{
+				if (m_nReplaceMacrosFlags & 1<<macroDirectoryName)
+					strvMacroValues[macroDirectoryName] = fnOriginalFilename.GetDirectoryName();
+				if (m_nReplaceMacrosFlags & 1<<macroFileName)
+					strvMacroValues[macroFileName] = fnOriginalFilename.GetFileNameWithoutExtension();
+				if (m_nReplaceMacrosFlags & 1<<macroExtension)
+					strvMacroValues[macroExtension] = fnOriginalFilename.GetExtension();
+				if (m_nReplaceMacrosFlags & 1<<macroUnfilteredName)
+					strvMacroValues[macroUnfilteredName] = strUnfilteredName;
+				if (m_nReplaceMacrosFlags & 1<<macroFilteredName)
+					strvMacroValues[macroFilteredName] = strFilename;
+
+				ReplaceMacrosIn(strReplace, strvMacroValues);
+			}
 
 			// Add markers in the replacement string.
 			if (m_nChangeCase != caseNone)
@@ -82,21 +88,6 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CPath& fnOrigi
 		switch (m_nUse)
 		{
 		case useWildcards:	// Wildcard
-			// If we use Wildcards, we convert them to RegExp.
-			// Change the Wildcard into a RegExp.
-			EscapeRegExp(strReplace);
-			{
-				int nCapture = 1;
-				for (int i=0; i<strReplace.GetLength(); ++i)
-				{
-					if (strReplace[i] == '*')
-					{
-						strReplace.SetAt(i, '0' + nCapture);
-						if (++nCapture > 9)
-							break;
-					}
-				}
-			}
 		case useRegExp:	// RegExp
 			{
 				CString strOutput = strFilename;
@@ -152,7 +143,7 @@ void CSearchReplaceFilter::OnEndRenamingList()
 {
 }
 
-bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStringList& slMacros, CStringList& slValues)
+bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CString strvMacroValues[]) const
 {
 	// Load ID3 tag info.
 #if (defined _UNICODE || defined UNICODE)
@@ -179,31 +170,31 @@ bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStr
 	}
 
 	// Add to the list of Macros -> Values.
-	slMacros.AddHead( _T("$(ID3Track)") );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Track)
 	{
 		int nTrackNum = _ttoi(GetID3TagValue(id3Tag, ID3FID_TRACKNUM));
 		CString strTrackNum;
 		strTrackNum.Format(_T("%d"), nTrackNum);
-		slValues.AddHead( strTrackNum );
+		strvMacroValues[macroID3Track] = strTrackNum;
 	}
 
-	slMacros.AddHead( _T("$(ID3Artist)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_LEADARTIST) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Artist)
+		strvMacroValues[macroID3Artist] = GetID3TagValue(id3Tag, ID3FID_LEADARTIST);
 
-	slMacros.AddHead( _T("$(ID3Title)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_TITLE) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Title)
+		strvMacroValues[macroID3Title] = GetID3TagValue(id3Tag, ID3FID_TITLE);
 
-	slMacros.AddHead( _T("$(ID3Album)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_ALBUM) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Album)
+		strvMacroValues[macroID3Album] = GetID3TagValue(id3Tag, ID3FID_ALBUM);
 
-	slMacros.AddHead( _T("$(ID3Year)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_YEAR) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Year)
+		strvMacroValues[macroID3Year] = GetID3TagValue(id3Tag, ID3FID_YEAR);
 
-	slMacros.AddHead( _T("$(ID3Comment)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_COMMENT) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Comment)
+		strvMacroValues[macroID3Comment] = GetID3TagValue(id3Tag, ID3FID_COMMENT);
 
-	slMacros.AddHead( _T("$(ID3Genre)") );
-	slValues.AddHead( GetID3TagValue(id3Tag, ID3FID_CONTENTTYPE) );
+	if (m_nReplaceMacrosFlags & 1<<macroID3Genre)
+		strvMacroValues[macroID3Genre] = GetID3TagValue(id3Tag, ID3FID_CONTENTTYPE);
 
 #ifdef _UNICODE
 	fclose(f);
@@ -374,7 +365,6 @@ CString CSearchReplaceFilter::GetFilterDescription() const
 	ruleDescr += _T("]");
 
 	// TODO: nChangeCase
-	// TODO: locale
 
 	return ruleDescr;
 }
@@ -412,6 +402,7 @@ void CSearchReplaceFilter::LoadDefaultArgs()
 
 	// Re-compile the regexp.
 	CompileRegExp();
+	PrecompileReplace();
 }
 
 // Define some or all of filter's parameters (for import/load).
@@ -462,6 +453,9 @@ void CSearchReplaceFilter::SetArgs(const CMapStringToString& mapArgs)
 
 	// Re-compile the regexp.
 	CompileRegExp();
+
+	// Precompile the macros.
+	PrecompileReplace();
 }
 
 void CSearchReplaceFilter::RegExpFree()
@@ -508,6 +502,8 @@ bool CSearchReplaceFilter::CompileRegExp()
 			EscapeRegExp(strSearch);
 			strSearch.Replace(_T("\\?"), _T("."));
 			strSearch.Replace(_T("\\*"), _T("(.*)"));
+
+			// Match whole text?
 			if (m_bMatchWholeText)
 				strSearch = '^' + strSearch + '$';
 		}
@@ -537,6 +533,67 @@ bool CSearchReplaceFilter::CompileRegExp()
 		m_regexpExtra = pcre_study(m_regexpCompiled, 0, &pchError);
 
 	return m_regexpCompiled != NULL && m_regexpExtra != NULL;
+}
+
+void CSearchReplaceFilter::PrecompileReplace()
+{
+	// Create a copy of the replacement string.
+	m_strReplaceCompiled = m_strReplace;
+
+	// Pre-compile macros.
+	m_nReplaceMacrosFlags = 0;
+	for (int nMacroCode=0; nMacroCode<macrosCount; ++nMacroCode)
+	{
+		CString strMacroName;
+		switch (nMacroCode)
+		{
+		// General
+		case macroDirectoryName:	strMacroName = _T("$(FileDir)"); break;
+		case macroFileName:			strMacroName = _T("$(FileName)"); break;
+		case macroExtension:		strMacroName = _T("$(FileExt)"); break;
+		case macroUnfilteredName:	strMacroName = _T("$(UnfilteredName)"); break;
+		case macroFilteredName:		strMacroName = _T("$(FilteredName)"); break;
+		// ID3
+		case macroID3Track:		strMacroName = _T("$(ID3Track)"); break;
+		case macroID3Artist:	strMacroName = _T("$(ID3Artist)"); break;
+		case macroID3Title:		strMacroName = _T("$(ID3Title)"); break;
+		case macroID3Album:		strMacroName = _T("$(ID3Album)"); break;
+		case macroID3Year:		strMacroName = _T("$(ID3Year)"); break;
+		case macroID3Comment:	strMacroName = _T("$(ID3Comment)"); break;
+		case macroID3Genre:		strMacroName = _T("$(ID3Genre)"); break;
+
+		default:
+			ASSERT(false);
+			continue;
+		}
+
+		// Search & replace macros by MACRO_MARK+code.
+		CString strCompiledMacro= MACRO_MARK;
+		strCompiledMacro.AppendFormat(_T("%02d"), nMacroCode);
+		if (m_strReplaceCompiled.Replace(strMacroName, strCompiledMacro) > 0)
+		{
+			// Flag that macro.
+			m_nReplaceMacrosFlags |= 1<<nMacroCode;
+		}
+	}
+
+	// Pre-compile wildcards.
+	if (m_nUse == useWildcards)
+	{
+		// If we use Wildcards, we convert them to RegExp.
+		// Change the Wildcard into a RegExp.
+		EscapeRegExp(m_strReplaceCompiled);
+		int nCapture = 1;
+		for (int i=0; i<m_strReplaceCompiled.GetLength(); ++i)
+		{
+			if (m_strReplaceCompiled[i] == '*')
+			{
+				m_strReplaceCompiled.SetAt(i, '0' + nCapture);
+				if (++nCapture > 9)
+					break;
+			}
+		}
+	}
 }
 
 unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOut, const CString &strReplace) const
@@ -725,51 +782,47 @@ CString CSearchReplaceFilter::myMid(const CString &str, int nFirst, int nCount)
 	return str.Mid(nFirst, nCount);
 }
 
-/** Replace all macros in string by their relative values.
- */
-void CSearchReplaceFilter::ReplaceMacrosIn(CString &strInOut, const CStringList &slMacros, const CStringList &slValues) const
+void CSearchReplaceFilter::ReplaceMacrosIn(CString& strContent, const CString strvMacroValues[]) const
 {
-	CString		strMacro,
-				strValue;
-	POSITION	posMacros,
-				posValues;
-	int			i;
+	int nStart = 0;
+	while (true)
+	{
+		int nMacroPos = strContent.Find(MACRO_MARK, nStart);
+		if (nMacroPos == -1 || nMacroPos + 2 >= strContent.GetLength())
+			break;
+		
+		// Get the macro code.
+		int nMacroCode = (strContent[nMacroPos+MACRO_MARK_LENGTH] - '0')*10 + (strContent[nMacroPos+MACRO_MARK_LENGTH+1] - '0');
+		if (nMacroCode < 0 || nMacroCode >= macrosCount)
+			continue;	// Invalid macro code (hack?)
+		if (((m_nReplaceMacrosFlags>>nMacroCode) & 1) != 1)
+			continue;	// Invalid macro mark (hack?)
 
-	ASSERT(slMacros.GetCount() == slValues.GetCount());
+		// Replace by the macro's value.
+		strContent = strContent.Left(nMacroPos) + strvMacroValues[nMacroCode] + strContent.Mid(nMacroPos+MACRO_MARK_LENGTH+MACRO_CODE_LENGTH);
 
-	// Search & replace macros.
-	for (i=0; i<strInOut.GetLength(); ++i)
-		for (posMacros = slMacros.GetHeadPosition(), posValues = slValues.GetHeadPosition(); posMacros != NULL, posValues != NULL; )
-		{
-			strMacro = slMacros.GetNext(posMacros);
-			strValue = slValues.GetNext(posValues);
-			if (strInOut.Mid(i, strMacro.GetLength()).CompareNoCase( strMacro ) == 0)
-			{
-				// Replace.
-				strInOut = strInOut.Left(i) + strValue + strInOut.Mid(i+strMacro.GetLength());
-				i += strValue.GetLength() - 1;
-			}
-		}
+		// Go to the next possible macro.
+		nStart = nMacroPos + strvMacroValues[nMacroCode].GetLength();
+	}
 }
 
 CString CSearchReplaceFilter::GetID3TagValue(ID3_Tag &id3Tag, ID3_FrameID nid3ID)
 {
-	char		szTag[256];
-	ID3_Frame*	pid3Frame;
-	ID3_Field*	pid3Field;
-
 	// Don't free frame or field with delete. 
 	// id3lib will do that for us...
-	if ((pid3Frame = id3Tag.Find(nid3ID)) != NULL &&
-		(pid3Field = pid3Frame->GetField(ID3FN_TEXT)) != NULL)
-	{
-		pid3Field->Get(szTag, sizeof(szTag)/sizeof(szTag[0]));
-		CString strTag;
-		strTag = szTag;
-		ReplaceInvalidChars(strTag);
-		return strTag;
-	}
-	return _T(""); // That's bad!
+	ID3_Frame* pid3Frame = id3Tag.Find(nid3ID);
+	if (pid3Frame == NULL)
+		return _T(""); // That's bad!
+
+	ID3_Field* pid3Field = pid3Frame->GetField(ID3FN_TEXT);
+	if (pid3Field == NULL)
+		return _T(""); // That's bad!
+
+	// TODO: Unicode strings are not correctly translated. Use pid3Field->GetRawUnicodeText() with encoding, or another lib.
+	CString strTagValue;
+	strTagValue = pid3Field->GetRawText();
+	ReplaceInvalidChars(strTagValue);
+	return strTagValue;
 }
 
 bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChangeOption)

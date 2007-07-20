@@ -118,6 +118,7 @@ public:
 
 	void SetReplace(const CString& strValue) {
 		m_strReplace = strValue;
+		PrecompileReplace();
 	}
 
 	void SetCaseSensitive(bool bValue) {
@@ -183,7 +184,7 @@ private:
 	int			m_nSeriesStep;
 	bool		m_bID3Tag;
 
-	static bool AddID3TagMacros(const CPath& fnOriginalFilename, CStringList& slMacros, CStringList& slValues);
+	bool AddID3TagMacros(const CPath& fnOriginalFilename, CString strvMacroValues[]) const;
 
 	static void ReplaceInvalidChars(CString& strSubject);
 
@@ -203,9 +204,10 @@ private:
 
 	static CString myMid(const CString &str, int nFirst, int nCount);
 
-	/** Replace all macros in string by their relative values.
+	/**
+	 * Replace all macros in string by their relative values.
 	 */
-	void ReplaceMacrosIn(CString &strInOut, const CStringList &slMacros, const CStringList &slValues) const;
+	void ReplaceMacrosIn(CString& strContent, const CString strvMacroValues[]) const;
 
 	static CString GetID3TagValue(ID3_Tag &id3Tag, ID3_FrameID nid3ID);
 
@@ -223,6 +225,8 @@ private:
 	 */
 	bool CompileRegExp();
 
+	void PrecompileReplace();
+
 	/**
 	 * Change the case in strSubject between the two markers "\x06\x03\x05".
 	 * The markers are removed after. If the markers are not found, nothing is changed.
@@ -232,13 +236,39 @@ private:
 	 */
 	static bool ChangeCase(CString& strSubject, EChangeCase nCaseChangeOption);
 
-	static const int CASE_MARKER_LENGTH;
 	static const LPCTSTR CASE_MARKER;
+	static const int CASE_MARKER_LENGTH;
+
+	static const LPCTSTR MACRO_MARK;
+	static const int MACRO_MARK_LENGTH;
+	static const int MACRO_CODE_LENGTH;
 
 	// Variables used to improve speed by keeping the compiled RegExp.
 	pcre*		m_regexpCompiled;
 	pcre_extra*	m_regexpExtra;
 	CString		m_strRegExpCompileError;
+
+	// Pre-compiled macros.
+	CString m_strReplaceCompiled;		// A compiled m_strReplace where macros are marked.
+	enum EMacro
+	{
+		macroDirectoryName,
+		macroFileName,
+		macroExtension,
+		macroUnfilteredName,
+		macroFilteredName,
+
+		macroID3Track,
+		macroID3Artist,
+		macroID3Title,
+		macroID3Album,
+		macroID3Year,
+		macroID3Comment,
+		macroID3Genre,
+			
+		macrosCount
+	};
+	unsigned	m_nReplaceMacrosFlags;	// A set of bit flags of macros present in the replacement string.
 
 	// Variable used between OnStartRenamingList and OnEndRenamingList.
 	int m_nSeriesCounter;
