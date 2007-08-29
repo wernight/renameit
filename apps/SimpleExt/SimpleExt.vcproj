@@ -74,7 +74,6 @@
 				ModuleDefinitionFile="$(TargetName).def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -161,7 +160,6 @@
 				ModuleDefinitionFile="$(TargetName).def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -237,7 +235,6 @@
 				AdditionalDependencies="odbc32.lib odbccp32.lib UnicoWS.lib"
 				ModuleDefinitionFile="$(TargetName).def"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -314,7 +311,6 @@
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(TargetName).def"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -392,7 +388,6 @@
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(TargetName).def"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -468,7 +463,6 @@
 				AdditionalDependencies="odbc32.lib odbccp32.lib UnicoWS.lib"
 				ModuleDefinitionFile="$(TargetName).def"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
