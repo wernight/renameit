@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot = true);
+int CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot = true);
 vector<wstring> Dir(const wstring& strFolder);
 string WstringToString(const wstring& wstr);
 
@@ -24,7 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 // Compare two folders and return the number of files that don't match.
-unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot /*= true*/)
+int CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot /*= true*/)
 {
 	unsigned nMismatch = 0;
 
@@ -48,7 +48,7 @@ unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bo
 		if ((hFindFile = FindFirstFile(folder1Search.c_str(), &fd1)) == INVALID_HANDLE_VALUE)
 		{
 			cerr << "Cannot find the directory: " << WstringToString(strFolder1) << endl;
-			return -1;
+			return 1;
 		}
 		else
 			FindClose(hFindFile);
@@ -56,7 +56,7 @@ unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bo
 		if ((hFindFile = FindFirstFile(folder2Search.c_str(), &fd2)) == INVALID_HANDLE_VALUE)
 		{
 			cerr << "Cannot find the directory: " << WstringToString(strFolder2) << endl;
-			return -1;
+			return 1;
 		}
 		else
 			FindClose(hFindFile);
