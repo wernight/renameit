@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2);
+unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot = true);
 vector<wstring> Dir(const wstring& strFolder);
 string WstringToString(const wstring& wstr);
 
@@ -24,8 +24,69 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 // Compare two folders and return the number of files that don't match.
-unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2)
+unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bRoot /*= true*/)
 {
+	unsigned nMismatch = 0;
+
+	// Compare the folders them-selves (when it's not the starting folder).
+	if (!bRoot)
+	{
+		// Compare folders' names.
+		wstring folder1Search = strFolder1;
+		wstring folder2Search = strFolder2;
+		if (folder1Search[folder1Search.length() - 1] != _T('\\'))
+			folder1Search += _T("\\");
+		if (folder2Search[folder2Search.length() - 1] != _T('\\'))
+			folder2Search += _T("\\");
+		folder1Search += _T(".");
+		folder2Search += _T(".");
+
+		WIN32_FIND_DATA fd1;
+		WIN32_FIND_DATA fd2;
+		HANDLE hFindFile;
+
+		if ((hFindFile = FindFirstFile(folder1Search.c_str(), &fd1)) == INVALID_HANDLE_VALUE)
+		{
+			cerr << "Cannot find the directory: " << WstringToString(strFolder1) << endl;
+			return -1;
+		}
+		else
+			FindClose(hFindFile);
+
+		if ((hFindFile = FindFirstFile(folder2Search.c_str(), &fd2)) == INVALID_HANDLE_VALUE)
+		{
+			cerr << "Cannot find the directory: " << WstringToString(strFolder2) << endl;
+			return -1;
+		}
+		else
+			FindClose(hFindFile);
+
+		if (_tcscmp(fd1.cFileName, fd2.cFileName) != 0)
+		{
+			cout << "\"" << WstringToString(strFolder1) << "\" and \"" << WstringToString(strFolder2) << "\" folders' name differ." << endl;
+			++nMismatch;
+		}
+
+		// Compare folders' attributes.
+		DWORD dwFolder1Attributes = GetFileAttributes(strFolder1.c_str());
+		DWORD dwFolder2Attributes = GetFileAttributes(strFolder2.c_str());
+		if (dwFolder1Attributes == INVALID_FILE_ATTRIBUTES)
+		{
+			cerr << "Cannot get the file's attributes: " << WstringToString(strFolder1) << endl;
+			++nMismatch;
+		}
+		else if (dwFolder2Attributes == INVALID_FILE_ATTRIBUTES)
+		{
+			cerr << "Cannot get the file's attributes: " << WstringToString(strFolder2) << endl;
+			++nMismatch;
+		}
+		else if (dwFolder1Attributes != dwFolder2Attributes)
+		{
+			cout << "\"" << WstringToString(strFolder1) << "\" and \"" << WstringToString(strFolder2) << "\" folders' attributes differ." << endl;
+			++nMismatch;
+		}
+	}
+
 	// Get a list of files to compare: FilesList = Files_in_folder1 + Files_in_folder2
 	vector<wstring> vFilesList1 = Dir(strFolder1);
 	vector<wstring> vFilesList2 = Dir(strFolder2);
@@ -50,14 +111,13 @@ unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2)
 		strFullFolder2 += _T("\\");
 
 	// For each file of the list
-	unsigned nMismatch = 0;
 	for (vector<wstring>::iterator iter=vFilesList.begin(); iter!=vFilesList.end(); ++iter)
 	{
 		// If it is a folder
 		if ((*iter)[(*iter).length() - 1] == '\\')
 		{
 			// Do a recursive comparaison
-			nMismatch += CompareFolders(strFullFolder1 + *iter, strFullFolder2 + *iter);
+			nMismatch += CompareFolders(strFullFolder1 + *iter, strFullFolder2 + *iter, false);
 			continue;
 		}
 
@@ -95,12 +155,12 @@ unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2)
 		{
 			if (f1 == NULL)
 			{
-				cout << "Cannot open the file: " << WstringToString(strFile1) << endl;
+				cerr << "Cannot open the file: " << WstringToString(strFile1) << endl;
 				++nMismatch;
 			}
 			else if (f2 == NULL)
 			{
-				cout << "Cannot open the file: " << WstringToString(strFile2) << endl;
+				cerr << "Cannot open the file: " << WstringToString(strFile2) << endl;
 				++nMismatch;
 			}
 			else
@@ -120,8 +180,29 @@ unsigned CompareFolders(const wstring& strFolder1, const wstring& strFolder2)
 
 				if (!bMatch)
 				{
-					cout << "\"" << WstringToString(strFile1) << "\" and \"" << WstringToString(strFile2) << "\" differ." << endl;
+					cout << "\"" << WstringToString(strFile1) << "\" and \"" << WstringToString(strFile2) << "\" content differ." << endl;
 					++nMismatch;
+				}
+				else
+				{
+					// Compare files' attributes.
+					DWORD dwFile1Attributes = GetFileAttributes(strFile1.c_str());
+					DWORD dwFile2Attributes = GetFileAttributes(strFile2.c_str());
+					if (dwFile1Attributes == INVALID_FILE_ATTRIBUTES)
+					{
+						cerr << "Cannot get the file's attributes: " << WstringToString(strFile1) << endl;
+						++nMismatch;
+					}
+					else if (dwFile2Attributes == INVALID_FILE_ATTRIBUTES)
+					{
+						cerr << "Cannot get the file's attributes: " << WstringToString(strFile2) << endl;
+						++nMismatch;
+					}
+					else if (dwFile1Attributes != dwFile2Attributes)
+					{
+						cout << "\"" << WstringToString(strFile1) << "\" and \"" << WstringToString(strFile2) << "\" attributes differ." << endl;
+						++nMismatch;
+					}
 				}
 			}
 		}
