@@ -15,6 +15,7 @@ public:
 
 	// Add a file's name and error message to the list.
 	bool AddFile(LPCTSTR szFileName, LPCTSTR szErrorMessage);
+	bool AddFile(LPCTSTR szFileName, UINT nResourceString);
 
 	// Return true if the dialog has file names and error messages.
 	bool HasErrors();

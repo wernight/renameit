@@ -608,7 +608,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUTBOX            "&About Rename-It!..."
-    IDS_ADDDIR              "%1 is a directory.\nDo you want to add the files in the directory?"
+    IDS_ADDDIR              "`%1` is a folder.\nDo you want to include all its subfolders and files?"
     IDS_CANTSAVE            "Unable to save configuration to registry."
     IDS_GENERICERROR        "Unknow error in file %1 at line %2.\nPlease report it to the software's authors."
     ID_CANT_SAVE_FILE       "Couldn't save file."
@@ -696,19 +696,18 @@ BEGIN
     IDS_FOLDER_OFN_TITLE    "Select folder"
     IDS_UNKNOWN_FILTER      "Error during loading of the filter ""%1"":\nUnknown filter."
     IDS_STATUS_RENAME_COUNT "%1 files(s) to rename of the %2 file(s)."
-    IDS_INVALID_FILE_NAME   "Invalid file name: Contains forbidden characters"
+    IDS_INVALID_FILE_NAME   "Invalid file name: Contains forbidden characters. Invalid characters might include ASCII/Unicode characters 1 through 31, as well as quote (""), less than (<), greater than (>), pipe (|), backspace (\\b), null (\\0) and tab (\\t)."
     IDS_RENAME_PARTS        "C:\\..\\Folders\\Filename.Ext"
     IDS_TT_SELECT_RENAME_PARTS 
                             "Highlight the elements you would like to rename."
     IDS_NO_FILTER_TO_SAVE   "Nothing to save: No filter have been defined."
     IDS_CONFLICT_SAME_AFTER "Conflict: The file '%1' is going to have the same file name as this one."
     IDS_RISKY_FNAME_TOO_LONG 
-                            "Risky name: The file name is too long (exceeds 120 characters)."
-    IDS_RISKY_FNAME_CHARS   "Risky name: The file name contains characters that can cause problems."
+                            "Risky file name: The file name is too long (exceeds 120 characters)."
     IDS_RISKY_FNAME_RESERVED 
-                            "Risky name: This name should be avoided because it is reserved by the system."
+                            "Risky file name: This name should be avoided because it is reserved by the system. This includes CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_FNAME_TRIM_SPACES 
-                            "Risky name: Spaces before or after the file name should be avoided."
+                            "Risky file name: Spaces before or after the file name should be avoided."
 END
 
 STRINGTABLE 
@@ -753,6 +752,20 @@ BEGIN
     IDS_PGRS_PREREN_CAPTION "Stage 2: Preparing renaming..."
     IDS_PGRS_RENAMING_CAPTION "Stage 3: Renaming $(Done) of $(Total)..."
     IDS_PGRS_TITLE          "Renaming Progress"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LONGUER_THAN_MAX_PATH 
+                            "Ricky file name: The full path's length exceeds 260 characters limit. Some application may not support it."
+    IDS_START_END_BACKSLASH_MISSING 
+                            "Directory separator missing: The path must start and end by a backslash (\\)."
+    IDS_INVALID_DIRECTORY_NAME 
+                            "Invalid folder name: Contains forbidden characters. Invalid characters might include ASCII/Unicode characters 1 through 31, as well as quote (""), less than (<), greater than (>), pipe (|), backspace (\\b), null (\\0) and tab (\\t)."
+    IDS_RISKY_DIRNAME_RESERVED 
+                            "Risky folder name: On the folder's name should be avoided because it is reserved by the system. This includes CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
+    IDS_RISKY_DIRNAME_TRIM_SPACES 
+                            "Risky folder name: Spaces before or after the folder name should be avoided."
 END
 
 #endif    // English (U.S.) resources
@@ -1371,7 +1384,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUTBOX            "À &propos de Rename-It!..."
-    IDS_ADDDIR              "%1 est un répertoire.\nVoulez-vous ajouter les fichiers qui sont dans ce répertoire?"
+    IDS_ADDDIR              "%1 est un dossier.\nVoulez-vous ajouter tous ses fichiers et sous-dossiers?"
     IDS_CANTSAVE            "Impossible de sauvegarder la configuration dans la base de registre."
     IDS_GENERICERROR        "Erreur inconnue dans le fichier %1 à la ligne %2.\nVeuillez rapporter cette erreur aux auteurs du logiciel."
     ID_CANT_SAVE_FILE       "Impossible de sauvegarder le fichier."
@@ -1459,19 +1472,18 @@ BEGIN
     IDS_FOLDER_OFN_TITLE    "Selectionner le dosser"
     IDS_UNKNOWN_FILTER      "Erreur lors du chargement du filtre ""%1"":\nFiltre inconnu."
     IDS_STATUS_RENAME_COUNT "%1 fichier(s) à renommer sur %2 fichier(s)."
-    IDS_INVALID_FILE_NAME   "Nom invalide: Le nom contient des caractères invalides"
+    IDS_INVALID_FILE_NAME   "Nom de fichier invalide: Le nom contient des caractères invalides. Cela inclus les guillemets doubles (""), inférieure à (<), supérieur à (>), pipe (|), retour arrière (\\b), nul (\\0) et tabulation (\\t)."
     IDS_RENAME_PARTS        "C:\\..\\Dossiers\\Nom_du_fichier.Ext"
     IDS_TT_SELECT_RENAME_PARTS 
                             "Mettez en surbrillance les éléments que vous souhaitez renommer."
     IDS_NO_FILTER_TO_SAVE   "Il n'y a rien à sauvegarder: Aucun filtre n'a été défini."
     IDS_CONFLICT_SAME_AFTER "Conflit: Le fichier '%1' aura le même nom que celui-ci."
     IDS_RISKY_FNAME_TOO_LONG 
-                            "Nom à risque: Nom de fichier trop long (excède 120 charactères)."
-    IDS_RISKY_FNAME_CHARS   "Nom à risque: Le nom du fichier contiendra des caractères à risque."
+                            "Nom de fichier à risque: Nom de fichier trop long (excède 120 charactères)."
     IDS_RISKY_FNAME_RESERVED 
-                            "Nom à risque: Utilise un nom réservé par le système."
+                            "Nom de fichier à risque: Utilise un nom réservé par le système. Cela inclus CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_FNAME_TRIM_SPACES 
-                            "Nom à risque: Éviter les espaces en début ou fin de fichier."
+                            "Nom de fichier à risque: Éviter les espaces en début ou fin de fichier."
 END
 
 STRINGTABLE 
@@ -1516,6 +1528,20 @@ BEGIN
     IDS_PGRS_PREREN_CAPTION "Phase 2: Prépartion du renommage..."
     IDS_PGRS_RENAMING_CAPTION "Phase 3: Renomme $(Done) sur $(Total)..."
     IDS_PGRS_TITLE          "Progression du renommage"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LONGUER_THAN_MAX_PATH 
+                            "Nom de fichier à risque: Le chemin vers le fichier atteint la limite des 260 caractères. Certaines applications peuvent ne pas le supporter."
+    IDS_START_END_BACKSLASH_MISSING 
+                            "Caractère séparateur de dossier manquant: Le chemin vers le fichier doit commencer et finir par un backslash (\\)."
+    IDS_INVALID_DIRECTORY_NAME 
+                            "Nom de dossier invalide: Le nom contient des caractères invalides. Cela inclus les guillemets doubles (""), inférieure à (<), supérieur à (>), pipe (|), retour arrière (\\b), nul (\\0) et tabulation (\\t)."
+    IDS_RISKY_DIRNAME_RESERVED 
+                            "Nom de dossier à risque: Un dossier utilise un nom réservé par le système. Cela inclus CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
+    IDS_RISKY_DIRNAME_TRIM_SPACES 
+                            "Nom de dossier à risque: Éviter les espaces en début ou fin de nom de dossier."
 END
 
 #endif    // French (France) resources

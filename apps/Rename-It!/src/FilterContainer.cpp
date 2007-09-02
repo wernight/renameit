@@ -43,8 +43,11 @@ void CFilterContainer::RemoveFilter(int nFilterIndex)
 
 void CFilterContainer::RemoveAllFilters()
 {
-	for (const_iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
-		delete *iter;
+	BOOST_FOREACH(IFilter* pFilter, m_vFilters)
+	{
+		delete pFilter;
+	}
+
 	m_vFilters.clear();
 }
 
@@ -111,12 +114,12 @@ BOOL CFilterContainer::SaveFilters(const CString& filename)
 	}
 
 	// Write data
-	for (const_iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
+	BOOST_FOREACH(IFilter* pFilter, m_vFilters)
 	{
-		_ftprintf(file, _T("[%s]\n"), (LPCTSTR)(*iter)->GetFilterCodeName());
+		_ftprintf(file, _T("[%s]\n"), (LPCTSTR)pFilter->GetFilterCodeName());
 
 		CMapStringToString mapArgs;
-		(*iter)->GetArgs(mapArgs);
+		pFilter->GetArgs(mapArgs);
 		for (POSITION pos2 = mapArgs.GetStartPosition(); pos2 != NULL; )
 		{
 			CString strKey, strValue;
@@ -137,8 +140,7 @@ int CFilterContainer::LoadFilters(const CString &filename)
 	int		nFiltersAdded = 0;
 
 	CMapStringToString mapArgs;
-	IFilter *filter = NULL;
-	CRenameWhat filterRenameWhat;
+	scoped_ptr<IFilter> filter;
 
 	// open file
 	FILE	*file;
@@ -165,24 +167,29 @@ int CFilterContainer::LoadFilters(const CString &filename)
 			CString strType = &line[1];
 
 			// If previously we have loaded a filter,
-			if (filter != NULL)
+			if (filter.get() != NULL)
 			{
 				// Add the previously loaded filter to the list
 				filter->SetArgs(mapArgs);
-				if (filter != &filterRenameWhat)
+				if (filter->GetFilterCodeName() == "RenameWhat")
 				{
-					AddFilter(filter);
+					// Get the rename what part.
+					m_nPathRenamePart = static_cast<CRenameWhat*>(filter.get())->GetRenameWhat();
+				}
+				else
+				{
+					AddFilter(filter.get());
 					++nFiltersAdded;
 				}
-				filter = NULL;
+				filter.reset();
 				mapArgs.RemoveAll();
 			}
 
 			// Check if filter exist...
 			if (strType == _T("General"))
-				filter = &filterRenameWhat;
+				filter.reset(new CRenameWhat());
 			else if (strType == _T("Search and replace"))
-				filter = new CSearchReplaceFilter();
+				filter.reset(new CSearchReplaceFilter());
 			else
 			{
 				// Unknown filter
@@ -192,7 +199,7 @@ int CFilterContainer::LoadFilters(const CString &filename)
 			}
 		}
 		// Else if we are loading a filter's arguments
-		else if (filter != NULL)	// key="value"
+		else if (filter.get() != NULL)	// key="value"
 		{
 			// Key
 			LPTSTR pos = _tcschr(line, _T('='));
@@ -228,23 +235,24 @@ int CFilterContainer::LoadFilters(const CString &filename)
 		}
 	}
 
-	if (filter != NULL)
+	if (filter.get() != NULL)
 	{
 		filter->SetArgs(mapArgs);
-		if (filter != &filterRenameWhat)
+		if (filter->GetFilterCodeName() == "RenameWhat")
 		{
-			AddFilter(filter);
+			// Get the rename what part.
+			m_nPathRenamePart = static_cast<CRenameWhat*>(filter.get())->GetRenameWhat();
+		}
+		else
+		{
+			AddFilter(filter.get());
 			++nFiltersAdded;
 		}
-		filter = NULL;
+		filter.reset();
 		mapArgs.RemoveAll();
 	}
 
 	fclose(file);
-
-	// Get the rename what part.
-	if (filterRenameWhat.GetRenameWhat() > 0)
-		m_nPathRenamePart = filterRenameWhat.GetRenameWhat();
 
 	return nFiltersAdded;
 }

@@ -93,10 +93,10 @@ bool CReportDlg::RenameItem(int nItem)
 	// Show renaming dialog
 	CRenameDlg	ren;
 
-	CPath fnOriginalFileName = m_renamingList[nOperationIndex].fnBefore;
+	CPath fnOriginalFileName = m_renamingList[nOperationIndex].pathBefore;
 	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() );
 
-	CPath fnNewFileName = m_renamingList[nOperationIndex].fnAfter;
+	CPath fnNewFileName = m_renamingList[nOperationIndex].pathAfter;
 	ren.SetNewFileName( fnNewFileName.GetFileName() );
 
 	ASSERT(fnOriginalFileName.GetDirectoryName() == fnNewFileName.GetDirectoryName());
@@ -106,7 +106,7 @@ bool CReportDlg::RenameItem(int nItem)
 	{
 		// Change file name.
 		CRenamingList::CRenamingOperation roRenamingOperation = m_renamingList[nOperationIndex];
-		roRenamingOperation.fnAfter = strBaseFolder + ren.GetNewFileName();
+		roRenamingOperation.pathAfter = strBaseFolder + ren.GetNewFileName();
 		m_renamingList.SetRenamingOperation(nOperationIndex, roRenamingOperation);
 		m_ctlReportList.SetItemText(nItem, 1, ren.GetNewFileName());
 
@@ -167,11 +167,11 @@ void CReportDlg::ShowErrors()
 void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 {
 	// Get the file name before and after to display.
-	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].fnBefore;
+	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].pathBefore;
 	CString strOriFileName = fnOriginalFileName.GetFileName();
 	CString strPath = fnOriginalFileName.GetDirectoryName();
 
-	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].fnAfter;
+	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].pathAfter;
 	CString strNewFileName = fnNewFileName.GetFileName();
 
 	ASSERT(	CPath(fnOriginalFileName.GetDirectoryName()).FSCompare(
@@ -184,7 +184,7 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		// Show critical error and exit the application.
 		ASSERT(false);
 		AfxMessageBox(IDS_CRITICAL_ERROR, MB_ICONSTOP);
-		PostQuitMessage(1);
+		AfxPostQuitMessage(1);
 		return;
 	}
 	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 1, strNewFileName) );
@@ -195,6 +195,7 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 
 	// Change icon in report list.
 	int nIcon = -1;
+	BOOST_STATIC_ASSERT(CRenamingList::errCount == 9);
 	switch (problem.nErrorCode)
 	{
 	case CRenamingList::errNoError:
@@ -205,7 +206,9 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		nIcon = iconRemoved;
 		break;
 
-	case CRenamingList::errInvalidName:
+	case CRenamingList::errInvalidFileName:
+	case CRenamingList::errInvalidDirectoryName:
+	case CRenamingList::errBackslashMissing:
 		nIcon = iconInvalidName;
 		break;
 
@@ -213,7 +216,9 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		nIcon = iconConflict;
 		break;
 
-	case CRenamingList::errRiskyName:
+	case CRenamingList::errRiskyFileName:
+	case CRenamingList::errRiskyDirectoryName:
+	case CRenamingList::errLonguerThanMaxPath:
 		nIcon = iconBadName;
 		break;
 
@@ -222,8 +227,8 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		MsgBoxUnhandledError(__FILE__, __LINE__);
 	}
 
-	m_ctlReportList.SetItem(nRenamingOperationIndex, 0, LVIF_IMAGE, NULL, nIcon, 0, 0, NULL);
-	m_ctlReportList.SetItemText(nRenamingOperationIndex, 3, problem.strMessage);
+	m_ctlReportList.SetItem(nItemIndex, 0, LVIF_IMAGE, NULL, nIcon, 0, 0, NULL);
+	m_ctlReportList.SetItemText(nItemIndex, 3, problem.strMessage);
 }
 
 void CReportDlg::UpdateStatus()
@@ -433,8 +438,8 @@ void CReportDlg::OnOK()
 	for (int i=0; i<m_renamingList.GetCount(); ++i)
 	{
 		// Is the extension going to change?
-		if (CPath::FSCompare(m_renamingList[i].fnBefore.GetExtension(), m_renamingList[i].fnAfter.GetExtension()) != 0
-			&& m_renamingList[i].fnBefore.GetExtension().GetLength() < 5)	// Very long extensions are probably not system extensions
+		if (CPath::FSCompare(m_renamingList[i].pathBefore.GetExtension(), m_renamingList[i].pathAfter.GetExtension()) != 0
+			&& m_renamingList[i].pathBefore.GetExtension().GetLength() < 5)	// Very long extensions are probably not system extensions
 		{
 			if (AfxMessageBox(IDS_MODIFY_EXTENSION_WARNING, MB_ICONWARNING | MB_YESNO) == IDNO)
 				return;

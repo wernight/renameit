@@ -44,5 +44,5 @@ protected:
 		}
 	};
 	std::vector<POSSIBLE_SELECTION> m_vPossibleSelections;
-	UINT	m_nRenamePart;	// A set of bit flags of ERenamePartFlags
+	UINT	m_nRenamePart;	// A set of bit flags of CFilteredPath::ERenamePartFlags
 };

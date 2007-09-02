@@ -35,11 +35,16 @@ public:
 	 */
 	enum EErrorCode
 	{
-		errNoError,			// No error.
-		errRiskyName,		// The new file name should be avoided.
-		errConflict,		// The renaming preview shows a conflict with other files (existing or in the renaming list).
-		errInvalidName,		// The new file name is invalid.
-		errFileMissing,		// The original file is missing from the storage.
+		errNoError,				// No error.
+		errRiskyFileName,		// The new file name should be avoided.
+		errRiskyDirectoryName,	// The new directory name should be avoided.
+		errLonguerThanMaxPath,	// The full path length is >= than MAX_PATH=260 chars long (it may not work properly with some applications).
+		errConflict,			// The renaming preview shows a conflict with other files (existing or in the renaming list).
+		errInvalidFileName,		// The new file name is invalid.
+		errInvalidDirectoryName,// The new directory name is invalid.
+		errBackslashMissing,	// The path must start and end by a backslash (\).
+		errFileMissing,			// The original file is missing from the storage.
+		errCount
 	};
 
 	enum EStage
@@ -59,13 +64,13 @@ public:
 		}
 
 		CRenamingOperation(const CPath& before, const CPath& after) :
-			fnBefore(before),
-			fnAfter(after)
+			pathBefore(before),
+			pathAfter(after)
 		{
 		}
 			
-		CPath	fnBefore;
-		CPath	fnAfter;
+		CPath	pathBefore;
+		CPath	pathAfter;
 	};
 
 	struct COperationProblem
@@ -136,8 +141,8 @@ public:
 		m_vProblems.push_back( COperationProblem() );
 	}
 
-	void AddRenamingOperation(const CPath& fnBefore, const CPath& fnAfter) {
-		AddRenamingOperation( CRenamingOperation(fnBefore, fnAfter) );
+	void AddRenamingOperation(const CPath& pathBefore, const CPath& pathAfter) {
+		AddRenamingOperation( CRenamingOperation(pathBefore, pathAfter) );
 	}
 
 	void SetRenamingOperation(int nIndex, const CRenamingOperation& roRenaming) {
@@ -186,6 +191,21 @@ public:
 
 // Implementation
 private:
+	// A comparaison used to order such a set such as the longuest path come first.
+	template <class _Tp>
+	struct path_compare : public binary_function<_Tp, _Tp, bool>
+	{
+		bool operator()(const _Tp& __x, const _Tp& __y) const
+		{
+			if (__x.GetLength() != __y.GetLength())
+				return __x.GetLength() > __y.GetLength();
+			else
+				return __x < __y;
+		}
+	};
+
+	static COperationProblem CheckName(const CString& strName, const CString& strNameWithoutExtension, bool bIsFileName);
+
 	void SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage)
 	{
 		vector<COperationProblem>::iterator iter = m_vProblems.begin() + nOperationIndex;
@@ -195,10 +215,18 @@ private:
 		{
 			// Find the error level from the error code.
 			EErrorLevel nLevel;
+			BOOST_STATIC_ASSERT(errCount == 9);
 			switch (nErrorCode)
 			{
-			case errRiskyName:	nLevel = levelWarning; break;
-			default:			nLevel = levelError;
+			case errLonguerThanMaxPath:
+			case errRiskyFileName:
+			case errRiskyDirectoryName:
+				nLevel = levelWarning;
+				break;
+
+			default:
+				nLevel = levelError;
+				break;
 			}
 
 			// Update error counters.

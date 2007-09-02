@@ -49,7 +49,7 @@ private:
 	//{{AFX_DATA(CRenameItDlg)
 	enum { IDD = IDD_RENAMEIT_DIALOG };
 
-	CMemoryFileList m_flFiles;
+	CMemoryFileList m_flFiles;			// A list of files to rename.
 	bool m_bDialogInit;
 	HICON m_hIcon;
 	CButton	m_ctlButtonMoveUp;
@@ -92,7 +92,7 @@ private:
 	afx_msg void OnKeydownRulesList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDblclkRulesList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnFileConfigure();
-	afx_msg void OnButtonAddfoler();
+	afx_msg void OnButtonAddfolder();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnLvnInsertitemRulesList(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnDeleteitemRulesList(NMHDR *pNMHDR, LRESULT *pResult);
@@ -119,13 +119,27 @@ private:
 	BOOL OnContextMenuRules(CPoint point);
 	BOOL OnContextMenuFilenames(CPoint point);
 
-	void AddFilesInFolder(const CString &dirname, bool bSubfolders=true);
+	/** Add a file to the renaming elements.
+	 * You have to call Push/PopUpdatesFreeze before and after.
+	 * @param filename			File name to add to the list.
+	 * @param pstrErrorBuffer	String that will contain the error message returned (may be NULL).
+	 * @return True is successful else copy in pstrErrorBuffer the error message.
+	 */
 	bool AddFile(const CString &filename);
+
+	// Add files in the folder and subfolders if the flag is set
+	void AddFilesInFolder(const CString &dirname, bool bSubfolders=true);
+
 	void UpdateFilelist();
+	
 	void UpdateFilterlist();
+	
 	void SelectAllFiles();
+	
 	void UnselectAllFiles();
+	
 	void InverseFileSelection();
+	
 	bool AddFilter(IFilter *pFilter);
 
 	// Discard any call to UpdateFilelist() until the last PopUpdatesFreeze().
@@ -145,7 +159,6 @@ private:
 		}
 	}
 
-
 	// Process the provided command line arguments
 	bool ProcessCommandLine(LPCTSTR szArgs);
 	void ProcessShellCommandLine(LPCTSTR szArgs);
@@ -155,8 +168,9 @@ private:
 	bool LoadFilterList(LPCTSTR szFileName);
 	bool SaveFilterList();
 	void OnUpdateStatusBar();
-	bool IsFilterSelected(UINT idxItem)
-    { return (m_ctlListFilters.GetItemState( idxItem, LVIS_SELECTED) == LVIS_SELECTED);}
+	bool IsFilterSelected(UINT idxItem) {
+		return (m_ctlListFilters.GetItemState( idxItem, LVIS_SELECTED) == LVIS_SELECTED);
+	}
 	void SwapFilterItems( UINT itemIdx1, UINT itemIdx2);
 	void UpdateMoveButtonState();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -170,6 +184,11 @@ private:
 	 * @param nFilterIndex	Index of the filter in the filter container of the new filter to preview between [0, count].
 	 */
 	IPreviewFileList* GetPreviewSamples(int nFilterIndex);
+
+	/**
+	 * Return the unicode path form that can handle very long path names.
+	 */
+	static CString GetUnicodePath(const CString& strPath);
 };
 
 //{{AFX_INSERT_LOCATION}}

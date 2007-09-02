@@ -146,7 +146,7 @@ CRenameItDlg::CRenameItDlg(CWnd* pParent /*=NULL*/)
 		// Show critical error and exit the application.
 		ASSERT(false);
 		AfxMessageBox(IDS_CRITICAL_ERROR, MB_ICONSTOP);
-		PostQuitMessage(1);
+		AfxPostQuitMessage(1);
 	}
 	strHomeDir = strHomeDir.Left( strHomeDir.ReverseFind('\\')+1 );
 }
@@ -185,7 +185,7 @@ BEGIN_MESSAGE_MAP(CRenameItDlg, CResizingDialog)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_RULES_LIST, OnKeydownRulesList)
 	ON_NOTIFY(NM_DBLCLK, IDC_RULES_LIST, OnDblclkRulesList)
 	ON_COMMAND(ID_FILE_CONFIGURE, OnFileConfigure)
-	ON_BN_CLICKED(IDC_BUTTON_ADDFOLDER, OnButtonAddfoler)
+	ON_BN_CLICKED(IDC_BUTTON_ADDFOLDER, OnButtonAddfolder)
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(LVN_INSERTITEM, IDC_RULES_LIST, OnLvnInsertitemRulesList)
 	ON_NOTIFY(LVN_DELETEITEM, IDC_RULES_LIST, OnLvnDeleteitemRulesList)
@@ -341,10 +341,8 @@ void CRenameItDlg::OnFileExit()
 {
 	// This is the only way to exit the application from the main screen.
 
-	// TODO: To return an exit code use 123:
-	// PostMessage(WM_QUIT, 123);
 	// ALTERNATIVE: ExitInstance() method of the App.
-	PostMessage(WM_QUIT);
+	AfxPostQuitMessage(0);
 }
 
 void CRenameItDlg::OnOK() 
@@ -362,7 +360,7 @@ void CRenameItDlg::OnCancel()
 
 void CRenameItDlg::OnButtonAddRenamer() 
 {
-	boost::scoped_ptr<IFilter> filter(new CSearchReplaceFilter());
+	scoped_ptr<IFilter> filter(new CSearchReplaceFilter());
 	AddFilter(filter.get());
 }
 
@@ -588,7 +586,7 @@ void CRenameItDlg::OnDropFiles(HDROP hDropInfo)
 {
 	if (hDropInfo)
 	{
-		int iFiles = DragQueryFile(hDropInfo, (UINT)-1, NULL, 0);		
+		int iFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, NULL, 0);		
 
 		// Clear error list
 		m_dlgNotAddedFiles.ClearList();
@@ -599,20 +597,25 @@ void CRenameItDlg::OnDropFiles(HDROP hDropInfo)
 		// For each dropped file...
 		for (int i=0; i<iFiles; i++)
 		{
-			TCHAR szFullPath[_MAX_PATH];
-			DragQueryFile(hDropInfo, i, szFullPath, _MAX_PATH);
+			CPath path;
+			{
+				UINT nPathLength = DragQueryFile(hDropInfo, i, NULL, 0);
+				CString strPath;
+				DragQueryFile(hDropInfo, i, strPath.GetBuffer(nPathLength), nPathLength);
+				path = GetUnicodePath(strPath);
+			}
 
-			if (PathIsDirectory(szFullPath))
+			if (PathIsDirectory(path.GetFullPath()))
 			{
 				CString msg;
-				AfxFormatString1(msg, IDS_ADDDIR, szFullPath);
+				AfxFormatString1(msg, IDS_ADDDIR, path.GetDisplayPath());
 				if (AfxMessageBox(msg, MB_YESNO|MB_ICONQUESTION) == IDYES)
 					// Add dir recursive
-					AddFilesInFolder(CString(szFullPath));
+					AddFilesInFolder(path.GetFullPath());
 			}
 			else
 				// Not a subdir...
-				AddFile(CString(_T("\\\\?\\")) + szFullPath);
+				AddFile(path.GetFullPath());
 		}
 
 		// Un-freeze the updates.
@@ -834,7 +837,7 @@ void CRenameItDlg::OnButtonAddfile()
 		// Add each file...
 		pos = dlgFile.GetStartPosition();
 		while (pos)
-			AddFile( _T("\\\\?\\") + dlgFile.GetNextPathName(pos) );
+			AddFile(GetUnicodePath( dlgFile.GetNextPathName(pos) ));
 
 		// Un-freeze the updates.
 		PopUpdatesFreeze();
@@ -863,12 +866,6 @@ void CRenameItDlg::OnKeydownRulesList(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-/** Add a file to the renaming elements.
- * You have to call Push/PopUpdatesFreeze before and after.
- * @param filename			File name to add to the list.
- * @param pstrErrorBuffer	String that will contain the error message returned (may be NULL).
- * @return True is successful else copy in pstrErrorBuffer the error message.
- */
 bool CRenameItDlg::AddFile(const CString &strFileName)
 {
 	// Get the full path
@@ -884,8 +881,6 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 		}
 		if (dwRet == 0)	// Some error? (file not found?)
 		{
-			fnFileName = strFileName;
-
 			// Get error message
 			LPTSTR lpMsgBuf = NULL;
 			FormatMessage( 
@@ -898,7 +893,8 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 				NULL );
 	
 			// Add that error.
-			m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), lpMsgBuf);
+			fnFileName = strFileName;
+			m_dlgNotAddedFiles.AddFile(fnFileName.GetDisplayPath(), lpMsgBuf);
 	
 			// Free the buffer.
 			LocalFree( lpMsgBuf );
@@ -914,7 +910,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	{
 		CString	strErrorMessage;
 		strErrorMessage.LoadString(IDS_FILE_ALREADY_EXIST);
-		m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), strErrorMessage);
+		m_dlgNotAddedFiles.AddFile(fnFileName.GetDisplayPath(), strErrorMessage);
 		return false;
 	}
 
@@ -924,7 +920,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	{
 		CString	strErrorMessage;
 		strErrorMessage.LoadString(ID_RENAME_SYSTEM_FILE);
-		m_dlgNotAddedFiles.AddFile(fnFileName.GetFullPath(), strErrorMessage);
+		m_dlgNotAddedFiles.AddFile(fnFileName.GetDisplayPath(), strErrorMessage);
 		return false;
 	}
 
@@ -933,7 +929,6 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	return true;
 }
 
-// Add files in the folder and subfolders if the flag is set
 void CRenameItDlg::AddFilesInFolder(const CString &strDirName, bool bSubfolders)
 {
 	// Freeze the updates.
@@ -1063,33 +1058,33 @@ BOOL CAboutDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CRenameItDlg::OnButtonAddfoler()
+void CRenameItDlg::OnButtonAddfolder()
 {
-	BROWSEINFO		bi;
-	LPITEMIDLIST	pidl;
-	CString			strPath,
-					rOfnTitle;
-
 	// Set Browse Info
+	BROWSEINFO		bi;
 	ZeroMemory(&bi, sizeof(BROWSEINFO));
 	bi.hwndOwner = GetSafeHwnd();
+	CString	rOfnTitle;
 	rOfnTitle.LoadString(IDS_FOLDER_OFN_TITLE);
 	bi.lpszTitle = rOfnTitle;
 	bi.ulFlags = BIF_DONTGOBELOWDOMAIN | BIF_RETURNONLYFSDIRS | BIF_BROWSEINCLUDEFILES
 		| BIF_NONEWFOLDERBUTTON;
 
 	// Show Browe Dialog and Get Path
-	if ((pidl=SHBrowseForFolder(&bi)) == NULL)
+	LPITEMIDLIST	pidl = SHBrowseForFolder(&bi);
+	if (pidl == NULL)
 		return;		// User selected Cancel
+	CString strPath;
 	if (!SHGetPathFromIDList(pidl, strPath.GetBuffer(MAX_PATH)))
 		return;
 	strPath.ReleaseBuffer();
+	strPath = GetUnicodePath(strPath);
 
 	// Clear error list
 	m_dlgNotAddedFiles.ClearList();
 
 	// Add the files in folder and subfolders to the list
-	AddFilesInFolder(_T("\\\\?\\") + strPath);
+	AddFilesInFolder(strPath);
 
 	// Display errors if there are some.
 	if (!m_dlgNotAddedFiles.HasErrors())
@@ -1173,11 +1168,14 @@ void CRenameItDlg::ProcessShellCommandLine(LPCTSTR szArgs)
     // Add files&folders
 	while (*szFiles != _T('\0'))
 	{
+		CString strPath = GetUnicodePath(szFiles);
+
 		// Add to list
-		if (PathIsDirectory(szFiles))
-			AddFilesInFolder(CString(_T("\\\\?\\")) + szFiles);
+		if (PathIsDirectory(strPath))
+			// Add sub-folders.
+			AddFilesInFolder(strPath, true);
 		else
-			AddFile(CString(_T("\\\\?\\")) + szFiles);
+			AddFile(strPath);
 
 		// Go to next file path
 		szFiles += _tcslen(szFiles)+1;
@@ -1222,8 +1220,6 @@ void CRenameItDlg::ProcessUserCommandLine()
 				{
 					if (ffFileFind.IsDirectory())
 					{
-						// TODO: Add the folder also to enable renaming folders.
-
 						// Add the folder
 						AddFilesInFolder(ffFileFind.GetFilePath(), pe->bRecursive);
 					}
@@ -1257,9 +1253,9 @@ void CRenameItDlg::ProcessUserCommandLine()
 		else
 		{
 			if (RenameAllFiles(CRenamingController::elError | CRenamingController::elWarning))
-				PostQuitMessage(0);
-			else
-				PostQuitMessage(1);
+				AfxPostQuitMessage(0);
+			//else if (cmdLine.IsSilentMode())
+			//	AfxPostQuitMessage(1);
 		}
 	}
 }
@@ -1539,7 +1535,7 @@ BOOL CRenameItDlg::OnContextMenuFilenames(CPoint point)
 		OnButtonAddfile();
 		break;
 	case 15:	// Add folders
-		OnButtonAddfoler();
+		OnButtonAddfolder();
 		break;
 	case 60:	// Select All
 		SelectAllFiles();
@@ -1876,6 +1872,7 @@ void CRenameItDlg::OnMovedItemFileNamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 		// Freeze the updates.
 		PushUpdatesFreeze();
 
+		// Reoder items.
 		CMemoryFileList::iterator iterFrom = m_flFiles.GetIteratorAt(pMoveItem->nFrom);
 		m_flFiles.ReorderFiles(
 			m_flFiles.GetIteratorAt(pMoveItem->nTo), 
@@ -1978,18 +1975,20 @@ bool CRenameItDlg::RenameAllFiles(unsigned nRenamingControllerErrorLevel)
 	m_fcFilters.FilterFileNames(
 		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// Begin
 		m_flFiles.GetInputIteratorAt(m_flFiles.GetFirstChecked()),	// First
-		m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),	// Last
+		m_flFiles.GetInputIteratorAt(m_flFiles.GetTail()),			// Last
 		m_flFiles.GetOutputIteratorAt(m_flFiles.GetFirstChecked()));	// Result
 
 	// Generate the file list of original and new file names.
 	CFileList flBefore;
 	CFileList flAfter;
 	BOOST_FOREACH(CMemoryFileList::ITEM& item, m_flFiles)
+	{
 		if (item.bChecked)
 		{
 			flBefore.AddFile(item.fnBefore);
 			flAfter.AddFile(item.fnAfter);
 		}
+	}
 	ASSERT(flBefore.GetFileCount() == flAfter.GetFileCount());
 
 	// Do the renaming.
@@ -2253,4 +2252,12 @@ IPreviewFileList* CRenameItDlg::GetPreviewSamples(int nFilterIndex)
 			m_flFiles.GetInputIteratorAt(iterDefault),		// Default sample
 			fcFilters);			// Filters BEFORE the new coming one
 	}
+}
+
+CString CRenameItDlg::GetUnicodePath(const CString& strPath)
+{
+	if (PathIsUNC(strPath))
+		return _T("\\\\?\\UNC\\") + strPath.Mid(2);
+	else
+		return _T("\\\\?\\") + strPath;
 }

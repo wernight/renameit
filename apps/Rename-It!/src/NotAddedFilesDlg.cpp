@@ -64,13 +64,24 @@ BOOL CNotAddedFilesDlg::OnInitDialog()
 	// EXCEPTION : les pages de propriétés OCX devraient retourner FALSE
 }
 
-// Add a file's name and error message to the list.
 bool CNotAddedFilesDlg::AddFile(LPCTSTR szFileName, LPCTSTR szErrorMessage)
 {
 	m_slFileNames.AddTail(szFileName);
 	m_slErrorMessages.AddTail(szErrorMessage);
 
 	return true;
+}
+
+bool CNotAddedFilesDlg::AddFile(LPCTSTR szFileName, UINT nResourceString)
+{
+	CString strMessage;
+	if (strMessage.LoadString(nResourceString))
+	{
+		ASSERT(false);
+		return AddFile(szFileName, _T("???"));
+	}
+	else
+		return AddFile(szFileName, strMessage);
 }
 
 // Return true if the dialog has file names and error messages.

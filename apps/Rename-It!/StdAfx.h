@@ -127,6 +127,7 @@ using namespace std;
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/static_assert.hpp>
 using namespace boost;
 
 inline long int lrintf(float x) {

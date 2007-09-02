@@ -22,7 +22,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 	// Remove files that have the same name before and after.
 	for (int i=0; i<m_renamingList.GetCount(); ++i)
-		if (m_renamingList[i].fnBefore == m_renamingList[i].fnAfter)
+		if (m_renamingList[i].pathBefore == m_renamingList[i].pathAfter)
 		{
 			m_renamingList.RemoveRenamingOperation(i);
 			--i;
@@ -127,8 +127,8 @@ void CRenamingController::OnRenamed(int nIndex, DWORD dwErrorCode)
 	if (dwErrorCode == 0)
 	{// Renaming succeed
 		m_dlgRenameError.Add(
-			m_renamingList.GetRenamingOperation(nIndex).fnBefore,
-			m_renamingList.GetRenamingOperation(nIndex).fnAfter,
+			m_renamingList.GetRenamingOperation(nIndex).pathBefore,
+			m_renamingList.GetRenamingOperation(nIndex).pathAfter,
 			NULL);
 	}
 	else
@@ -146,8 +146,8 @@ void CRenamingController::OnRenamed(int nIndex, DWORD dwErrorCode)
 
 		// Add that error.
 		m_dlgRenameError.Add(
-			m_renamingList.GetRenamingOperation(nIndex).fnBefore,
-			m_renamingList.GetRenamingOperation(nIndex).fnAfter,
+			m_renamingList.GetRenamingOperation(nIndex).pathBefore,
+			m_renamingList.GetRenamingOperation(nIndex).pathAfter,
 			lpMsgBuf);
 
 		// Free the buffer.
