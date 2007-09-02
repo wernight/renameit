@@ -813,7 +813,7 @@ void CRenameItDlg::OnButtonAddfile()
 	rOfnFilter.LoadString(IDS_FILES_OFN_FILTER);
 	CFileDialog dlgFile(TRUE, NULL, NULL,
 		OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_EXPLORER,
-		rOfnFilter);
+		rOfnFilter, this);
 
 	// provide wide buffer
 #if (_WIN32_WINNT >= 0x0500)	// Windows 2000/XP
@@ -1075,8 +1075,22 @@ void CRenameItDlg::OnButtonAddfolder()
 	if (pidl == NULL)
 		return;		// User selected Cancel
 	CString strPath;
-	if (!SHGetPathFromIDList(pidl, strPath.GetBuffer(MAX_PATH)))
+	bool bSuccess = SHGetPathFromIDList(pidl, strPath.GetBuffer(MAX_PATH)) != 0;
+
+	// free memory used
+	IMalloc* imalloc = 0;
+	if (SUCCEEDED( SHGetMalloc(&imalloc) ))
+	{
+		imalloc->Free(pidl);
+		imalloc->Release();
+	}
+
+	// If it failed, we stop here.
+	if (!bSuccess)
+	{
+		strPath.ReleaseBuffer(0);
 		return;
+	}
 	strPath.ReleaseBuffer();
 	strPath = GetUnicodePath(strPath);
 

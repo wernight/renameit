@@ -390,7 +390,7 @@ void CSearchReplaceFilter::LoadDefaultArgs()
 {
 	m_strSearch.Empty();
 	m_strReplace.Empty();
-	m_bOnce = true;
+	m_bOnce = false;
 	m_bCaseSensitive = true;
 	m_bMatchWholeText = false;
 	m_nUse = useWildcards;

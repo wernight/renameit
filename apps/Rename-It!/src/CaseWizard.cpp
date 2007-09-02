@@ -43,7 +43,7 @@ namespace Wizard
 	{
 		__super::OnInitDialog();
 
-		m_strBefore = m_pPreviewSamples->GetOriginalFileName().GetFilteredSubstring();
+		m_strBefore = m_pPreviewSamples->GetBeforePreviewRenaming().GetFilteredSubstring();
 		UpdateData(FALSE);
 
 		OnUpdatePreview();

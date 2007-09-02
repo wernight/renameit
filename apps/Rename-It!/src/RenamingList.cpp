@@ -312,8 +312,9 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 	}
 
 	// Starting or ending by one or more spaces.
-	if (strName.GetAt(0) == _T(' ')			// Files/Folders starting by a space is not good.
-		|| strName.Right(0) == _T(' '))		// Files/Folders ending by a space is not good.
+	ASSERT(!strName.IsEmpty());
+	if (strName[0] == _T(' ') ||						// Files/Folders starting by a space is not good.
+		strName[strName.GetLength() - 1] == _T(' '))	// Files/Folders ending by a space is not good.
 	{
 		// Warning: Spaces before or after.
 		COperationProblem problem;

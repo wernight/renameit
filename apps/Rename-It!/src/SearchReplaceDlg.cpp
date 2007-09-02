@@ -41,7 +41,7 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	, m_nUse(0)
 	, m_bUse(FALSE)
 	, m_bCaseSensitive(TRUE)
-	, m_bAllOccurences(TRUE)
+	, m_bReplaceOnce(FALSE)
 	, m_strBefore("")
 	, m_strReplace("")
 	, m_strSearch("")
@@ -54,11 +54,11 @@ CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileL
 	, m_pToolTip(NULL)
 	, m_previewSamples(previewSamples)
 {
-	m_strBefore = previewSamples.GetOriginalFileName().GetFilteredSubstring();
+	m_strBefore = previewSamples.GetBeforePreviewRenaming().GetFilteredSubstring();
 
 	m_strSearch = m_filter.GetSearch();
 	m_strReplace = m_filter.GetReplace();
-	m_bAllOccurences = !m_filter.IsReplaceOnce();
+	m_bReplaceOnce = m_filter.IsReplaceOnce();
 	m_bCaseSensitive = m_filter.IsCaseSensitive();
 	m_bMatchWholeText = m_filter.IsMatchWholeText();
 	m_bUse = m_filter.GetUse() != CSearchReplaceFilter::useNone;
@@ -108,7 +108,7 @@ void CSearchReplaceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_REPLACE_RICHEDIT, m_strReplace);
 	DDX_Text(pDX, IDC_BEFORE, m_strBefore);
 	DDX_Check(pDX, IDC_MATCHCASE, m_bCaseSensitive);
-	DDX_Check(pDX, IDC_ALL_OCCURRENCES_CHECK, m_bAllOccurences);
+	DDX_Check(pDX, IDC_REPLACE_ONCE_CHECK, m_bReplaceOnce);
 	DDX_CBIndex(pDX, IDC_USE_COMBO, m_nUse);
 	DDX_Check(pDX, IDC_USE_CHECK, m_bUse);
 	DDX_Check(pDX, IDC_SERIES_CHECK, m_bSeries);
@@ -131,7 +131,7 @@ BEGIN_MESSAGE_MAP(CSearchReplaceDlg, CDialog)
 	ON_BN_CLICKED(IDC_REPLACEBUTTON, &CSearchReplaceDlg::OnReplaceButton)
 	ON_BN_CLICKED(IDC_SEARCHBUTTON, &CSearchReplaceDlg::OnSearchButton)
 	ON_BN_CLICKED(IDC_MATCHCASE, &CSearchReplaceDlg::OnMatchcase)
-	ON_BN_CLICKED(IDC_ALL_OCCURRENCES_CHECK, &CSearchReplaceDlg::OnBnClickedAllOccurencesCheck)
+	ON_BN_CLICKED(IDC_REPLACE_ONCE_CHECK, &CSearchReplaceDlg::OnBnClickedReplaceOnceCheck)
 	ON_BN_CLICKED(IDC_USE_CHECK, &CSearchReplaceDlg::OnBnClickedUseCheck)
 	ON_CBN_SELCHANGE(IDC_USE_COMBO, &CSearchReplaceDlg::OnCbnSelchangeUseCombo)
 	ON_BN_CLICKED(IDC_CASE_CHECK, &CSearchReplaceDlg::OnBnClickedCaseCheck)
@@ -171,7 +171,7 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_ID3TAG_CHECK), IDS_TT_ID3) );
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_BEFORE), IDS_TT_BEFORE) );
 	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_AFTER), IDS_TT_AFTER) );
-	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_ALL_OCCURRENCES_CHECK), IDS_TT_ALLOCCURENCES) );
+	VERIFY( m_pToolTip->AddTool(GetDlgItem(IDC_REPLACE_ONCE_CHECK), IDS_TT_ONCE) );
 	m_pToolTip->Activate(TRUE);
 
 	// Set up the spins
@@ -218,7 +218,7 @@ void CSearchReplaceDlg::OnMatchcase()
 	PopUpdatesFreeze();
 }
 
-void CSearchReplaceDlg::OnBnClickedAllOccurencesCheck() 
+void CSearchReplaceDlg::OnBnClickedReplaceOnceCheck() 
 {
 	PushUpdatesFreeze();
 	PopUpdatesFreeze();
@@ -582,11 +582,6 @@ void CSearchReplaceDlg::UpdateSample()
 		m_bMatchWholeText = false;
 		GetDlgItem(IDC_WHOLE_TEXT)->SendMessage(BM_SETCHECK, BST_UNCHECKED);
 	}
-	if (!GetDlgItem(IDC_ALL_OCCURRENCES_CHECK)->IsWindowEnabled())
-	{
-		m_bAllOccurences = false;
-		GetDlgItem(IDC_ALL_OCCURRENCES_CHECK)->SendMessage(BM_SETCHECK, BST_UNCHECKED);
-	}
 
 	// Update the filter
 	m_filter.SetSearch(m_strSearch);
@@ -599,7 +594,7 @@ void CSearchReplaceDlg::UpdateSample()
 
 	m_filter.SetCaseSensitive(m_bCaseSensitive != 0);
 
-	m_filter.SetReplaceOnce(m_bAllOccurences == 0);
+	m_filter.SetReplaceOnce(m_bReplaceOnce != 0);
 
 	m_filter.SetMatchWholeText(m_bMatchWholeText != 0);
 

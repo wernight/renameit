@@ -55,7 +55,7 @@ public:
 	CString	m_strSearch;
 	BOOL	m_bCaseSensitive;
 	CComboBox m_ctrlLocaleCombo;
-	BOOL	m_bAllOccurences;
+	BOOL	m_bReplaceOnce;
 	BOOL	m_bMatchWholeText;
 	BOOL	m_bUse;
 	int		m_nUse;
@@ -122,7 +122,7 @@ protected:
 	afx_msg void OnSearchButton();
 	afx_msg void OnReplaceButton();
 	afx_msg void OnMatchcase();
-	afx_msg void OnBnClickedAllOccurencesCheck();
+	afx_msg void OnBnClickedReplaceOnceCheck();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedUseCheck();
 	afx_msg void OnCbnSelchangeUseCombo();

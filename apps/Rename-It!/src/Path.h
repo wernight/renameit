@@ -137,9 +137,9 @@ protected:
 	{
 		// Save the full path.
 		m_strPath = strFullPath;
-		if (strFullPath.GetLength() > 4 && strFullPath.Left(4) == _T("\\\\?\\"))
+		if (strFullPath.GetLength() >= 4 && strFullPath.Left(4) == _T("\\\\?\\"))
 		{
-			if (strFullPath.GetLength() > 8 && strFullPath.Left(8) == _T("\\\\?\\UNC\\"))
+			if (strFullPath.GetLength() >= 8 && strFullPath.Left(8) == _T("\\\\?\\UNC\\"))
 				m_nDisplayStart = 8;
 			else
 				m_nDisplayStart = 4;

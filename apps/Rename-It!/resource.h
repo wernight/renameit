@@ -96,7 +96,6 @@
 #define IDD_REPORT                      176
 #define IDS_LONGUER_THAN_MAX_PATH       176
 #define IDS_START_END_BACKSLASH_MISSING 177
-#define IDS_DIRECTORY_NAME_INVALID      178
 #define IDS_INVALID_DIRECTORY_NAME      178
 #define IDI_REMOVED                     179
 #define IDS_RISKY_DIRNAME_RESERVED      180
@@ -172,8 +171,8 @@
 #define IDS_TT_ID3                      1017
 #define IDS_TT_LOCALE                   1018
 #define IDS_TT_ALLOCCURENCES            1019
+#define IDS_TT_ONCE                     1019
 #define IDC_NATURALCASE                 1020
-#define IDC_ALL_OCCURRENCES_CHECK       1021
 #define IDC_NAMECASE                    1021
 #define IDC_LOWERCASE                   1022
 #define IDC_UPPERCASE                   1023
@@ -216,6 +215,7 @@
 #define IDC_PROGRESS2                   1135
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136
+#define IDC_REPLACE_ONCE_CHECK          1137
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000
 #define IDS_CMDLINE_LOG_FILE_MISSING    2001
 #define IDS_CMDLINE_NO_FILTER           2002
@@ -281,7 +281,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1137
+#define _APS_NEXT_CONTROL_VALUE         1138
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

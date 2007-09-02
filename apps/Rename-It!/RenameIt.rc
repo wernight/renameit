@@ -214,8 +214,7 @@ BEGIN
     EDITTEXT        IDC_SERIE_STEP_EDIT,287,94,39,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
     CONTROL         "",IDC_SERIE_STEP_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,323,92,10,14
     CONTROL         "ID3 Tag Reader Mode",IDC_ID3TAG_CHECK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,186,110,87,10
-    CONTROL         "Replace every occurrence",IDC_ALL_OCCURRENCES_CHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,186,123,100,10
+    CONTROL         "Replace once",IDC_REPLACE_ONCE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,186,123,100,10
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,147,340,1
     LTEXT           "Before:",IDC_STATIC,3,157,27,8
     EDITTEXT        IDC_BEFORE,36,154,308,14,ES_AUTOHSCROLL
@@ -734,7 +733,7 @@ BEGIN
     IDS_TT_BEFORE           "Sample string before applying the renaming filter"
     IDS_TT_AFTER            "Sample string after applying the renaming filter"
     IDS_TT_ID3              "ID3 Tag macros for the replacement text box"
-    IDS_TT_ALLOCCURENCES    "Replace as many times as possible"
+    IDS_TT_ONCE             "Replace one once for each element to rename"
 END
 
 STRINGTABLE 
@@ -905,8 +904,7 @@ BEGIN
     EDITTEXT        IDC_SERIE_STEP_EDIT,285,94,41,12,ES_AUTOHSCROLL | ES_NUMBER | WS_DISABLED
     CONTROL         "",IDC_SERIE_STEP_SPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS | WS_DISABLED,318,91,10,14
     CONTROL         "Mode Lecteur de Tag ID3",IDC_ID3TAG_CHECK,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,178,110,98,10
-    CONTROL         "Remplacer toutes les occurrences",IDC_ALL_OCCURRENCES_CHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,178,123,126,10
+    CONTROL         "Remplacer qu'une fois",IDC_REPLACE_ONCE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,123,126,10
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,147,340,1
     CONTROL         "Avant :",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,3,157,26,8
     EDITTEXT        IDC_BEFORE,35,154,309,14,ES_AUTOHSCROLL
@@ -1510,7 +1508,7 @@ BEGIN
     IDS_TT_BEFORE           "Exemple de chaîne avant d'avoir appliqué le filtre de renommage"
     IDS_TT_AFTER            "Exemple de chaîne après avoir appliqué le filtre de renommage"
     IDS_TT_ID3              "Macros Tag ID3 pour la zone de remplacement"
-    IDS_TT_ALLOCCURENCES    "Effectuer autant de remplacements que possible"
+    IDS_TT_ONCE             "N'effectue qu'au plus un seul remplacement pour chaque élément à renommer."
 END
 
 STRINGTABLE 

@@ -44,13 +44,30 @@ public:
 		m_defaultSample = static_cast<const CIterator<InputIterator>& >(value).GetInputIterator();
 	}
 
-// Operations
-	CFilteredPath GetOriginalFileName() const
+	virtual CFilteredPath GetOriginalFileName() const
 	{
 		return CFilteredPath(*m_defaultSample, m_fcFilters.GetPathRenamePart());
 	}
 
-	CFilteredPath PreviewRenaming(const IFilter* pFilterToPreview) const
+	virtual CFilteredPath GetBeforePreviewRenaming() const
+	{
+		// Create a copy.
+		CFilterContainer fc = m_fcFilters;
+
+		// Filter the current default sample file.
+		CPath fnFileName;
+		InputIterator last = m_defaultSample; ++last;
+		fc.FilterFileNames(
+			m_beginSampleFile,
+			m_defaultSample,
+			last,
+			&fnFileName);
+
+		return CFilteredPath(fnFileName, m_fcFilters.GetPathRenamePart());
+	}
+
+// Operations
+	virtual CFilteredPath PreviewRenaming(const IFilter* pFilterToPreview) const
 	{
 		// Add the filter to preview at the end of the filters' list.
 		CFilterContainer fc = m_fcFilters;
