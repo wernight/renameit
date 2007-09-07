@@ -261,9 +261,29 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	std::auto_ptr<TCHAR> szCommandLine(new TCHAR[strCommandLine.length() + 1]);
 	_tcscpy(szCommandLine.get(), strCommandLine.c_str());
 
-	if (!::CreateProcess(strApplication.c_str(), szCommandLine.get(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation))
+	if (!::CreateProcess(NULL, szCommandLine.get(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation))
 	{
-		::MessageBox(pCmdInfo->hwnd, _T("Error: Can't launch RenameIt.exe.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		LPTSTR lpMsgBuf = NULL;
+		DWORD dwError = GetLastError();
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			dwError,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+			(LPTSTR) &lpMsgBuf,
+			0,
+			NULL );
+
+		if (lpMsgBuf)
+		{
+			// Display the error.
+			MyFormatMessage(IDS_CREATE_RENAMEIT_PROCESS_ERROR, strCommandLine.c_str(), lpMsgBuf);
+
+			// Free the buffer.
+			LocalFree(lpMsgBuf);
+		}
+		else
+			::MessageBox(NULL, _T("Critical error."), _T("Rename-It!"), MB_ICONSTOP);
+
 		return S_OK;
 	}
 
@@ -275,4 +295,36 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	::CloseHandle(processInformation.hProcess);
 	UnmapViewOfFile(lpMapAddress);
 	return S_OK;
+}
+
+void CSimpleShlExt::MyFormatMessage(UINT nResourceID, ...)
+{
+	va_list ap;
+	va_start(ap, nResourceID);
+
+	// Load the format.
+	TCHAR lpStringBuf[1024];
+	int nLength = ::LoadString((HINSTANCE)GetModuleHandle(NULL), nResourceID, lpStringBuf, sizeof(lpStringBuf)/sizeof(lpStringBuf[0]));
+
+	// Format the message.
+	LPTSTR lpMsgBuf = NULL;
+	if (nLength > 0 &&
+		::FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_STRING,
+		lpStringBuf,
+		0,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR) &lpMsgBuf,
+		0,
+		&ap))
+	{
+		// Display the formated message.
+		::MessageBox(NULL, lpMsgBuf, _T("Rename-It!"), MB_ICONERROR);
+
+		LocalFree(lpMsgBuf);
+	}
+	else
+		::MessageBox(NULL, _T("Critical error!"), _T("Rename-It!"), MB_ICONSTOP);
+
+	va_end(ap);
 }

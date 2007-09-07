@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Neutre resources
+// Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
 #ifdef _WIN32
@@ -27,12 +27,12 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 IDB_MENU_BITMAP         BITMAP                  "Menu.bmp"
-#endif    // Neutre resources
+#endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Anglais (États-Unis) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -120,14 +120,16 @@ STRINGTABLE
 BEGIN
     IDS_PROJNAME            "Rename-It!"
     IDS_COMMAND_STRING      "Renames the selected items in one operation using filters."
+    IDS_CREATE_RENAMEIT_PROCESS_ERROR 
+                            "Rename-It! process creation failed: Cannot start `%1`.\nReason: %2\n\nPlease re-install the application."
 END
 
-#endif    // Anglais (États-Unis) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Français (France) resources
+// French (France) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
 #ifdef _WIN32
@@ -144,9 +146,11 @@ STRINGTABLE
 BEGIN
     IDS_PROJNAME            "Rename-It!"
     IDS_COMMAND_STRING      "Renomme les éléments sélectionnés en une fois à l'aide de filtres."
+    IDS_CREATE_RENAMEIT_PROCESS_ERROR 
+                            "Erreur lors de la création du processus Rename-It!: Impossible de lancer `%1`.\nRéson: %2\n\nVeuillez-réinstaller l'application."
 END
 
-#endif    // Français (France) resources
+#endif    // French (France) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

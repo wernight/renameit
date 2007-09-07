@@ -34,12 +34,12 @@ public:
 	END_COM_MAP()
 
 // ISimpleShlExt
-public:
-
-protected:
+private:
 	HBITMAP	m_hMenuBmp;
 	LPTSTR	m_szFiles;
 	UINT	m_nFilesLength;
+
+	void MyFormatMessage(UINT nResourceID, ...);
 
 public:
 	// IShellExtInit

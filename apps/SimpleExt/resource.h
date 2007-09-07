@@ -5,6 +5,7 @@
 #define IDS_PROJNAME                    100
 #define IDR_SIMPLESHLEXT                101
 #define IDS_COMMAND_STRING              101
+#define IDS_CREATE_RENAMEIT_PROCESS_ERROR 102
 #define IDB_MENU_BITMAP                 103
 
 // Next default values for new objects
