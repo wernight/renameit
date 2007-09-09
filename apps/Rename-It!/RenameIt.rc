@@ -117,7 +117,7 @@ MENU IDR_MAINMENU
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Part to rename:",IDC_STATIC,7,10,50,8
-    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,60,7,118,14
+    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,60,7,122,14
     GROUPBOX        "Renaming filters",IDC_STATIC_RULES,7,25,223,72
     CONTROL         "List4",IDC_RULES_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,15,35,195,39
     PUSHBUTTON      "^",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
@@ -696,13 +696,14 @@ BEGIN
     IDS_UNKNOWN_FILTER      "Error during loading of the filter ""%1"":\nUnknown filter."
     IDS_STATUS_RENAME_COUNT "%1 files(s) to rename of the %2 file(s)."
     IDS_INVALID_FILE_NAME   "Invalid file name: Contains forbidden characters. Invalid characters might include ASCII/Unicode characters 1 through 31, as well as quote (""), less than (<), greater than (>), pipe (|), backspace (\\b), null (\\0) and tab (\\t)."
-    IDS_RENAME_PARTS        "C:\\..\\Folders\\Filename.Ext"
+    IDS_RENAME_PARTS        "C:\\...\\Folder\\Filename.Ext"
     IDS_TT_SELECT_RENAME_PARTS 
                             "Highlight the elements you would like to rename."
     IDS_NO_FILTER_TO_SAVE   "Nothing to save: No filter have been defined."
     IDS_CONFLICT_SAME_AFTER "Conflict: The file '%1' is going to have the same file name as this one."
     IDS_RISKY_FNAME_TOO_LONG 
                             "Risky file name: The file name is too long (exceeds 120 characters)."
+    IDS_EMPTY_FILE_NAME     "Empty file name: There is not more file name defined for the file name after."
     IDS_RISKY_FNAME_RESERVED 
                             "Risky file name: This name should be avoided because it is reserved by the system. This includes CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_FNAME_TRIM_SPACES 
@@ -761,10 +762,14 @@ BEGIN
                             "Directory separator missing: The path must start and end by a backslash (\\)."
     IDS_INVALID_DIRECTORY_NAME 
                             "Invalid folder name: Contains forbidden characters. Invalid characters might include ASCII/Unicode characters 1 through 31, as well as quote (""), less than (<), greater than (>), pipe (|), backspace (\\b), null (\\0) and tab (\\t)."
+    IDS_EMPTY_DIRECTORY_NAME 
+                            "Empty folder name: One of more folders' names are empty (meaning there is a double backslash (\\) in the path name)."
     IDS_RISKY_DIRNAME_RESERVED 
                             "Risky folder name: On the folder's name should be avoided because it is reserved by the system. This includes CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_DIRNAME_TRIM_SPACES 
                             "Risky folder name: Spaces before or after the folder name should be avoided."
+    IDS_INCONSISTENT_DIRECTORY_CASE 
+                            "Inconsistent folders name warning: The case of this directory's path name is not the same of every renaming operation. The shortest directory path's case will be used."
 END
 
 #endif    // English (U.S.) resources
@@ -793,7 +798,7 @@ MENU IDR_MAINMENU
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     LTEXT           "Partie à renommer :",IDC_STATIC,7,10,63,8
-    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,73,7,119,14
+    CONTROL         "",IDC_RENAMEPART_RICHEDIT,"RichEdit20A",ES_CENTER | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_TABSTOP,73,7,123,14
     GROUPBOX        "Filtres de renommage",IDC_STATIC_RULES,7,25,223,72
     CONTROL         "List4",IDC_RULES_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,15,35,195,39
     PUSHBUTTON      "^",IDC_BUTTON_MOVEUP,211,35,14,14,WS_DISABLED
@@ -1471,13 +1476,14 @@ BEGIN
     IDS_UNKNOWN_FILTER      "Erreur lors du chargement du filtre ""%1"":\nFiltre inconnu."
     IDS_STATUS_RENAME_COUNT "%1 fichier(s) à renommer sur %2 fichier(s)."
     IDS_INVALID_FILE_NAME   "Nom de fichier invalide: Le nom contient des caractères invalides. Cela inclus les guillemets doubles (""), inférieure à (<), supérieur à (>), pipe (|), retour arrière (\\b), nul (\\0) et tabulation (\\t)."
-    IDS_RENAME_PARTS        "C:\\..\\Dossiers\\Nom_du_fichier.Ext"
+    IDS_RENAME_PARTS        "C:\\...\\Dossier\\Nom_du_fichier.Ext"
     IDS_TT_SELECT_RENAME_PARTS 
                             "Mettez en surbrillance les éléments que vous souhaitez renommer."
     IDS_NO_FILTER_TO_SAVE   "Il n'y a rien à sauvegarder: Aucun filtre n'a été défini."
     IDS_CONFLICT_SAME_AFTER "Conflit: Le fichier '%1' aura le même nom que celui-ci."
     IDS_RISKY_FNAME_TOO_LONG 
                             "Nom de fichier à risque: Nom de fichier trop long (excède 120 charactères)."
+    IDS_EMPTY_FILE_NAME     "Nom de fichier vide: Il n'y a pas de nouveau nom de fichier défini, il a disparu."
     IDS_RISKY_FNAME_RESERVED 
                             "Nom de fichier à risque: Utilise un nom réservé par le système. Cela inclus CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_FNAME_TRIM_SPACES 
@@ -1536,10 +1542,14 @@ BEGIN
                             "Caractère séparateur de dossier manquant: Le chemin vers le fichier doit commencer et finir par un backslash (\\)."
     IDS_INVALID_DIRECTORY_NAME 
                             "Nom de dossier invalide: Le nom contient des caractères invalides. Cela inclus les guillemets doubles (""), inférieure à (<), supérieur à (>), pipe (|), retour arrière (\\b), nul (\\0) et tabulation (\\t)."
+    IDS_EMPTY_DIRECTORY_NAME 
+                            "Nom de dossier vide: Au moins l'un des nom de dossiers est vide (ce qui signit qu'il y a un double backslash (\\) dans le chemin)."
     IDS_RISKY_DIRNAME_RESERVED 
                             "Nom de dossier à risque: Un dossier utilise un nom réservé par le système. Cela inclus CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9."
     IDS_RISKY_DIRNAME_TRIM_SPACES 
                             "Nom de dossier à risque: Éviter les espaces en début ou fin de nom de dossier."
+    IDS_INCONSISTENT_DIRECTORY_CASE 
+                            "Casse du dossier inconsistent: La casse du chemin vers ce dossier n'est pas la même pour toutes les opérations de renommage. Seule casse du chemin le plus court sera utilisé."
 END
 
 #endif    // French (France) resources

@@ -76,6 +76,18 @@ void CSearchReplaceFilter::FilterPath(CString& strFilename, const CPath& fnOrigi
 				if (m_nReplaceMacrosFlags & 1<<macroFilteredName)
 					strvMacroValues[macroFilteredName] = strFilename;
 
+				// When using regexp...
+				switch (m_nUse)
+				{
+				case useWildcards:	// Wildcard
+				case useRegExp:	// RegExp
+					// ... escape all the macro (as the rest has been escaped in PrecompileReplace().
+					for (int i=0; i<macrosCount; ++i)
+						if (m_nReplaceMacrosFlags & 1<<i)
+							EscapeRegExp(strvMacroValues[i]);
+					break;
+				}
+
 				ReplaceMacrosIn(strReplace, strvMacroValues);
 			}
 
@@ -610,7 +622,7 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 	int			nvOffsets[OFFSETS_SIZE];
 
 	if (m_bOnce)
-	{
+	{// Replace once.
 		CHAR	szInA[1024];
 #ifdef _UNICODE
 		szInA[WideCharToMultiByte(CP_ACP, 0, strIn, -1, szInA, sizeof(szInA)/sizeof(szInA[0]), NULL, NULL)] = '\0';
@@ -623,33 +635,49 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 			// We found something
 			++nReplacements;
 			strOut = strIn.Left(nvOffsets[0]);
-			CString strTmpReplace = strReplace;
 
-			// Find all \1 \2 \0 in replace
-			for (int nFindPos; (nFindPos = strTmpReplace.Find(_T('\\'))) != -1; strTmpReplace = myMid(strTmpReplace, nFindPos+2))
+			// Replace all \0 \1 \2... in strReplace and replace them by the captured value,
+			// \\ by \, and \x by x.
+			int nStart = 0;
+			for (int nFindPos, nPrevFindPos = 0; (nFindPos = strReplace.Find(_T('\\'), nPrevFindPos)) != -1; nPrevFindPos = nFindPos+1)
 			{
-				strOut += strTmpReplace.Left(nFindPos);
-				if ((nFindPos+1) < strTmpReplace.GetLength())
+				if (nFindPos+1 < strReplace.GetLength())
 				{
-					TCHAR chr = strTmpReplace.GetAt(nFindPos+1);
-					if (chr >= _T('0') && chr <= _T('9'))
-					{
+					TCHAR chr = strReplace[nFindPos+1];
+					if (isdigit(chr))
+					{// Replace \1 by the captured expression N°1.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart);
+
 						int index = chr - _T('0');
-						if (index < nCount)
-							if (nvOffsets[index*2] != -1)
-								strOut += myMid(strIn, nvOffsets[index*2], nvOffsets[index*2+1]-nvOffsets[index*2]);
+						if (index < nCount &&
+							nvOffsets[index*2] != -1)
+						{
+							strOut += strIn.Mid(nvOffsets[index*2], nvOffsets[index*2+1] - nvOffsets[index*2]);
+						}
+						else
+							strOut += _T("?");
+
+						nStart = nFindPos + 2;
 					}
-					else
-						strOut += chr;
+					else if (chr == '\\')
+					{// Replace \\ by \.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart + 1);
+						nStart = nFindPos + 2;
+					}
+
+					nPrevFindPos = nFindPos + 2;
 				}
+				else
+					nPrevFindPos = nFindPos + 1;
 			}
-			strOut += strTmpReplace;
-			strOut += myMid(strIn, nvOffsets[1]);
+			strOut += strReplace.Mid(nStart);
+
+			// Add what's after the end of this substitution.
+			strOut += strIn.Mid(nvOffsets[1]);
 		}
 	}
 	else
-	{
-		// Many
+	{// Replace as many as possible.
 		CString strTmpIn = strIn;
 		strOut.Empty();
 
@@ -668,32 +696,45 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 			// We found something
 			++nReplacements;
 			strOut += strTmpIn.Left(nvOffsets[0]);
-			CString strTmpReplace = strReplace;
 
-			// Find all \1 \2 \0 in replace
-			for (int nFindPos; (nFindPos = strTmpReplace.Find(_T('\\'))) != -1; )
+			// Replace all \0 \1 \2... in strReplace and replace them by the captured value.
+			// \\ by \, and \x by x.
+			int nStart = 0;
+			for (int nFindPos, nPrevFindPos = 0; (nFindPos = strReplace.Find(_T('\\'), nPrevFindPos)) != -1; )
 			{
-				strOut += strTmpReplace.Left(nFindPos);
-				if ((nFindPos+1) < strTmpReplace.GetLength())
+				if (nFindPos+1 < strReplace.GetLength())
 				{
-					TCHAR chr = strTmpReplace.GetAt(nFindPos+1);
-					if (chr >= _T('0') && chr <= _T('9'))
-					{
+					TCHAR chr = strReplace[nFindPos+1];
+					if (isdigit(chr))
+					{// Replace \1 by the captured expression N°1.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart);
+
 						int index = chr - _T('0');
-						if (index < nCount)
-							if (nvOffsets[index*2] != -1)
-								strOut += myMid(strTmpIn, nvOffsets[index*2], nvOffsets[index*2+1]-nvOffsets[index*2]);
+						if (index < nCount &&
+							nvOffsets[index*2] != -1)
+						{
+							strOut += strTmpIn.Mid(nvOffsets[index*2], nvOffsets[index*2+1] - nvOffsets[index*2]);
+						}
+						else
+							strOut += _T("?");
+
+						nStart = nFindPos + 2;
 					}
-					else
-						strOut += chr;
+					else if (chr == '\\')
+					{// Replace \\ by \.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart + 1);
+						nStart = nFindPos + 2;
+					}
+
+					nPrevFindPos = nFindPos + 2;
 				}
-				if (nFindPos + 2 > strTmpReplace.GetLength())
-					strTmpReplace.Empty();
 				else
-					strTmpReplace = myMid(strTmpReplace, nFindPos+2);
+					nPrevFindPos = nFindPos + 1;
 			}
-			strOut += strTmpReplace;
-			strTmpIn = myMid(strTmpIn, nvOffsets[1]);
+			strOut += strReplace.Mid(nStart);
+
+			// Continue after the end of this substitution.
+			strTmpIn = strTmpIn.Mid(nvOffsets[1]);
 		}
 		strOut += strTmpIn;
 	}
@@ -764,22 +805,6 @@ bool CSearchReplaceFilter::FilterString(CString& strSubject, const CString& strS
 		strSubject = strOutput;
 		return bReplacedString;
 	}
-}
-
-CString CSearchReplaceFilter::myMid(const CString &str, int nFirst)
-{
-	if (nFirst > str.GetLength())
-		return CString("");
-
-	return str.Mid(nFirst);
-}
-
-CString CSearchReplaceFilter::myMid(const CString &str, int nFirst, int nCount)
-{
-	if (nFirst + nCount > str.GetLength())
-		return myMid(str, nFirst);
-
-	return str.Mid(nFirst, nCount);
 }
 
 void CSearchReplaceFilter::ReplaceMacrosIn(CString& strContent, const CString strvMacroValues[]) const

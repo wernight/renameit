@@ -103,12 +103,23 @@ BOOL CFilterContainer::SaveFilters(const CString& filename)
 	_ftprintf(file, _T("[General]\n"));
 	{
 		CString strRenameWhat;
-		if (m_nPathRenamePart & CFilteredPath::renameFolders)
-			strRenameWhat += "Dir";
-		if (m_nPathRenamePart & CFilteredPath::renameFilename)
-			strRenameWhat += "File";
-		if (m_nPathRenamePart & CFilteredPath::renameExtension)
-			strRenameWhat += "Ext";
+		BOOST_STATIC_ASSERT(CFilteredPath::renameVersion == 100);
+		if (m_nPathRenamePart & CFilteredPath::renameLastFolder)
+			strRenameWhat += "LastDir";
+		else
+		{
+			if (m_nPathRenamePart & CFilteredPath::renameRoot)
+				strRenameWhat += "Root+";
+			if (m_nPathRenamePart & CFilteredPath::renameFoldersPath)
+				strRenameWhat += "Dirs+";
+			if (m_nPathRenamePart & CFilteredPath::renameFilename)
+				strRenameWhat += "File+";
+			if (m_nPathRenamePart & CFilteredPath::renameExtension)
+				strRenameWhat += "Ext+";
+			
+			if (!strRenameWhat.IsEmpty())
+				strRenameWhat = strRenameWhat.Left(strRenameWhat.GetLength() - 1);
+		}
 		_ftprintf(file, _T("RenameWhat=\"%s\"\n"), (LPCTSTR)strRenameWhat);
 		_ftprintf(file, _T("\n"));
 	}

@@ -195,7 +195,7 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 
 	// Change icon in report list.
 	int nIcon = -1;
-	BOOST_STATIC_ASSERT(CRenamingList::errCount == 9);
+	BOOST_STATIC_ASSERT(CRenamingList::errCount == 10);
 	switch (problem.nErrorCode)
 	{
 	case CRenamingList::errNoError:
@@ -216,6 +216,7 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		nIcon = iconConflict;
 		break;
 
+	case CRenamingList::errDirCaseInconsistent:
 	case CRenamingList::errRiskyFileName:
 	case CRenamingList::errRiskyDirectoryName:
 	case CRenamingList::errLonguerThanMaxPath:

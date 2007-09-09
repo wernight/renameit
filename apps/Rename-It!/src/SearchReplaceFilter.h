@@ -200,10 +200,6 @@ private:
 	 */
 	bool FilterString(CString& strSubject, const CString& strSearch, const CString& strReplace) const;
 
-	static CString myMid(const CString &str, int nFirst);
-
-	static CString myMid(const CString &str, int nFirst, int nCount);
-
 	/**
 	 * Replace all macros in string by their relative values.
 	 */

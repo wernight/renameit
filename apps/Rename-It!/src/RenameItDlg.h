@@ -50,6 +50,7 @@ private:
 	enum { IDD = IDD_RENAMEIT_DIALOG };
 
 	CMemoryFileList m_flFiles;			// A list of files to rename.
+	CMemoryFileList m_flDirectories;	// A list of folders to rename.
 	bool m_bDialogInit;
 	HICON m_hIcon;
 	CButton	m_ctlButtonMoveUp;
@@ -127,6 +128,8 @@ private:
 	 */
 	bool AddFile(const CString &filename);
 
+	bool AddFolder(const CString& strPath);
+
 	// Add files in the folder and subfolders if the flag is set
 	void AddFilesInFolder(const CString &dirname, bool bSubfolders=true);
 
@@ -185,10 +188,8 @@ private:
 	 */
 	IPreviewFileList* GetPreviewSamples(int nFilterIndex);
 
-	/**
-	 * Return the unicode path form that can handle very long path names.
-	 */
-	static CString GetUnicodePath(const CString& strPath);
+	// Which list to use: Files or Directories?
+	CMemoryFileList* GetDisplayedList();
 };
 
 //{{AFX_INSERT_LOCATION}}

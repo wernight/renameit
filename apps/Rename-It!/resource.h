@@ -91,6 +91,7 @@
 #define IDS_CONFLICT_SAME_AFTER         171
 #define IDS_RISKY_FNAME_TOO_LONG        172
 #define IDB_ADDFILES                    173
+#define IDS_EMPTY_FILE_NAME             173
 #define IDS_RISKY_FNAME_RESERVED        174
 #define IDS_RISKY_FNAME_TRIM_SPACES     175
 #define IDD_REPORT                      176
@@ -98,10 +99,12 @@
 #define IDS_START_END_BACKSLASH_MISSING 177
 #define IDS_INVALID_DIRECTORY_NAME      178
 #define IDI_REMOVED                     179
+#define IDS_EMPTY_DIRECTORY_NAME        179
 #define IDS_RISKY_DIRNAME_RESERVED      180
 #define IDI_REN_OK                      181
 #define IDS_RISKY_DIRNAME_TRIM_SPACES   181
 #define IDI_CONFLICT                    182
+#define IDS_INCONSISTENT_DIRECTORY_CASE 182
 #define IDI_BADNAME                     183
 #define IDB_DELALL                      185
 #define IDR_SEARCH_WILD                 187

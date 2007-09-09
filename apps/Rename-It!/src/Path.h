@@ -1,4 +1,7 @@
 #pragma once
+#ifdef _DEBUG
+#  include <Shlwapi.h>	// Used for PathGetArgs() and PathIsDirectory()
+#endif
 
 /**
  * Path to a file or a folder.
@@ -9,8 +12,18 @@ class CPath
 // Construction
 public:
 	CPath(void) :
-		m_nDisplayStart(0)
+  		m_nPathRootLength(0),
+		m_nFileNameFirst(0),
+		m_nExtensionLength(0)
 	{
+	}
+
+	CPath(const CPath& path)
+	{
+		m_strPath = path.m_strPath;
+		m_nPathRootLength = path.m_nPathRootLength;
+		m_nFileNameFirst = path.m_nFileNameFirst;
+		m_nExtensionLength = path.m_nExtensionLength;
 	}
 
 	CPath(const CString& strFullPath)
@@ -23,26 +36,26 @@ public:
 	 * Returns the absolute path for the specified path string.
 	 * The unicode 32,000 characters path to be used for system functions.
 	 */
-	inline const CString& GetFullPath() const {
-		return m_strPath;
-	}
-
-	/**
-	 * Return the path without "\\?\" to make it more user friendly.
-	 */
-	inline CString GetDisplayPath() const {
-		return m_strPath.Mid(m_nDisplayStart);
-	}
-
-	/**
-	 * Gets the direct letter of the path.
-	 * Ex: "C:" or "" if there is none.
-	 */
-	inline CString GetDrive() const {
-		if (m_nDriveLength == 0)
-			return _T("");
+	inline CString GetFullPath() const {
+		if (m_strPath.GetLength() >= 2)
+		{
+			if (m_strPath.GetLength() >= 4 && m_strPath.Left(4) == _T("\\\\?\\"))
+				return m_strPath;
+			else if (m_strPath[1] == ':' && isalpha(m_strPath[0]))
+				return _T("\\\\?\\") + m_strPath;
+			else
+				return _T("\\\\?\\UNC\\") + m_strPath;
+		}
 		else
-			return m_strPath.Mid(m_nDisplayStart, m_nDriveLength);
+			return m_strPath;
+	}
+
+	/**
+	 * Return the path as provided during the creation of this object.
+	 * It's the right one to be used when displaying the full path to the user.
+	 */
+	inline const CString& GetPath() const {
+		return m_strPath;
 	}
 
 	/**
@@ -50,7 +63,7 @@ public:
 	 * Ex: "\\?\C:\".
 	 */
 	inline CString GetPathRoot() const {
-		return m_strPath.Left(m_nDisplayStart + m_nDriveLength + 1);
+		return m_strPath.Left(m_nPathRootLength);
 	}
 
 	/**
@@ -85,6 +98,16 @@ public:
 		return m_strPath.Right(m_nExtensionLength);
 	}
 
+	inline bool IsDirectory() const {
+		if (m_strPath.IsEmpty())
+			return false;
+		switch (m_strPath[m_strPath.GetLength() - 1])
+		{
+		case '\\': case '/':	ASSERT(PathIsDirectory(m_strPath));		return true;
+		default	:				ASSERT(!PathIsDirectory(m_strPath));	return false;
+		}
+	}
+
 // Operations
 	// Compare two files names using the file system comparaison.
 	static inline int FSCompare(const CString& a, const CString& b) {
@@ -110,17 +133,12 @@ public:
 		vector<CString> vPath;
 
 		int end;
-		for (int first = m_nDisplayStart + m_nDriveLength; (end = m_strPath.Find('\\', first)) != -1; first = end + 1)
+		for (int first = m_nPathRootLength; (end = m_strPath.Find('\\', first)) != -1; first = end + 1)
 		{
-			if (first != end)
-				vPath.push_back( m_strPath.Mid(first, end - first) );
+			vPath.push_back( m_strPath.Mid(first, end - first) );
 		}
 
 		return vPath;
-	}
-
-	inline operator const CString&() const {
-		return m_strPath;
 	}
 
 	inline bool operator==(const CPath& other) const {
@@ -137,34 +155,55 @@ protected:
 	{
 		// Save the full path.
 		m_strPath = strFullPath;
-		if (strFullPath.GetLength() >= 4 && strFullPath.Left(4) == _T("\\\\?\\"))
-		{
-			if (strFullPath.GetLength() >= 8 && strFullPath.Left(8) == _T("\\\\?\\UNC\\"))
-				m_nDisplayStart = 8;
-			else
-				m_nDisplayStart = 4;
-		}
-		else
-			m_nDisplayStart = 0;
 
 		// Replace '/' by '\\'.
 		int nPos;
 		while ((nPos = m_strPath.Find('/')) != -1)
 			m_strPath.SetAt(nPos, '\\');
 
-		// Find the drive.
-		if (strFullPath.GetLength() > m_nDisplayStart + 2
-				&& isalpha(strFullPath[m_nDisplayStart])
-				&& strFullPath[m_nDisplayStart + 1] == ':')
-			m_nDriveLength = 2;
+		// Find the root.
+		const int DRIVE_ROOT_LENGTH = 3; // = strlen("C:\\")
+		const int UNICODE_ROOT_LENGTH = 4; // = strlen("\\\\?\\")
+		const int UNICODE_ROOT_UNC_LENGTH = 8; // = strlen("\\\\?\\UNC\\")
+		if (m_strPath.GetLength() >= UNICODE_ROOT_LENGTH && m_strPath.Left(UNICODE_ROOT_LENGTH) == _T("\\\\?\\"))
+		{
+			if (m_strPath.GetLength() >= UNICODE_ROOT_UNC_LENGTH && m_strPath.Left(UNICODE_ROOT_UNC_LENGTH) == _T("\\\\?\\UNC\\"))
+			{
+				int nPos = m_strPath.Find('\\', UNICODE_ROOT_LENGTH);
+				if (nPos != -1)
+					m_nPathRootLength = nPos + 1;					// `\\?\UNC\network\`
+				else
+					m_nPathRootLength = UNICODE_ROOT_UNC_LENGTH;	// `\\?\UNC\`
+			}
+			else
+			{
+				if (m_strPath.GetLength() >= UNICODE_ROOT_LENGTH+DRIVE_ROOT_LENGTH && m_strPath[UNICODE_ROOT_LENGTH+1] == ':' && m_strPath[UNICODE_ROOT_LENGTH+2] == '\\' && isalpha(m_strPath[UNICODE_ROOT_LENGTH]))
+					m_nPathRootLength = UNICODE_ROOT_LENGTH+DRIVE_ROOT_LENGTH;	// `\\?\C:\`
+				else
+					m_nPathRootLength = DRIVE_ROOT_LENGTH;	// `\\?\`
+			}
+		}
 		else
-			m_nDriveLength = 0;
+		{
+			if (m_strPath.GetLength() >= DRIVE_ROOT_LENGTH && m_strPath[1] == ':' && m_strPath[2] == '\\' && isalpha(m_strPath[0]))
+				m_nPathRootLength = DRIVE_ROOT_LENGTH;		// `C:\`
+			else if (m_strPath.GetLength() >= 2 && m_strPath[0] == '\\' && m_strPath[1] == '\\')
+			{
+				int nPos = m_strPath.Find('\\', 2);
+				if (nPos != -1)
+					m_nPathRootLength = nPos + 1;				// `\\network\`
+				else
+					m_nPathRootLength = 0;
+			}
+			else
+				m_nPathRootLength = 0;
+		}
 
 		// Split the path into components.
 		m_nExtensionLength = 0;
-		m_nFileNameFirst = strFullPath.GetLength();
-		LPCTSTR pszPath = strFullPath;
-		const TCHAR* pchEnd = &pszPath[strFullPath.GetLength()];
+		m_nFileNameFirst = m_strPath.GetLength();
+		LPCTSTR pszPath = m_strPath;
+		const TCHAR* pchEnd = &pszPath[m_strPath.GetLength()];
 		for (const TCHAR* pch = pchEnd-1; pch >= pszPath; --pch)
 		{
 			switch (*pch)
@@ -183,8 +222,7 @@ loop_exit:;
 	}
 
 	CString	m_strPath;		// The full path to the file or folder (ex: "\\?\C:\foo\bar").
-	int m_nDisplayStart;	// First character to display when showing the path (used to hide \\?\ on display).
-	int m_nDriveLength;		// The length of the drive (either 2 or 0).
+	int m_nPathRootLength;	// The length of the path root.
 	int m_nFileNameFirst;	// First character of the file name (or the length of m_strPath if there is none).
 	int m_nExtensionLength;	// The length of the extension including the "." (can be zero).
 };

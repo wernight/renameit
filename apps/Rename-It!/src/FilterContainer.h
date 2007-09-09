@@ -155,13 +155,21 @@ private:
 			if (!mapArgs.Lookup(_T("RenameWhat"), strRenameWhat))
 				return;
 
+			BOOST_STATIC_ASSERT(CFilteredPath::renameVersion == 100);
 			m_nRenameWhat = 0;
-			if (strRenameWhat.Find(_T("Dir")) >= 0)
-				m_nRenameWhat |= CFilteredPath::renameFolders;
-			if (strRenameWhat.Find(_T("File")) >= 0)
-				m_nRenameWhat |= CFilteredPath::renameFilename;
-			if (strRenameWhat.Find(_T("Ext")) >= 0)
-				m_nRenameWhat |= CFilteredPath::renameExtension;
+			if (strRenameWhat.Find(_T("LastDir")) >= 0)
+				m_nRenameWhat = CFilteredPath::renameLastFolder;
+			else
+			{
+				if (strRenameWhat.Find(_T("Root")) >= 0)
+					m_nRenameWhat |= CFilteredPath::renameRoot;
+				if (strRenameWhat.Find(_T("Dirs")) >= 0)
+					m_nRenameWhat |= CFilteredPath::renameFoldersPath;
+				if (strRenameWhat.Find(_T("File")) >= 0)
+					m_nRenameWhat |= CFilteredPath::renameFilename;
+				if (strRenameWhat.Find(_T("Ext")) >= 0)
+					m_nRenameWhat |= CFilteredPath::renameExtension;
+			}
 		}
 
 		// Functions that are not used.

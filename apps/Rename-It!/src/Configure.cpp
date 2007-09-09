@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "RenameIt.h"
 #include "Configure.h"
+#include "FilteredPath.h"
 
 #include <shlobj.h>
 
@@ -63,6 +64,17 @@ CConfigure::CConfigure(CWnd* pParent /*=NULL*/)
 
         RegCloseKey(hKey);
 	}
+
+	// Check some values.
+	BOOST_STATIC_ASSERT(CFilteredPath::renameVersion == 100);
+	m_type &= CFilteredPath::renameRoot |
+			CFilteredPath::renameFoldersPath |
+			CFilteredPath::renameLastFolder |
+			CFilteredPath::renameFilename |
+			CFilteredPath::renameExtension;
+	if (m_type == 0)
+		// When the rename-what is invalid, load the default selection.
+		m_type = CFilteredPath::renameFilename;
 }
 
 

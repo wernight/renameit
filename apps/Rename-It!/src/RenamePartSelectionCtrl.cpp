@@ -12,9 +12,9 @@
 
 IMPLEMENT_DYNAMIC(CRenamePartSelectionCtrl, CRichEditCtrl)
 
-CRenamePartSelectionCtrl::CRenamePartSelectionCtrl()
+CRenamePartSelectionCtrl::CRenamePartSelectionCtrl() :
+	m_nRenamePart(0)
 {
-
 }
 
 CRenamePartSelectionCtrl::~CRenamePartSelectionCtrl()
@@ -25,6 +25,21 @@ CRenamePartSelectionCtrl::~CRenamePartSelectionCtrl()
 BEGIN_MESSAGE_MAP(CRenamePartSelectionCtrl, CRichEditCtrl)
 	ON_NOTIFY_REFLECT(EN_SELCHANGE, &CRenamePartSelectionCtrl::OnEnSelchange)
 END_MESSAGE_MAP()
+
+UINT CRenamePartSelectionCtrl::GetRenameParts() const
+{
+	return m_nRenamePart;
+}
+
+void CRenamePartSelectionCtrl::SetRenameParts(UINT nRenamePart)
+{
+	m_nRenamePart = nRenamePart;
+
+	std::vector<POSSIBLE_SELECTION>::iterator iter;
+	for (iter=m_vPossibleSelections.begin(); iter!=m_vPossibleSelections.end(); ++iter)
+		if ((*iter).nRenamePart == nRenamePart)
+			SetSel((*iter).cr);
+}
 
 void CRenamePartSelectionCtrl::PreSubclassWindow()
 {
@@ -38,18 +53,34 @@ void CRenamePartSelectionCtrl::PreSubclassWindow()
 	CString strCaption;
 	strCaption.LoadString(IDS_RENAME_PARTS);
 	SetWindowText( strCaption );
-	unsigned nPosPathStart = strCaption.Find('\\'),
-			nPosPathEnd = strCaption.ReverseFind('\\') + 1,
-			nPosFilenameStart = nPosPathEnd,
+
+	unsigned
+			nPosRootStart = 0,
+			nPosRootEnd = strCaption.Find('\\') + 1,
+
+			nPosDirPathStart = nPosRootEnd,
+			nPosDirPathEnd = strCaption.ReverseFind('\\') + 1,
+
+			nPosLastDirStart = strCaption.Left(nPosDirPathEnd - 1).ReverseFind('\\') + 1,
+			nPosLastDirEnd = nPosDirPathEnd - 1,
+
+			nPosFilenameStart = nPosDirPathEnd,
 			nPosFilenameEnd = strCaption.ReverseFind('.'),
+
 			nPosExtStart = nPosFilenameEnd + 1,
 			nPosExtEnd = strCaption.GetLength();
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosPathEnd, CFilteredPath::renameFolders) );
+
+	// Order selections so that the smallest selection area are used first.
+	BOOST_STATIC_ASSERT(CFilteredPath::renameVersion == 100);
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosLastDirStart, nPosLastDirEnd, CFilteredPath::renameLastFolder) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosDirPathStart, nPosDirPathEnd, CFilteredPath::renameFoldersPath) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosFilenameEnd, CFilteredPath::renameFilename) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosExtStart, nPosExtEnd, CFilteredPath::renameExtension) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosFilenameEnd, CFilteredPath::renameFolders | CFilteredPath::renameFilename) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosDirPathStart, nPosFilenameEnd, CFilteredPath::renameFoldersPath | CFilteredPath::renameFilename) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosExtEnd, CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosPathStart, nPosExtEnd, CFilteredPath::renameFolders | CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosDirPathStart, nPosExtEnd, CFilteredPath::renameFoldersPath | CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosRootStart, nPosFilenameEnd, CFilteredPath::renameRoot | CFilteredPath::renameFoldersPath | CFilteredPath::renameFilename) );
+	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosRootStart, nPosExtEnd, CFilteredPath::renameRoot | CFilteredPath::renameFoldersPath | CFilteredPath::renameFilename | CFilteredPath::renameExtension) );
 
 	CRichEditCtrl::PreSubclassWindow();
 }
@@ -66,12 +97,20 @@ void CRenamePartSelectionCtrl::OnEnSelchange(NMHDR *pNMHDR, LRESULT *pResult)
 	LONG cpMin = pSelChange->chrg.cpMin;
 	LONG cpMax = pSelChange->chrg.cpMax;
 
-	// If the selection starts before the first allowed range, or after the last one,
-	// clamp it
-	if (cpMin < m_vPossibleSelections.front().cr.cpMin)
-		cpMin = m_vPossibleSelections.front().cr.cpMin;
-	if (cpMax > m_vPossibleSelections.back().cr.cpMax)
-		cpMax = m_vPossibleSelections.back().cr.cpMax;
+	// If the selection starts before the first allowed range, or after the last one, clamp it
+	LONG cpPSMin = m_vPossibleSelections.front().cr.cpMin;
+	LONG cpPSMax = m_vPossibleSelections.front().cr.cpMax;
+	BOOST_FOREACH(POSSIBLE_SELECTION& ps, m_vPossibleSelections)
+	{
+		if (ps.cr.cpMin < cpPSMin)
+			cpPSMin = ps.cr.cpMin;
+		if (ps.cr.cpMax > cpPSMax)
+			cpPSMax = ps.cr.cpMax;
+	}
+	if (cpMin < cpPSMin)
+		cpMin = cpPSMin;
+	if (cpMax > cpPSMax)
+		cpMax = cpPSMax;
 
 	// Select the first possible-selection that contains the current selection
 	std::vector<POSSIBLE_SELECTION>::iterator iter;

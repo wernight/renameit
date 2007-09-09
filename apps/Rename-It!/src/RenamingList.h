@@ -36,6 +36,7 @@ public:
 	enum EErrorCode
 	{
 		errNoError,				// No error.
+		errDirCaseInconsistent,	// The directory's name case is different from this one for other renaming operations.
 		errRiskyFileName,		// The new file name should be avoided.
 		errRiskyDirectoryName,	// The new directory name should be avoided.
 		errLonguerThanMaxPath,	// The full path length is >= than MAX_PATH=260 chars long (it may not work properly with some applications).
@@ -204,6 +205,30 @@ private:
 		}
 	};
 
+	struct dir_case_compare : public binary_function<CString, CString, bool>
+	{
+		bool operator()(const CString& __x, const CString& __y) const
+		{
+			return __x.CompareNoCase(__y) < 0;
+		}
+	};
+
+	struct DIR_CASE
+	{
+		DIR_CASE(int nDirLength, int nOperationIndex)
+		{
+			nMinDirLength = nDirLength;
+			vnOperationsIndex.push_back(nOperationIndex);
+		}
+
+		int nMinDirLength;
+		vector<int> vnOperationsIndex;
+	};
+
+	void CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower, CFileFind& ffFileFind);
+
+	void CheckDirectoryPath(int nOperationIndex);
+
 	static COperationProblem CheckName(const CString& strName, const CString& strNameWithoutExtension, bool bIsFileName);
 
 	void SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage)
@@ -215,9 +240,10 @@ private:
 		{
 			// Find the error level from the error code.
 			EErrorLevel nLevel;
-			BOOST_STATIC_ASSERT(errCount == 9);
+			BOOST_STATIC_ASSERT(errCount == 10);
 			switch (nErrorCode)
 			{
+			case errDirCaseInconsistent:
 			case errLonguerThanMaxPath:
 			case errRiskyFileName:
 			case errRiskyDirectoryName:
@@ -244,6 +270,11 @@ private:
 			ASSERT((iter->nErrorLevel==levelNone) ^ !iter->strMessage.IsEmpty());	// no error <=> no error message, an error <=> error message set
 		}
 	}
+
+	/**
+	 * Find the shortest and the index of the longest pathAfter in all the m_vRenamingOperations.
+	 */
+	void FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) const;
 
 	// Default progress callback that does nothing.
 	void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}

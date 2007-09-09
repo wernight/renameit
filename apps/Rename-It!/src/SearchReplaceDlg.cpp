@@ -521,6 +521,9 @@ void CSearchReplaceDlg::PopUpdatesFreeze()
 	ASSERT(m_nUpdatesFreeze >= 0);
 	if (m_nUpdatesFreeze == 0)
 	{
+		// Block updates freeze (to avoid this to be recursive).
+		m_nUpdatesFreeze = 1;
+
 		UpdateData();
 
 		// Update renaming sample.
@@ -529,6 +532,9 @@ void CSearchReplaceDlg::PopUpdatesFreeze()
 		// Colour the syntax.
 		ColorSearchText();
 		ColorReplacementText();
+
+		// Un-block updates freeze.
+		m_nUpdatesFreeze = 0;
 	}
 }
 

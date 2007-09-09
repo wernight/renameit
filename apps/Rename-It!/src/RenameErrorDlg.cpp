@@ -62,8 +62,8 @@ BOOL CRenameErrorDlg::OnInitDialog()
 	str.LoadString(IDS_AFTER); m_ctlReport.InsertColumn(1, str);
 	for (int i=0; i<(int)m_vErrors.size(); ++i)
 	{
-		int nInsertedIndex = m_ctlReport.InsertItem(i, m_vErrors[i].fnBefore.GetDisplayPath());
-		m_ctlReport.SetItem(nInsertedIndex, 1, LVIF_TEXT, m_vErrors[i].fnAfter.GetDisplayPath(), NULL, NULL, NULL, NULL);
+		int nInsertedIndex = m_ctlReport.InsertItem(i, m_vErrors[i].fnBefore.GetPath());
+		m_ctlReport.SetItem(nInsertedIndex, 1, LVIF_TEXT, m_vErrors[i].fnAfter.GetPath(), NULL, NULL, NULL, NULL);
 		m_ctlReport.SetItem(nInsertedIndex, 2, LVIF_TEXT, m_vErrors[i].strError, NULL, NULL, NULL, NULL);
 
 		// Change icon

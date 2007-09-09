@@ -66,137 +66,109 @@ bool CRenamingList::Check()
 	{
 		// TODO: Try with std::string instead of CString to see which one is faster.
 		
-		// Create a map of file names (in lower case) associated to the operation index.
+		// First pass: Preparation.
 		set<CString> setBeforeLower;
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stageChecking, i*30/nFilesCount, 100);
+			m_fOnProgress(stageChecking, i*20/nFilesCount, 100);
 
+			// Create a map of file names (in lower case) associated to the operation index.
 			CString strName = m_vRenamingOperations[i].pathBefore.GetFullPath();
 			setBeforeLower.insert( strName.MakeLower() );
 		}	
 	
-		// Check for file conflicts.
+		// Check folders' case consistency (1/2): Find the length of the shortest path.
+		int nMinAfterDirIndex, nMaxAfterDirIndex;
+		FindMinMaxDirectoryPath(&nMinAfterDirIndex, &nMaxAfterDirIndex);
+
+		map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
+		{
+			// Insert the shortest path to the map (to improve a little the speed).
+			CString strShortestDirAfter = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName();
+			mapDirsCase.insert( pair<CString, DIR_CASE>(
+				strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
+				DIR_CASE(nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
+		}
+
+		// Checking loop.
 		map<CString, int> mapAfterLower;
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stageChecking, 30 + i*50/nFilesCount, 100);
+			m_fOnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
 	
-			// If that file isn't already marked as conflicting with another,
-			// test if it's going to conflict with another file.
-			if (m_vProblems[i].nErrorCode == errConflict)
-				continue;
+			// Check for file conflicts.
+			CheckFileConflict(i, setBeforeLower, mapAfterLower, ffFileFind);
 
-			CString strAfterLower = m_vRenamingOperations[i].pathAfter.GetFullPath();
-			strAfterLower.MakeLower();
-			
-			/* Detect if it's going to be renamed to a file that already exists
-			 * but that is not part of the files to rename...
-			 */
-			if (ffFileFind.FindFile(strAfterLower)		// The destination exists on the disk.
-				&& setBeforeLower.find(strAfterLower) == setBeforeLower.end())	// and it's not going to be renamed.
+			// For files...
+			if (!m_vRenamingOperations[i].pathBefore.IsDirectory())
 			{
-				// No it is not, so it will conflict with the existing file on the disk.
-				CString strErrorMsg;
-				strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
-				SetProblem(i, errConflict, strErrorMsg);
-			}
-			/* If it's not going to conflict with a file not part of the files to rename,
-			 * check if it conflicts with files that are going to be renamed...
-			 */
-			else
-			{
-				// Check if two files are going to have the same new file name.
-				map<CString, int>::const_iterator iterFound = mapAfterLower.find(strAfterLower);
-				if (iterFound != mapAfterLower.end())
+				// Check if the file still exists
+				if (!ffFileFind.FindFile( m_vRenamingOperations[i].pathBefore.GetFullPath() ))
 				{
-					// Conflict found: Two files are going to be renamed to the same new file name.
 					CString strErrorMsg;
-
-					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[iterFound->second].pathBefore.GetDisplayPath());
-					SetProblem(i, errConflict, strErrorMsg);
-
-					AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[i].pathBefore.GetDisplayPath());
-					SetProblem(iterFound->second, errConflict, strErrorMsg);
+					strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
+					SetProblem(i, errFileMissing, strErrorMsg);
 				}
-				else
-				{// We add this file to the map.
-					mapAfterLower.insert( pair<CString, int>(strAfterLower, i) );
+
+				// Check the file name.
+				COperationProblem problem = CheckName(
+					m_vRenamingOperations[i].pathAfter.GetFileName(),
+					m_vRenamingOperations[i].pathAfter.GetFileNameWithoutExtension(),
+					true);
+				if (problem.nErrorLevel != levelNone)
+				{
+					// Some problem found.
+					SetProblem(i, problem.nErrorCode, problem.strMessage);
 				}
 			}
-		} // end: conflict check for-loop
-	}
 
-	// Check if file name is valid
-	// and Check if file still exists
-	for (int i=0; i<nFilesCount; ++i)
-	{
-		// Report progress
-		m_fOnProgress(stageChecking, 80 + i*20/nFilesCount, 100);
-
-		// Check if the file still exists
-		if (!ffFileFind.FindFile( m_vRenamingOperations[i].pathBefore.GetFullPath() ))
-		{
-			CString strErrorMsg;
-			strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
-			SetProblem(i, errFileMissing, strErrorMsg);
-		}
-
-		// Check the file name.
-		{
-			COperationProblem problem = CheckName(
-				m_vRenamingOperations[i].pathAfter.GetFileName(),
-				m_vRenamingOperations[i].pathAfter.GetFileNameWithoutExtension(),
-				true);
-
-			if (problem.nErrorLevel != levelNone)
+			// Check the directory name.
+			CheckDirectoryPath(i);
+			// Check folders' case consistency 2/2
 			{
-				// Some problem found.
-				SetProblem(i, problem.nErrorCode, problem.strMessage);
-			}
-		}
+				// Create a copy of the folder name.
+				CString strDirAfter = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
+				ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
+				strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
 
-		// Check that the directory starts and ends by a baclslash.
-		CString strDirectory = m_vRenamingOperations[i].pathAfter.GetDirectoryName().Mid(m_vRenamingOperations[i].pathAfter.GetPathRoot().GetLength() - 1);
-		if (strDirectory.IsEmpty() ||
-			strDirectory[0] != '\\' ||
-			strDirectory[strDirectory.GetLength() - 1] != '\\')
-		{
-			CString strErrorMsg;
-			strErrorMsg.LoadString(IDS_START_END_BACKSLASH_MISSING);
-			SetProblem(i, errBackslashMissing, strErrorMsg);
-		}
+				// For each parent directory name (starting from GetDirectoryName()).
+				const int nMinDirAfterLength = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength() - 1; // note we don't count the last '\' since we remove it.
+				while (strDirAfter.GetLength() >= nMinDirAfterLength)
+				{
+					// If the directory is in the map.
+					map<CString, DIR_CASE, dir_case_compare>::iterator iter = mapDirsCase.find(strDirAfter);
+					if (iter == mapDirsCase.end())
+					{
+						// Add it to the map.
+						mapDirsCase.insert( pair<CString, DIR_CASE>(
+							strDirAfter,
+							DIR_CASE(i, strDirAfter.GetLength())) );
+					}
+					else
+					{
+						// Check if the case differ.
+						if (iter->first != strDirAfter)
+						{
+							// Report the problem.
+							CString strMessage;
+							strMessage.LoadString(IDS_INCONSISTENT_DIRECTORY_CASE);
+							SetProblem(i, errDirCaseInconsistent, strMessage);
+						} // end: Check if the case differ.
 
-		// Check if the directories name is valid.
-		BOOST_FOREACH(CString strDirectory, m_vRenamingOperations[i].pathAfter.GetDirectories())
-		{
-			// Find the directory's name before the '.' (yes an extension is also counted for directories)
-			CString strDirectoryWithoutExtension;
-			int nPos = strDirectory.Find('.');
-			if (nPos != -1)
-				strDirectoryWithoutExtension = strDirectory.Left(nPos);
-			else
-				strDirectoryWithoutExtension = strDirectory;
+						// Add the RO's index.
+						iter->second.vnOperationsIndex.push_back( i );
+					} // end if the directory is in the map.
 
-			// Check the name.
-			COperationProblem problem = CheckName(strDirectory, strDirectoryWithoutExtension, false);
-			if (problem.nErrorLevel != levelNone)
-			{
-				// Some problem found.
-				SetProblem(i, problem.nErrorCode, problem.strMessage);
-				break;
-			}
-		} // end: directory name validity check.
-
-		// Check if the path if over MAX_PATH.
-		if (m_vRenamingOperations[i].pathAfter.GetDisplayPath().GetLength() >= MAX_PATH)
-		{
-			CString strErrorMsg;
-			strErrorMsg.LoadString(IDS_LONGUER_THAN_MAX_PATH);
-			SetProblem(i, errLonguerThanMaxPath, strErrorMsg);
-		}
+					// Go to the next parent folder.
+					int nPos = strDirAfter.ReverseFind('\\');
+					if (nPos == -1)
+						break;
+					strDirAfter = strDirAfter.Left(nPos);
+				} // end while.
+			} // end of case consistency check.
+		} // end: checking loop.
 	}
 
 	// Restaure the locale.
@@ -209,11 +181,123 @@ bool CRenamingList::Check()
 	return m_nErrors == 0 && m_nWarnings == 0;
 }
 
+void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower, CFileFind& ffFileFind)
+{
+	// If that file isn't already marked as conflicting with another,
+	// test if it's going to conflict with another file.
+	if (m_vProblems[nOperationIndex].nErrorCode == errConflict)
+		return;
+
+	CString strAfterLower = m_vRenamingOperations[nOperationIndex].pathAfter.GetFullPath();
+	strAfterLower.MakeLower();
+	
+	/* Detect if it's going to be renamed to a file that already exists
+	 * but that is not part of the files to rename...
+	 */
+	if (ffFileFind.FindFile(strAfterLower)		// The destination exists on the disk.
+		&& setBeforeLower.find(strAfterLower) == setBeforeLower.end())	// and it's not going to be renamed.
+	{
+		// No it is not, so it will conflict with the existing file on the disk.
+		CString strErrorMsg;
+		strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
+		SetProblem(nOperationIndex, errConflict, strErrorMsg);
+	}
+	/* If it's not going to conflict with a file not part of the files to rename,
+	 * check if it conflicts with files that are going to be renamed...
+	 */
+	else
+	{
+		// Check if two files are going to have the same new file name.
+		map<CString, int>::const_iterator iterFound = mapAfterLower.find(strAfterLower);
+		if (iterFound != mapAfterLower.end())
+		{
+			// Conflict found: Two files are going to be renamed to the same new file name.
+			CString strErrorMsg;
+
+			AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[iterFound->second].pathBefore.GetPath());
+			SetProblem(nOperationIndex, errConflict, strErrorMsg);
+
+			AfxFormatString1(strErrorMsg, IDS_CONFLICT_SAME_AFTER, m_vRenamingOperations[nOperationIndex].pathBefore.GetPath());
+			SetProblem(iterFound->second, errConflict, strErrorMsg);
+		}
+		else
+		{// We add this file to the map.
+			mapAfterLower.insert( pair<CString, int>(strAfterLower, nOperationIndex) );
+		}
+	}
+}
+
+void CRenamingList::CheckDirectoryPath(int nOperationIndex)
+{
+	const CPath* pOperationPathAfter = &m_vRenamingOperations[nOperationIndex].pathAfter;
+
+	// Check that the directory starts and ends by a baclslash.
+	const CString& strRoot = pOperationPathAfter->GetPathRoot();
+	const CString& strDir = pOperationPathAfter->GetDirectoryName();
+
+	if (strRoot.IsEmpty() || 
+		strRoot[strRoot.GetLength() - 1] != '\\' ||
+		(!strDir.IsEmpty() && strDir[strDir.GetLength() - 1] != '\\'))
+	{
+		CString strErrorMsg;
+		strErrorMsg.LoadString(IDS_START_END_BACKSLASH_MISSING);
+		SetProblem(nOperationIndex, errBackslashMissing, strErrorMsg);
+	}
+
+	// Check if the directories name is valid.
+	BOOST_FOREACH(CString strDirectory, pOperationPathAfter->GetDirectories())
+	{
+		// Find the directory's name before the '.' (yes an extension is also counted for directories)
+		CString strDirectoryWithoutExtension;
+		int nPos = strDirectory.Find('.');
+		if (nPos != -1)
+			strDirectoryWithoutExtension = strDirectory.Left(nPos);
+		else
+			strDirectoryWithoutExtension = strDirectory;
+
+		// Check the name.
+		COperationProblem problem = CheckName(strDirectory, strDirectoryWithoutExtension, false);
+		if (problem.nErrorLevel != levelNone)
+		{
+			// Some problem found.
+			SetProblem(nOperationIndex, problem.nErrorCode, problem.strMessage);
+			break;
+		}
+	} // end: directory name validity check.
+
+	// Check if the path if over MAX_PATH.
+	if (pOperationPathAfter->GetPath().GetLength() >= MAX_PATH)
+	{
+		CString strErrorMsg;
+		strErrorMsg.LoadString(IDS_LONGUER_THAN_MAX_PATH);
+		SetProblem(nOperationIndex, errLonguerThanMaxPath, strErrorMsg);
+	}
+}
+
 CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName, const CString& strNameWithoutExtension, bool bIsFileName)
 {
+	// Empty name.
+	if (strName.IsEmpty())
+	{
+		// Warning: Invalid.
+		COperationProblem problem;
+		if (bIsFileName)
+		{
+			problem.nErrorLevel = levelError;
+			problem.nErrorCode = errInvalidFileName;
+			problem.strMessage.LoadString(IDS_EMPTY_FILE_NAME);
+		}
+		else
+		{
+			problem.nErrorLevel = levelError;
+			problem.nErrorCode = errInvalidDirectoryName;
+			problem.strMessage.LoadString(IDS_EMPTY_DIRECTORY_NAME);
+		}
+		return problem;
+	}
+
 	// Invalid path characters might include ASCII/Unicode characters 1 through 31, as well as quote ("), less than (<), greater than (>), pipe (|), backspace (\b), null (\0) and tab (\t).
-	if (strName.IsEmpty()	// Empty name.
-		|| strName.FindOneOf(_T("\\/:*?\"<>|\b\t")) != -1	// Forbidden characters.
+	if (strName.FindOneOf(_T("\\/:*?\"<>|\b\t")) != -1	// Forbidden characters.
 		|| strName.Right(0) == _T("."))	// The OS doesn't support files/directories ending by a dot.
 	{
 		// Warning: Invalid.
@@ -344,10 +428,17 @@ bool CRenamingList::PerformRenaming()
 
 	// Pre-conditions checking.
 #ifdef _DEBUG
-	BOOST_FOREACH(CRenamingOperation operation, m_vRenamingOperations)
+	bool bRenamingFolders = m_vRenamingOperations[0].pathBefore.IsDirectory();
+	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
 	{
 		// Each operation changes something.
 		ASSERT(operation.pathBefore != operation.pathAfter);	// Note that this is case sensitive.
+
+		// Rename a folder to a folder, and a file to a file (only).
+		ASSERT(operation.pathBefore.IsDirectory() == operation.pathAfter.IsDirectory());
+
+		// Rename either a set of files XOR a set of directories (cannot be both).
+		ASSERT(bRenamingFolders == operation.pathBefore.IsDirectory());
 	}
 #endif
 
@@ -377,6 +468,19 @@ bool CRenamingList::PerformRenaming()
 
 			CString strAfter = m_vRenamingOperations[i].pathAfter.GetFullPath();
 			mapAfterLower.insert( pair<CString, int>(strAfter.MakeLower(), i) );
+		}
+
+		// Unify folders' case (1/2): Find the length of the shortest path.
+		int nMinAfterDirIndex, nMaxAfterDirIndex;
+		FindMinMaxDirectoryPath(&nMinAfterDirIndex, &nMaxAfterDirIndex);
+
+		map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
+		{
+			// Insert the shortest path to the map (to improve a little the speed).
+			CString strShortestDirAfter = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName();
+			mapDirsCase.insert( pair<CString, DIR_CASE>(
+				strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
+				DIR_CASE(nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
 		}
 
 		// Define the successors in the graph,
@@ -441,6 +545,65 @@ bool CRenamingList::PerformRenaming()
 				// Add to the set.
 				setDeleteIfEmptyDirectories.insert(strParentPath);
 			}
+
+			// Unify folders' case 2/2
+			{
+				// Create a copy of the folder name.
+				CString strDirAfter = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
+				ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
+				strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
+
+				// For each parent directory name (starting from GetDirectoryName()).
+				const int nMinDirAfterLength = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength() - 1; // note we don't count the last '\' since we remove it.
+				while (strDirAfter.GetLength() >= nMinDirAfterLength)
+				{
+					// If the directory is in the map.
+					map<CString, DIR_CASE, dir_case_compare>::iterator iter = mapDirsCase.find(strDirAfter);
+					if (iter == mapDirsCase.end())
+					{
+						// Add it to the map.
+						mapDirsCase.insert( pair<CString, DIR_CASE>(
+							strDirAfter,
+							DIR_CASE(i, strDirAfter.GetLength())) );
+					}
+					else
+					{
+						// Check if the case differ.
+						if (iter->first != strDirAfter)
+						{
+							// If the RO's length > map's length,
+							// then it means that that map's case should prevail.
+							if (strDirAfter.GetLength() >= iter->second.nMinDirLength)
+							{
+								// Change the RO's case.
+								m_vRenamingOperations[i].pathAfter = iter->first + m_vRenamingOperations[i].pathAfter.GetPath().Mid(iter->first.GetLength());
+							}
+							else
+							{
+								// Change the map's case and update the map's min length.
+								// Since changing the case doesn't affect this operation's order in the map, we can const_cast<>.
+								const_cast<CString&>(iter->first) = strDirAfter;
+								iter->second.nMinDirLength = strDirAfter.GetLength();
+
+								// Change the map's case, all RO's in the map.
+								BOOST_FOREACH(int nROIndex, iter->second.vnOperationsIndex)
+								{
+									m_vRenamingOperations[nROIndex].pathAfter = strDirAfter + m_vRenamingOperations[nROIndex].pathAfter.GetPath().Mid(strDirAfter.GetLength());
+								}
+							}
+						} // end: Check if the case differ.
+
+						// Add the RO's index.
+						iter->second.vnOperationsIndex.push_back( i );
+					} // end if the directory is in the map.
+
+					// Go to the next parent folder.
+					int nPos = strDirAfter.ReverseFind('\\');
+					if (nPos == -1)
+						break;
+					strDirAfter = strDirAfter.Left(nPos);
+				} // end while.
+			} // end of case unification.
 		}
 
 		// Restaure the locale.
@@ -461,6 +624,9 @@ bool CRenamingList::PerformRenaming()
 			int nIndex = i;
 			while (true)
 			{
+				// When moving a directory, the destination must be on the same drive.
+				ASSERT(!m_vRenamingOperations[nIndex].pathBefore.IsDirectory() || CPath::FSCompare(m_vRenamingOperations[nIndex].pathBefore.GetPathRoot(), m_vRenamingOperations[nIndex].pathAfter.GetPathRoot()) == 0);
+
 				bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
 
 				// Check that every parent directory exists, or create it.
@@ -555,10 +721,40 @@ bool CRenamingList::PerformRenaming()
 	// Delete emptied folders (folders that are empty after renaming).
 	// Note that the set is ordered so that the longuest path comes first,
 	// which implies that subfolders are removed prior to checking their parent folder.
-	BOOST_FOREACH(CString strDirectory, setDeleteIfEmptyDirectories)
+	BOOST_FOREACH(CString& strDirectory, setDeleteIfEmptyDirectories)
 	{
+		// Note: ERROR_ACCESS_DENIED may be reported for non-empty dir that are protected,
+		//       so we need to check if the directory is empty prior to calling RemoveDirectory().
+		bool bDirEmpty = true;	// The directory is supposed empty.
+		CFileFind ff;
+		if (!ff.FindFile(strDirectory + _T("*.*")))
+		{
+			bDirEmpty = false;	// We don't remove this folder.
+
+			DWORD dwErrorCode = ::GetLastError();
+
+			// TODO: Report this error.
+			bError = true;
+		}
+		else
+		{
+			BOOL bMore = TRUE;
+			while (bMore)
+			{
+				BOOL bMore = ff.FindNextFile();
+				CString& strFName = ff.GetFileName();
+				if (strFName != _T(".") &&
+					strFName != _T(".."))
+				{
+					bDirEmpty = false;
+					break;
+				}
+			}
+			ff.Close();
+		}
+
 		// Remove ONLY a non-empty directory.
-		if (!ktm.RemoveDirectory(strDirectory))
+		if (bDirEmpty && !ktm.RemoveDirectory(strDirectory))
 		{
 			DWORD dwErrorCode = ::GetLastError();
 			/** Some possible error codes include:
@@ -567,11 +763,10 @@ bool CRenamingList::PerformRenaming()
 			 * ERROR_DIR_NOT_EMPTY		Directory not empty.
 			 * ERROR_FILE_NOT_FOUND		Directory doesn't exist.
 			 */
-			if (dwErrorCode != ERROR_DIR_NOT_EMPTY)
-			{// Warning: ERROR_ACCESS_DENIED may be reported for non-empty dir that are protected.
-				// TODO: Report this error as a WARNING.
-				bError = true;
-			}
+			ASSERT(dwErrorCode != ERROR_DIR_NOT_EMPTY);
+
+			// TODO: Report this error as a WARNING.
+			bError = true;
 		}
 	}
 
@@ -586,4 +781,39 @@ bool CRenamingList::PerformRenaming()
 	}
 	else
 		return ktm.Commit();
+}
+
+void CRenamingList::FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) const
+{
+	int nMinAfterDirIndex = 0;
+	int nMinAfterDirLength = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength();
+
+	int nMaxAfterDirIndex = nMinAfterDirIndex;
+	int nMaxAfterDirLength = nMinAfterDirLength;
+
+	// Find the shortest path.
+	const int nFilesCount = (int)m_vRenamingOperations.size();
+	for (int i=0; i<nFilesCount; ++i)
+	{
+		CString strDir = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
+
+		if (strDir.GetLength() < nMinAfterDirLength)
+		{
+			nMinAfterDirIndex = i;
+			nMinAfterDirLength = strDir.GetLength();
+		}
+
+		if (strDir.GetLength() > nMaxAfterDirLength)
+		{
+			nMaxAfterDirIndex = i;
+			nMaxAfterDirLength = strDir.GetLength();
+		}
+	}
+
+	// Report.
+	if (pnMinIndex != NULL)
+		*pnMinIndex = nMinAfterDirIndex;
+
+	if (pnMaxIndex != NULL)
+		*pnMaxIndex = nMaxAfterDirIndex;
 }

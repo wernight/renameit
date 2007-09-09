@@ -9,11 +9,18 @@ class CFilteredPath : public CPath
 {
 public:
 // Definitions
-	// Renamed part (must be continuous: (0x01 | 0x04) is not allowed as there is 0x02 in the middle missing).
+	/**
+	 * Renamed part (must be continuous: (0x01 | 0x04) is not allowed as there is 0x02 in the middle missing).
+	 * WARNING: renameLastFolder can only be used alone.
+	 * The renameRoot shouldn't be used with folders without the file name, because folders's root cannot be changed.
+	 */
 	enum ERenamePartFlags {
-		renameFolders = 0x01,
-		renameFilename = 0x02,
-		renameExtension = 0x04
+		renameRoot =		0x01,	// 'C:\'
+		renameFoldersPath =	0x02,	// 'ParentFolder\Subfolder\'
+		renameLastFolder =	0x04,	// 'Subfolder'
+		renameFilename =	0x08,	// 'Filename'
+		renameExtension =	0x10,	// 'Ext'
+		renameVersion = 100			// Some value that should be incremented every time there is an important change in the flags.
 	};
 
 // Construction
@@ -58,27 +65,55 @@ private:
 	// Update the m_nFirst and m_nLast.
 	inline void FindFilteredSubstring()
 	{
-		// Find the first character of the filtered substring.
-		if (m_nRenamePart & renameFolders)
-			m_nFirst = m_nDisplayStart;
-		else if (m_nRenamePart & renameFilename)
-			m_nFirst = m_nFileNameFirst;
-		else
-		{
-			// Only the extension is being renamed.
-			ASSERT(m_nRenamePart == renameExtension);
-			m_nFirst = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
-		}
+		BOOST_STATIC_ASSERT(renameVersion == 100);
 
-		// Find the last character of the filtered substring.
-		if (m_nRenamePart & renameExtension)
-			m_nEnd = m_strPath.GetLength();
-		else if (m_nRenamePart & renameFilename)
-			m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
+		if (m_nRenamePart & renameLastFolder)
+		{
+			// Initialize to avoid problems with empty paths.
+			m_nEnd = m_nFirst = m_nPathRootLength;
+
+			// Find the last directory.
+			int nStart = m_nFirst;
+			while (true)
+			{
+				int nPos = m_strPath.Find('\\', nStart);
+				if (nPos == -1)
+					break;
+
+				m_nFirst = nStart;
+				m_nEnd = nPos;
+
+				nStart = nPos + 1;
+			}
+		}
 		else
 		{
-			ASSERT(m_nRenamePart == renameFolders);
-			m_nEnd = m_nFileNameFirst;
+			// Find the first character of the filtered substring.
+			if (m_nRenamePart & renameRoot)
+				m_nFirst = 0;
+			else if (m_nRenamePart & renameFoldersPath)
+				m_nFirst = m_nPathRootLength;
+			else if (m_nRenamePart & renameFilename)
+				m_nFirst = m_nFileNameFirst;
+			else
+			{
+				// Only the extension is being renamed.
+				ASSERT(m_nRenamePart == renameExtension);
+				m_nFirst = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
+			}
+
+			// Find the last character of the filtered substring.
+			if (m_nRenamePart & renameExtension)
+				m_nEnd = m_strPath.GetLength();
+			else if (m_nRenamePart & renameFilename)
+				m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
+			else if (m_nRenamePart & renameFoldersPath)
+				m_nEnd = m_nFileNameFirst;
+			else
+			{
+				ASSERT(m_nRenamePart == renameRoot);
+				m_nEnd = m_nPathRootLength;
+			}
 		}
 
 		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());

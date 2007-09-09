@@ -14,17 +14,10 @@ public:
 	virtual ~CRenamePartSelectionCtrl();
 
 	// Retrieve the selected parts to be renamed
-	UINT GetRenameParts() const {
-		return m_nRenamePart;
-	}
+	UINT GetRenameParts() const;
 
 	// Define the selected parts to be renamed
-	void SetRenameParts(UINT nRenamePart) {
-		std::vector<POSSIBLE_SELECTION>::iterator iter;
-		for (iter=m_vPossibleSelections.begin(); iter!=m_vPossibleSelections.end(); ++iter)
-			if ((*iter).nRenamePart == nRenamePart)
-				SetSel((*iter).cr);
-	}
+	void SetRenameParts(UINT nRenamePart);
 
 // Implementation
 protected:
