@@ -659,10 +659,10 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 
 						nStart = nFindPos + 2;
 					}
-					else if (chr == '\\')
-					{// Replace \\ by \.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart + 1);
-						nStart = nFindPos + 2;
+					else
+					{// Replace \X by X.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart);
+						nStart = nFindPos + 1;
 					}
 
 					nPrevFindPos = nFindPos + 2;
@@ -720,10 +720,10 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 
 						nStart = nFindPos + 2;
 					}
-					else if (chr == '\\')
-					{// Replace \\ by \.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart + 1);
-						nStart = nFindPos + 2;
+					else
+					{// Replace \X by X.
+						strOut += strReplace.Mid(nStart, nFindPos - nStart);
+						nStart = nFindPos + 1;
 					}
 
 					nPrevFindPos = nFindPos + 2;
