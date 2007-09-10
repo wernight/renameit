@@ -8,6 +8,8 @@ if exist RenameIt.exe goto ready
 	exit 1
 :ready
 
+set IN_RUN_ALL=1
+
 echo ==========================================
 echo TEST COMMAND-LINE
 echo ==========================================
@@ -21,7 +23,7 @@ echo ==========================================
 echo TEST FILTERS
 echo ==========================================
 cd "test Filters"
-call run.bat
+call run_all.bat
 cd ..
 echo.
 

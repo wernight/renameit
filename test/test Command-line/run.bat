@@ -79,6 +79,7 @@ cd ..
 rmdir /s /q test_files
 color 2
 echo *** No errors detected
+if not '%IN_RUN_ALL%'=='1' pause
 exit /B
 
 rem ===============
@@ -90,4 +91,5 @@ set ALL_PASSED=0
 color c
 echo.
 echo *** errors detected in test suite; see standard output for details
+if not '%IN_RUN_ALL%'=='1' pause
 exit /B 1

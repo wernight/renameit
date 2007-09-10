@@ -2,13 +2,13 @@
 rem =======================
 rem = CHECK THE ARGUMENTS =
 rem =======================
-if '%1'=='' goto args_bad
+if '%1'=='' goto args_missing
 if exist "%~n1.rar" goto args_ok
-:args_bad
-	echo Error: Unknown test: `%~n1`.
+	echo Error: Cannot find the test file `%~n1.rar`.
 	echo.
+:args_missing
 	echo Provide the name of the test as first argument.
-	echo Example: For "Series.rar" provide "Series" as first argument.
+	echo Example: To run the test "Series.rar" provide "Series.rar" as first argument.
 	pause
 	exit /B 2
 :args_ok
@@ -72,13 +72,21 @@ goto passed
 :passed
 cd ..
 rmdir /s /q "%TEST_NAME%"
+color 2
+if '%IN_RUN_ALL_TESTS%'=='1' goto end
+	echo.
+	echo *** No errors detected
 goto end
 
 :failed
 cd ..
-set ALL_PASSED=0
+set /A FAILED_TESTS=%FAILED_TESTS%+1
 color c
+if '%IN_RUN_ALL_TESTS%'=='1' goto end
+	echo.
+	echo *** errors detected in test suite; see standard output for details
 goto end
 
 :end
 echo.
+if not '%IN_RUN_ALL_TESTS%'=='1' pause
