@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Unicode Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -103,7 +103,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -189,7 +189,7 @@
 		<Configuration
 			Name="Release MinDependency|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -264,7 +264,7 @@
 		<Configuration
 			Name="Unicode Release MinSize|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -340,7 +340,7 @@
 		<Configuration
 			Name="Release MinSize|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -417,7 +417,7 @@
 		<Configuration
 			Name="Unicode Release MinDependency|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="D:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"

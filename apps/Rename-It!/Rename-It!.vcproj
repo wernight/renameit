@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Unicode Release|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			CharacterSet="1"
@@ -106,7 +106,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			CharacterSet="2"
@@ -193,7 +193,7 @@
 		<Configuration
 			Name="Unicode Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -279,7 +279,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-			IntermediateDirectory="E:\TEMP\Visual Studio\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			CharacterSet="2"
