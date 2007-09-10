@@ -21,6 +21,11 @@ set RENAMEIT=..\..\RenameIt.exe
 set COMPFOLD=..\..\CompFold.exe
 set RAR=..\Rar.exe
 
+rem ======================
+rem = DISPLAY TEST START =
+rem ======================
+echo Running %TEST_NAME%...
+
 rem ==============
 rem = UNCOMPRESS =
 rem ==============
@@ -33,11 +38,6 @@ if not exist "%TEST_NAME%" goto rmdir_end
 :rmdir_end
 %RAR% x "%TEST_NAME%.rar" >NUL
 cd %TEST_NAME%
-
-rem ======================
-rem = DISPLAY TEST START =
-rem ======================
-echo Running %TEST_NAME%...
 
 rem ===============================================
 rem = COPY THE FILES IN "BEFORE" TO A TEMP FOLDER =
@@ -65,7 +65,8 @@ if not errorlevel 1 goto passed1
 rem ==================================================
 rem = COMPARE THE RESULT WITH THE EXPECTED RESULT    =
 rem ==================================================
-%COMPFOLD% after.ref after.generated
+if '%IN_RUN_ALL_TESTS%'=='1' %COMPFOLD% after.ref after.generated >NUL
+if not '%IN_RUN_ALL_TESTS%'=='1' %COMPFOLD% after.ref after.generated
 if errorlevel 1 goto failed
 goto passed
 
@@ -73,18 +74,18 @@ goto passed
 cd ..
 rmdir /s /q "%TEST_NAME%"
 color 2
-if '%IN_RUN_ALL_TESTS%'=='1' goto end
-	echo.
-	echo *** No errors detected
+if '%IN_RUN_ALL_TESTS%'=='1' echo                                         [PASSED]
+if not '%IN_RUN_ALL_TESTS%'=='1' echo.
+if not '%IN_RUN_ALL_TESTS%'=='1' echo *** No errors detected
 goto end
 
 :failed
 cd ..
 set /A FAILED_TESTS=%FAILED_TESTS%+1
 color c
-if '%IN_RUN_ALL_TESTS%'=='1' goto end
-	echo.
-	echo *** errors detected in test suite; see standard output for details
+if '%IN_RUN_ALL_TESTS%'=='1' echo                                         [FAILED]
+if not '%IN_RUN_ALL_TESTS%'=='1' echo.
+if not '%IN_RUN_ALL_TESTS%'=='1' echo *** errors detected in test suite; see standard output for details
 goto end
 
 :end
