@@ -614,7 +614,7 @@ BEGIN
     ID_OVERWRITE_SYSTEM_FILE "Unable to overwrite a system file."
     ID_OVERWRITE_READONLY_FILE 
                             "The file is marked as read only.\n\nAre you sure you want\nto overwrite it?"
-    ID_RENAME_SYSTEM_FILE   "System file"
+    IDS_RENAME_SYSTEM_FILE  "System file"
     IDS_CONFIRM_EXIT        "Some files haven't been renamed.\nAre you sure you want to exit?"
     IDS_REPORT_BEFORE       "Files to rename: %1\n%2 Error(s), %3 Warning(s)"
     IDS_MANUAL_RENAMING_ERROR 
@@ -1394,7 +1394,7 @@ BEGIN
     ID_OVERWRITE_SYSTEM_FILE "Impossible d'écraser un fichier système."
     ID_OVERWRITE_READONLY_FILE 
                             "Ce fichier est marqué comme lecture-seule.\n\nÊtes-vous sûr de vouloir l'écraser?"
-    ID_RENAME_SYSTEM_FILE   "Fichier système"
+    IDS_RENAME_SYSTEM_FILE  "Fichier système"
     IDS_CONFIRM_EXIT        "Certains fichiers n'ont pas été renommé.\nÊtes-vous sûr de vouloir quitter?"
     IDS_REPORT_BEFORE       "Fichiers à renommer: %1\n%2 Erreur(s), %3 Avertissement(s)"
     IDS_MANUAL_RENAMING_ERROR 

@@ -75,7 +75,7 @@ bool CNotAddedFilesDlg::AddFile(LPCTSTR szFileName, LPCTSTR szErrorMessage)
 bool CNotAddedFilesDlg::AddFile(LPCTSTR szFileName, UINT nResourceString)
 {
 	CString strMessage;
-	if (strMessage.LoadString(nResourceString))
+	if (!strMessage.LoadString(nResourceString))
 	{
 		ASSERT(false);
 		return AddFile(szFileName, _T("???"));

@@ -12,7 +12,7 @@
 #define ID_CANT_SAVE_FILE               105
 #define ID_OVERWRITE_SYSTEM_FILE        106
 #define ID_OVERWRITE_READONLY_FILE      107
-#define ID_RENAME_SYSTEM_FILE           108
+#define IDS_RENAME_SYSTEM_FILE          108
 #define IDS_CONFIRM_EXIT                109
 #define IDS_REPORT_BEFORE               110
 #define IDS_MANUAL_RENAMING_ERROR       111
@@ -172,8 +172,6 @@
 #define IDS_TT_BEFORE                   1015
 #define IDS_TT_AFTER                    1016
 #define IDS_TT_ID3                      1017
-#define IDS_TT_LOCALE                   1018
-#define IDS_TT_ALLOCCURENCES            1019
 #define IDS_TT_ONCE                     1019
 #define IDC_NATURALCASE                 1020
 #define IDC_NAMECASE                    1021

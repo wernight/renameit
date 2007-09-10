@@ -103,12 +103,50 @@ public:
 			return false;
 		switch (m_strPath[m_strPath.GetLength() - 1])
 		{
-		case '\\': case '/':	ASSERT(PathIsDirectory(m_strPath));		return true;
-		default	:				ASSERT(!PathIsDirectory(m_strPath));	return false;
+		case '\\': case '/':
+			ASSERT(!PathFileExists(m_strPath) || PathIsDirectory(m_strPath));
+			return true;
+
+		default	:
+			ASSERT(!PathFileExists(m_strPath) || !PathIsDirectory(m_strPath));
+			return false;
 		}
 	}
 
 // Operations
+	// Determines whether a path to a file system object such as a file or directory is valid.
+	static bool PathFileExists(const CString& strPath)
+	{
+		ASSERT(strPath.Right(1) != '.');	// No file or folder should end by a dot (.).
+
+		if (strPath.IsEmpty())
+			return false;
+		else if (strPath.GetLength() < MAX_PATH)
+			return ::PathFileExists(strPath) != 0;
+		else
+		{
+			ASSERT(strPath.Left(4) == _T("\\\\?\\"));	// Only unicode path case go past MAX_PATH.
+
+			// We must use FindFile for very long path.
+			WIN32_FIND_DATA fd;
+			HANDLE hFindFile;
+
+			// Directories should not end by '\' for FindFirstFileEx (or it would fail the test).
+			if (strPath[strPath.GetLength() - 1] != '\\')
+				hFindFile = ::FindFirstFileEx(strPath, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+			else
+				hFindFile = ::FindFirstFileEx(strPath.Left(strPath.GetLength() - 1), FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+
+			if (hFindFile != INVALID_HANDLE_VALUE)
+			{
+				::FindClose(hFindFile);
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+
 	// Compare two files names using the file system comparaison.
 	static inline int FSCompare(const CString& a, const CString& b) {
 		static const _locale_t m_liFileSystemLocale = _create_locale(LC_CTYPE, "");

@@ -1,6 +1,7 @@
 #pragma once
 #include "Path.h"
 #include "FileList.h"
+#include "KTM.h"
 
 /**
  * Handle the renaming of a set of renaming operations.
@@ -225,7 +226,7 @@ private:
 		vector<int> vnOperationsIndex;
 	};
 
-	void CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower, CFileFind& ffFileFind);
+	void CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower);
 
 	void CheckDirectoryPath(int nOperationIndex);
 
@@ -275,6 +276,11 @@ private:
 	 * Find the shortest and the index of the longest pathAfter in all the m_vRenamingOperations.
 	 */
 	void FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) const;
+
+	/**
+	 * Detects if an existing directory contains some elements or if it's empty.
+	 */
+	static bool DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransaction* pKTM = NULL);
 
 	// Default progress callback that does nothing.
 	void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}

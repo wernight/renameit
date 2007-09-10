@@ -639,15 +639,16 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 			// Replace all \0 \1 \2... in strReplace and replace them by the captured value,
 			// \\ by \, and \x by x.
 			int nStart = 0;
-			for (int nFindPos, nPrevFindPos = 0; (nFindPos = strReplace.Find(_T('\\'), nPrevFindPos)) != -1; nPrevFindPos = nFindPos+1)
+			for (int nFindPos, nPrevFindPos = 0; (nFindPos = strReplace.Find(_T('\\'), nPrevFindPos)) != -1; )
 			{
 				if (nFindPos+1 < strReplace.GetLength())
 				{
+					// Copy what's before the \.
+					strOut += strReplace.Mid(nStart, nFindPos - nStart);
+
 					TCHAR chr = strReplace[nFindPos+1];
 					if (isdigit(chr))
 					{// Replace \1 by the captured expression N°1.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart);
-
 						int index = chr - _T('0');
 						if (index < nCount &&
 							nvOffsets[index*2] != -1)
@@ -661,7 +662,6 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 					}
 					else
 					{// Replace \X by X.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart);
 						nStart = nFindPos + 1;
 					}
 
@@ -704,11 +704,12 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 			{
 				if (nFindPos+1 < strReplace.GetLength())
 				{
+					// Copy what's before the \.
+					strOut += strReplace.Mid(nStart, nFindPos - nStart);
+
 					TCHAR chr = strReplace[nFindPos+1];
 					if (isdigit(chr))
 					{// Replace \1 by the captured expression N°1.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart);
-
 						int index = chr - _T('0');
 						if (index < nCount &&
 							nvOffsets[index*2] != -1)
@@ -722,7 +723,6 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 					}
 					else
 					{// Replace \X by X.
-						strOut += strReplace.Mid(nStart, nFindPos - nStart);
 						nStart = nFindPos + 1;
 					}
 

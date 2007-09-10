@@ -928,7 +928,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	if (dwAttr & FILE_ATTRIBUTE_SYSTEM)
 	{
 		CString	strErrorMessage;
-		strErrorMessage.LoadString(ID_RENAME_SYSTEM_FILE);
+		strErrorMessage.LoadString(IDS_RENAME_SYSTEM_FILE);
 		m_dlgNotAddedFiles.AddFile(fnFileName.GetPath(), strErrorMessage);
 		return false;
 	}
@@ -995,7 +995,7 @@ bool CRenameItDlg::AddFolder(const CString& strPath)
 	DWORD dwAttr = GetFileAttributes(path.GetFullPath());
 	if (dwAttr & FILE_ATTRIBUTE_SYSTEM)
 	{
-		m_dlgNotAddedFiles.AddFile(path.GetPath(), ID_RENAME_SYSTEM_FILE);
+		m_dlgNotAddedFiles.AddFile(path.GetPath(), IDS_RENAME_SYSTEM_FILE);
 		return false;
 	}
 

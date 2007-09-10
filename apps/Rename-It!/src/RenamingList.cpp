@@ -3,7 +3,6 @@
 #include "OrientedGraph.h"
 #include <math.h>
 #include "../resource.h"
-#include "KTM.h"
 
 CRenamingList::CRenamingList(void)
 	: m_nWarnings(0)
@@ -46,8 +45,7 @@ bool CRenamingList::Check()
 	// Pre-condition: Foreach file to rename A: A.before != A.after.
 
 	// Declarations.
-	const int	nFilesCount = (int) m_vRenamingOperations.size();
-	CFileFind	ffFileFind;
+	const int nFilesCount = (int)m_vRenamingOperations.size();
 
 	// Reinitialize the error list.
 	ASSERT(m_vProblems.size() == m_vRenamingOperations.size());
@@ -99,13 +97,13 @@ bool CRenamingList::Check()
 			m_fOnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
 	
 			// Check for file conflicts.
-			CheckFileConflict(i, setBeforeLower, mapAfterLower, ffFileFind);
+			CheckFileConflict(i, setBeforeLower, mapAfterLower);
 
 			// For files...
 			if (!m_vRenamingOperations[i].pathBefore.IsDirectory())
 			{
 				// Check if the file still exists
-				if (!ffFileFind.FindFile( m_vRenamingOperations[i].pathBefore.GetFullPath() ))
+				if (!CPath::PathFileExists( m_vRenamingOperations[i].pathBefore.GetFullPath() ))
 				{
 					CString strErrorMsg;
 					strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
@@ -181,7 +179,7 @@ bool CRenamingList::Check()
 	return m_nErrors == 0 && m_nWarnings == 0;
 }
 
-void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower, CFileFind& ffFileFind)
+void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower)
 {
 	// If that file isn't already marked as conflicting with another,
 	// test if it's going to conflict with another file.
@@ -194,7 +192,7 @@ void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& s
 	/* Detect if it's going to be renamed to a file that already exists
 	 * but that is not part of the files to rename...
 	 */
-	if (ffFileFind.FindFile(strAfterLower)		// The destination exists on the disk.
+	if (CPath::PathFileExists(strAfterLower)	// The destination exists on the disk.
 		&& setBeforeLower.find(strAfterLower) == setBeforeLower.end())	// and it's not going to be renamed.
 	{
 		// No it is not, so it will conflict with the existing file on the disk.
@@ -244,7 +242,7 @@ void CRenamingList::CheckDirectoryPath(int nOperationIndex)
 		SetProblem(nOperationIndex, errBackslashMissing, strErrorMsg);
 	}
 
-	// Check if the directories name is valid.
+	// Check if the directories names are valid.
 	BOOST_FOREACH(CString strDirectory, pOperationPathAfter->GetDirectories())
 	{
 		// Find the directory's name before the '.' (yes an extension is also counted for directories)
@@ -490,10 +488,11 @@ bool CRenamingList::PerformRenaming()
 			// Report progress
 			m_fOnProgress(stagePreRenaming, 20 + i*80/nFilesCount, 100);
 
-			// Look if a node with a file-name-after has the same name as this node file-name-before.
-			CString strBefore = m_vRenamingOperations[i].pathBefore.GetFullPath();
-			map<CString, int>::const_iterator iterFound = mapAfterLower.find(strBefore.MakeLower());
-			if (iterFound != mapAfterLower.end())
+			// Look if a node with a name-after has the same name as this node name-before.
+			// We ignore when the operation `i` has the same name a before and after (since the checking is then handled by file system).
+			CString strBefore = m_vRenamingOperations[i].pathBefore.GetFullPath().MakeLower();
+			map<CString, int>::const_iterator iterFound = mapAfterLower.find(strBefore);
+			if (iterFound != mapAfterLower.end() && iterFound->second != i)
 			{
 				graph[i].AddSuccessor(iterFound->second);
 				
@@ -513,10 +512,25 @@ bool CRenamingList::PerformRenaming()
 							// Originally rename A -> B
 							CPath fnFinal = m_vRenamingOperations[graph[i].GetSuccessor(0)].pathAfter;
 
-							CString strRandomName = _T("~");
-							for (int k=0; k<15; ++k)
-								strRandomName += _T("0123456789ABCDEF")[rand()%16];
-							CPath fnTemp = fnFinal.GetFullPath() + strRandomName;
+							// Find a temporary name to rename A -> TMP -> B.
+							CString strRandomName;
+							{
+								if (fnFinal.IsDirectory())
+								{
+									CString strFinalPath = fnFinal.GetFullPath();
+									strRandomName = strFinalPath.Left(strFinalPath.GetLength() - 1) + _T("~TMP");
+								}
+								else
+									strRandomName = fnFinal.GetFullPath() + _T("~TMP");
+
+								CString strRandomNameFormat = strRandomName + _T("%d");
+								for (int k=2; CPath::PathFileExists(strRandomName); ++k)
+									strRandomName.Format(strRandomNameFormat, k);
+
+								if (fnFinal.IsDirectory())
+									strRandomName.AppendChar('\\');
+							}
+							CPath fnTemp = strRandomName;
 
 							// Rename A -> TMP
 							m_vRenamingOperations[graph[i].GetSuccessor(0)].pathAfter = fnTemp;
@@ -542,8 +556,12 @@ bool CRenamingList::PerformRenaming()
 				strParentPath += strDirectoryName.MakeLower();
 				strParentPath.AppendChar('\\');
 
-				// Add to the set.
-				setDeleteIfEmptyDirectories.insert(strParentPath);
+				// If the directory isn't empty,
+				if (!DirectoryIsEmpty(strParentPath))
+				{
+					// Add to the set.
+					setDeleteIfEmptyDirectories.insert(strParentPath);
+				}
 			}
 
 			// Unify folders' case 2/2
@@ -604,7 +622,7 @@ bool CRenamingList::PerformRenaming()
 					strDirAfter = strDirAfter.Left(nPos);
 				} // end while.
 			} // end of case unification.
-		}
+		} // end for each operations index `i`.
 
 		// Restaure the locale.
 		_tsetlocale(LC_CTYPE, strLocaleBak);
@@ -625,7 +643,11 @@ bool CRenamingList::PerformRenaming()
 			while (true)
 			{
 				// When moving a directory, the destination must be on the same drive.
-				ASSERT(!m_vRenamingOperations[nIndex].pathBefore.IsDirectory() || CPath::FSCompare(m_vRenamingOperations[nIndex].pathBefore.GetPathRoot(), m_vRenamingOperations[nIndex].pathAfter.GetPathRoot()) == 0);
+				ASSERT(!m_vRenamingOperations[nIndex].pathBefore.IsDirectory() ||
+					CPath::FSCompare(
+						CPath(m_vRenamingOperations[nIndex].pathBefore.GetFullPath()).GetPathRoot(),
+						CPath(m_vRenamingOperations[nIndex].pathAfter.GetFullPath()).GetPathRoot()
+					) == 0);
 
 				bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
 
@@ -638,11 +660,10 @@ bool CRenamingList::PerformRenaming()
 
 					// Get the full parent directory's path.
 					strParentPath += strDirectoryName;
-					strParentPath.AppendChar('\\');
 
 					// Check if the parent path exists.
 					WIN32_FIND_DATA fd;
-					HANDLE hFind = ktm.FindFirstFileEx(strParentPath + '.', FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
+					HANDLE hFind = ktm.FindFirstFileEx(strParentPath, FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
 					if (hFind != INVALID_HANDLE_VALUE)
 					{// This parent directory already exist.
 						FindClose(hFind);
@@ -690,6 +711,9 @@ bool CRenamingList::PerformRenaming()
 							break;
 						}
 					}
+
+					// Add a backslash at the end.
+					strParentPath.AppendChar('\\');
 				}
 
 				// Rename file.
@@ -721,40 +745,13 @@ bool CRenamingList::PerformRenaming()
 	// Delete emptied folders (folders that are empty after renaming).
 	// Note that the set is ordered so that the longuest path comes first,
 	// which implies that subfolders are removed prior to checking their parent folder.
-	BOOST_FOREACH(CString& strDirectory, setDeleteIfEmptyDirectories)
+	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
 	{
+		// Remove ONLY a non-empty directory.
 		// Note: ERROR_ACCESS_DENIED may be reported for non-empty dir that are protected,
 		//       so we need to check if the directory is empty prior to calling RemoveDirectory().
-		bool bDirEmpty = true;	// The directory is supposed empty.
-		CFileFind ff;
-		if (!ff.FindFile(strDirectory + _T("*.*")))
-		{
-			bDirEmpty = false;	// We don't remove this folder.
-
-			DWORD dwErrorCode = ::GetLastError();
-
-			// TODO: Report this error.
-			bError = true;
-		}
-		else
-		{
-			BOOL bMore = TRUE;
-			while (bMore)
-			{
-				BOOL bMore = ff.FindNextFile();
-				CString& strFName = ff.GetFileName();
-				if (strFName != _T(".") &&
-					strFName != _T(".."))
-				{
-					bDirEmpty = false;
-					break;
-				}
-			}
-			ff.Close();
-		}
-
-		// Remove ONLY a non-empty directory.
-		if (bDirEmpty && !ktm.RemoveDirectory(strDirectory))
+		if (DirectoryIsEmpty(strDirectoryPath, &ktm) &&
+			!ktm.RemoveDirectory(strDirectoryPath))
 		{
 			DWORD dwErrorCode = ::GetLastError();
 			/** Some possible error codes include:
@@ -773,7 +770,7 @@ bool CRenamingList::PerformRenaming()
 	if (bError)
 	{
 		// TODO: Possibly commit or roll-back depending on the user's choice.
-		if (AfxMessageBox(_T("Errors.\nPress YES to commit or NO roll-back."), MB_YESNO) == IDYES)
+		if (MessageBox(NULL, _T("Errors.\nPress YES to commit or NO roll-back."), _T("Rename-It! Debug"), MB_YESNO) == IDYES)
 			VERIFY(ktm.Commit());
 		else
 			VERIFY(ktm.RollBack());
@@ -816,4 +813,39 @@ void CRenamingList::FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) co
 
 	if (pnMaxIndex != NULL)
 		*pnMaxIndex = nMaxAfterDirIndex;
+}
+
+bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransaction* pKTM /*= NULL*/)
+{
+	ASSERT(strDirectoryPath.Right(1) == '\\');
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFindFile;
+
+	if (pKTM != NULL)
+		hFindFile = pKTM->FindFirstFileEx(strDirectoryPath + _T("*.*"), FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+	else
+		hFindFile = FindFirstFileEx(strDirectoryPath + _T("*.*"), FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+
+	if (hFindFile == INVALID_HANDLE_VALUE)
+	{
+		DWORD dwErrorCode = ::GetLastError();
+		ASSERT(false);	// This shouldn't happen, as the directory is supposed existing.
+		return false;
+	}
+	else
+	{
+		do
+		{
+			if (_tcscmp(fd.cFileName, _T(".")) != 0 &&
+				_tcscmp(fd.cFileName, _T("..")) != 0)
+			{
+				::FindClose(hFindFile);
+				return true;
+			}
+		} while (::FindNextFile(hFindFile, &fd));
+
+		::FindClose(hFindFile);
+		return false;
+	}
 }
