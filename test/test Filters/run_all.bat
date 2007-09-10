@@ -1,5 +1,4 @@
 @echo off
-
 rem ==================================
 rem = Simply execute all the run.bat =
 rem ==================================
@@ -22,7 +21,7 @@ rem = One test failed   =
 rem =====================
 :one_failed
 set TOTAL_TESTS=0
-for %%d in (*.rar) do set /A TOTAL_TESTS=%TOTAL_TESTS%+1
+for %%d in (*.rar) do call _counter.bat
 echo *** %FAILED_TESTS%/%TOTAL_TESTS% tests failed
 echo *** errors detected in test suite; see standard output for details
 color c

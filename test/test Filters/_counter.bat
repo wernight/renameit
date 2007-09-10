@@ -1,0 +1,1 @@
+set /A TOTAL_TESTS=%TOTAL_TESTS%+1
