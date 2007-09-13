@@ -42,7 +42,18 @@ bool CRenamingList::IsUsingKtm() const
 
 bool CRenamingList::Check()
 {
-	// Pre-condition: Foreach file to rename A: A.before != A.after.
+	// Pre-conditions
+#ifdef _DEBUG
+	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
+	{
+		// Each operation must be a unicode path.
+		ASSERT(operation.pathBefore.GetPath().Left(4) == "\\\\?\\");
+		ASSERT(operation.pathAfter.GetPath().Left(4) == "\\\\?\\");
+
+		// Each operation changes something.
+		ASSERT(operation.pathBefore != operation.pathAfter);
+	}
+#endif
 
 	// Declarations.
 	const int nFilesCount = (int)m_vRenamingOperations.size();
@@ -72,13 +83,12 @@ bool CRenamingList::Check()
 			m_fOnProgress(stageChecking, i*20/nFilesCount, 100);
 
 			// Create a map of file names (in lower case) associated to the operation index.
-			CString strName = m_vRenamingOperations[i].pathBefore.GetFullPath();
+			CString strName = m_vRenamingOperations[i].pathBefore.GetPath();
 			setBeforeLower.insert( strName.MakeLower() );
 		}	
 	
 		// Check folders' case consistency (1/2): Find the length of the shortest path.
-		int nMinAfterDirIndex, nMaxAfterDirIndex;
-		FindMinMaxDirectoryPath(&nMinAfterDirIndex, &nMaxAfterDirIndex);
+		int nMinAfterDirIndex = FindShortestDirectoryPathAfter();
 
 		map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
 		{
@@ -99,31 +109,28 @@ bool CRenamingList::Check()
 			// Check for file conflicts.
 			CheckFileConflict(i, setBeforeLower, mapAfterLower);
 
-			// For files...
-			if (!m_vRenamingOperations[i].pathBefore.IsDirectory())
+			// Check if the file/folder still exists
+			if (!CPath::PathFileExists( m_vRenamingOperations[i].pathBefore.GetPath() ))
 			{
-				// Check if the file still exists
-				if (!CPath::PathFileExists( m_vRenamingOperations[i].pathBefore.GetFullPath() ))
-				{
-					CString strErrorMsg;
-					strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
-					SetProblem(i, errFileMissing, strErrorMsg);
-				}
+				CString strErrorMsg;
+				strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
+				SetProblem(i, errFileMissing, strErrorMsg);
+			}
 
-				// Check the file name.
-				COperationProblem problem = CheckName(
-					m_vRenamingOperations[i].pathAfter.GetFileName(),
-					m_vRenamingOperations[i].pathAfter.GetFileNameWithoutExtension(),
-					true);
-				if (problem.nErrorLevel != levelNone)
-				{
-					// Some problem found.
-					SetProblem(i, problem.nErrorCode, problem.strMessage);
-				}
+			// Check the file/folder name.
+			COperationProblem problem = CheckName(
+				m_vRenamingOperations[i].pathAfter.GetFileName(),
+				m_vRenamingOperations[i].pathAfter.GetFileNameWithoutExtension(),
+				true);
+			if (problem.nErrorLevel != levelNone)
+			{
+				// Some problem found.
+				SetProblem(i, problem.nErrorCode, problem.strMessage);
 			}
 
 			// Check the directory name.
 			CheckDirectoryPath(i);
+
 			// Check folders' case consistency 2/2
 			{
 				// Create a copy of the folder name.
@@ -186,7 +193,7 @@ void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& s
 	if (m_vProblems[nOperationIndex].nErrorCode == errConflict)
 		return;
 
-	CString strAfterLower = m_vRenamingOperations[nOperationIndex].pathAfter.GetFullPath();
+	CString strAfterLower = m_vRenamingOperations[nOperationIndex].pathAfter.GetPath();
 	strAfterLower.MakeLower();
 	
 	/* Detect if it's going to be renamed to a file that already exists
@@ -264,7 +271,7 @@ void CRenamingList::CheckDirectoryPath(int nOperationIndex)
 	} // end: directory name validity check.
 
 	// Check if the path if over MAX_PATH.
-	if (pOperationPathAfter->GetPath().GetLength() >= MAX_PATH)
+	if (CPath::MakeSimplePath(pOperationPathAfter->GetPath()).GetLength() >= MAX_PATH)
 	{
 		CString strErrorMsg;
 		strErrorMsg.LoadString(IDS_LONGUER_THAN_MAX_PATH);
@@ -426,23 +433,20 @@ bool CRenamingList::PerformRenaming()
 
 	// Pre-conditions checking.
 #ifdef _DEBUG
-	bool bRenamingFolders = m_vRenamingOperations[0].pathBefore.IsDirectory();
 	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
 	{
+		// Each operation must be a unicode path.
+		ASSERT(operation.pathBefore.GetPath().Left(4) == "\\\\?\\");
+		ASSERT(operation.pathAfter.GetPath().Left(4) == "\\\\?\\");
+
 		// Each operation changes something.
 		ASSERT(operation.pathBefore != operation.pathAfter);	// Note that this is case sensitive.
-
-		// Rename a folder to a folder, and a file to a file (only).
-		ASSERT(operation.pathBefore.IsDirectory() == operation.pathAfter.IsDirectory());
-
-		// Rename either a set of files XOR a set of directories (cannot be both).
-		ASSERT(bRenamingFolders == operation.pathBefore.IsDirectory());
 	}
 #endif
 
 	// Create an oriented graph of conflicting renamings:
 	Beroux::Math::OrientedGraph	graph;
-	set<CString, path_compare<CString>> setDeleteIfEmptyDirectories;
+	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;
 	{
 		const int nFilesCount = (int) m_vRenamingOperations.size();
 
@@ -464,17 +468,16 @@ bool CRenamingList::PerformRenaming()
 
 			graph.AddNode(i);
 
-			CString strAfter = m_vRenamingOperations[i].pathAfter.GetFullPath();
+			CString strAfter = m_vRenamingOperations[i].pathAfter.GetPath();
 			mapAfterLower.insert( pair<CString, int>(strAfter.MakeLower(), i) );
 		}
 
 		// Unify folders' case (1/2): Find the length of the shortest path.
-		int nMinAfterDirIndex, nMaxAfterDirIndex;
-		FindMinMaxDirectoryPath(&nMinAfterDirIndex, &nMaxAfterDirIndex);
+		int nMinAfterDirIndex = FindShortestDirectoryPathAfter();
 
 		map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
+		// Insert the shortest path to the map (to improve a little the speed).
 		{
-			// Insert the shortest path to the map (to improve a little the speed).
 			CString strShortestDirAfter = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName();
 			mapDirsCase.insert( pair<CString, DIR_CASE>(
 				strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
@@ -486,20 +489,27 @@ bool CRenamingList::PerformRenaming()
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stagePreRenaming, 20 + i*80/nFilesCount, 100);
+			m_fOnProgress(stagePreRenaming, 20 + i*75/nFilesCount, 100);
 
-			// Look if a node with a name-after has the same name as this node name-before.
-			// We ignore when the operation `i` has the same name a before and after (since the checking is then handled by file system).
-			CString strBefore = m_vRenamingOperations[i].pathBefore.GetFullPath().MakeLower();
-			map<CString, int>::const_iterator iterFound = mapAfterLower.find(strBefore);
+			// Definitions
+			CPath *proBefore = &m_vRenamingOperations[i].pathBefore;
+			CPath *proAfter = &m_vRenamingOperations[i].pathAfter;
+
+			// Look if there is a node with name-after equal to this node's name-before
+			// (meaning that there should be an edge from the this node to the found node).
+			// We ignore when the operation `i` has the same name a before and after
+			// (since the checking would then be handled by the file system).
+			CString strBefore = proBefore->GetPath();
+			map<CString, int>::const_iterator iterFound = mapAfterLower.find(strBefore.MakeLower());
 			if (iterFound != mapAfterLower.end() && iterFound->second != i)
 			{
+				// Node(i) -edge-to-> Node(j)
 				graph[i].AddSuccessor(iterFound->second);
 				
 				// Assertion: There can be at most one successor,
 				// else it means that two files (or more) will have the same destination name.
 
-				// Check if their are par of a cycle (only nodes that have a successor and an antecedent may form a cycle).
+				// Check if their are part of a cycle (only nodes that have a successor and an antecedent may form a cycle).
 				if (graph[i].HasSuccessor() && graph[i].HasAntecedent())
 				{
 					for (int j=graph[i].GetSuccessor(0); graph[j].HasSuccessor(); j=graph[j].GetSuccessor(0))
@@ -510,38 +520,41 @@ bool CRenamingList::PerformRenaming()
 							// so it doesn't conflict.
 
 							// Originally rename A -> B
-							CPath fnFinal = m_vRenamingOperations[graph[i].GetSuccessor(0)].pathAfter;
+							int nOperationIndex = graph[i].GetSuccessor(0);
+							CPath pathFinal = m_vRenamingOperations[nOperationIndex].pathAfter;
 
 							// Find a temporary name to rename A -> TMP -> B.
 							CString strRandomName;
 							{
-								if (fnFinal.IsDirectory())
-								{
-									CString strFinalPath = fnFinal.GetFullPath();
-									strRandomName = strFinalPath.Left(strFinalPath.GetLength() - 1) + _T("~TMP");
-								}
-								else
-									strRandomName = fnFinal.GetFullPath() + _T("~TMP");
+								ASSERT(pathFinal.GetPath()[pathFinal.GetPath().GetLength() - 1] != '\\');
+								strRandomName = pathFinal.GetPath() + _T("~TMP");
 
 								CString strRandomNameFormat = strRandomName + _T("%d");
-								for (int k=2; CPath::PathFileExists(strRandomName); ++k)
+								for (int k=2; CPath::PathFileExists(strRandomName) || mapAfterLower.find(strRandomName) != mapAfterLower.end(); ++k)
 									strRandomName.Format(strRandomNameFormat, k);
-
-								if (fnFinal.IsDirectory())
-									strRandomName.AppendChar('\\');
 							}
-							CPath fnTemp = strRandomName;
+							CPath pathTemp = strRandomName;
 
 							// Rename A -> TMP
-							m_vRenamingOperations[graph[i].GetSuccessor(0)].pathAfter = fnTemp;
+							m_vRenamingOperations[nOperationIndex].pathAfter = pathTemp;
+							// (Optional operation since mapAfterLower.find(X.before) == This operation.)
+							//CString strAfter = pathTemp.GetPath();
+							//mapAfterLower.insert( pair<CString, int>(strAfter.MakeLower(), nOperationIndex) );
 
 							// Then rename TMP -> B
-							AddRenamingOperation( CRenamingOperation(fnTemp, fnFinal) );
+							AddRenamingOperation( CRenamingOperation(pathTemp, pathFinal) );
+							int nSecondOperationIndex = (int)m_vRenamingOperations.size() - 1;
+							CString strAfter = pathTemp.GetPath();
+							mapAfterLower[strAfter.MakeLower()] = nSecondOperationIndex;
+
+							// Since we've change the vector array, the memory location may have been changed also.
+							proBefore = &m_vRenamingOperations[i].pathBefore;
+							proAfter = &m_vRenamingOperations[i].pathAfter;
 
 							// Add Node(i) --> Node(TMP), because File(i) must be renamed before File(TMP).
-							graph.AddNode((int)m_vRenamingOperations.size() - 1);
+							graph.AddNode(nSecondOperationIndex);
 							graph[i].RemoveSuccessor(0);
-							graph[i].AddSuccessor((int)m_vRenamingOperations.size() - 1);
+							graph[i].AddSuccessor(nSecondOperationIndex);
 
 							break;
 						}
@@ -549,16 +562,17 @@ bool CRenamingList::PerformRenaming()
 			} // end if successor found.
 
 			// Mark folders the should be erased after renaming if they are empty.
-			CString strParentPath = m_vRenamingOperations[i].pathBefore.GetPathRoot();
-			BOOST_FOREACH(CString strDirectoryName, m_vRenamingOperations[i].pathBefore.GetDirectories())
+			if (_tcsicmp(proBefore->GetDirectoryName(),
+				         proAfter->GetDirectoryName()) != 0 &&
+				!DirectoryIsEmpty(proBefore->GetDirectoryName()))
 			{
-				// Get the full parent directory's path.
-				strParentPath += strDirectoryName.MakeLower();
-				strParentPath.AppendChar('\\');
-
-				// If the directory isn't empty,
-				if (!DirectoryIsEmpty(strParentPath))
+				CString strParentPath = proBefore->GetPathRoot();
+				BOOST_FOREACH(CString strDirectoryName, proBefore->GetDirectories())
 				{
+					// Get the full parent directory's path.
+					strParentPath += strDirectoryName.MakeLower();
+					strParentPath.AppendChar('\\');
+
 					// Add to the set.
 					setDeleteIfEmptyDirectories.insert(strParentPath);
 				}
@@ -567,7 +581,7 @@ bool CRenamingList::PerformRenaming()
 			// Unify folders' case 2/2
 			{
 				// Create a copy of the folder name.
-				CString strDirAfter = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
+				CString strDirAfter = proAfter->GetDirectoryName();
 				ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
 				strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
 
@@ -594,7 +608,7 @@ bool CRenamingList::PerformRenaming()
 							if (strDirAfter.GetLength() >= iter->second.nMinDirLength)
 							{
 								// Change the RO's case.
-								m_vRenamingOperations[i].pathAfter = iter->first + m_vRenamingOperations[i].pathAfter.GetPath().Mid(iter->first.GetLength());
+								*proAfter = iter->first + proAfter->GetPath().Mid(iter->first.GetLength());
 							}
 							else
 							{
@@ -628,82 +642,87 @@ bool CRenamingList::PerformRenaming()
 		_tsetlocale(LC_CTYPE, strLocaleBak);
 	}
 
+	// Finally, create an ordered map of elements to rename so that the longuest path comes first.
+	map<CString, int, path_compare<CString> > mapRenamingOperations;
+	typedef std::pair<CString, int> ro_pair_t;
+	{
+		const int nTotal = (int) m_vRenamingOperations.size();
+		for (int i=0; i<nTotal; ++i)
+		{
+			// Report progress
+			m_fOnProgress(stagePreRenaming, 95 + i*5/nTotal, 100);
+			
+			if (!graph[i].HasAntecedent())
+				mapRenamingOperations.insert( ro_pair_t(m_vRenamingOperations[i].pathBefore.GetPath(), i) );
+		}
+	}
+
 	// Create a new transaction.
 	KTMTransaction ktm;
 
 	// Rename files in topological order.
 	int nDone = 0;
-	int nTotal = (int) m_vRenamingOperations.size();
+	const int nTotal = (int) m_vRenamingOperations.size();
 	m_fOnProgress(stageRenaming, 0, nTotal);	// Inform we start renaming.
 	bool bError = false;
-	for (int i=0; i<nTotal; ++i)
-		if (!graph[i].HasAntecedent())
+	BOOST_FOREACH(ro_pair_t pair, mapRenamingOperations)
+	{
+		int nIndex = pair.second;
+		while (true)
 		{
-			int nIndex = i;
-			while (true)
+			const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
+
+			// When moving a directory, the destination must be on the same drive.
+/*				ASSERT(!renamingOperation.pathBefore.IsDirectory() ||
+				CPath::FSCompare(
+					renamingOperation.pathBefore.GetPathRoot(),
+					renamingOperation.pathAfter.GetPathRoot()
+				) == 0);*/
+
+			bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
+
+			// Check that every parent directory exists, or create it.
+			CString strParentPath = renamingOperation.pathAfter.GetPathRoot();
+			BOOST_FOREACH(CString strDirectoryName, renamingOperation.pathAfter.GetDirectories())
 			{
-				// When moving a directory, the destination must be on the same drive.
-				ASSERT(!m_vRenamingOperations[nIndex].pathBefore.IsDirectory() ||
-					CPath::FSCompare(
-						CPath(m_vRenamingOperations[nIndex].pathBefore.GetFullPath()).GetPathRoot(),
-						CPath(m_vRenamingOperations[nIndex].pathAfter.GetFullPath()).GetPathRoot()
-					) == 0);
+				// Keep the parent directory of this parent directory.
+				CString strParentParentPath = strParentPath;
 
-				bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
+				// Get the full parent directory's path.
+				strParentPath += strDirectoryName;
 
-				// Check that every parent directory exists, or create it.
-				CString strParentPath = m_vRenamingOperations[nIndex].pathAfter.GetPathRoot();
-				BOOST_FOREACH(CString strDirectoryName, m_vRenamingOperations[nIndex].pathAfter.GetDirectories())
-				{
-					// Keep the parent directory of this parent directory.
-					CString strParentParentPath = strParentPath;
+				// Check if the parent path exists.
+				WIN32_FIND_DATA fd;
+				HANDLE hFind = ktm.FindFirstFileEx(strParentPath, FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
+				if (hFind != INVALID_HANDLE_VALUE)
+				{// This parent directory already exist.
+					FindClose(hFind);
 
-					// Get the full parent directory's path.
-					strParentPath += strDirectoryName;
-
-					// Check if the parent path exists.
-					WIN32_FIND_DATA fd;
-					HANDLE hFind = ktm.FindFirstFileEx(strParentPath, FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
-					if (hFind != INVALID_HANDLE_VALUE)
-					{// This parent directory already exist.
-						FindClose(hFind);
-
-						// Check if the case is changed.
-						if (strDirectoryName != fd.cFileName)
+					// Check if the case is changed.
+					if (strDirectoryName != fd.cFileName)
+					{
+						// Change the case.
+						if (!ktm.MoveFileEx(
+								strParentParentPath + fd.cFileName,
+								strParentPath,
+								0))
 						{
-							// Change the case.
-							if (!ktm.MoveFileEx(
-									strParentParentPath + fd.cFileName,
-									strParentPath,
-									0))
-							{
-								m_fOnRenamed(nIndex, GetLastError());
-								bError = true;
-							}
+							m_fOnRenamed(nIndex, GetLastError());
+							bError = true;
 						}
 					}
-					else
+				}
+				else
+				{
+					DWORD dwLastError = GetLastError();
+
+					if (dwLastError == ERROR_FILE_NOT_FOUND)
 					{
-						DWORD dwLastError = GetLastError();
-
-						if (dwLastError == ERROR_FILE_NOT_FOUND)
+						// Create the parent directory.
+						if (!ktm.CreateDirectoryEx(NULL, strParentPath, NULL))
 						{
-							// Create the parent directory.
-							if (!ktm.CreateDirectoryEx(NULL, strParentPath, NULL))
-							{
-								// Could not create the directory, let's report this error.
-								m_fOnRenamed(nIndex, GetLastError());
-								bError = true;
-
-								// Now we exit and continue on the next file.
-								bAfterPathCreation = false;
-								break;
-							}
-						}
-						else
-						{
-							// Some other problem, report it.
-							m_fOnRenamed(nIndex, dwLastError);
+							// Could not create the directory, let's report this error.
+							m_fOnRenamed(nIndex, GetLastError());
 							bError = true;
 
 							// Now we exit and continue on the next file.
@@ -711,36 +730,47 @@ bool CRenamingList::PerformRenaming()
 							break;
 						}
 					}
-
-					// Add a backslash at the end.
-					strParentPath.AppendChar('\\');
-				}
-
-				// Rename file.
-				if (bAfterPathCreation)
-				{
-					if (!ktm.MoveFileEx(
-							m_vRenamingOperations[nIndex].pathBefore.GetFullPath(),
-							m_vRenamingOperations[nIndex].pathAfter.GetFullPath(),
-							MOVEFILE_COPY_ALLOWED))
-					{
-						m_fOnRenamed(nIndex, GetLastError());
-						bError = true;
-					}
 					else
-						m_fOnRenamed(nIndex, 0);
+					{
+						// Some other problem, report it.
+						m_fOnRenamed(nIndex, dwLastError);
+						bError = true;
+
+						// Now we exit and continue on the next file.
+						bAfterPathCreation = false;
+						break;
+					}
 				}
 
-				// Report progress
-				m_fOnProgress(stageRenaming, ++nDone, nTotal);
-
-				// Rename its successors.
-				if (graph[nIndex].HasSuccessor())
-					nIndex = graph[nIndex].GetSuccessor(0);
-				else
-					break;
+				// Add a backslash at the end.
+				strParentPath.AppendChar('\\');
 			}
+
+			// Rename file.
+			if (bAfterPathCreation)
+			{
+				if (!ktm.MoveFileEx(
+						renamingOperation.pathBefore.GetPath(),
+						renamingOperation.pathAfter.GetPath(),
+						MOVEFILE_COPY_ALLOWED))
+				{
+					m_fOnRenamed(nIndex, GetLastError());
+					bError = true;
+				}
+				else
+					m_fOnRenamed(nIndex, 0);
+			}
+
+			// Report progress
+			m_fOnProgress(stageRenaming, ++nDone, nTotal);
+
+			// Rename its successors.
+			if (graph[nIndex].HasSuccessor())
+				nIndex = graph[nIndex].GetSuccessor(0);
+			else
+				break;
 		}
+	}
 
 	// Delete emptied folders (folders that are empty after renaming).
 	// Note that the set is ordered so that the longuest path comes first,
@@ -780,39 +810,25 @@ bool CRenamingList::PerformRenaming()
 		return ktm.Commit();
 }
 
-void CRenamingList::FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) const
+int CRenamingList::FindShortestDirectoryPathAfter() const
 {
 	int nMinAfterDirIndex = 0;
 	int nMinAfterDirLength = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength();
-
-	int nMaxAfterDirIndex = nMinAfterDirIndex;
-	int nMaxAfterDirLength = nMinAfterDirLength;
 
 	// Find the shortest path.
 	const int nFilesCount = (int)m_vRenamingOperations.size();
 	for (int i=0; i<nFilesCount; ++i)
 	{
-		CString strDir = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
+		int nDirLength = m_vRenamingOperations[i].pathAfter.GetDirectoryName().GetLength();
 
-		if (strDir.GetLength() < nMinAfterDirLength)
+		if (nDirLength < nMinAfterDirLength)
 		{
 			nMinAfterDirIndex = i;
-			nMinAfterDirLength = strDir.GetLength();
-		}
-
-		if (strDir.GetLength() > nMaxAfterDirLength)
-		{
-			nMaxAfterDirIndex = i;
-			nMaxAfterDirLength = strDir.GetLength();
+			nMinAfterDirLength = nDirLength;
 		}
 	}
 
-	// Report.
-	if (pnMinIndex != NULL)
-		*pnMinIndex = nMinAfterDirIndex;
-
-	if (pnMaxIndex != NULL)
-		*pnMaxIndex = nMaxAfterDirIndex;
+	return nMinAfterDirIndex;
 }
 
 bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransaction* pKTM /*= NULL*/)
@@ -831,7 +847,7 @@ bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransac
 	{
 		DWORD dwErrorCode = ::GetLastError();
 		ASSERT(false);	// This shouldn't happen, as the directory is supposed existing.
-		return false;
+		return true;
 	}
 	else
 	{
@@ -841,11 +857,11 @@ bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransac
 				_tcscmp(fd.cFileName, _T("..")) != 0)
 			{
 				::FindClose(hFindFile);
-				return true;
+				return false;
 			}
 		} while (::FindNextFile(hFindFile, &fd));
 
 		::FindClose(hFindFile);
-		return false;
+		return true;
 	}
 }

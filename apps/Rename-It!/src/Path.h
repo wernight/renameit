@@ -1,7 +1,5 @@
 #pragma once
-#ifdef _DEBUG
-#  include <Shlwapi.h>	// Used for PathGetArgs() and PathIsDirectory()
-#endif
+#include <Shlwapi.h>	// Used for PathGetArgs(), PathIsDirectory(), and PathFileExists().
 
 /**
  * Path to a file or a folder.
@@ -33,24 +31,6 @@ public:
 
 // Attributes
 	/**
-	 * Returns the absolute path for the specified path string.
-	 * The unicode 32,000 characters path to be used for system functions.
-	 */
-	inline CString GetFullPath() const {
-		if (m_strPath.GetLength() >= 2)
-		{
-			if (m_strPath.GetLength() >= 4 && m_strPath.Left(4) == _T("\\\\?\\"))
-				return m_strPath;
-			else if (m_strPath[1] == ':' && isalpha(m_strPath[0]))
-				return _T("\\\\?\\") + m_strPath;
-			else
-				return _T("\\\\?\\UNC\\") + m_strPath;
-		}
-		else
-			return m_strPath;
-	}
-
-	/**
 	 * Return the path as provided during the creation of this object.
 	 * It's the right one to be used when displaying the full path to the user.
 	 */
@@ -60,7 +40,7 @@ public:
 
 	/**
 	 * Gets the root directory information of the specified path.
-	 * Ex: "\\?\C:\".
+	 * Ex: "C:\".
 	 */
 	inline CString GetPathRoot() const {
 		return m_strPath.Left(m_nPathRootLength);
@@ -68,7 +48,7 @@ public:
 
 	/**
 	 * Returns the directory information for the specified path string.
-	 * Ex: "\\?\C:\foo\"
+	 * Ex: "C:\foo\"
 	 */
 	inline CString GetDirectoryName() const {
 		return m_strPath.Left(m_nFileNameFirst);
@@ -96,21 +76,6 @@ public:
 	 */
 	inline CString GetExtension() const {
 		return m_strPath.Right(m_nExtensionLength);
-	}
-
-	inline bool IsDirectory() const {
-		if (m_strPath.IsEmpty())
-			return false;
-		switch (m_strPath[m_strPath.GetLength() - 1])
-		{
-		case '\\': case '/':
-			ASSERT(!PathFileExists(m_strPath) || PathIsDirectory(m_strPath));
-			return true;
-
-		default	:
-			ASSERT(!PathFileExists(m_strPath) || !PathIsDirectory(m_strPath));
-			return false;
-		}
 	}
 
 // Operations
@@ -145,6 +110,38 @@ public:
 			else
 				return false;
 		}
+	}
+
+	/**
+	 * Returns the absolute path for the specified path string.
+	 * The unicode 32,000 characters path to be used for system functions.
+	 */
+	static inline CString MakeUnicodePath(const CString& strPath)
+	{
+		if (strPath.GetLength() >= 2)
+		{
+			if (strPath.GetLength() >= 4 && strPath.Left(4) == _T("\\\\?\\"))
+				return strPath;
+			else if (strPath[1] == ':' && isalpha(strPath[0]))
+				return _T("\\\\?\\") + strPath;
+			else
+				return _T("\\\\?\\UNC\\") + strPath;
+		}
+		else
+			return strPath;
+	}
+
+	/**
+	 * Returns the path without \\?\.
+	 */
+	static inline CString MakeSimplePath(const CString& strPath)
+	{
+		if (strPath.Left(8) == _T("\\\\?\\UNC\\"))
+			return '\\' + strPath.Mid(8);
+		else if (strPath.Left(4) == _T("\\\\?\\"))
+			return strPath.Mid(4);
+		else
+			return strPath;
 	}
 
 	// Compare two files names using the file system comparaison.
@@ -198,6 +195,10 @@ protected:
 		int nPos;
 		while ((nPos = m_strPath.Find('/')) != -1)
 			m_strPath.SetAt(nPos, '\\');
+
+		// Never keep an ending '\'.
+		if (!m_strPath.IsEmpty() && m_strPath[m_strPath.GetLength() - 1] == '\\')
+			m_strPath = m_strPath.Left(m_strPath.GetLength() - 1);
 
 		// Find the root.
 		const int DRIVE_ROOT_LENGTH = 3; // = strlen("C:\\")

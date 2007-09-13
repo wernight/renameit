@@ -67,53 +67,33 @@ private:
 	{
 		BOOST_STATIC_ASSERT(renameVersion == 100);
 
-		if (m_nRenamePart & renameLastFolder)
-		{
-			// Initialize to avoid problems with empty paths.
-			m_nEnd = m_nFirst = m_nPathRootLength;
+		// Note: It may be awkward to select the file name when renaming the folders,
+		//       but that's because when renaming folders, the file name IS the last
+		//       folder's name.
 
-			// Find the last directory.
-			int nStart = m_nFirst;
-			while (true)
-			{
-				int nPos = m_strPath.Find('\\', nStart);
-				if (nPos == -1)
-					break;
-
-				m_nFirst = nStart;
-				m_nEnd = nPos;
-
-				nStart = nPos + 1;
-			}
-		}
+		// Find the first character of the filtered substring.
+		if (m_nRenamePart & renameRoot)
+			m_nFirst = 0;
+		else if (m_nRenamePart & renameFoldersPath)
+			m_nFirst = m_nPathRootLength;
+		else if (m_nRenamePart & (renameLastFolder | renameFilename))
+			m_nFirst = m_nFileNameFirst;
 		else
 		{
-			// Find the first character of the filtered substring.
-			if (m_nRenamePart & renameRoot)
-				m_nFirst = 0;
-			else if (m_nRenamePart & renameFoldersPath)
-				m_nFirst = m_nPathRootLength;
-			else if (m_nRenamePart & renameFilename)
-				m_nFirst = m_nFileNameFirst;
-			else
-			{
-				// Only the extension is being renamed.
-				ASSERT(m_nRenamePart == renameExtension);
-				m_nFirst = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
-			}
+			// Only the extension is being renamed.
+			ASSERT(m_nRenamePart == renameExtension);
+			m_nFirst = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
+		}
 
-			// Find the last character of the filtered substring.
-			if (m_nRenamePart & renameExtension)
-				m_nEnd = m_strPath.GetLength();
-			else if (m_nRenamePart & renameFilename)
-				m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
-			else if (m_nRenamePart & renameFoldersPath)
-				m_nEnd = m_nFileNameFirst;
-			else
-			{
-				ASSERT(m_nRenamePart == renameRoot);
-				m_nEnd = m_nPathRootLength;
-			}
+		// Find the last character of the filtered substring.
+		if (m_nRenamePart & renameExtension)
+			m_nEnd = m_strPath.GetLength();
+		else if (m_nRenamePart & (renameFoldersPath | renameLastFolder | renameFilename))
+			m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
+		else
+		{
+			ASSERT(m_nRenamePart == renameRoot);
+			m_nEnd = m_nPathRootLength;
 		}
 
 		ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());

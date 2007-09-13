@@ -61,16 +61,35 @@ public:
 
 	struct CRenamingOperation
 	{
+		friend CRenamingList;
+
 		CRenamingOperation()
 		{
 		}
 
 		CRenamingOperation(const CPath& before, const CPath& after) :
-			pathBefore(before),
-			pathAfter(after)
+			pathBefore(CPath::MakeUnicodePath(before.GetPath())),
+			pathAfter(CPath::MakeUnicodePath(after.GetPath()))
 		{
 		}
-			
+
+		const CPath& GetPathBefore() const {
+			return pathBefore;
+		}
+
+		const CPath& GetPathAfter() const {
+			return pathAfter;
+		}
+
+		void SetPathBefore(const CPath& path) {
+			pathBefore = CPath::MakeUnicodePath(path.GetPath());
+		}
+
+		void SetPathAfter(const CPath& path) {
+			pathAfter = CPath::MakeUnicodePath(path.GetPath());
+		}
+
+	protected:
 		CPath	pathBefore;
 		CPath	pathAfter;
 	};
@@ -273,9 +292,9 @@ private:
 	}
 
 	/**
-	 * Find the shortest and the index of the longest pathAfter in all the m_vRenamingOperations.
+	 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
 	 */
-	void FindMinMaxDirectoryPath(int* pnMinIndex, int* pnMaxIndex) const;
+	int FindShortestDirectoryPathAfter() const;
 
 	/**
 	 * Detects if an existing directory contains some elements or if it's empty.

@@ -59,12 +59,12 @@ void CRenamePartSelectionCtrl::PreSubclassWindow()
 			nPosRootEnd = strCaption.Find('\\') + 1,
 
 			nPosDirPathStart = nPosRootEnd,
-			nPosDirPathEnd = strCaption.ReverseFind('\\') + 1,
+			nPosDirPathEnd = strCaption.ReverseFind('\\'),
 
-			nPosLastDirStart = strCaption.Left(nPosDirPathEnd - 1).ReverseFind('\\') + 1,
-			nPosLastDirEnd = nPosDirPathEnd - 1,
+			nPosLastDirStart = strCaption.Left(nPosDirPathEnd).ReverseFind('\\') + 1,
+			nPosLastDirEnd = nPosDirPathEnd,
 
-			nPosFilenameStart = nPosDirPathEnd,
+			nPosFilenameStart = nPosDirPathEnd + 1,
 			nPosFilenameEnd = strCaption.ReverseFind('.'),
 
 			nPosExtStart = nPosFilenameEnd + 1,
@@ -73,7 +73,6 @@ void CRenamePartSelectionCtrl::PreSubclassWindow()
 	// Order selections so that the smallest selection area are used first.
 	BOOST_STATIC_ASSERT(CFilteredPath::renameVersion == 100);
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosLastDirStart, nPosLastDirEnd, CFilteredPath::renameLastFolder) );
-	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosDirPathStart, nPosDirPathEnd, CFilteredPath::renameFoldersPath) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosFilenameStart, nPosFilenameEnd, CFilteredPath::renameFilename) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosExtStart, nPosExtEnd, CFilteredPath::renameExtension) );
 	m_vPossibleSelections.push_back( POSSIBLE_SELECTION(nPosDirPathStart, nPosFilenameEnd, CFilteredPath::renameFoldersPath | CFilteredPath::renameFilename) );

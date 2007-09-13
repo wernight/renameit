@@ -161,11 +161,11 @@ bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStr
 #if (defined _UNICODE || defined UNICODE)
 	// A workaround in VC7
 	FILE* f = NULL;
-	if (_wfopen_s(&f, fnOriginalFilename.GetFullPath(), _T("rb")) != 0)
+	if (_wfopen_s(&f, CPath::MakeUnicodePath(fnOriginalFilename.GetPath()), _T("rb")) != 0)
 		return false;	// File not found.
 	ifstream stm(f);
 #else
-	ifstream stm(fnOriginalFilename.GetFullPath(), ios_base::in | ios_base::binary);
+	ifstream stm(CPath::MakeUnicodePath(fnOriginalFilename.GetPath()), ios_base::in | ios_base::binary);
 #endif
 	ID3_IFStreamReader id3Reader(stm);
 

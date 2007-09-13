@@ -93,10 +93,10 @@ bool CReportDlg::RenameItem(int nItem)
 	// Show renaming dialog
 	CRenameDlg	ren;
 
-	CPath fnOriginalFileName = m_renamingList[nOperationIndex].pathBefore;
+	CPath fnOriginalFileName = m_renamingList[nOperationIndex].GetPathBefore();
 	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() );
 
-	CPath fnNewFileName = m_renamingList[nOperationIndex].pathAfter;
+	CPath fnNewFileName = m_renamingList[nOperationIndex].GetPathAfter();
 	ren.SetNewFileName( fnNewFileName.GetFileName() );
 
 	ASSERT(fnOriginalFileName.GetDirectoryName() == fnNewFileName.GetDirectoryName());
@@ -106,7 +106,7 @@ bool CReportDlg::RenameItem(int nItem)
 	{
 		// Change file name.
 		CRenamingList::CRenamingOperation roRenamingOperation = m_renamingList[nOperationIndex];
-		roRenamingOperation.pathAfter = strBaseFolder + ren.GetNewFileName();
+		roRenamingOperation.SetPathAfter(strBaseFolder + ren.GetNewFileName());
 		m_renamingList.SetRenamingOperation(nOperationIndex, roRenamingOperation);
 		m_ctlReportList.SetItemText(nItem, 1, ren.GetNewFileName());
 
@@ -167,11 +167,11 @@ void CReportDlg::ShowErrors()
 void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 {
 	// Get the file name before and after to display.
-	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].pathBefore;
+	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].GetPathBefore();
 	CString strOriFileName = fnOriginalFileName.GetFileName();
 	CString strPath = fnOriginalFileName.GetDirectoryName();
 
-	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].pathAfter;
+	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].GetPathAfter();
 	CString strNewFileName = fnNewFileName.GetFileName();
 
 	ASSERT(	CPath(fnOriginalFileName.GetDirectoryName()).FSCompare(
@@ -439,8 +439,8 @@ void CReportDlg::OnOK()
 	for (int i=0; i<m_renamingList.GetCount(); ++i)
 	{
 		// Is the extension going to change?
-		if (CPath::FSCompare(m_renamingList[i].pathBefore.GetExtension(), m_renamingList[i].pathAfter.GetExtension()) != 0
-			&& m_renamingList[i].pathBefore.GetExtension().GetLength() < 5)	// Very long extensions are probably not system extensions
+		if (CPath::FSCompare(m_renamingList[i].GetPathBefore().GetExtension(), m_renamingList[i].GetPathAfter().GetExtension()) != 0
+			&& m_renamingList[i].GetPathBefore().GetExtension().GetLength() < 5)	// Very long extensions are probably not system extensions
 		{
 			if (AfxMessageBox(IDS_MODIFY_EXTENSION_WARNING, MB_ICONWARNING | MB_YESNO) == IDNO)
 				return;

@@ -924,7 +924,7 @@ bool CRenameItDlg::AddFile(const CString &strFileName)
 	}
 
 	// Check file's attributes
-	DWORD dwAttr = GetFileAttributes(fnFileName.GetFullPath());
+	DWORD dwAttr = GetFileAttributes(fnFileName.GetPath());
 	if (dwAttr & FILE_ATTRIBUTE_SYSTEM)
 	{
 		CString	strErrorMessage;
@@ -982,7 +982,6 @@ bool CRenameItDlg::AddFolder(const CString& strPath)
 
 		path = strFullPath;
 	}
-	ASSERT(path.IsDirectory());
 
 	// Check if already in the list
 	if (m_flDirectories.FindFile(path) != m_flDirectories.GetTail())
@@ -992,7 +991,7 @@ bool CRenameItDlg::AddFolder(const CString& strPath)
 	}
 
 	// Check directory's attributes
-	DWORD dwAttr = GetFileAttributes(path.GetFullPath());
+	DWORD dwAttr = GetFileAttributes(path.GetPath());
 	if (dwAttr & FILE_ATTRIBUTE_SYSTEM)
 	{
 		m_dlgNotAddedFiles.AddFile(path.GetPath(), IDS_RENAME_SYSTEM_FILE);
@@ -1853,7 +1852,10 @@ void CRenameItDlg::OnLvnEndlabeleditFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 		fnNewBefore.SetFilteredSubstring(pDispInfo->item.pszText);
 		
 		// Rename file.
-		if (MoveFile(fnBefore.GetFullPath(), fnNewBefore.GetFullPath()))
+		if (MoveFile(
+				CPath::MakeUnicodePath(fnBefore.GetPath()),
+				CPath::MakeUnicodePath(fnNewBefore.GetPath())
+			))
 		{
 			// Freeze the updates.
 			PushUpdatesFreeze();
