@@ -63,7 +63,7 @@ int CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bR
 
 		if (_tcscmp(fd1.cFileName, fd2.cFileName) != 0)
 		{
-			cout << "\"" << WstringToString(strFolder1) << "\" and \"" << WstringToString(strFolder2) << "\" folders' name differ." << endl;
+			cout << "\"" << WstringToString(strFolder1) << "\" folders' case differ: \"" << WstringToString(fd1.cFileName) << "\", \"" << WstringToString(fd2.cFileName) << "\"" << endl;
 			++nMismatch;
 		}
 
