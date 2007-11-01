@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="CompFold"
-	ProjectGUID="{11A541D1-914B-42B6-81AB-AD79325ECCF2}"
-	RootNamespace="CompFold"
+	Name="Rename-It! Unit Tests"
+	ProjectGUID="{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}"
+	RootNamespace="RenameItUnitTests"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -19,10 +19,13 @@
 			Name="Debug|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
+			UseOfMFC="2"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Generate CxxTest Globals"
+				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -39,10 +42,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="lib/cxxtest"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -61,6 +66,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -85,17 +91,22 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Run the Unit Tests"
+				CommandLine="&quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
+			UseOfMFC="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Generate CxxTest Globals"
+				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -111,8 +122,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="lib/cxxtest"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -133,6 +146,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -157,6 +171,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Run the Unit Tests"
+				CommandLine="&quot;$(OutDir)\$(ProjectName).exe&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -169,22 +185,42 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="src\CompFold.cpp"
+				RelativePath=".\src\Path.cpp"
 				>
 			</File>
 			<File
-				RelativePath="src\stdafx.cpp"
+				RelativePath=".\src\Runner.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						WarningLevel="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						WarningLevel="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\SimpleTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\StdAfx.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -199,7 +235,55 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="src\stdafx.h"
+				RelativePath=".\src\Path.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Execute cxxtestgen for $(InputFileName)"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Outputs="src\$(InputName).cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Execute cxxtestgen for $(InputFileName)"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\$(InputName).cpp --part ----include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Outputs="src\$(InputName).cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\SimpleTest.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Execute cxxtestgen for $(InputFileName)"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Outputs="src\$(InputName).cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Execute cxxtestgen for $(InputFileName)"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\$(InputName).cpp --part ----include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						Outputs="src\$(InputName).cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\StdAfx.h"
 				>
 			</File>
 		</Filter>
@@ -209,10 +293,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath="ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

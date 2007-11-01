@@ -6,6 +6,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleExt", "SimpleExt\Simp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompFold", "CompFold\CompFold.vcproj", "{11A541D1-914B-42B6-81AB-AD79325ECCF2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rename-It! Unit Tests", "Rename-It! Unit Tests\Rename-It! Unit Tests.vcproj", "{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -54,6 +56,22 @@ Global
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Release|Win32.ActiveCfg = Release|Win32
 		{11A541D1-914B-42B6-81AB-AD79325ECCF2}.Unicode Release|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Debug|Win32.Build.0 = Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Release|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Release|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Release MinDependency|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Release MinSize|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Release MinSize|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinDependency|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinSize|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
