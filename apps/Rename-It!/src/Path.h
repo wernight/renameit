@@ -125,7 +125,7 @@ public:
 			else if (strPath[1] == ':' && isalpha(strPath[0]))
 				return _T("\\\\?\\") + strPath;
 			else
-				return _T("\\\\?\\UNC\\") + strPath;
+				return _T("\\\\?\\UNC\\") + strPath.Mid(2);
 		}
 		else
 			return strPath;
@@ -137,20 +137,20 @@ public:
 	static inline CString MakeSimplePath(const CString& strPath)
 	{
 		if (strPath.Left(8) == _T("\\\\?\\UNC\\"))
-			return '\\' + strPath.Mid(8);
+			return '\\' + strPath.Mid(7);
 		else if (strPath.Left(4) == _T("\\\\?\\"))
 			return strPath.Mid(4);
 		else
 			return strPath;
 	}
 
-	// Compare two files names using the file system comparaison.
+	// Compare two files names using the file system comparison.
 	static inline int FSCompare(const CString& a, const CString& b) {
 		static const _locale_t m_liFileSystemLocale = _create_locale(LC_CTYPE, "");
 		return _tcsicmp_l(a, b, m_liFileSystemLocale);
 	}
 
-	// Compare two files names using the file system comparaison.
+	// Compare two files names using the file system comparison.
 	inline int FSCompare(const CPath& other) const {
 		static const _locale_t m_liFileSystemLocale = _create_locale(LC_CTYPE, "");
 		return _tcsicmp_l(m_strPath, other.m_strPath, m_liFileSystemLocale);
@@ -208,7 +208,7 @@ protected:
 		{
 			if (m_strPath.GetLength() >= UNICODE_ROOT_UNC_LENGTH && m_strPath.Left(UNICODE_ROOT_UNC_LENGTH) == _T("\\\\?\\UNC\\"))
 			{
-				int nPos = m_strPath.Find('\\', UNICODE_ROOT_LENGTH);
+				int nPos = m_strPath.Find('\\', UNICODE_ROOT_UNC_LENGTH);
 				if (nPos != -1)
 					m_nPathRootLength = nPos + 1;					// `\\?\UNC\network\`
 				else

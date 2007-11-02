@@ -92,7 +92,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Run the Unit Tests"
-				CommandLine="&quot;$(OutDir)\$(ProjectName).exe&quot;"
+				CommandLine="&quot;$(TargetPath)&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -172,7 +172,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Run the Unit Tests"
-				CommandLine="&quot;$(OutDir)\$(ProjectName).exe&quot;"
+				CommandLine="&quot;$(TargetPath)&quot;"
 			/>
 		</Configuration>
 	</Configurations>
