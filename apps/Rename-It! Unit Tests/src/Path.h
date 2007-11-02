@@ -33,6 +33,16 @@ public:
 	{
 	}
 
+	void testCopyConstructor()
+	{
+		CPath copy(m_pathNetworkUnc);
+		TS_ASSERT( copy == m_pathNetworkUnc );
+		TS_ASSERT( copy.GetPath() == m_pathNetworkUnc.GetPath() );
+		TS_ASSERT( copy.GetPathRoot() == m_pathNetworkUnc.GetPathRoot() );
+		TS_ASSERT( copy.GetDirectoryName() == m_pathNetworkUnc.GetDirectoryName() );
+		TS_ASSERT( copy.GetFileNameWithoutExtension() == m_pathNetworkUnc.GetFileNameWithoutExtension() );
+	}
+
 	void testGetPath()
 	{
 		TS_ASSERT( m_pathEmpty.GetPath().IsEmpty() );
