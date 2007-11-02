@@ -1,5 +1,5 @@
 #include <cxxtest/TestSuite.h>
-#include "../../Rename-It!/src/Path.h"
+#include "../src/Path.h"
 
 class PathTestSuite : public CxxTest::TestSuite 
 {

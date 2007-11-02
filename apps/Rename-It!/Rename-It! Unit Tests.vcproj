@@ -25,7 +25,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate CxxTest Gobal Runner"
-				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate CxxTest Gobal Runner"
-				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -185,11 +185,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\Generated\Path.cpp"
+				RelativePath=".\test\Generated\Path.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\Generated\Runner.cpp"
+				RelativePath=".\test\Generated\Runner.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -213,7 +213,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\StdAfx.cpp"
+				RelativePath=".\test\StdAfx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -239,7 +239,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src\Path.h"
+				RelativePath=".\test\Path.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -247,8 +247,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
-						Outputs="src\Generated\$(InputName).cpp"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
+						Outputs="test\Generated\$(InputName).cpp"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -257,13 +257,13 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o src\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
-						Outputs="src\Generated\$(InputName).cpp"
+						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
+						Outputs="test\Generated\$(InputName).cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\StdAfx.h"
+				RelativePath=".\test\StdAfx.h"
 				>
 			</File>
 		</Filter>
