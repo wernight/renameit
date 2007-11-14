@@ -83,6 +83,7 @@ public:
 	static bool PathFileExists(const CString& strPath)
 	{
 		ASSERT(strPath.Right(1) != '.');	// No file or folder should end by a dot (.).
+		ASSERT((::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
 
 		if (strPath.IsEmpty())
 			return false;
