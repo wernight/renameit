@@ -7,6 +7,9 @@
 
 extern CRenameItApp	theApp;
 
+namespace Beroux{ namespace IO{ namespace Renaming
+{
+
 // CRenameErrorDlg dialog
 
 IMPLEMENT_DYNAMIC(CRenameErrorDlg, CDialog)
@@ -96,3 +99,5 @@ void CRenameErrorDlg::OnOK()
 		m_nAction = uaReverseToPreviousState;
 	CDialog::OnOK();
 }
+
+}}}

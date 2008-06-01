@@ -57,6 +57,9 @@ static char THIS_FILE[] = __FILE__;
 
 static const int SCROLL_TIMER_ID		= 1;
 
+namespace Gui{ namespace Control
+{
+
 /////////////////////////////////////////////////////////////////////////////
 // CExplorerListCtrl
 
@@ -604,3 +607,5 @@ BOOL CExplorerListCtrl::OnEraseBkgnd(CDC* pDC)
 	return FALSE;
 //	return CListCtrl::OnEraseBkgnd(pDC);
 }
+
+}}

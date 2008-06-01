@@ -1,6 +1,8 @@
 #include <cxxtest/TestSuite.h>
 #include "../src/Path.h"
 
+using namespace Beroux::IO::Renaming;
+
 class PathTestSuite : public CxxTest::TestSuite 
 {
 public:

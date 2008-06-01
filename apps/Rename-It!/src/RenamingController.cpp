@@ -3,6 +3,9 @@
 #include "RenamingList.h"
 #include "Report.h"
 
+namespace Beroux{ namespace IO{ namespace Renaming
+{
+
 CRenamingController::CRenamingController(void) :
 	m_nErrorLevel(elALL)
 {
@@ -251,3 +254,5 @@ void CRenamingController::DisplayError(const CString& strErrorMsg, EErrorLevel n
 		}
 	}
 }
+
+}}}

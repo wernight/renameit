@@ -2,7 +2,7 @@
 #include "../resource.h"
 #include "EnumWizard.h"
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	// CEnumWizard dialog
 
@@ -38,4 +38,4 @@ namespace Wizard
 
 
 	// CEnumWizard message handlers
-}
+}}}}}

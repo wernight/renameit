@@ -5,6 +5,8 @@
 #include "InviteEdit.h"
 #include ".\inviteedit.h"
 
+namespace Gui{ namespace Control
+{
 
 // CInviteEdit
 
@@ -106,3 +108,5 @@ void CInviteEdit::OnPaint()
 	dc.SelectObject( pfontBackup );
 	// Don't call CEdit::OnPaint() to display messages
 }
+
+}}

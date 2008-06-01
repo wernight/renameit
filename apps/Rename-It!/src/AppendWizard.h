@@ -4,7 +4,7 @@
 
 // CAppendWizard dialog
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	class CAppendWizard : public CDialog, public CFilterWizard
 	{
@@ -25,4 +25,4 @@ namespace Wizard
 
 		DECLARE_MESSAGE_MAP()
 	};
-}
+}}}}}

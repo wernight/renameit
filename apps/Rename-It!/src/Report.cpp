@@ -2,6 +2,9 @@
 #include "Report.h"
 #include "ReportDlg.h"
 
+namespace Beroux{ namespace IO{ namespace Renaming
+{
+
 CReport::CReport(void)
 {
 }
@@ -12,6 +15,8 @@ CReport::~CReport(void)
 
 bool CReport::ShowReportFixErrors(CRenamingList& renamingList)
 {
-	CReportDlg dlgReport(renamingList);
+	Gui::CReportDlg dlgReport(renamingList);
 	return dlgReport.DoModal() == IDOK;
 }
+
+}}}

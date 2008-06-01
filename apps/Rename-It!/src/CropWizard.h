@@ -4,7 +4,7 @@
 
 // CCropWizard dialog
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	class CCropWizard : public CDialog, public CFilterWizard
 	{
@@ -25,4 +25,4 @@ namespace Wizard
 
 		DECLARE_MESSAGE_MAP()
 	};
-}
+}}}}}

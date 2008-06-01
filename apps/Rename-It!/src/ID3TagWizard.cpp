@@ -2,7 +2,7 @@
 #include "../resource.h"
 #include "ID3TagWizard.h"
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	// CID3TagWizard dialog
 
@@ -38,4 +38,4 @@ namespace Wizard
 
 
 	// CID3TagWizard message handlers
-}
+}}}}}

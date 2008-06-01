@@ -2,10 +2,9 @@
 
 #include "FilterWizard.h"
 
-// CEnumWizard dialog
-
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
+	// CEnumWizard dialog
 	class CEnumWizard : public CDialog, public CFilterWizard
 	{
 		DECLARE_DYNAMIC(CEnumWizard)
@@ -25,4 +24,4 @@ namespace Wizard
 
 		DECLARE_MESSAGE_MAP()
 	};
-}
+}}}}}

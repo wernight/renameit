@@ -6,6 +6,9 @@
 // ID3Lib fix: END_OF_READER unreferenced
 const ID3_Reader::int_type ID3_Reader::END_OF_READER = std::char_traits<ID3_Reader::int_type>::eof();
 
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
+{
+
 const LPCTSTR CSearchReplaceFilter::CASE_MARKER = _T("\x06\x03\x05");
 const int CSearchReplaceFilter::CASE_MARKER_LENGTH = (int) _tcslen(CASE_MARKER);
 
@@ -867,25 +870,25 @@ bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChan
 
 	// Change the case between the markers.
 	CString strChangeCaseIn = strSubject.Mid(nStartMarker+CASE_MARKER_LENGTH, nEndMarker-nStartMarker-CASE_MARKER_LENGTH);
-	LPTSTR szString = strChangeCaseIn.GetBuffer();
 	switch (nCaseChangeOption)
 	{
 	case caseLower: // LOWER
-		_tcslwr(szString);
+		strChangeCaseIn = strChangeCaseIn.MakeLower();
 		break;
 
 	case caseUpper: // UPPER
-		_tcsupr(szString);
+		strChangeCaseIn = strChangeCaseIn.MakeUpper();
 		break;
 
 	case caseSentense: // SENTENSE
-		_tcslwr(szString);
-		szString[0] = _totupper(szString[0]);
+		strChangeCaseIn = strChangeCaseIn.MakeLower();
+		strChangeCaseIn.SetAt(0, _totupper(strChangeCaseIn.GetAt(0)));
 		break;
 
 	case caseWord: // WORD
 		{
-			_tcslwr(szString);
+			strChangeCaseIn = strChangeCaseIn.MakeLower();
+			LPTSTR szString = strChangeCaseIn.GetBuffer();
 			bool inWord = false;
 
 			for (int i=0; i<(int)_tcsclen(szString); i++)
@@ -907,18 +910,24 @@ bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChan
 					}
 				}
 			}
+
+			strChangeCaseIn.ReleaseBuffer();
 		}
 		break;
 
 	case caseInvert:	// INVERT
-		for (int i=0; i<(int)_tcsclen(szString); i++)
 		{
-			// If it's not an ASCII
-//			if (_istascii(szString[i]))	// tolower/upper won't return right value for non-ascii
+			LPTSTR szString = strChangeCaseIn.GetBuffer();
+			for (int i=0; i<(int)_tcsclen(szString); i++)
+			{
+				// If it's not an ASCII
+//				if (_istascii(szString[i]))	// tolower/upper won't return right value for non-ascii
 				if (_istupper(szString[i]))
 					szString[i] = _totlower(szString[i]);
 				else
 					szString[i] = _totupper(szString[i]);
+			}
+			strChangeCaseIn.ReleaseBuffer();
 		}
 		break;
 
@@ -926,9 +935,9 @@ bool CSearchReplaceFilter::ChangeCase(CString& strSubject, EChangeCase nCaseChan
 		ASSERT(false);
 	}
 
-	strChangeCaseIn.ReleaseBuffer();
-
 	// Remove the markers and replace them by the new string.
 	strSubject = strSubject.Left(nStartMarker) + strChangeCaseIn + strSubject.Mid(nEndMarker+CASE_MARKER_LENGTH);
 	return true;
 }
+
+}}}}

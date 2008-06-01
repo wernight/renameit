@@ -2,6 +2,9 @@
 #include "CommandLineAnalyser.h"
 #include "../resource.h"
 
+namespace Beroux{ namespace Util
+{
+
 CCommandLineAnalyser::CCommandLineAnalyser(void) :
 	m_pos(NULL)
 {
@@ -119,3 +122,5 @@ bool CCommandLineAnalyser::AnalyseCommandLine(void)
 	Reset();	// Clean memory
 	return false;
 }
+
+}}

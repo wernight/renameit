@@ -2,7 +2,7 @@
 #include "../resource.h"
 #include "CaseWizard.h"
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	// CCaseWizard dialog
 
@@ -106,4 +106,4 @@ namespace Wizard
 		filter->SetChangeCase(nChangeCase);
 		return filter;
 	}
-}
+}}}}}

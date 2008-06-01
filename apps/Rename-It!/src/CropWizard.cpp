@@ -2,7 +2,7 @@
 #include "../resource.h"
 #include "CropWizard.h"
 
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
 	// CCropWizard dialog
 
@@ -38,4 +38,4 @@ namespace Wizard
 
 
 	// CCropWizard message handlers
-}
+}}}}}

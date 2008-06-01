@@ -4,6 +4,10 @@
 #include "stdafx.h"
 #include "RenamingProgressDlg.h"
 
+using namespace Beroux::IO::Renaming;
+
+namespace Gui
+{
 
 // CProgressDlg dialog
 
@@ -149,4 +153,6 @@ INT_PTR CProgressDlg::DoModal()
 		return IDOK;
 	else
 		return CDialog::DoModal();
+}
+
 }

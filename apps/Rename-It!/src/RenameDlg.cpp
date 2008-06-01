@@ -6,6 +6,9 @@
 #include "RenameDlg.h"
 
 
+namespace Gui
+{
+
 // CRenameDlg dialog
 
 IMPLEMENT_DYNAMIC(CRenameDlg, CDialog)
@@ -41,4 +44,6 @@ void CRenameDlg::OnOK()
 	m_strNewFileName.TrimLeft();
 	UpdateData(FALSE);
 	CDialog::OnOK();
+}
+
 }

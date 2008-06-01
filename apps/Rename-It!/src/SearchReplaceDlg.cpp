@@ -30,10 +30,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
+{
+
 /////////////////////////////////////////////////////////////////////////////
 // CSearchReplaceDlg dialog
-
-
 CSearchReplaceDlg::CSearchReplaceDlg(CSearchReplaceFilter& filter, IPreviewFileList& previewSamples, CWnd* pParent /*=NULL*/)
 	: CDialog(CSearchReplaceDlg::IDD, pParent)
 	, m_bInitialized(false)
@@ -688,3 +689,5 @@ void CSearchReplaceDlg::OnDestroy()
 	m_bInitialized = false;
 	CDialog::OnDestroy();
 }
+
+}}}}

@@ -367,6 +367,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\AboutDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\AppendWizard.cpp"
 				>
 			</File>
@@ -376,10 +380,6 @@
 			</File>
 			<File
 				RelativePath=".\src\CommandLineAnalyser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Configure.cpp"
 				>
 			</File>
 			<File
@@ -483,6 +483,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\SettingsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath="StdAfx.cpp"
 				>
 				<FileConfiguration
@@ -557,6 +561,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\src\AboutDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\AppendWizard.h"
 				>
 			</File>
@@ -566,10 +574,6 @@
 			</File>
 			<File
 				RelativePath=".\src\CommandLineAnalyser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Configure.h"
 				>
 			</File>
 			<File
@@ -750,6 +754,10 @@
 			</File>
 			<File
 				RelativePath=".\src\SearchReplaceFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SettingsDlg.h"
 				>
 			</File>
 			<File

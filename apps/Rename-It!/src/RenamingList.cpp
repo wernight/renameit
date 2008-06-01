@@ -4,6 +4,9 @@
 #include <math.h>
 #include "../resource.h"
 
+namespace Beroux{ namespace IO{ namespace Renaming
+{
+
 CRenamingList::CRenamingList(void)
 	: m_nWarnings(0)
 	, m_nErrors(0)
@@ -865,3 +868,5 @@ bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransac
 		return true;
 	}
 }
+
+}}}

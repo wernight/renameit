@@ -19,8 +19,18 @@
 //
 
 #include "StdAfx.h"
-#include "RenameIt.h"
 #include "RenameItDlg.h"
+#include "RenameIt.h"
+
+#include "AboutDlg.h"
+#include "ResizingDialog.h"
+#include "SettingsDlg.h"
+#include "FileList.h"
+#include "RenamingController.h"
+#include "NewMenu.h"
+
+#include "SearchReplaceFilter.h"
+#include "CommandLineAnalyser.h"
 
 #include <iostream>
 #include <fstream>
@@ -30,15 +40,6 @@
 #include <io.h>
 #include <Shlobj.h>
 #include <Shlwapi.h>	// Used for PathGetArgs() and PathIsDirectory()
-
-#include "ResizingDialog.h"
-#include "Configure.h"
-#include "FileList.h"
-#include "RenamingController.h"
-#include "NewMenu.h"
-
-#include "SearchReplaceFilter.h"
-#include "CommandLineAnalyser.h"
 
 // Wizards
 #include "CaseWizard.h"
@@ -53,58 +54,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CAboutDlg dialog used for App About
-
-class CAboutDlg : public CDialog
-{
-public:
-	CAboutDlg();
-
-	// Dialog Data
-	//{{AFX_DATA(CAboutDlg)
-	enum { IDD = IDD_ABOUTBOX };
-	//}}AFX_DATA
-
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CAboutDlg)
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL OnInitDialog();
-	//}}AFX_VIRTUAL
-
-	// Implementation
-protected:
-	//{{AFX_MSG(CAboutDlg)
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
-{
-	//{{AFX_DATA_INIT(CAboutDlg)
-	//}}AFX_DATA_INIT
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CAboutDlg)
-	//}}AFX_DATA_MAP
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	//{{AFX_MSG_MAP(CAboutDlg)
-	ON_WM_CTLCOLOR()
-	ON_WM_SETCURSOR()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+using namespace Beroux::IO::Renaming;
+using namespace Beroux::IO::Renaming::Filter;
+using namespace Beroux::IO::Renaming::Filter::Wizard;
 
 /////////////////////////////////////////////////////////////////////////////
 // CRenameItDlg dialog
+
+namespace Gui
+{
 
 CRenameItDlg::CRenameItDlg(CWnd* pParent /*=NULL*/)
 	: CResizingDialog(CRenameItDlg::IDD, pParent)
@@ -245,7 +203,7 @@ BOOL CRenameItDlg::OnInitDialog()
 	}
 
 	// Set what part of the path to rename
-	CConfigure	config;
+	CSettingsDlg	config;
 	m_ctrlRenamePart.SetRenameParts( config.GetType() );
 	m_fcFilters.SetPathRenamePart( config.GetType() );
 
@@ -262,7 +220,7 @@ BOOL CRenameItDlg::OnInitDialog()
 	// If there are files to rename.
 	if (GetDisplayedList()->IsEmpty())
 	{
-		CConfigure		config;
+		CSettingsDlg		config;
 		if (m_fcFilters.GetFilterCount() == 0 && config.AutoAddRenamer())
 			// Find the default filter in the filters' list.
 			OnButtonAddRenamer();
@@ -315,7 +273,7 @@ void CRenameItDlg::OnHelpAbout()
 
 void CRenameItDlg::OnFileOpen()
 {
-	CConfigure	config;
+	CSettingsDlg	config;
 
 	CString rFilter;
 	rFilter.LoadString(IDS_RIT_OFN_FILTER);
@@ -426,7 +384,7 @@ void CRenameItDlg::OnButtonFilterlist()
 				menuRecents;
 	CBitmap		bmpSave,
 				bmpOpen;
-	CConfigure	config;
+	CSettingsDlg	config;
 	DWORD		dwSelectionMade;
 	CString		strBuffer,
 				strPath;
@@ -516,7 +474,7 @@ void CRenameItDlg::OnButtonFilterlist()
  */
 bool CRenameItDlg::LoadFilterList(LPCTSTR szFileName)
 {
-	CConfigure config;
+	CSettingsDlg config;
 
 	// Is current filter list is not empty?
 	if (m_ctlListFilters.GetItemCount())
@@ -557,7 +515,7 @@ bool CRenameItDlg::LoadFilterList(LPCTSTR szFileName)
  */
 bool CRenameItDlg::SaveFilterList()
 {
-	CConfigure config;
+	CSettingsDlg config;
 	CString rFilter;
 	rFilter.LoadString(IDS_RIT_OFN_FILTER);
 	CFileDialog dlgFile(
@@ -1070,71 +1028,11 @@ void CRenameItDlg::OnFileConfigure()
 	PushUpdatesFreeze();
 
 	// Show configuration dialog
-	CConfigure dlg;
+	CSettingsDlg dlg;
 	dlg.DoModal();
 
 	// Un-freeze the updates.
 	PopUpdatesFreeze();
-}
-
-HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	// Change the color
-	switch (pWnd->GetDlgCtrlID())
-	{
-	case IDC_WEB_EDIT:
-	case IDC_DEV_EDIT:
-		pDC->SetTextColor(RGB(0x00,0x00,0xFF));
-	}
-
-	return hbr;
-}
-
-BOOL CAboutDlg::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
-{
-	// Change the cursor
-	switch (pWnd->GetDlgCtrlID())
-	{
-	case IDC_WEB_EDIT:
-	case IDC_DEV_EDIT:
-		::SetCursor(AfxGetApp()->LoadCursor(IDC_LINK_CURSOR));
-		return TRUE;
-	}
-
-	return CDialog::OnSetCursor(pWnd, nHitTest, message);
-}
-
-BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
-{
-	// Site Web
-	if (pMsg->message == WM_LBUTTONDOWN)
-		switch (::GetDlgCtrlID(pMsg->hwnd))
-	{
-		case IDC_WEB_EDIT:
-			ShellExecute(GetSafeHwnd(), _T("open"), _T("http://www.beroux.com/?id=22"), NULL, NULL, SW_SHOWNORMAL);
-			return TRUE;
-		case IDC_DEV_EDIT:
-			ShellExecute(GetSafeHwnd(), _T("open"), _T("mailto:werner@beroux.com"), NULL, NULL, SW_SHOWNORMAL);
-			return TRUE;
-	}
-
-	return CDialog::PreTranslateMessage(pMsg);
-}
-
-BOOL CAboutDlg::OnInitDialog()
-{
-	CString	str;
-
-	CDialog::OnInitDialog();
-
-	str.LoadString(IDS_HOME_PAGE);
-	GetDlgItem(IDC_WEB_EDIT)->SetWindowText(str);
-	GetDlgItem(IDC_DEV_EDIT)->SetWindowText(_T("Werner BEROUX"));
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CRenameItDlg::OnButtonAddfolder()
@@ -1294,7 +1192,7 @@ void CRenameItDlg::ProcessUserCommandLine()
 {
 	// TODO: The LOG file is saved but never used in the software.
 
-	CCommandLineAnalyser cmdLine;
+	Beroux::Util::CCommandLineAnalyser cmdLine;
 	if (!cmdLine.AnalyseCommandLine())
 		return;
 
@@ -1302,7 +1200,7 @@ void CRenameItDlg::ProcessUserCommandLine()
 	PushUpdatesFreeze();
 
 	// Add each file
-	for (CCommandLineAnalyser::PathElement* pe = cmdLine.GetFirstPathElement(); pe!=NULL; pe = cmdLine.GetNextPathElement())
+	for (Beroux::Util::CCommandLineAnalyser::PathElement* pe = cmdLine.GetFirstPathElement(); pe!=NULL; pe = cmdLine.GetNextPathElement())
 	{
 		// Add to list
 		CFileFind ffFileFind;
@@ -2028,7 +1926,7 @@ void CRenameItDlg::OnRenamePartSelectionChange(NMHDR *pNMHDR, LRESULT *pResult)
 	m_fcFilters.SetPathRenamePart( m_ctrlRenamePart.GetRenameParts() );
 
 	// Save
-	CConfigure	config;
+	CSettingsDlg	config;
 	config.SetType( m_ctrlRenamePart.GetRenameParts() );
 	config.SaveConfig();
 
@@ -2391,4 +2289,6 @@ CMemoryFileList* CRenameItDlg::GetDisplayedList()
 		return &m_flFiles;
 	else
 		return &m_flDirectories;
+}
+
 }

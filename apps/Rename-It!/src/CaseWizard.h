@@ -4,10 +4,9 @@
 #include "SearchReplaceFilter.h"
 #include "Path.h"
 
-// CCaseWizard dialog
-
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
+	// CCaseWizard dialog
 	class CCaseWizard : public CDialog, public CFilterWizard
 	{
 		DECLARE_DYNAMIC(CCaseWizard)
@@ -40,8 +39,8 @@ namespace Wizard
 		 */
 		shared_ptr<IFilter> GenerateFilter();
 
-		const IPreviewFileList* m_pPreviewSamples;
+		const Beroux::IO::Renaming::Filter::IPreviewFileList* m_pPreviewSamples;
 		int m_nCaseType;
 		CString	m_strBefore;
 	};
-}
+}}}}}

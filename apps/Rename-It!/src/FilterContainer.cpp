@@ -10,6 +10,10 @@
 // Include the different types of filters
 #include "SearchReplaceFilter.h"
 
+
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
+{
+
 CFilterContainer::CFilterContainer(void)
 {
 }
@@ -285,3 +289,5 @@ IFilter* CFilterContainer::CloneFilter(const IFilter* filter)
 	}
 	return pClone;
 }
+
+}}}}

@@ -2,10 +2,9 @@
 
 #include "FilterWizard.h"
 
-// CID3TagWizard dialog
-
-namespace Wizard
+namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter{ namespace Wizard
 {
+	// CID3TagWizard dialog
 	class CID3TagWizard : public CDialog, public CFilterWizard
 	{
 		DECLARE_DYNAMIC(CID3TagWizard)
@@ -25,4 +24,4 @@ namespace Wizard
 
 		DECLARE_MESSAGE_MAP()
 	};
-}
+}}}}}

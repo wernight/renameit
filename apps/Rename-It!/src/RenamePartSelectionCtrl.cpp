@@ -7,6 +7,10 @@
 #include "winuser.h"
 #include "FilteredPath.h"
 
+using namespace Beroux::IO::Renaming::Filter;
+
+namespace Gui{ namespace Control
+{
 
 // CRenamePartSelectionCtrl
 
@@ -161,3 +165,4 @@ void CRenamePartSelectionCtrl::OnEnSelchange(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+}}

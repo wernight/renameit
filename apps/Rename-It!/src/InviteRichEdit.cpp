@@ -6,6 +6,9 @@
 #include ".\inviteedit.h"
 
 
+namespace Gui{ namespace Control
+{
+
 // CInviteRichEdit
 
 IMPLEMENT_DYNAMIC(CInviteRichEdit, CEdit)
@@ -106,3 +109,5 @@ void CInviteRichEdit::OnPaint()
 	dc.SelectObject( pfontBackup );
 	// Don't call CRichEditCtrl::OnPaint() to display messages
 }
+
+}}

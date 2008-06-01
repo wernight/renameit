@@ -19,11 +19,14 @@
 //
 
 #include "stdafx.h"
+#include "SettingsDlg.h"
 #include "RenameIt.h"
-#include "Configure.h"
 #include "FilteredPath.h"
 
 #include <shlobj.h>
+
+using namespace Beroux::IO::Renaming;
+using namespace Beroux::IO::Renaming::Filter;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,12 +34,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+namespace Gui
+{
+
 /////////////////////////////////////////////////////////////////////////////
 // CConfigure dialog
 
 
-CConfigure::CConfigure(CWnd* pParent /*=NULL*/)
-	: CDialog(CConfigure::IDD, pParent)
+CSettingsDlg::CSettingsDlg(CWnd* pParent /*=NULL*/)
+	: CDialog(CSettingsDlg::IDD, pParent)
     , m_type(0)
 	, m_strFiltersDirectory(_T(""))
 	, m_bAutoAddRenamer(FALSE)
@@ -78,14 +84,14 @@ CConfigure::CConfigure(CWnd* pParent /*=NULL*/)
 }
 
 
-void CConfigure::DoDataExchange(CDataExchange* pDX)
+void CSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIRECTORY, m_strFiltersDirectory);
 	DDX_Check(pDX, IDC_AUTO_ADD_RENAMER_CHECK, m_bAutoAddRenamer);
 }
 
-BEGIN_MESSAGE_MAP(CConfigure, CDialog)
+BEGIN_MESSAGE_MAP(CSettingsDlg, CDialog)
 	//{{AFX_MSG_MAP(CConfigure)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
 	//}}AFX_MSG_MAP
@@ -94,7 +100,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CConfigure message handlers
 
-void CConfigure::OnBrowse() 
+void CSettingsDlg::OnBrowse() 
 {
     TCHAR path[MAX_PATH];
     LPMALLOC pMalloc;    // Gets the Shell's default allocator
@@ -125,7 +131,7 @@ void CConfigure::OnBrowse()
     pMalloc->Release();
 }
 
-void CConfigure::OnOK()
+void CSettingsDlg::OnOK()
 {
 	if (!UpdateData(TRUE))
 		return;
@@ -138,7 +144,7 @@ void CConfigure::OnOK()
 }
 
 // Save configuration
-bool CConfigure::SaveConfig(void)
+bool CSettingsDlg::SaveConfig(void)
 {
 	HKEY	hKey;
 
@@ -163,7 +169,7 @@ bool CConfigure::SaveConfig(void)
 }
 
 // Return path to the nIndex's recent file opened.
-int CConfigure::GetRecentFilter(int nIndex, CString &strPath)
+int CSettingsDlg::GetRecentFilter(int nIndex, CString &strPath)
 {
 	CString	strKeyName;
 	DWORD	dwSize;
@@ -181,7 +187,7 @@ int CConfigure::GetRecentFilter(int nIndex, CString &strPath)
 }
 
 // Place the given path on top of the recent filter files
-bool CConfigure::AddRecentFilter(const CString& strPath)
+bool CSettingsDlg::AddRecentFilter(const CString& strPath)
 {
 	CString	strKeyName,
 			strRecentPath;
@@ -233,7 +239,7 @@ bool CConfigure::AddRecentFilter(const CString& strPath)
 }
 
 // Return number of recent filter you may get using GetRecentFilter(...)
-int CConfigure::GetRecentFilterCount(void)
+int CSettingsDlg::GetRecentFilterCount(void)
 {
 	CString	strKeyName;
 	DWORD	dwSize;
@@ -251,4 +257,6 @@ int CConfigure::GetRecentFilterCount(void)
 			|| dwSize < 1)
 			return i-1;
 	}
+}
+
 }
