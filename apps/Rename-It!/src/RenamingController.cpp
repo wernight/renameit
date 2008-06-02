@@ -32,7 +32,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 		}
 
 	// When there is no file to be renamed...
-	if (m_renamingList.GetCount() == 0)
+	if (m_renamingList.IsEmpty())
 	{
 		DisplayError(IDS_NO_FILENAME_CHANGES, elNotice);
 		return true; // No file to rename.
@@ -57,7 +57,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 			CWinThread thread(RenamingThread, this);
 			thread.m_bAutoDelete = FALSE;
 			thread.CreateThread();
-			/* FIXME: On cancelling the thread operation must be stopped.
+			/* FIXME: On canceling the thread operation must be stopped.
 			 * m_dlgProgress.EnableCancel(m_nCurrentStage != CRenamingList::stageRenaming);
 			 */
 			if (m_dlgProgress.DoModal() == IDCANCEL)

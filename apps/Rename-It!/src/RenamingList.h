@@ -2,6 +2,7 @@
 #include "Path.h"
 #include "FileList.h"
 #include "KTM.h"
+#include "OrientedGraph.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
@@ -117,6 +118,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		void Create(const CFileList& flBefore, const CFileList& flAfter);
 
 	// Attributes
+		bool IsEmpty() const { return m_vRenamingOperations.empty(); }
+
 		/**
 		 * @return Number of renaming operations to perform.
 		 */
@@ -214,7 +217,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 	// Implementation
 	private:
-		// A comparaison used to order such a set such as the longuest path come first.
+		// A comparison used to order such a set such as the longest path come first.
 		template <class _Tp>
 		struct path_compare : public binary_function<_Tp, _Tp, bool>
 		{
@@ -294,9 +297,17 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		}
 
 		/**
+		 * Prepare a PerformRenaming().
+		 * \note This method may add renaming operations to m_vRenamingOperations.
+		 * \param[out] graph	A direct acyclic graph of renaming operations within the new vRenamingOperations.
+		 * \param[out] setDeleteIfEmptyDirectories	An ordered set of folders that should be deleted once all renaming is complete.
+		 */
+		void PrepareRenaming(Beroux::Math::OrientedGraph& graph, set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories);
+
+		/**
 		 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
 		 */
-		int FindShortestDirectoryPathAfter() const;
+		static int FindShortestDirectoryPathAfter(vector<CRenamingOperation>& vRenamingOperations);
 
 		/**
 		 * Detects if an existing directory contains some elements or if it's empty.

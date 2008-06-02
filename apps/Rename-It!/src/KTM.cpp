@@ -4,6 +4,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+namespace Beroux{ namespace IO
+{
+
 KTMTransaction::KTMTransaction(
 	 LPSECURITY_ATTRIBUTES lpTransactionAttributes // = NULL
 	,DWORD CreateOptions                           // = 0
@@ -335,3 +338,5 @@ LONG KTMTransaction::RegOpenKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD ulOptions, 
 		return ::RegOpenKeyEx(hKey, lpSubKey, ulOptions, samDesired, phkResult);
 	}
 }
+
+}}

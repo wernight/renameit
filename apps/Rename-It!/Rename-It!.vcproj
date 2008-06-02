@@ -475,6 +475,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ScopedLocale.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\SearchReplaceDlg.cpp"
 				>
 			</File>
@@ -747,6 +751,10 @@
 						Outputs=".\hlp\HTMLDefines.h"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\ScopedLocale.h"
+				>
 			</File>
 			<File
 				RelativePath=".\src\SearchReplaceDlg.h"
