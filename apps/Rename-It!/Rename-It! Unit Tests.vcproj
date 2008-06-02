@@ -25,7 +25,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate CxxTest Gobal Runner"
-				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate CxxTest Gobal Runner"
-				CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -247,7 +247,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
+						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 						Outputs="test\Generated\$(InputName).cpp"
 					/>
 				</FileConfiguration>
@@ -257,7 +257,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="..\..\tools\python.exe lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;"
+						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 						Outputs="test\Generated\$(InputName).cpp"
 					/>
 				</FileConfiguration>

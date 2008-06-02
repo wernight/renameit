@@ -1,0 +1,8 @@
+Installing Python for unit testing:
+1. Download Python 2.5 (or later) Windows installer from
+   http://www.python.org/download/
+
+2. Install it; only "Register Extensions" is needed,
+   the other elements are not required by this project.
+
+3. Done.
