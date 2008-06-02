@@ -84,8 +84,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		// Determines whether a path to a file system object such as a file or directory is valid.
 		static bool PathFileExists(const CString& strPath)
 		{
-			ASSERT(strPath.Right(1) != '.');	// No file or folder should end by a dot (.).
-			ASSERT((::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
+			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
+			ASSERT(strPath.IsEmpty() || (::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
 
 			if (strPath.IsEmpty())
 				return false;
@@ -93,7 +93,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				return ::PathFileExists(strPath) != 0;
 			else
 			{
-				ASSERT(strPath.Left(4) == _T("\\\\?\\"));	// Only unicode path case go past MAX_PATH.
+				ASSERT(strPath.Left(4) == _T("\\\\?\\"));	// Only Unicode path case go past MAX_PATH.
 
 				// We must use FindFile for very long path.
 				WIN32_FIND_DATA fd;
@@ -117,7 +117,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		/**
 		 * Returns the absolute path for the specified path string.
-		 * The unicode 32,000 characters path to be used for system functions.
+		 * The Unicode 32,000 characters path to be used for system functions.
 		 */
 		static inline CString MakeUnicodePath(const CString& strPath)
 		{

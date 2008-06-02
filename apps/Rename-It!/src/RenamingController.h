@@ -22,8 +22,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		};
 
 	// Construction
-		CRenamingController(void);
-		~CRenamingController(void);
+		CRenamingController();
+		~CRenamingController();
 
 	// Attributes
 		void SetErrorLevel(unsigned nErrorLevelFlags) {

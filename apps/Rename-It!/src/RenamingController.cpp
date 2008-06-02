@@ -6,12 +6,12 @@
 namespace Beroux{ namespace IO{ namespace Renaming
 {
 
-CRenamingController::CRenamingController(void) :
+CRenamingController::CRenamingController() :
 	m_nErrorLevel(elALL)
 {
 }
 
-CRenamingController::~CRenamingController(void)
+CRenamingController::~CRenamingController()
 {
 }
 
