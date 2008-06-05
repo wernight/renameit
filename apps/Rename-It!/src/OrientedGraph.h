@@ -142,7 +142,17 @@ namespace Beroux{ namespace Math{
 			return m_graph.find(nNode)->second;
 		}
 
+		const Node& GetNode(unsigned nNode) const
+		{
+			return m_graph.find(nNode)->second;
+		}
+
 		inline Node& operator[](unsigned nNode)
+		{
+			return GetNode(nNode);
+		}
+
+		inline const Node& operator[](unsigned nNode) const
 		{
 			return GetNode(nNode);
 		}

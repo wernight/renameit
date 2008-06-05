@@ -85,7 +85,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		static bool PathFileExists(const CString& strPath)
 		{
 			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
-			ASSERT(strPath.IsEmpty() || (::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
+			ASSERT(strPath.IsEmpty() || ::GetFileAttributes(strPath) != S_OK || (::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
 
 			if (strPath.IsEmpty())
 				return false;

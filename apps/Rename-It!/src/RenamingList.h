@@ -299,10 +299,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Prepare a PerformRenaming().
 		 * \note This method may add renaming operations to m_vRenamingOperations.
-		 * \param[out] graph	A direct acyclic graph of renaming operations within the new vRenamingOperations.
 		 * \param[out] setDeleteIfEmptyDirectories	An ordered set of folders that should be deleted once all renaming is complete.
+		 * \return An list of operations indexes in the updated m_vRenamingOperations ordered so that
+		 *         by performing them in order it should to the renaming job.
 		 */
-		void PrepareRenaming(Beroux::Math::OrientedGraph& graph, set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories);
+		vector<int> PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories);
 
 		/**
 		 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
