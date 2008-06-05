@@ -101,7 +101,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="@copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot;"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
@@ -189,7 +189,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="@copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot;"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
@@ -276,7 +276,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="@copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot;"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
@@ -362,7 +362,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="@copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot;"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 	</Configurations>
@@ -948,7 +948,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy &quot;$(InputPath)&quot; &quot;$(OutDir)\$(InputFileName)&quot;"
+						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
 						AdditionalDependencies=".\hlp\HTMLDefines.h"
 						Outputs="$(OutDir)\$(InputFileName)"
 					/>
@@ -959,7 +959,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy &quot;$(InputPath)&quot; &quot;$(OutDir)\$(InputFileName)&quot;"
+						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
 						AdditionalDependencies=".\hlp\HTMLDefines.h"
 						Outputs="$(OutDir)\$(InputFileName)"
 					/>
@@ -970,7 +970,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy &quot;$(InputPath)&quot; &quot;$(OutDir)\$(InputFileName)&quot;"
+						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
 						AdditionalDependencies=".\hlp\HTMLDefines.h"
 						Outputs="$(OutDir)\$(InputFileName)"
 					/>
@@ -981,7 +981,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy &quot;$(InputPath)&quot; &quot;$(OutDir)\$(InputFileName)&quot;"
+						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
 						AdditionalDependencies=".\hlp\HTMLDefines.h"
 						Outputs="$(OutDir)\$(InputFileName)"
 					/>
