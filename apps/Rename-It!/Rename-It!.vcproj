@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
 				RelativePath="StdAfx.cpp"
 				>
 				<FileConfiguration
@@ -529,11 +533,19 @@
 					Name="Renaming"
 					>
 					<File
+						RelativePath=".\src\IO\Renaming\DirectoryRemovalError.h"
+						>
+					</File>
+					<File
 						RelativePath=".\src\IO\Renaming\FileList.h"
 						>
 					</File>
 					<File
 						RelativePath=".\src\IO\Renaming\Filter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\IRenameError.h"
 						>
 					</File>
 					<File
@@ -546,6 +558,10 @@
 					</File>
 					<File
 						RelativePath=".\src\IO\Renaming\RenameErrorDlg.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\RenamingError.h"
 						>
 					</File>
 					<File

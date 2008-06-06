@@ -3,6 +3,8 @@
 #include <math.h>
 #include "../resource.h"
 #include "ScopedLocale.h"
+#include "RenamingError.h"
+#include "DirectoryRemovalError.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
@@ -75,8 +77,6 @@ bool CRenamingList::Check()
 	CScopedLocale scopeLocale(_T(""));
 	
 	{
-		// TODO: Try with std::string instead of CString to see which one is faster.
-		
 		// First pass: Preparation.
 		set<CString> setBeforeLower;
 		for (int i=0; i<nFilesCount; ++i)
@@ -195,9 +195,8 @@ void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& s
 	CString strAfterLower = m_vRenamingOperations[nOperationIndex].pathAfter.GetPath();
 	strAfterLower.MakeLower();
 	
-	/* Detect if it's going to be renamed to a file that already exists
-	 * but that is not part of the files to rename...
-	 */
+	// Detect if it's going to be renamed to a file that already exists
+	// but that is not part of the files to rename...
 	if (CPath::PathFileExists(strAfterLower)	// The destination exists on the disk.
 		&& setBeforeLower.find(strAfterLower) == setBeforeLower.end())	// and it's not going to be renamed.
 	{
@@ -206,9 +205,8 @@ void CRenamingList::CheckFileConflict(int nOperationIndex, const set<CString>& s
 		strErrorMsg.LoadString(IDS_CONFLICT_WITH_EXISTING);
 		SetProblem(nOperationIndex, errConflict, strErrorMsg);
 	}
-	/* If it's not going to conflict with a file not part of the files to rename,
-	 * check if it conflicts with files that are going to be renamed...
-	 */
+	// If it's not going to conflict with a file not part of the files to rename,
+	// check if it conflicts with files that are going to be renamed...
 	else
 	{
 		// Check if two files are going to have the same new file name.
@@ -235,7 +233,7 @@ void CRenamingList::CheckDirectoryPath(int nOperationIndex)
 {
 	const CPath* pOperationPathAfter = &m_vRenamingOperations[nOperationIndex].pathAfter;
 
-	// Check that the directory starts and ends by a baclslash.
+	// Check that the directory starts and ends by a backslash.
 	const CString& strRoot = pOperationPathAfter->GetPathRoot();
 	const CString& strDir = pOperationPathAfter->GetDirectoryName();
 
@@ -348,7 +346,7 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 	// Check if it's a name to avoid.
 
 	// Over 120 characters (maximum allowed from the Explorer)
-	if (strName.GetLength() > 256)
+	if (strName.GetLength() > 120)
 	{
 		// Warning: Too long.
 		if (bIsFileName)
@@ -359,16 +357,20 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 			problem.strMessage.LoadString(IDS_RISKY_FNAME_TOO_LONG);
 			return problem;
 		}
-		// TODO:
-		//else
-		//{
-		//}
+		else
+		{
+			COperationProblem problem;
+			problem.nErrorLevel = levelWarning;
+			problem.nErrorCode = errRiskyDirectoryName;
+			problem.strMessage.LoadString(IDS_RISKY_DIRNAME_TOO_LONG);
+			return problem;
+		}
 	}
 
 	// The following reserved words cannot be used as the name of a file:
 	// CON, PRN, AUX, CLOCK$, NUL, COM1, COM2, ..., COM9, LPT1, LPT2, ..., LPT9.
 	// Also, reserved words followed by an extension—for example, NUL.tx7—are invalid file names.
-	const int MAX_INVALID_NAME_LENGTH = 6;	// = strlen("CLOCK$")
+	const int MAX_INVALID_NAME_LENGTH = 6; // = strlen("CLOCK$");
 	if ((strNameWithoutExtension.GetLength() <= MAX_INVALID_NAME_LENGTH	// Quickly remove any file name that can't be invalid...
 			&& (   strNameWithoutExtension.CompareNoCase(_T("CON")) == 0	// to quickly detect system reserved file names.
 				|| strNameWithoutExtension.CompareNoCase(_T("PRN")) == 0
@@ -497,7 +499,7 @@ bool CRenamingList::PerformRenaming()
 							strParentPath,
 							0))
 					{
-						m_fOnRenamed(nIndex, GetLastError());
+						OnRenameError(nIndex, GetLastError());
 						bError = true;
 					}
 				}
@@ -512,7 +514,7 @@ bool CRenamingList::PerformRenaming()
 					if (!ktm.CreateDirectoryEx(NULL, strParentPath, NULL))
 					{
 						// Could not create the directory, let's report this error.
-						m_fOnRenamed(nIndex, GetLastError());
+						OnRenameError(nIndex, GetLastError());
 						bError = true;
 
 						// Now we exit and continue on the next file.
@@ -523,7 +525,7 @@ bool CRenamingList::PerformRenaming()
 				else
 				{
 					// Some other problem, report it.
-					m_fOnRenamed(nIndex, dwLastError);
+					OnRenameError(nIndex, dwLastError);
 					bError = true;
 
 					// Now we exit and continue on the next file.
@@ -544,11 +546,11 @@ bool CRenamingList::PerformRenaming()
 					renamingOperation.pathAfter.GetPath(),
 					MOVEFILE_COPY_ALLOWED))
 			{
-				m_fOnRenamed(nIndex, GetLastError());
+				OnRenameError(nIndex, GetLastError());
 				bError = true;
 			}
 			else
-				m_fOnRenamed(nIndex, 0);
+				OnRenamed(nIndex);
 		}
 
 		// Report progress
@@ -575,7 +577,8 @@ bool CRenamingList::PerformRenaming()
 			 */
 			ASSERT(dwErrorCode != ERROR_DIR_NOT_EMPTY);
 
-			// TODO: Report this error as a WARNING.
+			// TODO-TOFINISH: Report this error as a WARNING.
+			OnRenameError(CDirectoryRemovalError(strDirectoryPath, dwErrorCode));
 			bError = true;
 		}
 	}
@@ -591,6 +594,26 @@ bool CRenamingList::PerformRenaming()
 	}
 	else
 		return ktm.Commit();
+}
+
+void CRenamingList::OnRenamed(int nIndex)
+{
+	m_fOnRenamed(
+		m_vRenamingOperations[nIndex].GetPathBefore(),
+		m_vRenamingOperations[nIndex].GetPathAfter());
+}
+
+void CRenamingList::OnRenameError(const IRenameError& renameError)
+{
+	m_fOnRenameError(renameError);
+}
+
+void CRenamingList::OnRenameError(int nIndex, DWORD dwErrorCode)
+{
+	OnRenameError(CRenamingError(
+		m_vRenamingOperations[nIndex].GetPathBefore(),
+		m_vRenamingOperations[nIndex].GetPathAfter(),
+		dwErrorCode));
 }
 
 vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories)

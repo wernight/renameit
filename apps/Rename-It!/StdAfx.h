@@ -113,9 +113,10 @@ using namespace std;
 
 // Boost
 #define BOOST_LIB_DIAGNOSTIC	// to display the use lib file
-#include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/cast.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>

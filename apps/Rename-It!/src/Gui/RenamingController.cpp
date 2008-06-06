@@ -2,6 +2,8 @@
 #include "RenamingController.h"
 #include "IO/Renaming/RenamingList.h"
 #include "IO/Renaming/Report.h"
+#include "IO/Renaming/DirectoryRemovalError.h"
+#include "IO/Renaming/RenamingError.h"
 
 using namespace Beroux::IO::Renaming;
 
@@ -52,6 +54,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	{
 		// Define the callbacks for the renaming manager.
 		m_renamingList.SetRenamedCallback(boost::bind(&CRenamingController::OnRenamed, this, _1, _2));
+		m_renamingList.SetRenameErrorCallback(boost::bind(&CRenamingController::OnRenameError, this, _1));
 		m_renamingList.SetProgressCallback(boost::bind(&CRenamingController::OnProgress, this, _1, _2, _3));
 
 		// Do/Continue the processing while showing the progress.
@@ -127,36 +130,41 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	}
 }
 
-void CRenamingController::OnRenamed(int nIndex, DWORD dwErrorCode)
+void CRenamingController::OnRenamed(const CPath& pathNameBefore, const CPath& pathNameAfter)
 {
-	if (dwErrorCode == 0)
-	{// Renaming succeed
-		m_dlgRenameError.Add(
-			m_renamingList.GetRenamingOperation(nIndex).GetPathBefore(),
-			m_renamingList.GetRenamingOperation(nIndex).GetPathAfter(),
-			NULL);
-	}
-	else
+	// Renaming succeed
+	m_dlgRenameError.Add(
+		pathNameBefore,
+		pathNameAfter,
+		NULL);
+}
+
+void CRenamingController::OnRenameError(const IRenameError& renameError)
+{
+	if (typeid(renameError) == typeid(CRenamingError))
 	{// Renaming error
-		// Get error message
-		LPTSTR		lpMsgBuf = NULL;
-		FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-			NULL,
-			dwErrorCode,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &lpMsgBuf,
-			0,
-			NULL );
+		const CRenamingError& renamingError = static_cast<const CRenamingError&>(renameError);
 
 		// Add that error.
 		m_dlgRenameError.Add(
-			m_renamingList.GetRenamingOperation(nIndex).GetPathBefore(),
-			m_renamingList.GetRenamingOperation(nIndex).GetPathAfter(),
-			lpMsgBuf);
+			renamingError.GetPathNameBefore(),
+			renamingError.GetPathNameAfter(),
+			renamingError.GetErrorMessage());
+	}
+	else if (typeid(renameError) == typeid(CDirectoryRemovalError))
+	{// Directory removal error
+		const CDirectoryRemovalError& dirRemovalError = static_cast<const CDirectoryRemovalError&>(renameError);
 
-		// Free the buffer.
-		LocalFree( lpMsgBuf );
+		// Add that error.
+		// TODO: Test it.
+		m_dlgRenameError.Add(
+			dirRemovalError.GetDirectoryPath(),
+			CPath(),
+			dirRemovalError.GetErrorMessage());
+	}
+	else
+	{// Unknown error.
+		ASSERT(false);
 	}
 }
 
@@ -227,14 +235,14 @@ void CRenamingController::OnProgress(CRenamingList::EStage nStage, int nDone, in
 	m_dlgProgress.SetProgress(nStage, nDone, nTotal);
 }
 
-void CRenamingController::DisplayError(UINT nMsgID, EErrorLevel nErrorLevel) const
+void CRenamingController::DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const
 {
 	CString str;
 	str.LoadString(nMsgID);
 	DisplayError(str, nErrorLevel);
 }
 
-void CRenamingController::DisplayError(const CString& strErrorMsg, EErrorLevel nErrorLevel) const
+void CRenamingController::DisplayError(const CString& strErrorMsg, EErrorLevels nErrorLevel) const
 {
 	if (m_nErrorLevel & nErrorLevel)
 	{

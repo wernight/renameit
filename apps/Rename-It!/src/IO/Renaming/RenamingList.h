@@ -3,6 +3,7 @@
 #include "FileList.h"
 #include "../KTM.h"
 #include "Math/OrientedGraph.h"
+#include "IRenameError.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
@@ -61,6 +62,27 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		enum {
 			stageCount = 3		// Number of possible stages.
 		};
+
+		/**
+		 * A callback function called when a file was successfully renamed.
+		 * @param[in] pathNameBefore	The old name of file/directory before renaming.
+		 * @param[in] pathNameAfter	The new name of file/directory after renaming.
+		 */
+		typedef boost::function<void (const CPath& pathNameBefore, const CPath& pathNameAfter)> CRenamedEventHandler;
+
+		/**
+		 * A callback function called when a problem arised during the renaming.
+		 * @param[in] renameError	A derived type indicating the error type.
+		 */
+		typedef boost::function<void (const IRenameError&)> CRenameErrorEventHandler;
+
+		/**
+		 * A callback function called during the renaming to indicate progress.
+		 * @param[in] nStage		The current long operation being performed.
+		 * @param[in] nDone			The number of files renamed (with or without problem).
+		 * @param[in] nTotal		The total number of files to be rename.
+		 */
+		typedef boost::function<void (EStage nStage, int nDone, int nTotal)> CRenameProgressChangedEventHandler;
 
 		struct CRenamingOperation
 		{
@@ -130,13 +152,22 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		int GetErrorCount() const { return m_nErrors; }
 
 		/**
-		 * See the declaration of m_fOnRenamed for more details about
-		 * the callback function arguments.
-		 * You can create a method void MyCallback(int nIndex, DWORD dwErrorCode);
+		 * Event raised when problems arised during renaming.
+		 * You can create a method void MyCallback(const CString& strNameBefore, const CString& strNameAfter);
 		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1, _2);
 		 */
-		void SetRenamedCallback(const boost::function<void (int nIndex, DWORD dwErrorCode)>& fOnRenamed) {
+		void SetRenamedCallback(const CRenamedEventHandler& fOnRenamed) {
 			m_fOnRenamed = fOnRenamed;
+		}
+
+		/**
+		 * See the declaration of m_fOnRenamed for more details about
+		 * the callback function arguments.
+		 * You can create a method void MyCallback(const IRenameError& renameError);
+		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1);
+		 */
+		void SetRenameErrorCallback(const CRenameErrorEventHandler& fOnRenameError) {
+			m_fOnRenameError = fOnRenameError;
 		}
 
 		/**
@@ -144,7 +175,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * See the declaration of m_fOnProgress for more details about
 		 * the callback function arguments.
 		 */
-		void SetProgressCallback(const boost::function<void (EStage nStage, int nDone, int nTotal)>& fOnRenameProgress) {
+		void SetProgressCallback(const CRenameProgressChangedEventHandler& fOnRenameProgress) {
 			m_fOnProgress = fOnRenameProgress;
 		}
 
@@ -214,6 +245,13 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @return True on success, false if one or more files couldn't be renamed.
 		 */
 		bool PerformRenaming();
+
+	// Overrides
+	protected:
+		virtual void OnRenamed(int nIndex);
+
+		virtual void OnRenameError(const IRenameError& renameError);
+		void OnRenameError(int nIndex, DWORD dwErrorCode);
 
 	// Implementation
 	private:
@@ -326,19 +364,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		int m_nErrors;
 
-		/**
-		 * A callback function called after a file was renamed (also when it could not be renamed).
-		 * @param[in] nIndex		Index of the operation.
-		 * @param[in] dwErrorCode	0 on success or a Windows error code returned by GetLastError().
-		 */
-		boost::function<void (int nIndex, DWORD dwErrorCode)> m_fOnRenamed;
+		CRenamedEventHandler m_fOnRenamed;
 
-		/**
-		 * A callback function called during the renaming to indicate progress.
-		 * @param[in] nStage		The current long operation being performed.
-		 * @param[in] nDone			The number of files renamed (with or without problem).
-		 * @param[in] nTotal		The total number of files to be rename.
-		 */
-		boost::function<void (EStage nStage, int nDone, int nTotal)> m_fOnProgress;
+		CRenameErrorEventHandler m_fOnRenameError;
+
+		CRenameProgressChangedEventHandler m_fOnProgress;
 	};
 }}}

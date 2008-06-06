@@ -106,6 +106,7 @@
 #define IDI_CONFLICT                    182
 #define IDS_INCONSISTENT_DIRECTORY_CASE 182
 #define IDI_BADNAME                     183
+#define IDS_RISKY_DIRNAME_TOO_LONG      183
 #define IDB_DELALL                      185
 #define IDR_SEARCH_WILD                 187
 #define ID_TAGGETBYSTAR                 191

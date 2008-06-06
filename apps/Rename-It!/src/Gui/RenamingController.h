@@ -1,5 +1,4 @@
 #pragma once
-
 #include "IO/Renaming/RenamingList.h"
 #include "RenamingProgressDlg.h"
 #include "IO/Renaming/RenameErrorDlg.h"
@@ -13,7 +12,7 @@ namespace Gui
 	{
 	// Definitions
 	public:
-		enum EErrorLevel
+		enum EErrorLevels
 		{
 			elError		= 0x0001,
 			elWarning	= 0x0002,
@@ -42,10 +41,11 @@ namespace Gui
 	private:
 		static UINT RenamingThread(LPVOID lpParam);
 
-		void OnRenamed(int nIndex, DWORD dwErrorCode);
+		void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter);
+		void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError);
 		void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
-		void DisplayError(UINT nMsgID, EErrorLevel nErrorLevel) const;
-		void DisplayError(const CString& strErrorMsg, EErrorLevel nErrorLevel) const;
+		void DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const;
+		void DisplayError(const CString& strErrorMsg, EErrorLevels nErrorLevel) const;
 
 		Beroux::IO::Renaming::CRenamingList m_renamingList;
 		Gui::CProgressDlg m_dlgProgress;

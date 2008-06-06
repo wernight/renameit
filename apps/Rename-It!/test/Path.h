@@ -1,5 +1,5 @@
 #include <cxxtest/TestSuite.h>
-#include "../src/Path.h"
+#include "IO/Renaming/Path.h"
 
 using namespace Beroux::IO::Renaming;
 

@@ -757,7 +757,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_LONGUER_THAN_MAX_PATH 
-                            "Ricky file name: The full path's length exceeds 260 characters limit. Some application may not support it."
+                            "Risky file name: The full path's length exceeds 260 characters limit. Some application may not support it."
     IDS_START_END_BACKSLASH_MISSING 
                             "Directory separator missing: The path must start and end by a backslash (\\)."
     IDS_INVALID_DIRECTORY_NAME 
@@ -770,6 +770,8 @@ BEGIN
                             "Risky folder name: Spaces before or after the folder name should be avoided."
     IDS_INCONSISTENT_DIRECTORY_CASE 
                             "Inconsistent folders name warning: The case of this directory's path name is not the same of every renaming operation. The shortest directory path's case will be used."
+    IDS_RISKY_DIRNAME_TOO_LONG 
+                            "Risky folder name: The folder name is too long (exceeds 120 characters)."
 END
 
 #endif    // English (U.S.) resources
@@ -1550,6 +1552,8 @@ BEGIN
                             "Nom de dossier à risque: Éviter les espaces en début ou fin de nom de dossier."
     IDS_INCONSISTENT_DIRECTORY_CASE 
                             "Casse du dossier inconsistent: La casse du chemin vers ce dossier n'est pas la même pour toutes les opérations de renommage. Seule casse du chemin le plus court sera utilisé."
+    IDS_RISKY_DIRNAME_TOO_LONG 
+                            "Nom de dossier à risque: Nom de dossier trop long (excède 120 charactères)."
 END
 
 #endif    // French (France) resources
