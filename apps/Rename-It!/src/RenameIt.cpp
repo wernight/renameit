@@ -20,7 +20,7 @@
 
 #include "stdafx.h"
 #include "RenameIt.h"
-#include "RenameItDlg.h"
+#include "Gui/RenameItDlg.h"
 
 #include <Shlwapi.h>	// Used for PathGetArgs() and PathIsDirectory()
 

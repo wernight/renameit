@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include"
+				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include;src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;ID3LIB_LINKOPTION=1"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
@@ -134,7 +134,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include"
+				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include;src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;ID3LIB_LINKOPTION=1"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
@@ -221,7 +221,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include"
+				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include;src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;ID3LIB_LINKOPTION=1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -307,7 +307,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include"
+				AdditionalIncludeDirectories="lib/pcre/include; lib/id3lib/include;src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;ID3LIB_LINKOPTION=1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -371,59 +371,11 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\AboutDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\AppendWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CaseWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CommandLineAnalyser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CropWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\EnumWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ExplorerListCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FilterContainer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FilterWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ID3TagWizard.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\InviteEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\InviteRichEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\KTM.cpp"
+				RelativePath=".\src\DetectNonDotNetCC.h"
 				>
 			</File>
 			<File
@@ -431,19 +383,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MenuButton.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\NewMenu.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\NotAddedFilesDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameErrorDlg.cpp"
+				RelativePath=".\src\NewMenu.h"
 				>
 			</File>
 			<File
@@ -451,31 +399,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\RenameItDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamePartSelectionCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingProgressDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Report.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ReportDlg.cpp"
+				RelativePath=".\src\RenameIt.h"
 				>
 			</File>
 			<File
@@ -483,19 +407,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ScopedLocale.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SearchReplaceDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SearchReplaceFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SettingsDlg.cpp"
+				RelativePath=".\src\ResizingDialog.h"
 				>
 			</File>
 			<File
@@ -534,248 +446,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<Filter
-				Name="SyntaxColor"
-				>
-				<File
-					RelativePath=".\src\SyntaxColor\Enumeration.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\GeneralMacros.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\ID3Tags.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\RegExpReplace.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\RegExpSearch.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\WildcardsReplace.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\SyntaxColor\WildcardsSearch.cpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\src\AboutDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\AppendWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CaseWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CommandLineAnalyser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\CropWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\DetectNonDotNetCC.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\EnumWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ExplorerListCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FileList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FilterContainer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FilteredPath.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FilterWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ID3TagWizard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\IFilter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\InviteEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\InviteRichEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\IPreviewFileList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\KTM.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MemoryFileList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MenuButton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\NewMenu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\NotAddedFilesDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\OrientedGraph.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Path.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\PreviewFileList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameErrorDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameIt.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameItDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamePartSelectionCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenamingProgressDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Report.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ReportDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ResizingDialog.h"
-				>
-			</File>
-			<File
-				RelativePath=".\resource.h"
-				>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Generating map file for help compiler..."
-						CommandLine="echo // Generated Help Map file.  Used by RenameIt.HHP. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Resources (IDR_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h /a afxhh.h IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;"
-						Outputs=".\hlp\HTMLDefines.h"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Generating map file for help compiler..."
-						CommandLine="echo // Generated Help Map file.  Used by RenameIt.HHP. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Resources (IDR_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h /a afxhh.h IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;"
-						Outputs=".\hlp\HTMLDefines.h"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Generating map file for help compiler..."
-						CommandLine="echo // Generated Help Map file.  Used by RenameIt.HHP. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Resources (IDR_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h /a afxhh.h IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;"
-						Outputs=".\hlp\HTMLDefines.h"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Generating map file for help compiler..."
-						CommandLine="echo // Generated Help Map file.  Used by RenameIt.HHP. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Resources (IDR_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h /a afxhh.h IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;"
-						Outputs=".\hlp\HTMLDefines.h"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\ScopedLocale.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SearchReplaceDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SearchReplaceFilter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\SettingsDlg.h"
-				>
-			</File>
 			<File
 				RelativePath=".\StdAfx.h"
 				>
@@ -784,7 +454,15 @@
 				Name="SyntaxColor"
 				>
 				<File
+					RelativePath=".\src\SyntaxColor\Enumeration.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\SyntaxColor\Enumeration.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\SyntaxColor\GeneralMacros.cpp"
 					>
 				</File>
 				<File
@@ -792,11 +470,23 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\SyntaxColor\ID3Tags.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\SyntaxColor\ID3Tags.h"
 					>
 				</File>
 				<File
+					RelativePath=".\src\SyntaxColor\RegExpReplace.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\SyntaxColor\RegExpReplace.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\SyntaxColor\RegExpSearch.cpp"
 					>
 				</File>
 				<File
@@ -808,13 +498,305 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\SyntaxColor\WildcardsReplace.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\SyntaxColor\WildcardsReplace.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\SyntaxColor\WildcardsSearch.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\src\SyntaxColor\WildcardsSearch.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="IO"
+				>
+				<File
+					RelativePath=".\src\IO\KTM.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\IO\KTM.h"
+					>
+				</File>
+				<Filter
+					Name="Renaming"
+					>
+					<File
+						RelativePath=".\src\IO\Renaming\FileList.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\Filter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\Path.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\RenameErrorDlg.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\RenameErrorDlg.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\RenamingList.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\RenamingList.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\Report.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\Report.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\ScopedLocale.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\ScopedLocale.h"
+						>
+					</File>
+					<Filter
+						Name="Filter"
+						>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\FilterContainer.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\FilterContainer.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\FilteredPath.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\IFilter.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\IPreviewFileList.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\PreviewFileList.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\SearchReplaceDlg.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\SearchReplaceDlg.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\SearchReplaceFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\Filter\SearchReplaceFilter.h"
+							>
+						</File>
+						<Filter
+							Name="Wizard"
+							>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\AppendWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\AppendWizard.h"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\CaseWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\CaseWizard.h"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\CropWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\CropWizard.h"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\EnumWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\EnumWizard.h"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\FilterWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\FilterWizard.h"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\ID3TagWizard.cpp"
+								>
+							</File>
+							<File
+								RelativePath=".\src\IO\Renaming\Filter\Wizard\ID3TagWizard.h"
+								>
+							</File>
+						</Filter>
+					</Filter>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Util"
+				>
+				<File
+					RelativePath=".\src\Util\CommandLineAnalyser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Util\CommandLineAnalyser.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Math"
+				>
+				<File
+					RelativePath=".\src\Math\OrientedGraph.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Gui"
+				>
+				<File
+					RelativePath=".\src\Gui\AboutDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\AboutDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\MemoryFileList.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\NotAddedFilesDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\NotAddedFilesDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenameDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenameDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenameItDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenameItDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenamingController.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenamingController.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenamingProgressDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\RenamingProgressDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\ReportDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\ReportDlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\SettingsDlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Gui\SettingsDlg.h"
+					>
+				</File>
+				<Filter
+					Name="Control"
+					>
+					<File
+						RelativePath=".\src\Gui\Control\ExplorerListCtrl.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\ExplorerListCtrl.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\InviteEdit.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\InviteEdit.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\InviteRichEdit.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\InviteRichEdit.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\RenamePartSelectionCtrl.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\Gui\Control\RenamePartSelectionCtrl.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
