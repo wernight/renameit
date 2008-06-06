@@ -1,4 +1,5 @@
 #pragma once
+#include "../../ResizingDialog.h"
 #include "../../../resource.h"
 #include "Path.h"
 #include <afxcmn.h>
@@ -10,7 +11,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	 * Add the errors using Add() before calling DoModal().
 	 * Once the method returns, use GetUserAction to retrieve the user's action.
 	 */
-	class CRenameErrorDlg : public CDialog
+	class CRenameErrorDlg : public CResizingDialog
 	{
 		DECLARE_DYNAMIC(CRenameErrorDlg)
 
@@ -53,10 +54,15 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			iconError,
 		};
 
+		void UpdateErrorList();
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 		virtual BOOL OnInitDialog();
 		virtual void OnCancel();
 		virtual void OnOK();
+		afx_msg void OnBnClickedButtonShowDetails();
+		afx_msg void OnBnClickedButtonHideDetails();
+		afx_msg void OnBnClickedShowOnlyProblemsCheck();
+		afx_msg void OnSize(UINT nType, int cx, int cy);
 
 		DECLARE_MESSAGE_MAP()
 
@@ -80,5 +86,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		CStatic m_ctlDescriptionStatic;
 		CButton m_ctlAction;
 		EUserAction m_nAction;
+		bool m_bDialogInitialized;
 	};
 }}}

@@ -1,7 +1,10 @@
 #pragma once
-#include "IO/Renaming/RenamingList.h"
 #include "RenamingProgressDlg.h"
 #include "IO/Renaming/RenameErrorDlg.h"
+
+namespace Beroux{ namespace IO{ namespace Renaming{
+	class CRenamingList;
+}}}
 
 namespace Gui
 {
@@ -47,7 +50,7 @@ namespace Gui
 		void DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const;
 		void DisplayError(const CString& strErrorMsg, EErrorLevels nErrorLevel) const;
 
-		Beroux::IO::Renaming::CRenamingList m_renamingList;
+		shared_ptr<Beroux::IO::Renaming::CRenamingList> m_renamingList;
 		Gui::CProgressDlg m_dlgProgress;
 		Beroux::IO::Renaming::CRenameErrorDlg m_dlgRenameError;
 		unsigned m_nErrorLevel;

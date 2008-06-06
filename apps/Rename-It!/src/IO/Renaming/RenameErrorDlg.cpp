@@ -12,13 +12,18 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 // CRenameErrorDlg dialog
 
-IMPLEMENT_DYNAMIC(CRenameErrorDlg, CDialog)
+IMPLEMENT_DYNAMIC(CRenameErrorDlg, CResizingDialog)
 
 CRenameErrorDlg::CRenameErrorDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CRenameErrorDlg::IDD, pParent)
+	: CResizingDialog(CRenameErrorDlg::IDD, pParent)
 	, m_nErrorCount(0)
+	, m_bDialogInitialized(false)
 {
-
+	SetControlInfo(IDC_REPORT_LIST, RESIZE_HOR | RESIZE_VER);
+	SetControlInfo(IDC_DETAILS_BUTTON, ANCHORE_RIGHT);
+	SetControlInfo(IDC_SHOW_ONLY_PROBLEMS_CHECK, ANCHORE_LEFT | ANCHORE_BOTTOM);
+	SetControlInfo(IDC_HIDE_DETAILS_BUTTON, ANCHORE_RIGHT | ANCHORE_BOTTOM);
+	SetControlInfo(IDOK, ANCHORE_BOTTOM | RESIZE_HOR);
 }
 
 CRenameErrorDlg::~CRenameErrorDlg()
@@ -27,14 +32,18 @@ CRenameErrorDlg::~CRenameErrorDlg()
 
 void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CResizingDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_REPORT_LIST, m_ctlReport);
 	DDX_Control(pDX, IDC_DESCR_STATIC, m_ctlDescriptionStatic);
 	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlAction);
 }
 
 
-BEGIN_MESSAGE_MAP(CRenameErrorDlg, CDialog)
+BEGIN_MESSAGE_MAP(CRenameErrorDlg, CResizingDialog)
+	ON_BN_CLICKED(IDC_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonShowDetails)
+	ON_BN_CLICKED(IDC_HIDE_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonHideDetails)
+	ON_BN_CLICKED(IDC_SHOW_ONLY_PROBLEMS_CHECK, &CRenameErrorDlg::OnBnClickedShowOnlyProblemsCheck)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -42,7 +51,7 @@ END_MESSAGE_MAP()
 
 BOOL CRenameErrorDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CResizingDialog::OnInitDialog();
 
 	// Replace strings in caption text.
 	CString strCount;
@@ -63,41 +72,96 @@ BOOL CRenameErrorDlg::OnInitDialog()
 	CString str;
 	str.LoadString(IDS_BEFORE); m_ctlReport.InsertColumn(0, str);
 	str.LoadString(IDS_AFTER); m_ctlReport.InsertColumn(1, str);
+	str.LoadString(IDS_ERROR); m_ctlReport.InsertColumn(2, str);
+	UpdateErrorList();
+
+	// Select the default action.
+	m_ctlAction.SetCheck(BST_CHECKED);
+
+	m_bDialogInitialized = true;
+	SetWindowPos(NULL, 0, 0, 300, 200, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void CRenameErrorDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CResizingDialog::OnSize(nType, cx, cy);
+
+	// Resize columns...
+	if (m_bDialogInitialized)
+	{
+		const int nScrollBarWidth = 30;
+
+		// Error list control columns
+		RECT rect;
+		m_ctlReport.GetWindowRect(&rect);
+		int nCtrlWidth = rect.right - rect.left - nScrollBarWidth;
+		m_ctlReport.SetColumnWidth(0, nCtrlWidth/3);
+		m_ctlReport.SetColumnWidth(1, nCtrlWidth/3);
+		m_ctlReport.SetColumnWidth(2, nCtrlWidth/3);
+	}
+}
+
+void CRenameErrorDlg::UpdateErrorList()
+{
+	bool bShowOnlyProblems = (IsDlgButtonChecked(IDC_SHOW_ONLY_PROBLEMS_CHECK) != 0);
+
+	m_ctlReport.DeleteAllItems();
 	for (int i=0; i<(int)m_vErrors.size(); ++i)
 	{
+		if (bShowOnlyProblems && m_vErrors[i].strError.IsEmpty())
+			continue;
+
 		int nInsertedIndex = m_ctlReport.InsertItem(i, m_vErrors[i].fnBefore.GetPath());
 		m_ctlReport.SetItem(nInsertedIndex, 1, LVIF_TEXT, m_vErrors[i].fnAfter.GetPath(), NULL, NULL, NULL, NULL);
 		m_ctlReport.SetItem(nInsertedIndex, 2, LVIF_TEXT, m_vErrors[i].strError, NULL, NULL, NULL, NULL);
 
 		// Change icon
 		if (m_vErrors[i].strError.IsEmpty())
-			m_ctlReport.SetItem(i, 0, LVIF_IMAGE, NULL, iconOk, 0, 0, NULL);
+			m_ctlReport.SetItem(nInsertedIndex, 0, LVIF_IMAGE, NULL, iconOk, 0, 0, NULL);
 		else
-			m_ctlReport.SetItem(i, 0, LVIF_IMAGE, NULL, iconError, 0, 0, NULL);
+			m_ctlReport.SetItem(nInsertedIndex, 0, LVIF_IMAGE, NULL, iconError, 0, 0, NULL);
 	}
+}
 
-	// Select the default action.
-	m_ctlAction.SetCheck(BST_CHECKED);
+void CRenameErrorDlg::OnBnClickedButtonShowDetails()
+{
+	SetWindowPos(NULL, 0, 0, 2*256, 2*214, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+	m_ctlReport.ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_DETAILS_BUTTON)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_HIDE_DETAILS_BUTTON)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_SHOW_ONLY_PROBLEMS_CHECK)->ShowWindow(SW_SHOW);
+}
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
+void CRenameErrorDlg::OnBnClickedButtonHideDetails()
+{
+	m_ctlReport.ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_DETAILS_BUTTON)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_HIDE_DETAILS_BUTTON)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_SHOW_ONLY_PROBLEMS_CHECK)->ShowWindow(SW_HIDE);
+
+	// TODO: Restore the original window size.
+}
+
+void CRenameErrorDlg::OnBnClickedShowOnlyProblemsCheck()
+{
+	UpdateErrorList();
 }
 
 void CRenameErrorDlg::OnCancel()
 {
 	// We don't allow to cancel.
-	//CDialog::OnCancel();
+	//CResizingDialog::OnCancel();
 }
 
 void CRenameErrorDlg::OnOK()
 {
-	// TODO: Add your specialized code here and/or call the base class
-
 	if (m_ctlAction.GetState() & 0x0003)
 		m_nAction = uaKeepCurrentState;
 	else
 		m_nAction = uaReverseToPreviousState;
-	CDialog::OnOK();
+	CResizingDialog::OnOK();
 }
 
 }}}

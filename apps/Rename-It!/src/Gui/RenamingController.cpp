@@ -4,6 +4,7 @@
 #include "IO/Renaming/Report.h"
 #include "IO/Renaming/DirectoryRemovalError.h"
 #include "IO/Renaming/RenamingError.h"
+#include "IO/Renaming/RenamingList.h"
 
 using namespace Beroux::IO::Renaming;
 
@@ -25,18 +26,18 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	m_dlgProgress.SetTitle(IDS_PGRS_TITLE);
 
 	// Create a renaming list.
-	m_renamingList.Create(flBefore, flAfter);
+	m_renamingList.reset(new CRenamingList(flBefore, flAfter));
 
 	// Remove files that have the same name before and after.
-	for (int i=0; i<m_renamingList.GetCount(); ++i)
-		if (m_renamingList[i].GetPathBefore() == m_renamingList[i].GetPathAfter())
+	for (int i=0; i<m_renamingList->GetCount(); ++i)
+		if ((*m_renamingList)[i].GetPathBefore() == (*m_renamingList)[i].GetPathAfter())
 		{
-			m_renamingList.RemoveRenamingOperation(i);
+			m_renamingList->RemoveRenamingOperation(i);
 			--i;
 		}
 
 	// When there is no file to be renamed...
-	if (m_renamingList.IsEmpty())
+	if (m_renamingList->IsEmpty())
 	{
 		DisplayError(IDS_NO_FILENAME_CHANGES, elNotice);
 		return true; // No file to rename.
@@ -47,15 +48,15 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	m_nPreviousStage = -1;	// No progress displayed yet.
 
 	// Keep the number of files the user would like to rename.
-	m_nFilesToRename = m_renamingList.GetCount();	// This value may change later, so we keep it.
+	m_nFilesToRename = m_renamingList->GetCount();	// This value may change later, so we keep it.
 
 	bool bSuccess = false;	// Some errors are supposed.
 	do
 	{
 		// Define the callbacks for the renaming manager.
-		m_renamingList.SetRenamedCallback(boost::bind(&CRenamingController::OnRenamed, this, _1, _2));
-		m_renamingList.SetRenameErrorCallback(boost::bind(&CRenamingController::OnRenameError, this, _1));
-		m_renamingList.SetProgressCallback(boost::bind(&CRenamingController::OnProgress, this, _1, _2, _3));
+		m_renamingList->SetRenamedCallback(boost::bind(&CRenamingController::OnRenamed, this, _1, _2));
+		m_renamingList->SetRenameErrorCallback(boost::bind(&CRenamingController::OnRenameError, this, _1));
+		m_renamingList->SetProgressCallback(boost::bind(&CRenamingController::OnProgress, this, _1, _2, _3));
 
 		// Do/Continue the processing while showing the progress.
 		{
@@ -85,7 +86,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 			// Show the report dialog.
 			CReport report;
-			if (!report.ShowReportFixErrors(m_renamingList))
+			if (!report.ShowReportFixErrors(*m_renamingList))
 				return false;	// Some errors are left or the user cancelled.
 			else
 				// We continue at the next stage.
@@ -176,7 +177,7 @@ UINT CRenamingController::RenamingThread(LPVOID lpParam)
 	{
 	case CRenamingList::stageChecking:
 		// Check if there are some errors.
-		if (!pThis->m_renamingList.Check())
+		if (!pThis->m_renamingList->Check())
 		{// A problem has been found.
 			// Hide the progress window so the main thread can continue.
 			pThis->m_dlgProgress.Done();
@@ -186,11 +187,11 @@ UINT CRenamingController::RenamingThread(LPVOID lpParam)
 
 	case CRenamingList::stagePreRenaming:
 		// Keep the number of files the user would like to rename.
-		pThis->m_nFilesToRename = pThis->m_renamingList.GetCount();	// This value may change later, so we keep it.
+		pThis->m_nFilesToRename = pThis->m_renamingList->GetCount();	// This value may change later, so we keep it.
 
 		// Do the renaming.
 		{
-			bool bSuccess = pThis->m_renamingList.PerformRenaming();
+			bool bSuccess = pThis->m_renamingList->PerformRenaming();
 			pThis->m_nCurrentStage = CRenamingList::stageRenaming;
 
 			// Now we are done, we can hide the progress dialog.

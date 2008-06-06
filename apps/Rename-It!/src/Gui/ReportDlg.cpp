@@ -37,9 +37,9 @@ void CReportDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CReportDlg, CDialog)
-	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_REPORT_LIST, OnLvnItemActivateReportList)
+	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_REPORT_LIST, &CReportDlg::OnLvnItemActivateReportList)
 	ON_WM_CONTEXTMENU()
-	ON_NOTIFY(LVN_KEYDOWN, IDC_REPORT_LIST, OnLvnKeydownReportList)
+	ON_NOTIFY(LVN_KEYDOWN, IDC_REPORT_LIST, &CReportDlg::OnLvnKeydownReportList)
 	ON_BN_CLICKED(IDC_SHOW_ALL_CHECK, &CReportDlg::OnBnClickedShowAllCheck)
 END_MESSAGE_MAP()
 
