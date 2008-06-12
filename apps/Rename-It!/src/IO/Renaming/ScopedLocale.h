@@ -5,7 +5,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	class CScopedLocale
 	{
 	public:
-		CScopedLocale(const wchar_t* newLocale) {
+		CScopedLocale(LPCTSTR newLocale) {
 			CString m_strLocaleBak = _tsetlocale(LC_CTYPE, NULL);
 			_tsetlocale(LC_CTYPE, newLocale);
 		}

@@ -5,6 +5,7 @@
 #include "IO/Renaming/DirectoryRemovalError.h"
 #include "IO/Renaming/RenamingError.h"
 #include "IO/Renaming/RenamingList.h"
+#include "IO/KTM.h"
 
 using namespace Beroux::IO::Renaming;
 
@@ -60,9 +61,9 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 		// Do/Continue the processing while showing the progress.
 		{
-			CWinThread thread(RenamingThread, this);
-			thread.m_bAutoDelete = FALSE;
-			thread.CreateThread();
+			boost::scoped_ptr<CWinThread> thread(AfxBeginThread(RenamingThread, this));
+			thread->m_bAutoDelete = FALSE;
+
 			/* FIXME: On canceling the thread operation must be stopped.
 			 * m_dlgProgress.EnableCancel(m_nCurrentStage != CRenamingList::stageRenaming);
 			 */
@@ -70,9 +71,9 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 				return false;
 
 			// Wait for the working thread to terminate.
-			WaitForSingleObject(thread.m_hThread, INFINITE);
+			::WaitForSingleObject(thread->m_hThread, INFINITE);
 			DWORD dwExitCode = 0;
-			::GetExitCodeThread(thread.m_hThread, &dwExitCode);
+			::GetExitCodeThread(thread->m_hThread, &dwExitCode);
 			bSuccess = (dwExitCode == 0);
 		}
 
@@ -191,7 +192,7 @@ UINT CRenamingController::RenamingThread(LPVOID lpParam)
 
 		// Do the renaming.
 		{
-			KTMTransaction ktm;
+			Beroux::IO::KTMTransaction ktm;
 			bool bSuccess = pThis->m_renamingList->PerformRenaming(ktm);
 			pThis->m_nCurrentStage = CRenamingList::stageRenaming;
 			if (!bSuccess)
