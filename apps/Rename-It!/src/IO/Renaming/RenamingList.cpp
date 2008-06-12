@@ -586,14 +586,16 @@ bool CRenamingList::PerformRenaming(KTMTransaction& ktm)
 
 void CRenamingList::OnRenamed(int nIndex)
 {
-	m_fOnRenamed(
-		m_vRenamingOperations[nIndex].GetPathBefore(),
-		m_vRenamingOperations[nIndex].GetPathAfter());
+	if (m_fOnRenamed)
+		m_fOnRenamed(
+			m_vRenamingOperations[nIndex].GetPathBefore(),
+			m_vRenamingOperations[nIndex].GetPathAfter());
 }
 
 void CRenamingList::OnRenameError(const IRenameError& renameError)
 {
-	m_fOnRenameError(renameError);
+	if (m_fOnRenameError)
+		m_fOnRenameError(renameError);
 }
 
 void CRenamingList::OnRenameError(int nIndex, DWORD dwErrorCode)
@@ -606,7 +608,8 @@ void CRenamingList::OnRenameError(int nIndex, DWORD dwErrorCode)
 
 void CRenamingList::OnProgress(EStage nStage, int nDone, int nTotal)
 {
-	m_fOnProgress(nStage, nDone, nTotal);
+	if (m_fOnProgress)
+		m_fOnProgress(nStage, nDone, nTotal);
 }
 
 vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories)

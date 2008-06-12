@@ -173,52 +173,48 @@ void CRenamingController::OnRenameError(const IRenameError& renameError)
 UINT CRenamingController::RenamingThread(LPVOID lpParam)
 {
 	CRenamingController* pThis = static_cast<CRenamingController*>(lpParam);
+	bool bSuccess = true;	// Success is assumed at first.
 
-	switch (pThis->m_nCurrentStage)
+	//////////////////////////////////////////////////////////////////////////////
+	// Stage: Checking
+
+	// Check if there are some errors.
+	if (!pThis->m_renamingList->Check())
 	{
-	case CRenamingList::stageChecking:
-		// Check if there are some errors.
-		if (!pThis->m_renamingList->Check())
-		{// A problem has been found.
-			// Hide the progress window so the main thread can continue.
-			pThis->m_dlgProgress.Done();
-			return 0;
-		}
+		bSuccess = false;
+	}
+	else
+	{
 		pThis->m_nCurrentStage = CRenamingList::stagePreRenaming;
 
-	case CRenamingList::stagePreRenaming:
+		//////////////////////////////////////////////////////////////////////////////
+		// Stage: Renaming
+
 		// Keep the number of files the user would like to rename.
 		pThis->m_nFilesToRename = pThis->m_renamingList->GetCount();	// This value may change later, so we keep it.
 
 		// Do the renaming.
+		Beroux::IO::KTMTransaction ktm;
+		bSuccess &= pThis->m_renamingList->PerformRenaming(ktm);
+		pThis->m_nCurrentStage = CRenamingList::stageRenaming;
+		if (!bSuccess)
 		{
-			Beroux::IO::KTMTransaction ktm;
-			bool bSuccess = pThis->m_renamingList->PerformRenaming(ktm);
-			pThis->m_nCurrentStage = CRenamingList::stageRenaming;
-			if (!bSuccess)
-			{
-				// TODO: Possibly commit or roll-back depending on the user's choice.
-				if (MessageBox(NULL, _T("Errors.\nPress YES to commit or NO roll-back."), _T("Rename-It! Debug"), MB_YESNO) == IDYES)
-					VERIFY(ktm.Commit());
-				else
-					VERIFY(ktm.RollBack());
-				return false;
-			}
+			// TODO: Possibly commit or roll-back depending on the user's choice.
+			if (MessageBox(NULL, _T("Errors.\nPress YES to commit or NO roll-back."), _T("Rename-It! Debug"), MB_YESNO) == IDYES)
+				VERIFY(ktm.Commit());
 			else
-				return ktm.Commit();
-
-			// Now we are done, we can hide the progress dialog.
-			pThis->m_dlgProgress.Done();
-			if (bSuccess)
-				return 0;
-			else
-				return 1;
+				VERIFY(ktm.RollBack());
 		}
-
-	default:
-		ASSERT(false);
-		return 0;
+		else
+			bSuccess &= ktm.Commit();
 	}
+
+	// Hide the progress window so the main thread can continue.
+	pThis->m_dlgProgress.Done();
+	if (bSuccess)
+		return 0;
+	else
+		return 1;
 }
 
 void CRenamingController::OnProgress(CRenamingList::EStage nStage, int nDone, int nTotal)
