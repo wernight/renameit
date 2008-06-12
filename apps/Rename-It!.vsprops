@@ -4,6 +4,6 @@
 	Version="8.00"
 	Name="Rename-It!"
 	OutputDirectory="$(SolutionDir)..\build\$(ProjectName)\$(ConfigurationName)"
-	IntermediateDirectory="E:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
+	IntermediateDirectory="D:\TEMP\Visual Studio\$(SolutionName)\$(ProjectName)\$(ConfigurationName)"
 	>
 </VisualStudioPropertySheet>

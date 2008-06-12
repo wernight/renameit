@@ -82,7 +82,7 @@ bool CRenamingList::Check()
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stageChecking, i*20/nFilesCount, 100);
+			OnProgress(stageChecking, i*20/nFilesCount, 100);
 
 			// Create a map of file names (in lower case) associated to the operation index.
 			CString strName = m_vRenamingOperations[i].pathBefore.GetPath();
@@ -106,7 +106,7 @@ bool CRenamingList::Check()
 		for (int i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
+			OnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
 	
 			// Check for file conflicts.
 			CheckFileConflict(i, setBeforeLower, mapAfterLower);
@@ -427,7 +427,7 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 	return COperationProblem();
 }
 
-bool CRenamingList::PerformRenaming()
+bool CRenamingList::PerformRenaming(KTMTransaction& ktm)
 {
 	// Avoid possible strange behaviors for empty lists.
 	if (m_vRenamingOperations.size() == 0)
@@ -455,9 +455,7 @@ bool CRenamingList::PerformRenaming()
 	vector<int> vOrderedOperationList = PrepareRenaming(setDeleteIfEmptyDirectories);
 
 	// Rename files in topological order.
-	m_fOnProgress(stageRenaming, 0, (int)vOrderedOperationList.size());	// Inform we start renaming.
-
-	KTMTransaction ktm;	// Create a new transaction.
+	OnProgress(stageRenaming, 0, (int)vOrderedOperationList.size());	// Inform we start renaming.
 
 	bool bError = false;
 	for (unsigned nIndex=0; nIndex<vOrderedOperationList.size(); ++nIndex)
@@ -554,7 +552,7 @@ bool CRenamingList::PerformRenaming()
 		}
 
 		// Report progress
-		m_fOnProgress(stageRenaming, nIndex, (int)vOrderedOperationList.size());	// Inform we start renaming.
+		OnProgress(stageRenaming, nIndex, (int)vOrderedOperationList.size());	// Inform we start renaming.
 	}
 
 	// Delete emptied folders (folders that are empty after renaming).
@@ -583,17 +581,7 @@ bool CRenamingList::PerformRenaming()
 		}
 	}
 
-	if (bError)
-	{
-		// TODO: Possibly commit or roll-back depending on the user's choice.
-		if (MessageBox(NULL, _T("Errors.\nPress YES to commit or NO roll-back."), _T("Rename-It! Debug"), MB_YESNO) == IDYES)
-			VERIFY(ktm.Commit());
-		else
-			VERIFY(ktm.RollBack());
-		return false;
-	}
-	else
-		return ktm.Commit();
+	return !bError;
 }
 
 void CRenamingList::OnRenamed(int nIndex)
@@ -616,6 +604,11 @@ void CRenamingList::OnRenameError(int nIndex, DWORD dwErrorCode)
 		dwErrorCode));
 }
 
+void CRenamingList::OnProgress(EStage nStage, int nDone, int nTotal)
+{
+	m_fOnProgress(nStage, nDone, nTotal);
+}
+
 vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories)
 {
 	///////////////////////////////////////////////////////////////////
@@ -636,7 +629,7 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 	for (int i=0; i<nFilesCount; ++i)	
 	{
 		// Report progress
-		m_fOnProgress(stagePreRenaming, i*20/nFilesCount, 100);
+		OnProgress(stagePreRenaming, i*20/nFilesCount, 100);
 
 		graph.AddNode(i);
 
@@ -661,7 +654,7 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 	for (int i=0; i<nFilesCount; ++i)
 	{
 		// Report progress
-		m_fOnProgress(stagePreRenaming, 20 + i*75/nFilesCount, 100);
+		OnProgress(stagePreRenaming, 20 + i*75/nFilesCount, 100);
 
 		// Definitions
 		CPath *proBefore = &m_vRenamingOperations[i].pathBefore;
@@ -819,7 +812,7 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 		for (int i=0; i<nTotal; ++i)
 		{
 			// Report progress
-			m_fOnProgress(stagePreRenaming, 95 + i*5/nTotal, 100);
+			OnProgress(stagePreRenaming, 95 + i*5/nTotal, 100);
 
 			if (!graph[i].HasAntecedent())
 				mapRenamingOperations.insert( ro_pair_t(m_vRenamingOperations[i].pathBefore.GetPath(), i) );

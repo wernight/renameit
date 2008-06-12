@@ -242,9 +242,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Perform the renaming of all the file.
 		 * When KTM is used and the operation fails, no file is renamed.
+		 * @param ktm The class used to perform the renaming.
 		 * @return True on success, false if one or more files couldn't be renamed.
+		 * @note Does not commit or abort at the end.
 		 */
-		bool PerformRenaming();
+		bool PerformRenaming(KTMTransaction& ktm);
 
 	// Overrides
 	protected:
@@ -252,6 +254,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		virtual void OnRenameError(const IRenameError& renameError);
 		void OnRenameError(int nIndex, DWORD dwErrorCode);
+
+		virtual void OnProgress(EStage nStage, int nDone, int nTotal);
 
 	// Implementation
 	private:
@@ -357,17 +361,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}
 
 		vector<CRenamingOperation> m_vRenamingOperations;
-
 		vector<COperationProblem> m_vProblems;
-
 		int m_nWarnings;
-
 		int m_nErrors;
-
 		CRenamedEventHandler m_fOnRenamed;
-
 		CRenameErrorEventHandler m_fOnRenameError;
-
 		CRenameProgressChangedEventHandler m_fOnProgress;
 	};
 }}}
