@@ -25,6 +25,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Run the unit tests"
+				CommandLine="&quot;$(TargetDir)..\..\Rename-It! Unit Tests\$(ConfigurationName)\Rename-It! Unit Tests.exe&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -44,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir)Rename-It!\src"
+				AdditionalIncludeDirectories="src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -102,15 +104,17 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Run the unit tests"
+				CommandLine="&quot;$(TargetDir)..\..\Rename-It! Unit Tests\$(ConfigurationName)\Rename-It! Unit Tests.exe&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -129,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)Rename-It!\src"
+				AdditionalIncludeDirectories="src"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"

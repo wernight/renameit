@@ -17,7 +17,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		{
 			// Wait for the working thread to terminate.
 			DWORD dwExitCode = 0;
-			if (::GetExitCodeThread(m_pWinThread->m_hThread, &dwExitCode) != 0)
+			if (!::GetExitCodeThread(m_pWinThread->m_hThread, &dwExitCode))
 				return resultInProgress;
 			if (dwExitCode == STILL_ACTIVE)
 				return resultInProgress;

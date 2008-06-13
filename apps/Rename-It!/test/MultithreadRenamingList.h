@@ -1,20 +1,23 @@
 #include <cxxtest/TestSuite.h>
 #include "IO/Renaming/MultithreadRenamingList.h"
-#include "../resource.h"
 
 using namespace Beroux::IO::Renaming;
 
+// TODO: Add callback tests.
 class MultithreadRenamingListTestSuite : public CxxTest::TestSuite 
 {
 public:
 	CFileList m_vTestFilesBefore;
-	vector<HANDLE> m_vTestFilesOpen;
+	set<HANDLE> m_testFilesOpen;
 	shared_ptr<CRenamingList> m_simpleRenamingList;			// Should succeed.
 	shared_ptr<CRenamingList> m_impossibleRenamingList;		// Should fail at checking.
 	shared_ptr<CRenamingList> m_failingRenamingList;		// Should fail during renaming.
 
 	MultithreadRenamingListTestSuite()
 	{
+		HINSTANCE hInstance = (HINSTANCE) GetModuleHandle(NULL);
+		AfxSetResourceHandle(hInstance);
+
 		m_vTestFilesBefore.AddFile(_T("a.tmp"));
 		m_vTestFilesBefore.AddFile(_T("b.tmp"));
 		m_vTestFilesBefore.AddFile(_T("c.tmp"));
@@ -26,8 +29,8 @@ public:
 
 		// Create the temporary test files.
 		for (int i=0; i<m_vTestFilesBefore.GetFileCount(); ++i)
-			m_vTestFilesOpen.push_back(::CreateFile(m_vTestFilesBefore.GetFile(i).GetPath(), GENERIC_WRITE, FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE, NULL));
-		m_vTestFilesOpen.push_back(::CreateFile(szCannotRenameFileName, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE, NULL));
+			m_testFilesOpen.insert(::CreateFile(m_vTestFilesBefore.GetFile(i).GetPath(), GENERIC_WRITE, FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE, NULL));
+		m_testFilesOpen.insert(::CreateFile(szCannotRenameFileName, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE, NULL));
 
 		// Create the simple renaming list.
 		{
@@ -35,34 +38,39 @@ public:
 			after.AddFile(_T("a_after.tmp"));
 			after.AddFile(_T("b_after.tmp"));
 			after.AddFile(_T("c_after.tmp"));
+
 			m_simpleRenamingList.reset( new CRenamingList(m_vTestFilesBefore, after) );
 		}
 
 		// Create the checking failure renaming list.
 		{
 			CFileList after;
-			after.AddFile(m_vTestFilesBefore[0]);
-			after.AddFile(m_vTestFilesBefore[0]);
-			after.AddFile(m_vTestFilesBefore[0]);
+			after.AddFile(_T("a_after.tmp"));
+			after.AddFile(_T("b_after.tmp"));
+			after.AddFile(_T("b_after.tmp"));
+
 			m_impossibleRenamingList.reset( new CRenamingList(m_vTestFilesBefore, after) );
 		}
 
 		// Create the renaming failure renaming list.
 		{
-			m_vTestFilesBefore.AddFile(szCannotRenameFileName);
+			CFileList before = m_vTestFilesBefore;
+			before.AddFile(szCannotRenameFileName);
+
 			CFileList after;
 			after.AddFile(_T("a_after.tmp"));
 			after.AddFile(_T("b_after.tmp"));
 			after.AddFile(_T("c_after.tmp"));
 			after.AddFile(_T("cannot_rename_after.tmp"));
-			m_failingRenamingList.reset( new CRenamingList(m_vTestFilesBefore, after) );
+
+			m_failingRenamingList.reset( new CRenamingList(before, after) );
 		}
 	}
 
 	void tearDown()
 	{
 		// Close and delete the test files.
-		BOOST_FOREACH(HANDLE hFile, m_vTestFilesOpen)
+		BOOST_FOREACH(HANDLE hFile, m_testFilesOpen)
 			::CloseHandle(hFile);
 	}
 
