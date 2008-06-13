@@ -61,9 +61,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 		virtual BOOL OnInitDialog();
 		virtual void OnCancel();
+		virtual void OnOK();
 		afx_msg void OnBnClickedButtonShowDetails();
 		afx_msg void OnBnClickedButtonHideDetails();
 		afx_msg void OnBnClickedShowOnlyProblemsCheck();
+		afx_msg void OnBnClickedActionRadio();
 		afx_msg void OnSize(UINT nType, int cx, int cy);
 
 		DECLARE_MESSAGE_MAP()
@@ -86,8 +88,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		CImageList m_ilImages;
 		CListCtrl m_ctlReport;
 		CStatic m_ctlDescriptionStatic;
-		CButton m_ctlAction[3];
-		EUserAction m_nAction;
+		CButton m_ctlActionCommit;
+		CButton m_ctlActionRollBack;
+		CButton m_ctlActionKeep;
+		EUserAction m_nSelectedAction;
 		bool m_bDialogInitialized;
 		bool m_bUsingTransaction;
 	};

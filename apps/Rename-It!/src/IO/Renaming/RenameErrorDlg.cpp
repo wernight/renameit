@@ -35,19 +35,7 @@ CRenameErrorDlg::EUserAction CRenameErrorDlg::ShowDialog()
 {
 	// Show the dialog window.
 	VERIFY(DoModal() == IDOK);
-
-	// Get the selected answer.
-	if (m_ctlAction[0].GetState() & 0x0003)
-		return uaKeepCurrentState;
-	else if (m_ctlAction[1].GetState() & 0x0003)
-		return uaReverseToPreviousState;
-	else if (m_ctlAction[2].GetState() & 0x0003)
-		return uaKeepCurrentState;
-	else
-	{
-		ASSERT(false);
-		return uaReverseToPreviousState;
-	}
+	return m_nSelectedAction;
 }
 
 void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
@@ -55,9 +43,9 @@ void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
 	CResizingDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_REPORT_LIST, m_ctlReport);
 	DDX_Control(pDX, IDC_DESCR_STATIC, m_ctlDescriptionStatic);
-	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlAction[0]);
-	DDX_Control(pDX, IDC_ACTION2_RADIO, m_ctlAction[1]);
-	DDX_Control(pDX, IDC_ACTION3_RADIO, m_ctlAction[2]);
+	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlActionCommit);
+	DDX_Control(pDX, IDC_ACTION2_RADIO, m_ctlActionRollBack);
+	DDX_Control(pDX, IDC_ACTION3_RADIO, m_ctlActionKeep);
 }
 
 
@@ -65,6 +53,9 @@ BEGIN_MESSAGE_MAP(CRenameErrorDlg, CResizingDialog)
 	ON_BN_CLICKED(IDC_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonShowDetails)
 	ON_BN_CLICKED(IDC_HIDE_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonHideDetails)
 	ON_BN_CLICKED(IDC_SHOW_ONLY_PROBLEMS_CHECK, &CRenameErrorDlg::OnBnClickedShowOnlyProblemsCheck)
+	ON_BN_CLICKED(IDC_ACTION_RADIO, &CRenameErrorDlg::OnBnClickedActionRadio)
+	ON_BN_CLICKED(IDC_ACTION2_RADIO, &CRenameErrorDlg::OnBnClickedActionRadio)
+	ON_BN_CLICKED(IDC_ACTION3_RADIO, &CRenameErrorDlg::OnBnClickedActionRadio)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
@@ -97,16 +88,20 @@ BOOL CRenameErrorDlg::OnInitDialog()
 	str.LoadString(IDS_ERROR); m_ctlReport.InsertColumn(2, str);
 	UpdateErrorList();
 
-	// Show the available options.
-	m_ctlAction[0].ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
-	m_ctlAction[1].ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
-	m_ctlAction[2].ShowWindow(m_bUsingTransaction ? SW_HIDE : SW_SHOW);
+	// Show the control depending on m_bUsingTransaction.
+	{
+		// Show the available options.
+		m_ctlActionCommit.ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
+		m_ctlActionRollBack.ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
+		m_ctlActionKeep.ShowWindow(m_bUsingTransaction ? SW_HIDE : SW_SHOW);
 
-	// Select the default action.
-	if (m_bUsingTransaction)
-		m_ctlAction[0].SetCheck(BST_CHECKED);
-	else
-		m_ctlAction[2].SetCheck(BST_CHECKED);
+		// Select the default action.
+		if (!m_bUsingTransaction)
+			m_ctlActionKeep.SetCheck(BST_CHECKED);
+
+		// Enable the OK button only when some option is selected.
+		GetDlgItem(IDOK)->EnableWindow(!m_bUsingTransaction);
+	}
 
 	m_bDialogInitialized = true;
 	SetWindowPos(NULL, 0, 0, 300, 200, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
@@ -179,10 +174,46 @@ void CRenameErrorDlg::OnBnClickedShowOnlyProblemsCheck()
 	UpdateErrorList();
 }
 
+void CRenameErrorDlg::OnBnClickedActionRadio()
+{
+	GetDlgItem(IDOK)->EnableWindow(TRUE);
+}
+
 void CRenameErrorDlg::OnCancel()
 {
 	// We don't allow to cancel.
 	//CResizingDialog::OnCancel();
+}
+
+void CRenameErrorDlg::OnOK()
+{
+	// Get the selected answer.
+	if (m_bUsingTransaction)
+	{
+		if (m_ctlActionCommit.GetState() & 0x0003)
+			m_nSelectedAction = uaKeepCurrentState;
+		else if (m_ctlActionRollBack.GetState() & 0x0003)
+			m_nSelectedAction = uaReverseToPreviousState;
+		else
+		{
+			ASSERT(false);
+			m_nSelectedAction = uaReverseToPreviousState;
+		}
+	}
+	else
+	{
+		if (m_ctlActionKeep.GetState() & 0x0003)
+			m_nSelectedAction = uaKeepCurrentState;
+		else
+		{
+			ASSERT(false);
+			m_nSelectedAction = uaReverseToPreviousState;
+		}
+	}
+
+	// OK
+	m_bDialogInitialized = false;
+	CResizingDialog::OnOK();
 }
 
 }}}
