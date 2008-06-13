@@ -1,6 +1,6 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////
-// #include "KTM.h"
+// #include "KtmTransaction.h"
 //
 // Copyright (C) 2007 Warren Stevens. All rights reserved.
 //
@@ -29,29 +29,57 @@
 //////////////////////////////////////////////////////////////////////////
 // History
 // (Y-M-D), version, comment
+// 2008-06-13, Version 1.01, Using Rename-It! naming conventions and
+//                           added IsUsingTransactions().
 // 2007-03-07, Version 1.00, Initial release.
 //////////////////////////////////////////////////////////////////////////
 
 namespace Beroux{ namespace IO
 {
-	class KTMTransaction
+	class CKtmTransaction
 	{
 	public:
-		// constructor typically called using default parameters - see MSDN help for details
-		// set last parameter to false to disable the transaction functionality
-		KTMTransaction(
-			 LPSECURITY_ATTRIBUTES lpTransactionAttributes = NULL // see MSDN help
-			,DWORD CreateOptions = 0                              // see MSDN help
-			,DWORD Timeout       = NULL                           // NULL == infinite timeout
-			,LPWSTR Description  = NULL                           // user-readable string
-			,bool useTransactionsIfAvailable = true               // set to false to disable the transaction functionality
+		/**
+		 * Constructor typically called using default parameters - see MSDN help for details
+		 * set last parameter to false to disable the transaction functionality.
+		 * \param lpTransactionAttributes See MSDN help.
+		 * \param createOptions See MSDN help.
+		 * \param timeout NULL == infinite timeout.
+		 * \param description User-readable string.
+		 * \param useTransactionsIfAvailable Set to false to disable the transaction functionality.
+		 */
+		CKtmTransaction(
+			 LPSECURITY_ATTRIBUTES lpTransactionAttributes = NULL
+			,DWORD createOptions = 0
+			,DWORD timeout       = NULL
+			,LPWSTR description  = NULL
+			,bool useTransactionsIfAvailable = true
 			);
 
-		~KTMTransaction(); // causes rollback if you do not call Commit
+		/**
+		 * Causes RollBack() if you do not call Commit().
+		 */
+		~CKtmTransaction();
 
-		bool   RollBack();  // returns true for success, false for failure (call GetLastError on failure to get the reason)
-		bool   Commit();    // returns true for success, false for failure (call GetLastError on failure to get the reason)
-		HANDLE GetTransaction(); // handle to the current transaction, usually not needed (may be NULL, e.g. on Win XP)
+		/**
+		 * \return true when this KTM supports transaction renaming (meaning Commit() and Rollback()).
+		 */
+		bool IsUsingTransactions() const;
+
+		/**
+		 * Handle to the current transaction, usually not needed (may be NULL, e.g. on Win XP).
+		 */
+		HANDLE GetTransaction() const;
+
+		/**
+		 * \return true for success, false for failure (call GetLastError on failure to get the reason).
+		 */
+		bool RollBack();
+
+		/**
+		 * \return true for success, false for failure (call GetLastError on failure to get the reason).
+		 */
+		bool Commit();
 
 
 		///////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +115,7 @@ namespace Beroux{ namespace IO
 
 	protected:
 		bool InitFunctions();
-		bool UseTransactedFunctions();
+		bool UseTransactedFunctions() const;
 		void FreeLib(HMODULE& libToFree);
 
 		HANDLE  m_transaction;

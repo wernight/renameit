@@ -1,7 +1,7 @@
 #pragma once
 #include "Path.h"
 #include "FileList.h"
-#include "../KTM.h"
+#include "../KtmTransaction.h"
 #include "Math/OrientedGraph.h"
 #include "IRenameError.h"
 
@@ -246,7 +246,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @return True on success, false if one or more files couldn't be renamed.
 		 * @note Does not commit or abort at the end.
 		 */
-		bool PerformRenaming(KTMTransaction& ktm);
+		bool PerformRenaming(CKtmTransaction& ktm);
 
 	// Overrides
 	protected:
@@ -355,7 +355,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Detects if an existing directory contains some elements or if it's empty.
 		 */
-		static bool DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransaction* pKTM = NULL);
+		static bool DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransaction* pKTM = NULL);
 
 		// Default progress callback that does nothing.
 		void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}

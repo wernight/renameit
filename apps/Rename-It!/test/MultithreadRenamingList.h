@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 #include "IO/Renaming/MultithreadRenamingList.h"
-#include "IO/KTM.h"
+#include "IO/KtmTransaction.h"
 #include <iostream>
 
 #ifdef _UNICODE
@@ -22,9 +22,10 @@ public:
 	shared_ptr<CRenamingList> m_simpleRenamingList;			// Should succeed.
 	shared_ptr<CRenamingList> m_impossibleRenamingList;		// Should fail at checking.
 	shared_ptr<CRenamingList> m_failingRenamingList;		// Should fail during renaming.
-	unsigned m_nRenamed;
-	unsigned m_nErrors;
-	unsigned m_nProgress;
+	unsigned m_nOnRenamed;
+	unsigned m_nOnErrors;
+	unsigned m_nOnProgress;
+	unsigned m_nOnDone;
 
 	MultithreadRenamingListTestSuite()
 	{
@@ -127,7 +128,7 @@ public:
 
 	void testBasicFunction()
 	{
-		KTMTransaction ktm;
+		CKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultNotStarted, mrl.GetRenamingResult());
 
@@ -158,7 +159,7 @@ public:
 
 	void testCheckingFailure()
 	{
-		KTMTransaction ktm;
+		CKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		mrl.Start(*m_impossibleRenamingList, ktm);
 		mrl.WaitForTerminaison();
@@ -169,7 +170,7 @@ public:
 
 	void testRenamingFailure()
 	{
-		KTMTransaction ktm;
+		CKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		mrl.Start(*m_failingRenamingList, ktm);
 		mrl.WaitForTerminaison();
@@ -183,17 +184,20 @@ public:
 
 	void testCallbacks()
 	{
+		CKtmTransaction ktm;
+		CMultithreadRenamingList mrl;
+
 		// Register callbacks.
-		m_nRenamed = 0;
-		m_nErrors = 0;
-		m_nProgress = 0;
+		m_nOnRenamed = 0;
+		m_nOnErrors = 0;
+		m_nOnProgress = 0;
+		m_nOnDone = 0;
 		m_failingRenamingList->SetRenamedCallback(boost::bind(&MultithreadRenamingListTestSuite::OnRenamed, this, _1, _2));
 		m_failingRenamingList->SetRenameErrorCallback(boost::bind(&MultithreadRenamingListTestSuite::OnRenameError, this, _1));
 		m_failingRenamingList->SetProgressCallback(boost::bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
+		mrl.SetDoneCallback(bind(&MultithreadRenamingListTestSuite::OnDone, this, _1));
 
 		// Rename the files.
-		KTMTransaction ktm;
-		CMultithreadRenamingList mrl;
 		mrl.Start(*m_failingRenamingList, ktm);
 		mrl.WaitForTerminaison();
 		ktm.Commit();
@@ -202,9 +206,40 @@ public:
 			PrintCheckingErrors(*m_failingRenamingList);
 
 		// Check callbacks.
-		TS_ASSERT_LESS_THAN(m_nRenamed, m_failingRenamingList->GetCount());
-		TS_ASSERT_DIFFERS(0, m_nErrors);
-		TS_ASSERT_DIFFERS(0, m_nProgress);
+		TS_ASSERT_LESS_THAN(m_nOnRenamed, m_failingRenamingList->GetCount());
+		TS_ASSERT_DIFFERS(0, m_nOnErrors);
+		TS_ASSERT_DIFFERS(0, m_nOnProgress);
+		TS_ASSERT_EQUALS(1, m_nOnDone);
+	}
+
+	void testMultipleRenaming()
+	{
+		// Same mrl.
+		CMultithreadRenamingList mrl;
+
+		for (int i=0; i<3; ++i)
+		{
+			CKtmTransaction ktm;
+			mrl.Start(*m_simpleRenamingList, ktm);
+			mrl.WaitForTerminaison();
+			TS_ASSERT_EQUALS(CMultithreadRenamingList::resultSuccess, mrl.GetRenamingResult());
+			TS_ASSERT(ktm.RollBack());
+		}
+
+		// Use the same KTM also.
+		{
+			CKtmTransaction ktm;
+		
+			mrl.Start(*m_simpleRenamingList, ktm);
+			mrl.WaitForTerminaison();
+			TS_ASSERT_EQUALS(CMultithreadRenamingList::resultSuccess, mrl.GetRenamingResult());
+
+			mrl.Start(*m_simpleRenamingList, ktm);
+			mrl.WaitForTerminaison();
+			TS_ASSERT_DIFFERS(CMultithreadRenamingList::resultSuccess, mrl.GetRenamingResult());
+
+			TS_ASSERT(ktm.Commit());
+		}
 	}
 
 private:
@@ -226,16 +261,21 @@ private:
 
 	void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter)
 	{
-		++m_nRenamed;
+		++m_nOnRenamed;
 	}
 
 	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError)
 	{
-		++m_nErrors;
+		++m_nOnErrors;
 	}
 
 	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal)
 	{
-		++m_nProgress;
+		++m_nOnProgress;
+	}
+
+	void OnDone(CMultithreadRenamingList::ERenamingResult nRenamingResult)
+	{
+		++m_nOnDone;
 	}
 };

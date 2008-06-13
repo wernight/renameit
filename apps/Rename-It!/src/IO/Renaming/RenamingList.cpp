@@ -41,7 +41,7 @@ void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 
 bool CRenamingList::IsUsingKtm() const
 {
-	KTMTransaction ktm;
+	CKtmTransaction ktm;
 	return ktm.GetTransaction() != NULL;
 }
 
@@ -427,7 +427,7 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 	return COperationProblem();
 }
 
-bool CRenamingList::PerformRenaming(KTMTransaction& ktm)
+bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 {
 	// Avoid possible strange behaviors for empty lists.
 	if (m_vRenamingOperations.size() == 0)
@@ -863,7 +863,7 @@ int CRenamingList::FindShortestDirectoryPathAfter(vector<CRenamingOperation>& vR
 	return nMinAfterDirIndex;
 }
 
-bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, KTMTransaction* pKTM /*= NULL*/)
+bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransaction* pKTM /*= NULL*/)
 {
 	ASSERT(strDirectoryPath.Right(1) == '\\');
 

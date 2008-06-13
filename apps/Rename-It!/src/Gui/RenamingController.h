@@ -1,5 +1,6 @@
 #pragma once
 #include "RenamingProgressDlg.h"
+#include "IO/Renaming/MultithreadRenamingList.h"
 #include "IO/Renaming/RenameErrorDlg.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming{
@@ -47,6 +48,7 @@ namespace Gui
 		void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter);
 		void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError);
 		void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
+		void OnDone(Beroux::IO::Renaming::CMultithreadRenamingList::ERenamingResult nRenamingResult);
 		void DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const;
 		void DisplayError(const CString& strErrorMsg, EErrorLevels nErrorLevel) const;
 
@@ -54,8 +56,6 @@ namespace Gui
 		Gui::CProgressDlg m_dlgProgress;
 		Beroux::IO::Renaming::CRenameErrorDlg m_dlgRenameError;
 		unsigned m_nErrorLevel;
-		unsigned m_nFilesToRename;
-		int m_nCurrentStage; // The current stage of the renaming process.
 		int m_nPreviousStage; // The last stage for which the progress has been displayed.
 	};
 }

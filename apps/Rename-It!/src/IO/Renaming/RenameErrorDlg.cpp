@@ -18,6 +18,7 @@ CRenameErrorDlg::CRenameErrorDlg(CWnd* pParent /*=NULL*/)
 	: CResizingDialog(CRenameErrorDlg::IDD, pParent)
 	, m_nErrorCount(0)
 	, m_bDialogInitialized(false)
+	, m_bUsingTransaction(false)
 {
 	SetControlInfo(IDC_REPORT_LIST, RESIZE_HOR | RESIZE_VER);
 	SetControlInfo(IDC_DETAILS_BUTTON, ANCHORE_RIGHT);
@@ -30,12 +31,33 @@ CRenameErrorDlg::~CRenameErrorDlg()
 {
 }
 
+CRenameErrorDlg::EUserAction CRenameErrorDlg::ShowDialog()
+{
+	// Show the dialog window.
+	VERIFY(DoModal() == IDOK);
+
+	// Get the selected answer.
+	if (m_ctlAction[0].GetState() & 0x0003)
+		return uaKeepCurrentState;
+	else if (m_ctlAction[1].GetState() & 0x0003)
+		return uaReverseToPreviousState;
+	else if (m_ctlAction[2].GetState() & 0x0003)
+		return uaKeepCurrentState;
+	else
+	{
+		ASSERT(false);
+		return uaReverseToPreviousState;
+	}
+}
+
 void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CResizingDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_REPORT_LIST, m_ctlReport);
 	DDX_Control(pDX, IDC_DESCR_STATIC, m_ctlDescriptionStatic);
-	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlAction);
+	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlAction[0]);
+	DDX_Control(pDX, IDC_ACTION2_RADIO, m_ctlAction[1]);
+	DDX_Control(pDX, IDC_ACTION3_RADIO, m_ctlAction[2]);
 }
 
 
@@ -57,7 +79,7 @@ BOOL CRenameErrorDlg::OnInitDialog()
 	CString strCount;
 	CString strDescription;
 	m_ctlDescriptionStatic.GetWindowText(strDescription);
-	strCount.Format(_T("%d"), m_nErrorCount); strDescription.Replace(_T("$(Files)"), strCount);
+	strCount.Format(_T("%d"), m_nErrorCount); strDescription.Replace(_T("$(Errors)"), strCount);
 	strCount.Format(_T("%d"), m_vErrors.size()); strDescription.Replace(_T("$(Total)"), strCount);
 	m_ctlDescriptionStatic.SetWindowText(strDescription);
 
@@ -75,8 +97,16 @@ BOOL CRenameErrorDlg::OnInitDialog()
 	str.LoadString(IDS_ERROR); m_ctlReport.InsertColumn(2, str);
 	UpdateErrorList();
 
+	// Show the available options.
+	m_ctlAction[0].ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
+	m_ctlAction[1].ShowWindow(m_bUsingTransaction ? SW_SHOW : SW_HIDE);
+	m_ctlAction[2].ShowWindow(m_bUsingTransaction ? SW_HIDE : SW_SHOW);
+
 	// Select the default action.
-	m_ctlAction.SetCheck(BST_CHECKED);
+	if (m_bUsingTransaction)
+		m_ctlAction[0].SetCheck(BST_CHECKED);
+	else
+		m_ctlAction[2].SetCheck(BST_CHECKED);
 
 	m_bDialogInitialized = true;
 	SetWindowPos(NULL, 0, 0, 300, 200, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
@@ -153,15 +183,6 @@ void CRenameErrorDlg::OnCancel()
 {
 	// We don't allow to cancel.
 	//CResizingDialog::OnCancel();
-}
-
-void CRenameErrorDlg::OnOK()
-{
-	if (m_ctlAction.GetState() & 0x0003)
-		m_nAction = uaKeepCurrentState;
-	else
-		m_nAction = uaReverseToPreviousState;
-	CResizingDialog::OnOK();
 }
 
 }}}

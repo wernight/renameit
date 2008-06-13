@@ -25,10 +25,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		}
 	}
 
-	void CMultithreadRenamingList::Start(CRenamingList& renamingList, KTMTransaction& ktm)
+	void CMultithreadRenamingList::Start(CRenamingList& renamingList, CKtmTransaction& ktm)
 	{
 		// Start the thread.
-		m_pWinThread.reset( AfxBeginThread(RenamingThread, new CThreadArgs(renamingList, ktm)) );
+		m_pWinThread.reset( AfxBeginThread(RenamingThread, new CThreadArgs(renamingList, ktm, m_fOnDone)) );
 		m_pWinThread->m_bAutoDelete = FALSE;
 	}
 
@@ -41,26 +41,24 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	UINT CMultithreadRenamingList::RenamingThread(LPVOID lpParam)
 	{
 		// Retrieve the thread arguments.
-		CThreadArgs* threadArgs = static_cast<CThreadArgs*>(lpParam);
-		CRenamingList& renamingList = threadArgs->m_renamingList;
-		KTMTransaction& ktm = threadArgs->m_ktm;
-		delete threadArgs;
+		scoped_ptr<CThreadArgs> threadArgs( static_cast<CThreadArgs*>(lpParam) );
 
-		bool bSuccess = true;	// Success is assumed at first.
+		// Do the renaming.
+		ERenamingResult result = CheckAndRename(threadArgs->m_renamingList, threadArgs->m_ktm);
 
-		//////////////////////////////////////////////////////////////////////////////
-		// Stage: Checking
+		if (threadArgs->m_fOnDone)
+			threadArgs->m_fOnDone(result);
+		return result;
+	}
 
+	CMultithreadRenamingList::ERenamingResult CMultithreadRenamingList::CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm)
+	{
 		// Check if there are some errors.
 		if (!renamingList.Check())
 			return resultCheckingFailed;
 
-		//////////////////////////////////////////////////////////////////////////////
-		// Stage: Renaming
-
 		// Do the renaming.
-		bSuccess &= renamingList.PerformRenaming(ktm);
- 		if (!bSuccess)
+		if (!renamingList.PerformRenaming(ktm))
 			return resultRenamingFailed;
 
 // OLD:

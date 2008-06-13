@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
-#include "KTM.h"
+#include "KtmTransaction.h"
 //////////////////////////////////////////////////////////////////////////
 
 
 namespace Beroux{ namespace IO
 {
 
-KTMTransaction::KTMTransaction(
+CKtmTransaction::CKtmTransaction(
 	 LPSECURITY_ATTRIBUTES lpTransactionAttributes // = NULL
 	,DWORD CreateOptions                           // = 0
 	,DWORD Timeout                                 // = NULL
@@ -57,13 +57,13 @@ KTMTransaction::KTMTransaction(
 	}
 }
 
-bool KTMTransaction::UseTransactedFunctions()
+bool CKtmTransaction::UseTransactedFunctions() const
 {
 	// all libraries must load AND CreateTransaction in constructor must succeed
 	return (NULL != m_transaction);
 }
 
-KTMTransaction::~KTMTransaction()
+CKtmTransaction::~CKtmTransaction()
 {
 	// hitting destructor before a commit took place (e.g. exception ?) so we rollback
 	if(NULL != m_transaction){
@@ -76,7 +76,7 @@ KTMTransaction::~KTMTransaction()
 	FreeLib(m_kernel32_dll);
 }
 
-void KTMTransaction::FreeLib(HMODULE& libToFree)
+void CKtmTransaction::FreeLib(HMODULE& libToFree)
 {
 	if(NULL != libToFree) {
 		::FreeLibrary(libToFree);
@@ -90,7 +90,7 @@ bool GetCastProcAddress(HMODULE hModule, LPCSTR lpProcName, T& funcPtrToAssign) 
 	return (NULL != funcPtrToAssign); // loaded okay
 }
 
-bool KTMTransaction::InitFunctions()
+bool CKtmTransaction::InitFunctions()
 {
 	//////////////////////////////////////////////////////////////////////////
 	// UNICODE note:
@@ -138,7 +138,7 @@ bool KTMTransaction::InitFunctions()
 	return true; // okay
 }
 
-bool KTMTransaction::RollBack()
+bool CKtmTransaction::RollBack()
 {
 	if(UseTransactedFunctions()){
 		const bool wasSuccess(0 != m_ProcAddress_RollbackTransaction(m_transaction) );
@@ -149,7 +149,7 @@ bool KTMTransaction::RollBack()
 	}
 }
 
-bool KTMTransaction::Commit()
+bool CKtmTransaction::Commit()
 {
 	if(UseTransactedFunctions()){
 		const bool wasSuccess(0 != m_ProcAddress_CommitTransaction(m_transaction) );
@@ -160,12 +160,17 @@ bool KTMTransaction::Commit()
 	}
 }
 
-HANDLE KTMTransaction::GetTransaction()
+bool CKtmTransaction::IsUsingTransactions() const
+{
+	return UseTransactedFunctions();
+}
+
+HANDLE CKtmTransaction::GetTransaction() const
 {
 	return m_transaction; // handle to the current transaction, usually not needed (may be NULL, e.g. on Win XP)
 }
 
-BOOL KTMTransaction::DeleteFile(LPCTSTR lpFileName)
+BOOL CKtmTransaction::DeleteFile(LPCTSTR lpFileName)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_DeleteFileTransacted(lpFileName, m_transaction);
@@ -174,13 +179,13 @@ BOOL KTMTransaction::DeleteFile(LPCTSTR lpFileName)
 	}
 }
 
-BOOL KTMTransaction::CopyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists){
+BOOL CKtmTransaction::CopyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists){
 	// Overload - just calls other function
 	BOOL cancel(FALSE);
 	return CopyFileEx(lpExistingFileName, lpNewFileName, NULL, NULL, &cancel, 
 		bFailIfExists ? (COPY_FILE_FAIL_IF_EXISTS) : (0));
 }
-BOOL KTMTransaction::CopyFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, 
+BOOL CKtmTransaction::CopyFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, 
 	LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, LPBOOL pbCancel, DWORD dwCopyFlags)
 {
 	if(UseTransactedFunctions()){
@@ -190,7 +195,7 @@ BOOL KTMTransaction::CopyFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileNam
 	}
 }
 
-BOOL KTMTransaction::CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
+BOOL CKtmTransaction::CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_CreateDirectoryTransacted(lpTemplateDirectory, lpNewDirectory, lpSecurityAttributes, m_transaction);
@@ -199,7 +204,7 @@ BOOL KTMTransaction::CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNe
 	}
 }
 
-BOOL KTMTransaction::MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags){
+BOOL CKtmTransaction::MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags){
 	// Overload - just calls other function
 	if (UseTransactedFunctions()){
 		return m_ProcAddress_MoveFileTransacted(lpExistingFileName, lpNewFileName, NULL, NULL, dwFlags, m_transaction);
@@ -208,7 +213,7 @@ BOOL KTMTransaction::MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileNam
 	}
 }
 #if (_WIN32_WINNT >= 0x0500)
-BOOL KTMTransaction::MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags)
+BOOL CKtmTransaction::MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_MoveFileTransacted(lpExistingFileName, lpNewFileName, lpProgressRoutine, lpData, dwFlags, m_transaction);
@@ -218,7 +223,7 @@ BOOL KTMTransaction::MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lp
 }
 #endif // (_WIN32_WINNT >= 0x0500)
 
-HANDLE KTMTransaction::CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, 
+HANDLE CKtmTransaction::CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, 
 	DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
 {
 	if(UseTransactedFunctions()){
@@ -228,7 +233,7 @@ HANDLE KTMTransaction::CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWO
 	}
 }
 
-BOOL KTMTransaction::RemoveDirectory(LPCTSTR lpPathName)
+BOOL CKtmTransaction::RemoveDirectory(LPCTSTR lpPathName)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_RemoveDirectoryTransacted(lpPathName, m_transaction);
@@ -237,7 +242,7 @@ BOOL KTMTransaction::RemoveDirectory(LPCTSTR lpPathName)
 	}
 }
 
-DWORD KTMTransaction::GetFullPathName(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart)
+DWORD CKtmTransaction::GetFullPathName(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_GetFullPathNameTransacted(lpFileName, nBufferLength, lpBuffer, lpFilePart, m_transaction);
@@ -246,7 +251,7 @@ DWORD KTMTransaction::GetFullPathName(LPCTSTR lpFileName, DWORD nBufferLength, L
 	}
 }
 
-DWORD KTMTransaction::GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer)
+DWORD CKtmTransaction::GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_GetLongPathNameTransacted(lpszShortPath, lpszLongPath, cchBuffer, m_transaction);
@@ -256,7 +261,7 @@ DWORD KTMTransaction::GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath
 }
 
 #if (_WIN32_WINNT >= 0x0500)
-BOOL KTMTransaction::CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
+BOOL CKtmTransaction::CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_CreateHardLinkTransacted(lpFileName, lpExistingFileName, lpSecurityAttributes, m_transaction);
@@ -266,7 +271,7 @@ BOOL KTMTransaction::CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileNa
 }
 #endif // (_WIN32_WINNT >= 0x0500)
 
-DWORD KTMTransaction::GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSizeHigh)
+DWORD CKtmTransaction::GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSizeHigh)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_GetCompressedFileSizeTransacted(lpFileName, lpFileSizeHigh, m_transaction);
@@ -275,7 +280,7 @@ DWORD KTMTransaction::GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSi
 	}
 }
 
-BOOL KTMTransaction::GetFileAttributesEx(LPCTSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation)
+BOOL CKtmTransaction::GetFileAttributesEx(LPCTSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_GetFileAttributesTransacted(lpFileName, fInfoLevelId, lpFileInformation, m_transaction);
@@ -284,7 +289,7 @@ BOOL KTMTransaction::GetFileAttributesEx(LPCTSTR lpFileName, GET_FILEEX_INFO_LEV
 	}
 }
 
-BOOL KTMTransaction::SetFileAttributes(LPCTSTR lpFileName, DWORD dwFileAttributes)
+BOOL CKtmTransaction::SetFileAttributes(LPCTSTR lpFileName, DWORD dwFileAttributes)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_SetFileAttributesTransacted(lpFileName, dwFileAttributes, m_transaction);
@@ -293,7 +298,7 @@ BOOL KTMTransaction::SetFileAttributes(LPCTSTR lpFileName, DWORD dwFileAttribute
 	}
 }
 
-HANDLE KTMTransaction::FindFirstFileEx(LPCTSTR lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, LPVOID lpSearchFilter, DWORD dwAdditionalFlags)
+HANDLE CKtmTransaction::FindFirstFileEx(LPCTSTR lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, LPVOID lpSearchFilter, DWORD dwAdditionalFlags)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_FindFirstFileTransacted(lpFileName, fInfoLevelId, lpFindFileData, fSearchOp, lpSearchFilter, dwAdditionalFlags, m_transaction);
@@ -307,7 +312,7 @@ HANDLE KTMTransaction::FindFirstFileEx(LPCTSTR lpFileName, FINDEX_INFO_LEVELS fI
 // Registry Functions
 //////////////////////////////////////////////////////////////////////////
 
-LONG KTMTransaction::RegCreateKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD Reserved, LPTSTR lpClass, DWORD dwOptions, REGSAM samDesired, LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition)
+LONG CKtmTransaction::RegCreateKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD Reserved, LPTSTR lpClass, DWORD dwOptions, REGSAM samDesired, LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_RegCreateKeyTransacted(hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition, m_transaction, NULL);
@@ -316,7 +321,7 @@ LONG KTMTransaction::RegCreateKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD Reserved,
 	}
 }
 
-LONG KTMTransaction::RegDeleteKey(HKEY hKey, LPCTSTR lpSubKey)
+LONG CKtmTransaction::RegDeleteKey(HKEY hKey, LPCTSTR lpSubKey)
 {
 	if(UseTransactedFunctions()){
 #ifdef _WIN64
@@ -330,7 +335,7 @@ LONG KTMTransaction::RegDeleteKey(HKEY hKey, LPCTSTR lpSubKey)
 	}
 }
 
-LONG KTMTransaction::RegOpenKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult)
+LONG CKtmTransaction::RegOpenKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult)
 {
 	if(UseTransactedFunctions()){
 		return m_ProcAddress_RegOpenKeyTransacted(hKey, lpSubKey, ulOptions, samDesired, phkResult, m_transaction, NULL);

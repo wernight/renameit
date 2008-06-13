@@ -100,7 +100,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -188,7 +187,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -262,7 +260,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -348,7 +345,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -501,11 +497,11 @@
 				Name="IO"
 				>
 				<File
-					RelativePath=".\src\IO\KTM.cpp"
+					RelativePath=".\src\IO\KtmTransaction.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\IO\KTM.h"
+					RelativePath=".\src\IO\KtmTransaction.h"
 					>
 				</File>
 				<Filter

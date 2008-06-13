@@ -11,13 +11,27 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	 * Add the errors using Add() before calling DoModal().
 	 * Once the method returns, use GetUserAction to retrieve the user's action.
 	 */
-	class CRenameErrorDlg : public CResizingDialog
+	class CRenameErrorDlg : private CResizingDialog
 	{
 		DECLARE_DYNAMIC(CRenameErrorDlg)
 
 	public:
 		CRenameErrorDlg(CWnd* pParent = NULL);   // standard constructor
 		virtual ~CRenameErrorDlg();
+
+		enum EUserAction
+		{
+			uaKeepCurrentState,
+			uaReverseToPreviousState,
+		};
+
+		unsigned GetErrorCount() const {
+			return m_nErrorCount;
+		}
+
+		void SetTransactionSupported(bool value) {
+			m_bUsingTransaction = value;
+		}
 
 		/**
 		 * Add an operation done.
@@ -31,18 +45,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			m_vErrors.push_back( CError(fnBefore, fnAfter, strError) );
 		}
 
-		unsigned GetErrorCount() const {
-			return m_nErrorCount;
-		}
-
-		enum EUserAction
-		{
-			uaKeepCurrentState,
-			uaReverseToPreviousState
-		};
-		EUserAction GetUserAction() const {
-			return m_nAction;
-		}
+		EUserAction ShowDialog();
 
 	// Dialog Data
 	private:
@@ -58,7 +61,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 		virtual BOOL OnInitDialog();
 		virtual void OnCancel();
-		virtual void OnOK();
 		afx_msg void OnBnClickedButtonShowDetails();
 		afx_msg void OnBnClickedButtonHideDetails();
 		afx_msg void OnBnClickedShowOnlyProblemsCheck();
@@ -84,8 +86,9 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		CImageList m_ilImages;
 		CListCtrl m_ctlReport;
 		CStatic m_ctlDescriptionStatic;
-		CButton m_ctlAction;
+		CButton m_ctlAction[3];
 		EUserAction m_nAction;
 		bool m_bDialogInitialized;
+		bool m_bUsingTransaction;
 	};
 }}}

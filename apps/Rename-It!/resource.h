@@ -208,6 +208,8 @@
 #define IDC_ACTION2_RADIO               1122
 #define IDC_DETAILS_BUTTON              1123
 #define IDC_HIDE_DETAILS_BUTTON         1124
+#define IDC_ACTION_RADIO2               1125
+#define IDC_ACTION3_RADIO               1125
 #define IDC_DESCR_STATIC                1126
 #define IDC_PROGRESS                    1128
 #define IDC_PROGRESS_STATIC             1129
@@ -219,7 +221,6 @@
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136
 #define IDC_REPLACE_ONCE_CHECK          1137
-#define IDC_CHECK1                      1138
 #define IDC_SHOW_ONLY_PROBLEMS_CHECK    1138
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000
 #define IDS_CMDLINE_LOG_FILE_MISSING    2001

@@ -8,7 +8,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	 *
 	 * Example:
 	 * \code
-	 * KTMTransaction ktm;
+	 * CKtmTransaction ktm;
 	 * CMultithreadRenamingList mrl;
 	 * mrl.Start(my_renaming_list, ktm);
 	 *
@@ -23,6 +23,9 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	 * you have the choice to ktm.Commit() or ktm.RollBack(); where
 	 * committing whould renaming (most probably successfully) all files,
 	 * while the rolling back will avoid any change on the disk.
+	 *
+	 * \warning All callbacks from this class or from CRenamingList are from
+	 *          the worker thread, NOT the calling thread.
 	 */
 	class CMultithreadRenamingList
 	{
@@ -39,6 +42,14 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			resultSuccess,
 		};
 
+
+		/**
+		* A callback function called after the renaming is done,
+		* meaning when the worker thread finished working.
+		* @param[in] nRenamingResult	The result of the renaming.
+		*/
+		typedef boost::function<void (ERenamingResult)> CDoneEventHandler;
+
 	// Construction
 
 	// Attributes
@@ -53,16 +64,24 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		ERenamingResult GetRenamingResult() const;
 
+		/**
+		 * Callback when the renaming in done.
+		 * \note Use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1);
+		 */
+		void SetDoneCallback(const CDoneEventHandler& listener) {
+			m_fOnDone = listener;
+		}
+
 	// Operations
 		/**
 		 * Perform the checking and renaming in a worker thread.
 		 * If the checking failed, it stops there and GetRenamingResult()
 		 * returns resultCheckingFailed.
 		 * @param renamingList List of operations to perform.
-		 * @param ktm The KTMTransaction to be used by CRenamingList.
+		 * @param ktm The CKtmTransaction to be used by CRenamingList.
 		 * @note Don't access the renamingList until the renaming is over.
 		 */
-		void Start(CRenamingList& renamingList, KTMTransaction& ktm);
+		void Start(CRenamingList& renamingList, CKtmTransaction& ktm);
 
 		/**
 		 * Returns only after the worker thread has finished.
@@ -73,17 +92,22 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	private:
 		struct CThreadArgs
 		{
-			CThreadArgs(CRenamingList& renamingList, KTMTransaction& ktm)
+			CThreadArgs(CRenamingList& renamingList, CKtmTransaction& ktm, CDoneEventHandler& fOnDone)
 				: m_renamingList(renamingList)
 				, m_ktm(ktm)
+				, m_fOnDone(fOnDone)
 			{}
 
 			CRenamingList& m_renamingList;
-			KTMTransaction& m_ktm;
+			CKtmTransaction& m_ktm;
+			CDoneEventHandler& m_fOnDone;
 		};
 
 		static UINT RenamingThread(LPVOID lpParam);
 
+		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm);
+
 		boost::shared_ptr<CWinThread> m_pWinThread;
+		CDoneEventHandler m_fOnDone;
 	};
 }}}
