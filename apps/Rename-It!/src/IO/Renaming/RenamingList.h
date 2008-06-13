@@ -183,7 +183,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * Return the problems found for a specific operation.
 		 * Call Check() to update the problems' list.
 		 */
-		inline const COperationProblem& GetOperationProblem(int nIndex)
+		inline const COperationProblem& GetOperationProblem(int nIndex) const
 		{
 			return m_vProblems[nIndex];
 		}
