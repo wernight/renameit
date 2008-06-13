@@ -12,8 +12,6 @@ extern CRenameItApp	theApp;
 
 using namespace Beroux::IO::Renaming;
 
-namespace Gui
-{
 
 // CReportDlg dialog
 
@@ -504,4 +502,3 @@ int CReportDlg::FindIndexOf(int nRenamingOperation) const
 	}
 }
 
-}

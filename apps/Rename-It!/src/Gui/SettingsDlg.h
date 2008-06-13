@@ -19,61 +19,58 @@
 #include "afxwin.h"
 #include "../../resource.h"
 
-namespace Gui
+/////////////////////////////////////////////////////////////////////////////
+// CConfigure dialog
+
+class CSettingsDlg : public CDialog
 {
-	/////////////////////////////////////////////////////////////////////////////
-	// CConfigure dialog
+// Construction
+public:
+	CSettingsDlg(CWnd* pParent = NULL);   // standard constructor
 
-	class CSettingsDlg : public CDialog
-	{
-	// Construction
-	public:
-		CSettingsDlg(CWnd* pParent = NULL);   // standard constructor
+// Attributes
+	void SetPath(CString &path) { m_strFiltersDirectory = path; }
+	CString GetPath() const { return m_strFiltersDirectory; }
 
-	// Attributes
-		void SetPath(CString &path) { m_strFiltersDirectory = path; }
-		CString GetPath() const { return m_strFiltersDirectory; }
+	void SetType(int type) { m_type = type; }
+	int GetType() const { return m_type; }
 
-		void SetType(int type) { m_type = type; }
-		int GetType() const { return m_type; }
+	BOOL AutoAddRenamer() const { return m_bAutoAddRenamer; }
 
-		BOOL AutoAddRenamer() const { return m_bAutoAddRenamer; }
+// Operations
+	// Save configuration
+	bool SaveConfig(void);
 
-	// Operations
-		// Save configuration
-		bool SaveConfig(void);
+	// Return path to the nIndex's recent file opened.
+	int GetRecentFilter(int nIndex, CString &strPath);
 
-		// Return path to the nIndex's recent file opened.
-		int GetRecentFilter(int nIndex, CString &strPath);
+	// Place the given path on top of the recent filter files
+	bool AddRecentFilter(const CString& strPath);
 
-		// Place the given path on top of the recent filter files
-		bool AddRecentFilter(const CString& strPath);
+	// Return number of recent filter you may get using GetRecentFilter(...)
+	int GetRecentFilterCount(void);
 
-		// Return number of recent filter you may get using GetRecentFilter(...)
-		int GetRecentFilterCount(void);
+// Dialog Data
+protected:
+	enum { IDD = IDD_CONFIGURE };
 
-	// Dialog Data
-	protected:
-		enum { IDD = IDD_CONFIGURE };
+	CString	m_strFiltersDirectory;
+	int		m_type;
+	BOOL	m_bAutoAddRenamer;
 
-		CString	m_strFiltersDirectory;
-		int		m_type;
-		BOOL	m_bAutoAddRenamer;
+// Overrides
+protected:
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CConfigure)
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	//}}AFX_VIRTUAL
 
-	// Overrides
-	protected:
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CConfigure)
-		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-		//}}AFX_VIRTUAL
-
-	// Implementation
-	protected:
-		// Generated message map functions
-		//{{AFX_MSG(CConfigure)
-		afx_msg void OnBrowse();
-		//}}AFX_MSG
-		DECLARE_MESSAGE_MAP()
-		virtual void OnOK();
-	};
-}
+// Implementation
+protected:
+	// Generated message map functions
+	//{{AFX_MSG(CConfigure)
+	afx_msg void OnBrowse();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+	virtual void OnOK();
+};

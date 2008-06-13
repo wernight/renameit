@@ -556,14 +556,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\src\IO\Renaming\Report.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\src\IO\Renaming\Report.h"
-						>
-					</File>
-					<File
 						RelativePath=".\src\IO\Renaming\ScopedLocale.cpp"
 						>
 					</File>

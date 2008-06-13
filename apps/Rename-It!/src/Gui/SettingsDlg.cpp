@@ -22,7 +22,6 @@
 #include "SettingsDlg.h"
 #include "../RenameIt.h"
 #include "../IO/Renaming/Filter/FilteredPath.h"
-
 #include <shlobj.h>
 
 using namespace Beroux::IO::Renaming;
@@ -34,8 +33,6 @@ using namespace Beroux::IO::Renaming::Filter;
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Gui
-{
 
 /////////////////////////////////////////////////////////////////////////////
 // CConfigure dialog
@@ -259,4 +256,3 @@ int CSettingsDlg::GetRecentFilterCount(void)
 	}
 }
 
-}

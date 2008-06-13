@@ -6,9 +6,6 @@
 #include "RenameDlg.h"
 
 
-namespace Gui
-{
-
 // CRenameDlg dialog
 
 IMPLEMENT_DYNAMIC(CRenameDlg, CDialog)
@@ -46,4 +43,3 @@ void CRenameDlg::OnOK()
 	CDialog::OnOK();
 }
 
-}

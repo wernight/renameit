@@ -6,8 +6,6 @@
 #include "../RenameIt.h"
 
 // Boîte de dialogue CNotAddedFilesDlg
-namespace Gui
-{
 
 IMPLEMENT_DYNAMIC(CNotAddedFilesDlg, CDialog)
 CNotAddedFilesDlg::CNotAddedFilesDlg(CWnd* pParent /*=NULL*/)
@@ -95,6 +93,4 @@ void CNotAddedFilesDlg::ClearList()
 {
 	m_slFileNames.RemoveAll();
 	m_slErrorMessages.RemoveAll();
-}
-
 }

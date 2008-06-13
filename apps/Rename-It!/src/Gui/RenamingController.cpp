@@ -2,15 +2,12 @@
 #include "RenamingController.h"
 #include "IO/Renaming/DirectoryRemovalError.h"
 #include "IO/Renaming/RenamingList.h"
-#include "IO/Renaming/Report.h"
 #include "IO/Renaming/RenamingError.h"
 #include "IO/Renaming/RenamingList.h"
 #include "IO/KtmTransaction.h"
+#include "Gui/ReportDlg.h"
 
 using namespace Beroux::IO::Renaming;
-
-namespace Gui
-{
 
 CRenamingController::CRenamingController() :
 	m_nErrorLevel(elALL)
@@ -85,7 +82,7 @@ RestartRenaming:
 		AfxMessageBox(IDS_REPORT_ERROR_DETECTED, MB_ICONINFORMATION);
 
 		// Show the report dialog.
-		if (CReport().ShowReportFixErrors(*m_renamingList))
+		if (CReportDlg(*m_renamingList).DoModal() == IDOK)
 		{
 			multithreadRenamingList.SetAllowWarnings(true);
 			goto RestartRenaming;
@@ -229,4 +226,3 @@ void CRenamingController::DisplayError(const CString& strErrorMsg, EErrorLevels 
 	}
 }
 
-}

@@ -1,9 +1,6 @@
 #include "StdAfx.h"
 #include "AboutDlg.h"
 
-namespace Gui
-{
-
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
@@ -85,5 +82,3 @@ BOOL CAboutDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-}

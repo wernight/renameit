@@ -5,32 +5,29 @@
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
 
-namespace Gui
+class CAboutDlg : public CDialog
 {
-	class CAboutDlg : public CDialog
-	{
-	public:
-		CAboutDlg();
+public:
+	CAboutDlg();
 
-		// Dialog Data
-		//{{AFX_DATA(CAboutDlg)
-		enum { IDD = IDD_ABOUTBOX };
-		//}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(CAboutDlg)
+	enum { IDD = IDD_ABOUTBOX };
+	//}}AFX_DATA
 
-		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CAboutDlg)
-	protected:
-		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-		virtual BOOL PreTranslateMessage(MSG* pMsg);
-		virtual BOOL OnInitDialog();
-		//}}AFX_VIRTUAL
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CAboutDlg)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL OnInitDialog();
+	//}}AFX_VIRTUAL
 
-		// Implementation
-	protected:
-		//{{AFX_MSG(CAboutDlg)
-		afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-		afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-		//}}AFX_MSG
-		DECLARE_MESSAGE_MAP()
-	};
-}
+	// Implementation
+protected:
+	//{{AFX_MSG(CAboutDlg)
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+};

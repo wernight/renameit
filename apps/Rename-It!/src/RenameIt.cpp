@@ -65,7 +65,7 @@ BOOL CRenameItApp::InitInstance()
 	AfxInitRichEdit2();
 
 	// Show main dialog
-	Gui::CRenameItDlg	dlg;
+	CRenameItDlg	dlg;
     m_pMainWnd = &dlg;
     dlg.DoModal();
 
