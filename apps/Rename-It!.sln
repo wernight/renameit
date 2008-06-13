@@ -1,15 +1,21 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rename-It!", "Rename-It!\Rename-It!.vcproj", "{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D} = {30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleExt", "SimpleExt\SimpleExt.vcproj", "{7D856530-7E16-409B-A7FA-D75C2658DFF9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompFold", "CompFold\CompFold.vcproj", "{11A541D1-914B-42B6-81AB-AD79325ECCF2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rename-It! Unit Tests", "Rename-It!\Rename-It! Unit Tests.vcproj", "{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFCBD75E-78F5-4CAB-8F43-63133AD647C0} = {BFCBD75E-78F5-4CAB-8F43-63133AD647C0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rename-It! Application", "Rename-It!\Rename-It! Application.vcproj", "{927E31EC-B8C4-455B-8015-95AB8AB56375}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFCBD75E-78F5-4CAB-8F43-63133AD647C0} = {BFCBD75E-78F5-4CAB-8F43-63133AD647C0}
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D} = {30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +81,22 @@ Global
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.ActiveCfg = Release|Win32
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Debug|Win32.ActiveCfg = Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Debug|Win32.Build.0 = Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Release|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Release|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Release MinDependency|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Release MinSize|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Release MinSize|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinDependency|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinSize|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

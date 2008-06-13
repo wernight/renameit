@@ -2,10 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Rename-It! Unit Tests"
-	ProjectGUID="{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}"
-	RootNamespace="RenameItUnitTests"
-	Keyword="Win32Proj"
+	Name="Rename-It! Application"
+	ProjectGUID="{927E31EC-B8C4-455B-8015-95AB8AB56375}"
+	RootNamespace="RenameItApplication"
+	Keyword="MFCProj"
 	>
 	<Platforms>
 		<Platform
@@ -17,6 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
@@ -24,8 +25,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest Gobal Runner"
-				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -38,12 +37,15 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="false"
+				ValidateParameters="false"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="lib/cxxtest;src"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="$(SolutionDir)Rename-It!\src"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -57,6 +59,9 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -65,7 +70,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -91,22 +96,21 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Run the Unit Tests"
-				CommandLine="&quot;$(TargetPath)&quot;"
+				Description="Copy RenameIt.exe to test folder..."
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest Gobal Runner"
-				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -119,11 +123,15 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="false"
+				ValidateParameters="false"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="lib/cxxtest;src"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="$(SolutionDir)Rename-It!\src"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -135,6 +143,9 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -143,7 +154,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -171,8 +182,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Run the Unit Tests"
-				CommandLine="&quot;$(TargetPath)&quot;"
+				Description="Copy RenameIt.exe to test folder..."
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
 			/>
 		</Configuration>
 	</Configurations>
@@ -189,7 +200,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test\StdAfx.cpp"
+				RelativePath=".\src\RenameIt.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RenameIt.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -208,99 +227,15 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\test\StdAfx.h"
-				>
-			</File>
 		</Filter>
 		<Filter
-			Name="Tests Files"
+			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\test\MultithreadRenamingList.h"
+				RelativePath=".\stdafx.h"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\test\Path.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Generated Files"
-			>
-			<File
-				RelativePath=".\test\Generated\MultithreadRenamingList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test\Generated\Path.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test\Generated\Runner.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						WarningLevel="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						WarningLevel="0"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -309,6 +244,36 @@
 			>
 			<File
 				RelativePath=".\RenameIt.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="HTML Help Files"
+			>
+			<File
+				RelativePath="..\Rename-It!\hlp\RenameIt.hhc"
+				>
+			</File>
+			<File
+				RelativePath="..\Rename-It!\hlp\RenameIt.hhk"
+				>
+			</File>
+			<File
+				RelativePath="..\Rename-It!\hlp\RenameIt.hhp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="HTML Help Topics"
+			>
+			<File
+				RelativePath="..\Rename-It!\hlp\HIDD_RENAMEIT_DIALOG.htm"
+				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath="..\Rename-It!\hlp\HIDD_ROOT_DIALOG.htm"
+				DeploymentContent="true"
 				>
 			</File>
 		</Filter>

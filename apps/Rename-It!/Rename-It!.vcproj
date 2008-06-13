@@ -100,8 +100,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -188,13 +188,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Debug|Win32"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -244,19 +244,12 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
+				Name="VCLibrarianTool"
 				AdditionalDependencies="pcre.lib id3lib.lib"
-				OutputFile="$(OutDir)\RenameIt.exe"
-				LinkIncremental="2"
 				AdditionalLibraryDirectories="lib/pcre/lib; lib/id3lib/Debug"
-				GenerateDebugInformation="true"
-				SubSystem="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -268,15 +261,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -361,8 +348,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -392,14 +379,6 @@
 			</File>
 			<File
 				RelativePath=".\src\NewMenu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameIt.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenameIt.h"
 				>
 			</File>
 			<File
@@ -546,6 +525,14 @@
 					</File>
 					<File
 						RelativePath=".\src\IO\Renaming\IRenameError.h"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\MultithreadRenamingList.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\IO\Renaming\MultithreadRenamingList.h"
 						>
 					</File>
 					<File
@@ -922,82 +909,6 @@
 			</File>
 			<File
 				RelativePath=".\res\wiz_toolbar.bmp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="HTML Help Files"
-			Filter="hhp;hhc;hhk;gif;jpg"
-			>
-			<File
-				RelativePath=".\hlp\RenameIt.hhc"
-				>
-			</File>
-			<File
-				RelativePath=".\hlp\RenameIt.hhk"
-				>
-			</File>
-			<File
-				RelativePath=".\hlp\RenameIt.hhp"
-				>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						AdditionalDependencies=".\hlp\HTMLDefines.h"
-						Outputs="$(OutDir)\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						AdditionalDependencies=".\hlp\HTMLDefines.h"
-						Outputs="$(OutDir)\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						AdditionalDependencies=".\hlp\HTMLDefines.h"
-						Outputs="$(OutDir)\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Making help file..."
-						CommandLine="hhc &quot;$(InputPath)&quot;&#x0D;&#x0A;rem HHC returns 1 on success.&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;&#x0D;&#x0A;@echo off&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(OutDir)\$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						AdditionalDependencies=".\hlp\HTMLDefines.h"
-						Outputs="$(OutDir)\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="HTML Help Topics"
-			Filter="htm;html"
-			>
-			<File
-				RelativePath=".\hlp\HIDD_RENAMEIT_DIALOG.htm"
-				DeploymentContent="true"
-				>
-			</File>
-			<File
-				RelativePath=".\hlp\HIDD_ROOT_DIALOG.htm"
-				DeploymentContent="true"
 				>
 			</File>
 		</Filter>
