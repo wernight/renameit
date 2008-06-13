@@ -1,5 +1,6 @@
 #include <cxxtest/TestSuite.h>
 #include "IO/Renaming/MultithreadRenamingList.h"
+#include "IO/KTM.h"
 #include <iostream>
 
 #ifdef _UNICODE
@@ -8,6 +9,7 @@
 # define tcout cout
 #endif
 
+using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
 
 // TODO: Add callback tests.
@@ -125,11 +127,12 @@ public:
 
 	void testBasicFunction()
 	{
+		KTMTransaction ktm;
 		CMultithreadRenamingList mrl;
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultNotStarted, mrl.GetRenamingResult());
 
 		// Start renaming
-		mrl.Start(*m_simpleRenamingList);
+		mrl.Start(*m_simpleRenamingList, ktm);
 		TS_ASSERT(!mrl.IsDone());
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultInProgress, mrl.GetRenamingResult());
 
@@ -144,6 +147,7 @@ public:
 				break;
 			}
 		}
+		TS_ASSERT(ktm.Commit());
 
 		// Check success.
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultSuccess, mrl.GetRenamingResult());
@@ -154,18 +158,22 @@ public:
 
 	void testCheckingFailure()
 	{
+		KTMTransaction ktm;
 		CMultithreadRenamingList mrl;
-		mrl.Start(*m_impossibleRenamingList);
+		mrl.Start(*m_impossibleRenamingList, ktm);
 		mrl.WaitForTerminaison();
+		ktm.Commit();
 		TS_ASSERT(mrl.IsDone());
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultCheckingFailed, mrl.GetRenamingResult());
 	}
 
 	void testRenamingFailure()
 	{
+		KTMTransaction ktm;
 		CMultithreadRenamingList mrl;
-		mrl.Start(*m_failingRenamingList);
+		mrl.Start(*m_failingRenamingList, ktm);
 		mrl.WaitForTerminaison();
+		ktm.Commit();
 		TS_ASSERT(mrl.IsDone());
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultRenamingFailed, mrl.GetRenamingResult());
 		if (mrl.GetRenamingResult() == CMultithreadRenamingList::resultCheckingFailed)
@@ -184,10 +192,11 @@ public:
 		m_failingRenamingList->SetProgressCallback(boost::bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
 
 		// Rename the files.
+		KTMTransaction ktm;
 		CMultithreadRenamingList mrl;
-		mrl.Start(*m_failingRenamingList);
+		mrl.Start(*m_failingRenamingList, ktm);
 		mrl.WaitForTerminaison();
-		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultRenamingFailed, mrl.GetRenamingResult());
+		ktm.Commit();
 		if (mrl.GetRenamingResult() == CMultithreadRenamingList::resultCheckingFailed)
 			// Display the errors.
 			PrintCheckingErrors(*m_failingRenamingList);
