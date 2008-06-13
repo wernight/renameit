@@ -24,8 +24,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest Gobal Runner"
-				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				Description="Generate CxxTest..."
+				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -105,8 +105,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest Gobal Runner"
-				CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\Runner.cpp --runner=ParenPrinter --gui=Win32Gui --root --include=StdAfx.h"
+				Description="Generate CxxTest..."
+				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -184,37 +184,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
-			<File
-				RelativePath=".\test\StdAfx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\test\StdAfx.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Tests Files"
+			Name="Unit Test Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
@@ -226,9 +196,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
+						Description=""
+						CommandLine=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -236,9 +206,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
+						Description=""
+						CommandLine=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 			</File>
@@ -250,9 +220,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
+						Description=""
+						CommandLine=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -260,9 +230,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Execute cxxtestgen for $(InputFileName)"
-						CommandLine="lib\cxxtest\cxxtestgen.py -o test\Generated\$(InputName).cpp --part --include=StdAfx.h &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="test\Generated\$(InputName).cpp"
+						Description=""
+						CommandLine=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 			</File>
@@ -312,6 +282,30 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\StdAfx.cpp"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\StdAfx.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
