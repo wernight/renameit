@@ -44,15 +44,24 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 
 		/**
-		* A callback function called after the renaming is done,
-		* meaning when the worker thread finished working.
-		* @param[in] nRenamingResult	The result of the renaming.
-		*/
+		 * A callback function called after the renaming is done,
+		 * meaning when the worker thread finished working.
+		 * @param[in] nRenamingResult	The result of the renaming.
+		 */
 		typedef boost::function<void (ERenamingResult)> CDoneEventHandler;
 
 	// Construction
+		CMultithreadRenamingList();
 
 	// Attributes
+		/**
+		 * Set if warnings errors should stop the renaming at checking stage.
+		 * By default warning do stop the renaming.
+		 */
+		void SetAllowWarnings(bool value) {
+			m_bAllowWarnings = value;
+		}
+
 		/**
 		 * Tells if the worker thread has finished.
 		 * Reports also true on failure and when nothing is started.
@@ -92,22 +101,25 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	private:
 		struct CThreadArgs
 		{
-			CThreadArgs(CRenamingList& renamingList, CKtmTransaction& ktm, CDoneEventHandler& fOnDone)
+			CThreadArgs(CRenamingList& renamingList, CKtmTransaction& ktm, CDoneEventHandler& fOnDone, bool bAllowWarnings)
 				: m_renamingList(renamingList)
 				, m_ktm(ktm)
 				, m_fOnDone(fOnDone)
+				, m_bAllowWarnings(bAllowWarnings)
 			{}
 
 			CRenamingList& m_renamingList;
 			CKtmTransaction& m_ktm;
 			CDoneEventHandler& m_fOnDone;
+			bool m_bAllowWarnings;
 		};
 
 		static UINT RenamingThread(LPVOID lpParam);
 
-		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm);
+		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings);
 
 		boost::shared_ptr<CWinThread> m_pWinThread;
 		CDoneEventHandler m_fOnDone;
+		bool m_bAllowWarnings;
 	};
 }}}

@@ -78,10 +78,6 @@ RestartRenaming:
 	multithreadRenamingList.WaitForTerminaison();
 
 	// Where are we?
-	// FIXME: When there are checking warnings it should show the CReport dialog
-	//        once and if the user wishes to continue it should continue.
-	//        currently when there are warnings it makes an loop when trying to
-	//        force the renaming.
 	switch (multithreadRenamingList.GetRenamingResult())
 	{
 	case CMultithreadRenamingList::resultCheckingFailed:
@@ -90,7 +86,10 @@ RestartRenaming:
 
 		// Show the report dialog.
 		if (CReport().ShowReportFixErrors(*m_renamingList))
+		{
+			multithreadRenamingList.SetAllowWarnings(true);
 			goto RestartRenaming;
+		}
 		else
 			return false;	// Some errors are left and the user canceled.
 		break;

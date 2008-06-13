@@ -3,6 +3,10 @@
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
+	CMultithreadRenamingList::CMultithreadRenamingList()
+		: m_bAllowWarnings(false)
+	{
+	}
 
 	bool CMultithreadRenamingList::IsDone() const
 	{
@@ -28,7 +32,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	void CMultithreadRenamingList::Start(CRenamingList& renamingList, CKtmTransaction& ktm)
 	{
 		// Start the thread.
-		m_pWinThread.reset( AfxBeginThread(RenamingThread, new CThreadArgs(renamingList, ktm, m_fOnDone)) );
+		m_pWinThread.reset( AfxBeginThread(RenamingThread, new CThreadArgs(renamingList, ktm, m_fOnDone, m_bAllowWarnings)) );
 		m_pWinThread->m_bAutoDelete = FALSE;
 	}
 
@@ -44,36 +48,24 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		scoped_ptr<CThreadArgs> threadArgs( static_cast<CThreadArgs*>(lpParam) );
 
 		// Do the renaming.
-		ERenamingResult result = CheckAndRename(threadArgs->m_renamingList, threadArgs->m_ktm);
+		ERenamingResult result = CheckAndRename(threadArgs->m_renamingList, threadArgs->m_ktm, threadArgs->m_bAllowWarnings);
 
 		if (threadArgs->m_fOnDone)
 			threadArgs->m_fOnDone(result);
 		return result;
 	}
 
-	CMultithreadRenamingList::ERenamingResult CMultithreadRenamingList::CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm)
+	CMultithreadRenamingList::ERenamingResult CMultithreadRenamingList::CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings)
 	{
 		// Check if there are some errors.
-		if (!renamingList.Check())
+		renamingList.Check();
+		if (renamingList.GetErrorCount() > 0 ||
+			(!bAllowWarnings && renamingList.GetWarningCount() > 0))
 			return resultCheckingFailed;
 
 		// Do the renaming.
 		if (!renamingList.PerformRenaming(ktm))
 			return resultRenamingFailed;
-
-// OLD:
-//		if (!bSuccess)
-// 		{
-// 			// TODO: Possibly commit or roll-back depending on the user's choice.
-// 			if (MessageBox(NULL, _T("Errors.\nPress YES to commit or NO roll-back."), _T("Rename-It! Debug"), MB_YESNO) == IDYES)
-// 				VERIFY(ktm.Commit());
-// 			else
-// 				VERIFY(ktm.RollBack());
-// 			return resultRenamingFailed;
-// 		}
-// 		else
-// 			if (!ktm.Commit())
-//				return resultRenamingFailed;
 
 		return resultSuccess;
 	}
