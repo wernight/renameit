@@ -14,7 +14,7 @@ echo ==========================================
 echo TEST COMMAND-LINE
 echo ==========================================
 cd "test Command-line"
-call run.bat
+call run.cmd
 if errorlevel 1 goto end
 cd ..
 echo.
@@ -23,7 +23,7 @@ echo ==========================================
 echo TEST FILTERS
 echo ==========================================
 cd "test Filters"
-call run_all.bat
+call run_all.cmd
 cd ..
 echo.
 

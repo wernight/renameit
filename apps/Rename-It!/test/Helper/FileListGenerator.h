@@ -17,10 +17,7 @@ public:
 
 		m_strTempDir += _T("renameit_unit_test~");
 		for (int i=0; i<5; ++i)
-		{
-			char ch = szAllowed[rand()%nAllowed];
-			m_strTempDir += ch;
-		}
+			m_strTempDir += szAllowed[rand()%nAllowed];
 		m_strTempDir += _T('\\');
 
 		::CreateDirectory(m_strTempDir, NULL);
@@ -42,6 +39,11 @@ public:
 		return m_flAfter;
 	}
 
+	/**
+	 * Add a new file renaming operations.
+	 * The file name before is created.
+	 * Both file names provided should be relative to a temporary folder.
+	 */
 	void AddFile(const CString& fileNameBefore, const CString& fileNameAfter)
 	{
 		// Make full path.
@@ -55,6 +57,33 @@ public:
 			NULL, CREATE_NEW, 
 			FILE_ATTRIBUTE_TEMPORARY,
 			NULL));
+
+		// Add to the list.
+		m_flBefore.AddFile(pathBefore);
+		m_flAfter.AddFile(pathAfter);
+	}
+
+	/**
+	 * Add a new directory renaming operations.
+	 * The directory name before is created.
+	 * Both directory names provided should be relative to a temporary folder.
+	 */
+	void AddFolder(const CString& folderNameBefore, const CString& folderNameAfter)
+	{
+		// Make full path.
+		CString pathBefore = m_strTempDir + folderNameBefore;
+		CString pathAfter = m_strTempDir + folderNameAfter;
+
+		// Create the directory name before (including missing parent folders).
+		CString strParentPath = CPath(pathBefore).GetPathRoot();
+		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
+		{
+			// Get the full parent directory's path.
+			strParentPath += strDirectoryName;
+
+			if (!CPath::PathFileExists(strParentPath))
+				::CreateDirectory(strParentPath, NULL);
+		}
 
 		// Add to the list.
 		m_flBefore.AddFile(pathBefore);
@@ -80,16 +109,7 @@ public:
 	// Delete all files and folders.
 	void CleanUp()
 	{
-		// Remove all test files.
-		CFileFind ff;
-		BOOL bHasMore = ff.FindFile(m_strTempDir + _T("*.*"));
-		while (bHasMore)
-		{
-			bHasMore = ff.FindNextFile();
-
-			if (!ff.IsDirectory())
-				::DeleteFile(ff.GetFilePath());
-		}
+		DeleteAllInFolder(m_strTempDir);
 	}
 
 	// Returns true if all files/folders have have been renamed.
@@ -106,6 +126,30 @@ public:
 	}
 
 private:
+	static void DeleteAllInFolder(const CString& strDir)
+	{
+		ASSERT(strDir[strDir.GetLength() - 1] == '\\');
+
+		// Remove all test files.
+		CFileFind ff;
+		BOOL bHasMore = ff.FindFile(strDir + _T("*.*"));
+		while (bHasMore)
+		{
+			bHasMore = ff.FindNextFile();
+
+			if (ff.GetFileName() != "." && ff.GetFileName() != "..")
+			{
+				if (ff.IsDirectory())
+				{
+					DeleteAllInFolder(ff.GetFilePath());
+					::RemoveDirectory(ff.GetFilePath());
+				}
+				else
+					::DeleteFile(ff.GetFilePath());
+			}
+		}
+	}
+
 	CString m_strTempDir;
 	CFileList m_flBefore;
 	CFileList m_flAfter;

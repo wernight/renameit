@@ -204,7 +204,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\test\MultithreadRenamingList.h"
+				RelativePath=".\test\MultithreadRenamingListTestSuite.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -228,7 +228,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\test\Path.h"
+				RelativePath=".\test\PathTestSuite.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -252,7 +252,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\test\RenamingList.h"
+				RelativePath=".\test\RenamingListTestSuite.h"
 				>
 			</File>
 			<Filter
@@ -260,15 +260,15 @@
 				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				>
 				<File
-					RelativePath=".\test\Generated\MultithreadRenamingList.cpp"
+					RelativePath=".\test\Generated\MultithreadRenamingListTestSuite.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\test\Generated\Path.cpp"
+					RelativePath=".\test\Generated\PathTestSuite.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\test\Generated\RenamingList.cpp"
+					RelativePath=".\test\Generated\RenamingListTestSuite.cpp"
 					>
 				</File>
 			</Filter>

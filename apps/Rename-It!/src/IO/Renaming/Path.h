@@ -81,7 +81,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		}
 
 	// Operations
-		// Determines whether a path to a file system object such as a file or directory is valid.
+		// Determines whether a path to a file system object such as a file or directory is valid and is already existing.
 		static bool PathFileExists(const CString& strPath)
 		{
 			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
