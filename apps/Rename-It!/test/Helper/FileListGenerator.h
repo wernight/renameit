@@ -79,11 +79,12 @@ public:
 		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
 		{
 			// Get the full parent directory's path.
-			strParentPath += strDirectoryName;
+			strParentPath += strDirectoryName + '\\';
 
 			if (!CPath::PathFileExists(strParentPath))
 				::CreateDirectory(strParentPath, NULL);
 		}
+		::CreateDirectory(pathBefore, NULL);
 
 		// Add to the list.
 		m_flBefore.AddFile(pathBefore);
@@ -141,7 +142,7 @@ private:
 			{
 				if (ff.IsDirectory())
 				{
-					DeleteAllInFolder(ff.GetFilePath());
+					DeleteAllInFolder(ff.GetFilePath() + '\\');
 					::RemoveDirectory(ff.GetFilePath());
 				}
 				else

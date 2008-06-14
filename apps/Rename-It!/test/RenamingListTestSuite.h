@@ -40,7 +40,9 @@ public:
 
 		// Rename
 		TS_ASSERT(renList.Check());
-		TS_ASSERT(renList.PerformRenaming(ktm));
+		PrintCheckingErrors(renList);
+		if (renList.Check())
+			TS_ASSERT(renList.PerformRenaming(ktm));
 		TS_ASSERT(ktm.Commit());
 
 		// Check success.
@@ -56,7 +58,9 @@ public:
 
 		// Rename nothing
 		TS_ASSERT(renList.Check());
-		TS_ASSERT(renList.PerformRenaming(ktm));
+		PrintCheckingErrors(renList);
+		if (renList.Check())
+			TS_ASSERT(renList.PerformRenaming(ktm));
 		TS_ASSERT(ktm.Commit());
 	}
 
@@ -74,7 +78,9 @@ public:
 
 		// Rename
 		TS_ASSERT(renList.Check());
-		TS_ASSERT(renList.PerformRenaming(ktm));
+		PrintCheckingErrors(renList);
+		if (renList.Check())
+			TS_ASSERT(renList.PerformRenaming(ktm));
 		TS_ASSERT(ktm.Commit());
 
 		// Check success.
@@ -91,9 +97,9 @@ public:
 
 		// Rename
 		TS_ASSERT(renList.Check());
-		if (!renList.Check())
-			PrintCheckingErrors(renList);
-		TS_ASSERT(renList.PerformRenaming(ktm));
+		PrintCheckingErrors(renList);
+		if (renList.Check())
+			TS_ASSERT(renList.PerformRenaming(ktm));
 		TS_ASSERT(ktm.Commit());
 
 		// Check success.
@@ -196,18 +202,21 @@ public:
 private:
 	void PrintCheckingErrors(const CRenamingList& renamingList)
 	{
-		tcout << "Checking failed:" << endl;
+		if (renamingList.GetErrorCount() != 0 || renamingList.GetWarningCount() != 0)
+		{
+			tcout << "Checking failed:" << endl;
 
-		for (int i=0; i<renamingList.GetCount(); ++i)
-			if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelNone)
-				tcout 
-				<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathBefore().GetFileName() << '`'
-				<< " --> "
-				<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathAfter().GetFileName() << '`'
-				<< ": " << (LPCTSTR)renamingList.GetOperationProblem(i).strMessage
-				<< endl;
+			for (int i=0; i<renamingList.GetCount(); ++i)
+				if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelNone)
+					tcout 
+					<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathBefore().GetFileName() << '`'
+					<< " --> "
+					<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathAfter().GetFileName() << '`'
+					<< ": " << (LPCTSTR)renamingList.GetOperationProblem(i).strMessage
+					<< endl;
 
-		tcout << endl;
+			tcout << endl;
+		}
 	}
 
 	void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter)
