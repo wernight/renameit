@@ -182,7 +182,24 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Unit Test Files"
+			Name="Test Runner"
+			>
+			<File
+				RelativePath=".\test\Generated\Main.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			>
+			<File
+				RelativePath=".\RenameIt.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Unit Tests"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
@@ -234,51 +251,35 @@
 					/>
 				</FileConfiguration>
 			</File>
-		</Filter>
-		<Filter
-			Name="Generated Files"
-			>
 			<File
-				RelativePath=".\test\Generated\MultithreadRenamingList.cpp"
+				RelativePath=".\test\RenamingList.h"
 				>
 			</File>
-			<File
-				RelativePath=".\test\Generated\Path.cpp"
+			<Filter
+				Name="Generated"
+				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				>
-			</File>
-			<File
-				RelativePath=".\test\Generated\Runner.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
+				<File
+					RelativePath=".\test\Generated\MultithreadRenamingList.cpp"
 					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						WarningLevel="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
+				</File>
+				<File
+					RelativePath=".\test\Generated\Path.cpp"
 					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						WarningLevel="0"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			>
-			<File
-				RelativePath=".\RenameIt.rc"
+				</File>
+				<File
+					RelativePath=".\test\Generated\RenamingList.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Helper"
 				>
-			</File>
+				<File
+					RelativePath=".\test\Helper\FileListGenerator.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\StdAfx.cpp"

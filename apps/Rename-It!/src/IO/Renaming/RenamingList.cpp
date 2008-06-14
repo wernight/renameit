@@ -39,12 +39,6 @@ void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 		m_vRenamingOperations[i] = CRenamingOperation(flBefore[i], flAfter[i]);
 }
 
-bool CRenamingList::IsUsingKtm() const
-{
-	CKtmTransaction ktm;
-	return ktm.GetTransaction() != NULL;
-}
-
 bool CRenamingList::Check()
 {
 	// Pre-conditions
@@ -61,7 +55,9 @@ bool CRenamingList::Check()
 #endif
 
 	// Declarations.
-	const int nFilesCount = (int)m_vRenamingOperations.size();
+	const unsigned nFilesCount = (unsigned)m_vRenamingOperations.size();
+	if (nFilesCount == 0)
+		return true;	// Nothing to rename.
 
 	// Reinitialize the error list.
 	ASSERT(m_vProblems.size() == m_vRenamingOperations.size());
@@ -79,7 +75,7 @@ bool CRenamingList::Check()
 	{
 		// First pass: Preparation.
 		set<CString> setBeforeLower;
-		for (int i=0; i<nFilesCount; ++i)
+		for (unsigned i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
 			OnProgress(stageChecking, i*20/nFilesCount, 100);
@@ -103,7 +99,7 @@ bool CRenamingList::Check()
 
 		// Checking loop.
 		map<CString, int> mapAfterLower;
-		for (int i=0; i<nFilesCount; ++i)
+		for (unsigned i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
 			OnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
@@ -458,8 +454,9 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 	OnProgress(stageRenaming, 0, (int)vOrderedOperationList.size());	// Inform we start renaming.
 
 	bool bError = false;
-	for (unsigned nIndex=0; nIndex<vOrderedOperationList.size(); ++nIndex)
+	for (unsigned i=0; i<vOrderedOperationList.size(); ++i)
 	{
+		unsigned nIndex = vOrderedOperationList[i];
 		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
 
 		// When moving a directory, the destination must be on the same drive.
@@ -552,7 +549,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 		}
 
 		// Report progress
-		OnProgress(stageRenaming, nIndex, (int)vOrderedOperationList.size());	// Inform we start renaming.
+		OnProgress(stageRenaming, i, (int)vOrderedOperationList.size());	// Inform we start renaming.
 	}
 
 	// Delete emptied folders (folders that are empty after renaming).

@@ -62,9 +62,11 @@ namespace Beroux{ namespace IO
 		~CKtmTransaction();
 
 		/**
-		 * \return true when this KTM supports transaction renaming (meaning Commit() and Rollback()).
+		 * Tells whether it's using the Vista KTM (Kernel Transaction Manager) to make
+		 * the renaming transactions (meaning Commit() and Rollback()).
+		 * \return true when KTM (Kernel Transaction Manager) is supported.
 		 */
-		bool IsUsingTransactions() const;
+		bool IsUsingKtm() const;
 
 		/**
 		 * Handle to the current transaction, usually not needed (may be NULL, e.g. on Win XP).

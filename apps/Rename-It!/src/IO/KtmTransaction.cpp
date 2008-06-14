@@ -160,8 +160,9 @@ bool CKtmTransaction::Commit()
 	}
 }
 
-bool CKtmTransaction::IsUsingTransactions() const
+bool CKtmTransaction::IsUsingKtm() const
 {
+	ASSERT(UseTransactedFunctions() == (GetTransaction() != NULL));
 	return UseTransactedFunctions();
 }
 

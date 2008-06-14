@@ -93,7 +93,7 @@ RestartRenaming:
 
 	case CMultithreadRenamingList::resultRenamingFailed:
 		// Ask the user what he/she wants to do.
-		m_dlgRenameError.SetTransactionSupported(ktm.IsUsingTransactions());
+		m_dlgRenameError.SetTransactionSupported(ktm.IsUsingKtm());
 		switch (m_dlgRenameError.ShowDialog())
 		{
 		case CRenameErrorDlg::uaKeepCurrentState:

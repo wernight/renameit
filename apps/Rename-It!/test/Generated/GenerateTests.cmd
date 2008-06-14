@@ -4,7 +4,7 @@ rem Settings.
 set cxxtest=..\..\lib\cxxtest\cxxtestgen.py
 set input_dir=..
 set output_dir=.
-set runner_cpp=%output_dir%\Runner.cpp
+set runner_cpp=%output_dir%\Main.cpp
 
 rem Initialize.
 set errors=0

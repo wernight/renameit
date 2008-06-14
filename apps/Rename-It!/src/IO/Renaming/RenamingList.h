@@ -225,12 +225,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			return m_vRenamingOperations.at(nIndex);
 		}
 
-		/**
-		 * Tells wether it's using the Vista KTM (Kernel Transaction Manager) to make
-		 * the renaming transactions.
-		 */
-		bool IsUsingKtm() const;
-
 	// Operations
 		/**
 		 * Search for possible renaming problems before doing the renaming.

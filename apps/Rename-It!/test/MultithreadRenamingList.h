@@ -12,7 +12,6 @@
 using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
 
-// TODO: Add callback tests.
 class MultithreadRenamingListTestSuite : public CxxTest::TestSuite 
 {
 public:
