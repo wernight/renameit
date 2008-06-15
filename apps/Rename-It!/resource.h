@@ -208,9 +208,9 @@
 #define IDC_ACTION2_RADIO               1122
 #define IDC_DETAILS_BUTTON              1123
 #define IDC_HIDE_DETAILS_BUTTON         1124
-#define IDC_ACTION_RADIO2               1125
 #define IDC_ACTION3_RADIO               1125
 #define IDC_DESCR_STATIC                1126
+#define IDC_DESCR_NONE_STATIC           1127
 #define IDC_PROGRESS                    1128
 #define IDC_PROGRESS_STATIC             1129
 #define IDC_SEARCH_RICHEDIT             1130

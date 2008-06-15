@@ -23,7 +23,6 @@
 #include "../RenameIt.h"
 
 #include "AboutDlg.h"
-#include "../ResizingDialog.h"
 #include "SettingsDlg.h"
 #include "IO/Renaming/FileList.h"
 #include "RenamingController.h"
@@ -58,12 +57,17 @@ using namespace Beroux::IO::Renaming;
 using namespace Beroux::IO::Renaming::Filter;
 using namespace Beroux::IO::Renaming::Filter::Wizard;
 
+
 /////////////////////////////////////////////////////////////////////////////
 // CRenameItDlg dialog
 
+IMPLEMENT_DYNAMIC(CRenameItDlg, CSizingDialog)
+
 CRenameItDlg::CRenameItDlg(CWnd* pParent /*=NULL*/)
-	: CResizingDialog(CRenameItDlg::IDD, pParent)
+	: CSizingDialog(CRenameItDlg::IDD, pParent)
 	, m_nUpdatesFreeze(0)
+	, m_bDialogInit(false)
+	, m_pToolTip(NULL)
 {
 	//{{AFX_DATA_INIT(CRenameItDlg)
 	// NOTE: the ClassWizard will add member initialization here
@@ -71,17 +75,6 @@ CRenameItDlg::CRenameItDlg(CWnd* pParent /*=NULL*/)
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_bDialogInit = false;
-	m_pToolTip = NULL;
-
-	SetControlInfo(IDC_FILENAMES_IN,		RESIZE_HOR | RESIZE_VER);
-	SetControlInfo(IDC_STATIC_RULES,		RESIZE_HOR );
-	SetControlInfo(IDC_RULES_LIST,			RESIZE_HOR );
-    SetControlInfo(IDC_BUTTON_MOVEDOWN,     ANCHORE_RIGHT);
-    SetControlInfo(IDC_BUTTON_MOVEUP,       ANCHORE_RIGHT);
-	SetControlInfo(IDOK,					ANCHORE_RIGHT);
-	SetControlInfo(IDCANCEL,				ANCHORE_RIGHT);
-	SetControlInfo(IDC_STATUS_BAR,			ANCHORE_BOTTOM | RESIZE_HOR);
 
 	/************ Filters **************/
 	CString strHomeDir;
@@ -113,7 +106,7 @@ CRenameItDlg::~CRenameItDlg()
 
 void CRenameItDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CResizingDialog::DoDataExchange(pDX);
+	CSizingDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CRenameItDlg)
 	DDX_Control(pDX, IDC_BUTTON_MOVEUP, m_ctlButtonMoveUp);
 	DDX_Control(pDX, IDC_BUTTON_MOVEDOWN, m_ctlButtonMoveDown);
@@ -123,7 +116,7 @@ void CRenameItDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CRenameItDlg, CResizingDialog)
+BEGIN_MESSAGE_MAP(CRenameItDlg, CSizingDialog)
     //{{AFX_MSG_MAP(CRenameItDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -171,7 +164,7 @@ END_MESSAGE_MAP()
 // CRenameItDlg message handlers
 BOOL CRenameItDlg::OnInitDialog()
 {
-    CResizingDialog::OnInitDialog();
+    CSizingDialog::OnInitDialog();
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -186,6 +179,16 @@ BOOL CRenameItDlg::OnInitDialog()
 	m_ctlListFilenames.SetWindowPos(NULL, 0, 0, rectFilesPannel.Width(), rectFilesPannel.Height()-rectStatusBar.Height(), SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
 	int nSize = 123;
 	m_statusBar.SetParts(0, &nSize);
+
+	// Define how to resize.
+	AddResizableCtrl(IDC_STATIC_RULES, _T("CX"));
+	AddResizableCtrl(IDC_RULES_LIST, _T("CX"));
+	AddResizableCtrl(IDC_BUTTON_MOVEDOWN, _T("X"));
+	AddResizableCtrl(IDC_BUTTON_MOVEUP, _T("X"));
+	AddResizableCtrl(IDOK, _T("X"));
+	AddResizableCtrl(IDCANCEL, _T("X"));
+	AddResizableCtrl(IDC_FILENAMES_IN, _T("C"));
+	AddResizableCtrl(IDC_STATUS_BAR, _T("CX+Y"));
 
 	// Set NewMenu style
 	CNewMenu::SetMenuDrawMode( CNewMenu::STYLE_XP );
@@ -211,13 +214,13 @@ BOOL CRenameItDlg::OnInitDialog()
 	m_pToolTip->Activate(TRUE);
 
 	// Process command line
-	CString		strCmd = PathGetArgs( GetCommandLine() );		// Get command line without path to this exe
+	CString strCmd = PathGetArgs(GetCommandLine()); // Get command line without path to this exe.
 	ProcessCommandLine( strCmd );
 
 	// If there are files to rename.
 	if (GetDisplayedList().IsEmpty())
 	{
-		CSettingsDlg		config;
+		CSettingsDlg config;
 		if (m_fcFilters.GetFilterCount() == 0 && config.AutoAddRenamer())
 			// Find the default filter in the filters' list.
 			OnButtonAddRenamer();
@@ -252,7 +255,7 @@ void CRenameItDlg::OnPaint()
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
-		CResizingDialog::OnPaint();
+		CSizingDialog::OnPaint();
 }
 
 // The system calls this to obtain the cursor to display while the user drags
@@ -387,7 +390,6 @@ void CRenameItDlg::OnButtonFilterlist()
 				strPath;
 	CRect		rect;
 	POINT		point;
-	int			i;
 
 	// Load bitmaps
 	VERIFY( bmpOpen.LoadBitmap(IDB_OPEN) );
@@ -404,7 +406,7 @@ void CRenameItDlg::OnButtonFilterlist()
 		VERIFY( menuRecents.AppendMenu( MF_STRING|MF_GRAYED, 0, strBuffer ) );
 	}
 	else
-		for (i=1; i<=config.GetRecentFilterCount(); ++i)
+		for (int i=1; i<=config.GetRecentFilterCount(); ++i)
 		{
 			config.GetRecentFilter(i, strPath);
 			strBuffer.Format(_T("&%d %s"), i, strPath);
@@ -1945,12 +1947,12 @@ BOOL CRenameItDlg::PreTranslateMessage(MSG* pMsg)
 		return(TRUE);
 	}
 
-	return CResizingDialog::PreTranslateMessage(pMsg);
+	return CSizingDialog::PreTranslateMessage(pMsg);
 }
 
 void CRenameItDlg::OnSize(UINT nType, int cx, int cy)
 {
-	CResizingDialog::OnSize(nType, cx, cy);
+	CSizingDialog::OnSize(nType, cx, cy);
 
 	// Resize columns...
 	if (m_bDialogInit)

@@ -19,7 +19,7 @@
 //
 
 #pragma once
-#include "../ResizingDialog.h"
+#include "../SizingDialog.h"
 #include "../IO/Renaming/Filter/FilterContainer.h"
 #include "NotAddedFilesDlg.h"
 #include "Control/ExplorerListCtrl.h"
@@ -30,8 +30,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CRenameItDlg dialog
 
-class CRenameItDlg : public CResizingDialog
+class CRenameItDlg : public CSizingDialog
 {
+	DECLARE_DYNAMIC(CRenameItDlg)
+
 // Construction
 public:
 	CRenameItDlg(CWnd* pParent = NULL);	// standard constructor
@@ -107,6 +109,7 @@ private:
 	afx_msg void OnLvnOdfinditemFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnKeydownFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

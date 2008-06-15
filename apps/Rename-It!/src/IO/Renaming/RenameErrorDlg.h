@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ResizingDialog.h"
+#include "../../SizingDialog.h"
 #include "../../../resource.h"
 #include "Path.h"
 #include <afxcmn.h>
@@ -9,8 +9,10 @@
  * Add the errors using Add() before calling DoModal().
  * Once the method returns, use GetUserAction to retrieve the user's action.
  */
-class CRenameErrorDlg : private CResizingDialog
+class CRenameErrorDlg : private CSizingDialog
 {
+	DECLARE_DYNAMIC(CRenameErrorDlg)
+
 public:
 	CRenameErrorDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CRenameErrorDlg();

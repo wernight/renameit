@@ -7,17 +7,14 @@
 
 // CRenameErrorDlg dialog
 
+IMPLEMENT_DYNAMIC(CRenameErrorDlg, CSizingDialog)
+
 CRenameErrorDlg::CRenameErrorDlg(CWnd* pParent /*=NULL*/)
-	: CResizingDialog(CRenameErrorDlg::IDD, pParent)
+	: CSizingDialog(CRenameErrorDlg::IDD, pParent)
 	, m_nErrorCount(0)
 	, m_bDialogInitialized(false)
 	, m_bUsingTransaction(false)
 {
-	SetControlInfo(IDC_REPORT_LIST, RESIZE_HOR | RESIZE_VER);
-	SetControlInfo(IDC_DETAILS_BUTTON, ANCHORE_RIGHT);
-	SetControlInfo(IDC_SHOW_ONLY_PROBLEMS_CHECK, ANCHORE_LEFT | ANCHORE_BOTTOM);
-	SetControlInfo(IDC_HIDE_DETAILS_BUTTON, ANCHORE_RIGHT | ANCHORE_BOTTOM);
-	SetControlInfo(IDOK, ANCHORE_BOTTOM | RESIZE_HOR);
 }
 
 CRenameErrorDlg::~CRenameErrorDlg()
@@ -33,7 +30,7 @@ CRenameErrorDlg::EUserAction CRenameErrorDlg::ShowDialog()
 
 void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CResizingDialog::DoDataExchange(pDX);
+	CSizingDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_REPORT_LIST, m_ctlReport);
 	DDX_Control(pDX, IDC_DESCR_STATIC, m_ctlDescriptionStatic);
 	DDX_Control(pDX, IDC_ACTION_RADIO, m_ctlActionCommit);
@@ -42,7 +39,7 @@ void CRenameErrorDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CRenameErrorDlg, CResizingDialog)
+BEGIN_MESSAGE_MAP(CRenameErrorDlg, CSizingDialog)
 	ON_BN_CLICKED(IDC_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonShowDetails)
 	ON_BN_CLICKED(IDC_HIDE_DETAILS_BUTTON, &CRenameErrorDlg::OnBnClickedButtonHideDetails)
 	ON_BN_CLICKED(IDC_SHOW_ONLY_PROBLEMS_CHECK, &CRenameErrorDlg::OnBnClickedShowOnlyProblemsCheck)
@@ -57,15 +54,30 @@ END_MESSAGE_MAP()
 
 BOOL CRenameErrorDlg::OnInitDialog()
 {
-	CResizingDialog::OnInitDialog();
+	CSizingDialog::OnInitDialog();
 
-	// Replace strings in caption text.
-	CString strCount;
-	CString strDescription;
-	m_ctlDescriptionStatic.GetWindowText(strDescription);
-	strCount.Format(_T("%d"), m_nErrorCount); strDescription.Replace(_T("$(Errors)"), strCount);
-	strCount.Format(_T("%d"), m_vErrors.size()); strDescription.Replace(_T("$(Total)"), strCount);
-	m_ctlDescriptionStatic.SetWindowText(strDescription);
+	// Define how to resize.
+	AddResizableCtrl(IDC_DESCR_STATIC, _T("CX"));
+	AddResizableCtrl(IDC_SHOW_ONLY_PROBLEMS_CHECK, _T("Y"));
+	AddResizableCtrl(IDC_HIDE_DETAILS_BUTTON, _T("XY"));
+	AddResizableCtrl(IDC_REPORT_LIST, _T("C"));
+	AddResizableCtrl(IDOK, _T("RX+Y"));
+
+	// Show correct full error message.
+	{
+		CString strDescription;
+		m_ctlDescriptionStatic.GetWindowText(strDescription);
+		if (m_nErrorCount == m_vErrors.size())
+			strDescription = strDescription.Mid(strDescription.Find(_T("||")) + 2);
+		else
+			strDescription = strDescription.Left(strDescription.Find(_T("||")));
+
+		CString strCount;
+		strCount.Format(_T("%d"), m_nErrorCount); strDescription.Replace(_T("$(Errors)"), strCount);
+		strCount.Format(_T("%d"), m_vErrors.size()); strDescription.Replace(_T("$(Total)"), strCount);
+
+		m_ctlDescriptionStatic.SetWindowText(strDescription);
+	}
 
 	// Create image list.
 	VERIFY( m_ilImages.Create(16, 16, ILC_COLOR8|ILC_MASK, 0, 4) );
@@ -104,7 +116,7 @@ BOOL CRenameErrorDlg::OnInitDialog()
 
 void CRenameErrorDlg::OnSize(UINT nType, int cx, int cy)
 {
-	CResizingDialog::OnSize(nType, cx, cy);
+	CSizingDialog::OnSize(nType, cx, cy);
 
 	// Resize columns...
 	if (m_bDialogInitialized)
@@ -175,7 +187,7 @@ void CRenameErrorDlg::OnBnClickedActionRadio()
 void CRenameErrorDlg::OnCancel()
 {
 	// We don't allow to cancel.
-	//CResizingDialog::OnCancel();
+	//CSizingDialog::OnCancel();
 }
 
 void CRenameErrorDlg::OnOK()
@@ -206,5 +218,5 @@ void CRenameErrorDlg::OnOK()
 
 	// OK
 	m_bDialogInitialized = false;
-	CResizingDialog::OnOK();
+	CSizingDialog::OnOK();
 }

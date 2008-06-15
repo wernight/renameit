@@ -332,15 +332,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ResizingDialog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ResizingDialog.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SizingDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SizingDialog.h"
 				>
 			</File>
 			<File
