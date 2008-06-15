@@ -1,13 +1,5 @@
 #include <cxxtest/TestSuite.h>
-#include "IO/Renaming/RenamingList.h"
 #include "Helper/FileListGenerator.h"
-#include <iostream>
-
-#ifdef _UNICODE
-# define tcout wcout
-#else
-# define tcout cout
-#endif
 
 using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
@@ -34,110 +26,96 @@ public:
 	{
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		CKtmTransaction ktm;
 		fileListGenerator.AddFile(_T("a.tmp"), _T("a-after.tmp"));
-		CRenamingList renList = fileListGenerator.MakeRenamingList();
 
 		// Rename
-		TS_ASSERT(renList.Check());
-		PrintCheckingErrors(renList);
-		if (renList.Check())
-			TS_ASSERT(renList.PerformRenaming(ktm));
-		TS_ASSERT(ktm.Commit());
-
-		// Check success.
-		TS_ASSERT(fileListGenerator.AreAllRenamed());
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
 	void testEmptyRenaming()
 	{
-		// Replace
-		CKtmTransaction ktm;
-		CFileList before, after;
-		CRenamingList renList(before, after);
+		// Prepare
+		CFileListGenerator fileListGenerator;
 
 		// Rename nothing
-		TS_ASSERT(renList.Check());
-		PrintCheckingErrors(renList);
-		if (renList.Check())
-			TS_ASSERT(renList.PerformRenaming(ktm));
-		TS_ASSERT(ktm.Commit());
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
 	void testCyclicFileRenaming()
 	{
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		CKtmTransaction ktm;
 		fileListGenerator.AddFile(_T("1.tmp"), _T("2.tmp"));
 		fileListGenerator.AddFile(_T("4.tmp"), _T("5.tmp"));
 		fileListGenerator.AddFile(_T("2.tmp"), _T("3.tmp"));
 		fileListGenerator.AddFile(_T("3.tmp"), _T("4.tmp"));
 		fileListGenerator.AddFile(_T("5.tmp"), _T("1.tmp"));
-		CRenamingList renList = fileListGenerator.MakeRenamingList();
 
 		// Rename
-		TS_ASSERT(renList.Check());
-		PrintCheckingErrors(renList);
-		if (renList.Check())
-			TS_ASSERT(renList.PerformRenaming(ktm));
-		TS_ASSERT(ktm.Commit());
-
-		// Check success.
-		TS_ASSERT(fileListGenerator.AreAllRenamed());
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
 	void testSingleFolderRenaming()
 	{
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		CKtmTransaction ktm;
 		fileListGenerator.AddFolder(_T("dir_before"), _T("dir_after"));
-		CRenamingList renList = fileListGenerator.MakeRenamingList();
 
 		// Rename
-		TS_ASSERT(renList.Check());
-		PrintCheckingErrors(renList);
-		if (renList.Check())
-			TS_ASSERT(renList.PerformRenaming(ktm));
-		TS_ASSERT(ktm.Commit());
-
-		// Check success.
-		TS_ASSERT(fileListGenerator.AreAllRenamed());
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 	
 	void testCyclicFolderRenaming()
 	{
-		// TODO
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddFolder(_T("d"), _T("a"));
+		fileListGenerator.AddFolder(_T("ccc"), _T("d"));
+		fileListGenerator.AddFolder(_T("a"), _T("bb"));
+		fileListGenerator.AddFolder(_T("bb"), _T("ccc"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
 	void testEmboxedFolderRenaming()
 	{
-		// Ex: Adding "C:\A\B\" may add the folders:
-		// - C:\A\B\
-		// - C:\A\B\C1\
-		// - C:\A\B\C2\
-		// The folders "B", "C1", and "C2" are renamed; "A" is not.
-
-		// TODO
+// 		// Prepare
+// 		CFileListGenerator fileListGenerator;
+// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d"), _T("a\\b2\\c2\\d2"));
+// 		fileListGenerator.AddFolder(_T("a\\b"), _T("a\\b2"));
+// 		fileListGenerator.AddFolder(_T("a\\b\\c"), _T("a\\b2\\c2"));
+// 
+// 		// Rename
+// 		if (!fileListGenerator.PerformRenaming(false))
+// 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 	
-	void testCyclicEmboxedFolderRenaming()
+	void testComplexFolderRenaming()
 	{
-		// TODO
-	}
-	
-	void testRemoveRenamedEmptyParentsFolders()
-	{
-		// After the renaming is complete and only when it's successful, check
-		// if some files have moves from one folder A to a new folder B,
-		// and if there are no more files in the folder A after renaming,
-		// then if the user wants to delete the folder A (list all the folders
-		// in the same situation ?).
-		//
-		// By definition, this test only applies when renaming files.
-
-		// TODO
+// 		// Prepare
+// 		CFileListGenerator fileListGenerator;
+// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d"), _T("a\\B\\d2"));
+// 		fileListGenerator.AddFolder(_T("a\\b"), _T("a\\b2"));
+// 		fileListGenerator.AddFolder(_T("a\\b\\c"), _T("a\\b2\\c2"));
+// 		fileListGenerator.AddFolder(_T("a\\b2"), _T("a\\B\\c2"));
+// 		fileListGenerator.AddFolder(_T("a\\b\\c22"), _T("a\\B"));
+// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d2"), _T("a\\B\\c22"));
+// 
+// 		for (int i=0; i<10; ++i)
+// 		{
+// 			// Randomize
+// 			fileListGenerator.RandomizeOperationsOrder(i);
+// 
+// 			// Rename
+// 			if (!fileListGenerator.PerformRenaming())
+// 				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+// 		}
 	}
 	
 	void testFoldersCaseUnfication()
@@ -150,7 +128,71 @@ public:
 		// The case of "B" as defined by the operation (1) prevails on the case
 		// as defined in the operation (2). So in the end it'll be "C:\A\b\c\".
 
-		// TODO
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddFolder(_T("A\\B"), _T("A\\b"));
+		fileListGenerator.AddFolder(_T("A\\B\\C"), _T("A\\B\\c"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+		// Check case
+		CFileFind ff;
+		CFileList flAfter = fileListGenerator.GetAfterFileList();
+		for (int i=0; i<flAfter.GetFileCount(); ++i)
+		{
+			TS_ASSERT(ff.FindFile(flAfter.GetFile(i).GetPath()));
+			TS_ASSERT(!ff.FindNextFile());
+			TS_ASSERT_EQUALS(flAfter.GetFile(i).GetPath(), ff.GetFilePath());
+		}
+	}
+
+	void testRemoveRenamedEmptyParentsFolders()
+	{
+		// After the renaming is complete and only when it's successful, check
+		// if some files have moves from one folder A to a new folder B,
+		// and if there are no more files in the folder A after renaming,
+		// then if the user wants to delete the folder A (list all the folders
+		// in the same situation ?).
+		//
+		// This test applies to files and folders renaming.
+
+		// Test with files
+		{
+			// Prepare
+			CFileListGenerator fileListGenerator;
+			fileListGenerator.AddFile(_T("a1\\b1\\c1\\d1"), _T("a2"));
+			fileListGenerator.AddFile(_T("a1\\b1\\c2"), _T("a3"));
+			fileListGenerator.AddFile(_T("a1\\b2"), _T("a1\\b3"));
+
+			// Rename
+			if (!fileListGenerator.PerformRenaming())
+				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+			// Check
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1\\c1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1")));
+			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1")));
+		}
+
+		// Test with folders
+		{
+			// Prepare
+			CFileListGenerator fileListGenerator;
+			fileListGenerator.AddFolder(_T("a1\\b1\\c1\\d1"), _T("a2"));
+			fileListGenerator.AddFolder(_T("a1\\b1\\c2"), _T("a3"));
+			fileListGenerator.AddFolder(_T("a1\\b2"), _T("a1\\b3"));
+
+			// Rename
+			if (!fileListGenerator.PerformRenaming())
+				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+			// Check
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1\\c1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1")));
+			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1")));
+		}
 	}
 
 	void testUnicodePath()
@@ -158,6 +200,11 @@ public:
 		// Test to rename path provided with \\?\...
 
 		// TODO
+	}
+
+	void testFileChecking()
+	{
+		// TODO: Test almost every possible bad file name issuing warnings or errors.
 	}
 
 	void testFolderChecking()
@@ -174,6 +221,11 @@ public:
 		// deny it. If a folder of the same name exists, then deny it (later
 		// we'll allow to override).
 
+		// TODO
+	}
+
+	void testRenamingToAnotherDrive()
+	{
 		// TODO
 	}
 
@@ -197,37 +249,5 @@ public:
 		// Done by "subst X: C:\Folder\".
 
 		// TODO
-	}
-
-private:
-	void PrintCheckingErrors(const CRenamingList& renamingList)
-	{
-		if (renamingList.GetErrorCount() != 0 || renamingList.GetWarningCount() != 0)
-		{
-			tcout << "Checking failed:" << endl;
-
-			for (int i=0; i<renamingList.GetCount(); ++i)
-				if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelNone)
-					tcout 
-					<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathBefore().GetFileName() << '`'
-					<< " --> "
-					<< '`' << (LPCTSTR)renamingList.GetRenamingOperation(i).GetPathAfter().GetFileName() << '`'
-					<< ": " << (LPCTSTR)renamingList.GetOperationProblem(i).strMessage
-					<< endl;
-
-			tcout << endl;
-		}
-	}
-
-	void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter)
-	{
-	}
-
-	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError)
-	{
-	}
-
-	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal)
-	{
 	}
 };

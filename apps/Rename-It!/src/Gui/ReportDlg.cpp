@@ -8,8 +8,6 @@
 #include "../NewMenu.h"
 #include "../Math/OrientedGraph.h"
 
-extern CRenameItApp	theApp;
-
 using namespace Beroux::IO::Renaming;
 
 
@@ -57,10 +55,10 @@ BOOL CReportDlg::OnInitDialog()
 
 	// Create image list
 	VERIFY( m_ilImages.Create(16, 16, ILC_COLOR8|ILC_MASK, 0, 4) );
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance,MAKEINTRESOURCE(IDI_REMOVED)) ) == iconRemoved);
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance,MAKEINTRESOURCE(IDI_CONFLICT)) ) == iconConflict);
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance,MAKEINTRESOURCE(IDI_INVALIDNAME)) ) == iconInvalidName);
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance,MAKEINTRESOURCE(IDI_BADNAME)) ) == iconBadName);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_REMOVED)) ) == iconRemoved);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_CONFLICT)) ) == iconConflict);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_INVALIDNAME)) ) == iconInvalidName);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_BADNAME)) ) == iconBadName);
 	m_ctlReportList.SetImageList(&m_ilImages, LVSIL_SMALL);
 	ASSERT( &m_ilImages == m_ctlReportList.GetImageList(LVSIL_SMALL) );
 

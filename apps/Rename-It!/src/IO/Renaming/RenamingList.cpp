@@ -433,7 +433,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 #ifdef _DEBUG
 	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
 	{
-		// Each operation must be a unicode path.
+		// Each operation must be a Unicode path.
 		ASSERT(operation.pathBefore.GetPath().Left(4) == "\\\\?\\");
 		ASSERT(operation.pathAfter.GetPath().Left(4) == "\\\\?\\");
 
@@ -459,7 +459,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 		unsigned nIndex = vOrderedOperationList[i];
 		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
 
-		// When moving a directory, the destination must be on the same drive.
+		// FIXME: When moving a directory, the destination must be on the same drive.
 /*				ASSERT(!renamingOperation.pathBefore.IsDirectory() ||
 			CPath::FSCompare(
 				renamingOperation.pathBefore.GetPathRoot(),
@@ -572,7 +572,6 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 			 */
 			ASSERT(dwErrorCode != ERROR_DIR_NOT_EMPTY);
 
-			// TODO-TOFINISH: Report this error as a WARNING.
 			OnRenameError(CDirectoryRemovalError(strDirectoryPath, dwErrorCode));
 			bError = true;
 		}
@@ -726,7 +725,7 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 			} // end if cycle detection.
 		} // end if successor found.
 
-		// Mark folders the should be erased after renaming if they are empty.
+		// Mark folders that should be erased after renaming if they are empty.
 		if (_tcsicmp(proBefore->GetDirectoryName(),
 			         proAfter->GetDirectoryName()) != 0 &&
 			!DirectoryIsEmpty(proBefore->GetDirectoryName()))
@@ -875,8 +874,22 @@ bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransa
 	if (hFindFile == INVALID_HANDLE_VALUE)
 	{
 		DWORD dwErrorCode = ::GetLastError();
-		ASSERT(false);	// This shouldn't happen, as the directory is supposed existing.
-		return true;
+#ifdef _DEBUG
+		// Get error message
+		LPTSTR lpMsgBuf = NULL;
+		FormatMessage( 
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			dwErrorCode,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+			(LPTSTR) &lpMsgBuf,
+			0,
+			NULL );
+		CString strErrorMessage = lpMsgBuf;
+		LocalFree( lpMsgBuf );
+#endif
+		ASSERT(dwErrorCode == ERROR_PATH_NOT_FOUND);
+		return false;
 	}
 	else
 	{

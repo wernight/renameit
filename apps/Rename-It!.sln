@@ -77,10 +77,10 @@ Global
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinDependency|Win32.Build.0 = Release|Win32
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
 		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.SimpleExt Unicode Release MinSize|Win32.Build.0 = Release|Win32
-		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
-		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.Build.0 = Debug|Win32
-		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.ActiveCfg = Release|Win32
-		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.Build.0 = Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
+		{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Debug|Win32.ActiveCfg = Debug|Win32
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Debug|Win32.Build.0 = Debug|Win32
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Release|Win32.ActiveCfg = Release|Win32
@@ -93,10 +93,10 @@ Global
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinDependency|Win32.Build.0 = Release|Win32
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
 		{927E31EC-B8C4-455B-8015-95AB8AB56375}.SimpleExt Unicode Release MinSize|Win32.Build.0 = Release|Win32
-		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
-		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.Build.0 = Debug|Win32
-		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.ActiveCfg = Release|Win32
-		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.Build.0 = Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.ActiveCfg = Unicode Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Debug|Win32.Build.0 = Unicode Debug|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.ActiveCfg = Unicode Release|Win32
+		{927E31EC-B8C4-455B-8015-95AB8AB56375}.Unicode Release|Win32.Build.0 = Unicode Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

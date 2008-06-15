@@ -10,7 +10,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	{
 	public:
 		CDirectoryRemovalError(const CString& strDirectoryPath, DWORD dwErrorCode) :
-		  IRenameError(levelError),
+		  IRenameError(levelWarning),
 		  m_strDirectoryPath(strDirectoryPath),
 		  m_dwErrorCode(dwErrorCode)
 		{}

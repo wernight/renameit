@@ -347,7 +347,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		static int FindShortestDirectoryPathAfter(vector<CRenamingOperation>& vRenamingOperations);
 
 		/**
-		 * Detects if an existing directory contains some elements or if it's empty.
+		 * Detects if a directory contains some elements or not.
+		 * \return true when the directory exist but it's empty, and false else.
 		 */
 		static bool DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransaction* pKTM = NULL);
 

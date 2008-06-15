@@ -5,11 +5,7 @@
 #include "RenameErrorDlg.h"
 #include "RenameIt.h"
 
-extern CRenameItApp	theApp;
-
 // CRenameErrorDlg dialog
-
-IMPLEMENT_DYNAMIC(CRenameErrorDlg, CResizingDialog)
 
 CRenameErrorDlg::CRenameErrorDlg(CWnd* pParent /*=NULL*/)
 	: CResizingDialog(CRenameErrorDlg::IDD, pParent)
@@ -73,8 +69,8 @@ BOOL CRenameErrorDlg::OnInitDialog()
 
 	// Create image list.
 	VERIFY( m_ilImages.Create(16, 16, ILC_COLOR8|ILC_MASK, 0, 4) );
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance, MAKEINTRESOURCE(IDI_REN_OK)) ) == iconOk);
-	VERIFY( m_ilImages.Add( LoadIcon(theApp.m_hInstance, MAKEINTRESOURCE(IDI_REN_ERROR)) ) == iconError);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_REN_OK)) ) == iconOk);
+	VERIFY( m_ilImages.Add( ::LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_REN_ERROR)) ) == iconError);
 	m_ctlReport.SetImageList(&m_ilImages, LVSIL_SMALL);
 	ASSERT( &m_ilImages == m_ctlReport.GetImageList(LVSIL_SMALL) );
 

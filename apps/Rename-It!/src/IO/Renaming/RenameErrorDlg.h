@@ -11,8 +11,6 @@
  */
 class CRenameErrorDlg : private CResizingDialog
 {
-	DECLARE_DYNAMIC(CRenameErrorDlg)
-
 public:
 	CRenameErrorDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CRenameErrorDlg();

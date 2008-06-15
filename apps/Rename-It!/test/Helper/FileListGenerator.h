@@ -1,6 +1,12 @@
 #pragma once
 #include "IO/Renaming/FileList.h"
+#include "IO/Renaming/RenamingList.h"
+#include "IO/Renaming/RenamingError.h"
+#include "IO/KtmTransaction.h"
+#include "Helper/RandomMT.h"
+#include <sstream>
 
+using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
 
 class CFileListGenerator
@@ -39,6 +45,11 @@ public:
 		return m_flAfter;
 	}
 
+	CString GetTempFolder() const
+	{
+		return m_strTempDir;
+	}
+
 	/**
 	 * Add a new file renaming operations.
 	 * The file name before is created.
@@ -49,6 +60,17 @@ public:
 		// Make full path.
 		CString pathBefore = m_strTempDir + fileNameBefore;
 		CString pathAfter = m_strTempDir + fileNameAfter;
+
+		// Create the parent directories.
+		CString strParentPath = CPath(pathBefore).GetPathRoot();
+		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
+		{
+			// Get the full parent directory's path.
+			strParentPath += strDirectoryName + '\\';
+
+			if (!CPath::PathFileExists(strParentPath))
+				::CreateDirectory(strParentPath, NULL);
+		}
 
 		// Create the file name before.
 		::CloseHandle(::CreateFile(pathBefore,
@@ -74,7 +96,7 @@ public:
 		CString pathBefore = m_strTempDir + folderNameBefore;
 		CString pathAfter = m_strTempDir + folderNameAfter;
 
-		// Create the directory name before (including missing parent folders).
+		// Create the parent directories.
 		CString strParentPath = CPath(pathBefore).GetPathRoot();
 		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
 		{
@@ -84,6 +106,8 @@ public:
 			if (!CPath::PathFileExists(strParentPath))
 				::CreateDirectory(strParentPath, NULL);
 		}
+
+		// Create the directory
 		::CreateDirectory(pathBefore, NULL);
 
 		// Add to the list.
@@ -91,7 +115,7 @@ public:
 		m_flAfter.AddFile(pathAfter);
 	}
 
-	CRenamingList MakeRenamingList()
+	CRenamingList MakeRenamingList() const
 	{
 		return CRenamingList(m_flBefore, m_flAfter);
 	}
@@ -113,6 +137,56 @@ public:
 		DeleteAllInFolder(m_strTempDir);
 	}
 
+	void RandomizeOperationsOrder(unsigned long seed)
+	{
+		Beroux::Math::RandomMT random(seed);
+		for (int i=0; i<m_flBefore.GetFileCount(); ++i)
+		{
+			unsigned nIndex = random.RandomRange(0, m_flBefore.GetFileCount() - 1);
+
+			CPath pathBefore = m_flBefore.GetFile(nIndex);
+			CPath pathAfter = m_flAfter.GetFile(nIndex);
+			m_flBefore.RemoveFile(nIndex);
+			m_flAfter.RemoveFile(nIndex);
+			m_flBefore.AddFile(pathBefore);
+			m_flAfter.AddFile(pathBefore);
+		}
+	}
+
+	// Rename all the files and return true on success.
+	bool PerformRenaming(bool bUseTransactions=true)
+	{
+		m_ossRenameErrors.reset(new ostringstream());
+		CKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
+		CRenamingList renamingList = MakeRenamingList();
+		renamingList.SetRenameErrorCallback(bind(&CFileListGenerator::OnRenameError, this, _1));
+
+		if (!renamingList.Check())
+		{
+			PrintCheckingErrors(renamingList);
+			return false;
+		}
+
+		if (!renamingList.PerformRenaming(ktm))
+		{
+			ktm.Commit();
+			return false;
+		}
+
+		if (!ktm.Commit())
+			return false;
+
+		if (!AreAllRenamed())
+			return false;
+
+		return true;
+	}
+
+	string GetRenamingErrors() const
+	{
+		return m_ossRenameErrors->str();
+	}
+
 	// Returns true if all files/folders have have been renamed.
 	bool AreAllRenamed() const
 	{
@@ -127,6 +201,42 @@ public:
 	}
 
 private:
+	void PrintCheckingErrors(const CRenamingList& renamingList)
+	{
+		if (renamingList.GetErrorCount() != 0 || renamingList.GetWarningCount() != 0)
+		{
+			*m_ossRenameErrors << "Checking failed (" << renamingList.GetErrorCount() << " errors, " << renamingList.GetWarningCount() << " warnings):" << endl;
+
+			for (int i=0; i<renamingList.GetCount(); ++i)
+				if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelNone)
+					*m_ossRenameErrors 
+					<< '`' << CStringToString(renamingList.GetRenamingOperation(i).GetPathBefore().GetFileName()) << '`'
+					<< " --> "
+					<< '`' << CStringToString(renamingList.GetRenamingOperation(i).GetPathAfter().GetFileName()) << '`'
+					<< ": " << CStringToString(renamingList.GetOperationProblem(i).strMessage)
+					<< endl;
+
+			*m_ossRenameErrors << endl;
+		}
+	}
+
+	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError)
+	{
+		*m_ossRenameErrors << "OnRenameError(): ";
+		if (typeid(renameError) == typeid(CRenamingError))
+		{
+			const CRenamingError& renErr = static_cast<const CRenamingError&>(renameError);
+			*m_ossRenameErrors 
+				<< '`' << CStringToString(renErr.GetPathNameBefore().GetPath()) << '`'
+				<< " --> "
+				<< '`' << CStringToString(renErr.GetPathNameAfter().GetPath()) << '`'
+				<< ": " << CStringToString(renErr.GetErrorMessage());
+		}
+		else
+			*m_ossRenameErrors << "Unknown error type.";
+		*m_ossRenameErrors << endl;
+	}
+
 	static void DeleteAllInFolder(const CString& strDir)
 	{
 		ASSERT(strDir[strDir.GetLength() - 1] == '\\');
@@ -151,7 +261,21 @@ private:
 		}
 	}
 
+	static string CStringToString(const CString& source)
+	{
+#ifdef _UNICODE
+		size_t count = 0;
+		char dest[256];
+		wcstombs_s(&count, dest, (LPCWSTR)source, source.GetLength());
+		dest[source.GetLength()] = '\0';
+		return dest;
+#else
+		return (LPCSTR)source;
+#endif
+	}
+
 	CString m_strTempDir;
 	CFileList m_flBefore;
 	CFileList m_flAfter;
+	shared_ptr<ostringstream> m_ossRenameErrors;
 };
