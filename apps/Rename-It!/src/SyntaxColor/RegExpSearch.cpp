@@ -16,14 +16,14 @@ namespace SyntaxColor
 		// Compile the search string to look for compilation errors.
 		CString strSubject;
 		ctrl.GetWindowText(strSubject);
-		CHAR szPatternA[1024];
 #ifdef _UNICODE
+		char szPatternA[1024];
 		szPatternA[WideCharToMultiByte(CP_ACP, 0, strSubject, -1, szPatternA, sizeof(szPatternA)/sizeof(szPatternA[0]), NULL, NULL)] = '\0';
 #else
-		strcpy(szPatternA, strSubject);
+		const char* szPatternA = strSubject;
 #endif
-		const char *pchError;
-		int nErrorOffset;
+		const char *pchError = NULL;
+		int nErrorOffset = 0;
 		if (pcre_compile(szPatternA, 0, &pchError, &nErrorOffset, NULL) == NULL)
 		{
 			// Save the selection.
@@ -44,7 +44,7 @@ namespace SyntaxColor
 				ctrl.SetSel(nErrorOffset, nErrorOffset+1);
 			ctrl.SetSelectionCharFormat(cfError);
 
-			// Restaure the selection.
+			// Restore the selection.
 			ctrl.SetSel(crOriginalSelection);
 		}
 	}

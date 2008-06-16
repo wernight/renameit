@@ -141,10 +141,12 @@ void CRenamingController::OnRenameError(const IRenameError& renameError)
 		const CRenamingError& renamingError = static_cast<const CRenamingError&>(renameError);
 
 		// Add that error.
+		CString strErrorMessage;
+		strErrorMessage.Format(_T("%d %s"), renamingError.GetErrorCode(), renamingError.GetErrorMessage());
 		m_dlgRenameError.Add(
 			renamingError.GetPathNameBefore(),
 			renamingError.GetPathNameAfter(),
-			renamingError.GetErrorMessage());
+			strErrorMessage);
 	}
 	else if (typeid(renameError) == typeid(CDirectoryRemovalError))
 	{// Directory removal error
@@ -152,10 +154,12 @@ void CRenamingController::OnRenameError(const IRenameError& renameError)
 
 		// Add that error.
 		// TODO: Test it.
+		CString strErrorMessage;
+		strErrorMessage.Format(_T("%d %s"), dirRemovalError.GetErrorCode(), dirRemovalError.GetErrorMessage());
 		m_dlgRenameError.Add(
 			dirRemovalError.GetDirectoryPath(),
 			CPath(),
-			dirRemovalError.GetErrorMessage());
+			strErrorMessage);
 	}
 	else
 	{// Unknown error.

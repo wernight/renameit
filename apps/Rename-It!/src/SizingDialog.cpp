@@ -589,11 +589,11 @@ void ResizeGroupBox(CWnd* pGBox, const CWnd* pParent, const CCtrlInfo* pInfo,
 	rcCtrl.top    += LONG(dy*pInfo->m_dRateTop);
 	rcCtrl.bottom += LONG(dy*pInfo->m_dRateBottom);
 
-	BOOL bVisible = ::IsWindowVisible(pGBox->m_hWnd);
+//	BOOL bVisible = ::IsWindowVisible(pGBox->m_hWnd);
 	pGBox->SetRedraw(FALSE);
 	pGBox->MoveWindow(&rcCtrl);
-	if (!bVisible) 
-		return;
+//	if (!bVisible) 
+//		return;
 	pGBox->SetRedraw(TRUE);
 
 	CRect rcGBox[10];

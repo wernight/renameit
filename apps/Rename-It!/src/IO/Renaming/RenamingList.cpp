@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "RenamingList.h"
-#include <math.h>
 #include "../resource.h"
 #include "ScopedLocale.h"
 #include "RenamingError.h"
@@ -460,6 +459,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
 
 		// FIXME: When moving a directory, the destination must be on the same drive.
+		// Note: Added MOVEFILE_COPY_ALLOWED flag to MoveFileEx().
 /*				ASSERT(!renamingOperation.pathBefore.IsDirectory() ||
 			CPath::FSCompare(
 				renamingOperation.pathBefore.GetPathRoot(),
@@ -483,7 +483,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 			HANDLE hFind = ktm.FindFirstFileEx(strParentPath, FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
 			if (hFind != INVALID_HANDLE_VALUE)
 			{// This parent directory already exist.
-				FindClose(hFind);
+				::FindClose(hFind);
 
 				// Check if the case is changed.
 				if (strDirectoryName != fd.cFileName)
@@ -492,16 +492,16 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 					if (!ktm.MoveFileEx(
 							strParentParentPath + fd.cFileName,
 							strParentPath,
-							0))
+							MOVEFILE_COPY_ALLOWED))
 					{
-						OnRenameError(nIndex, GetLastError());
+						OnRenameError(nIndex, ::GetLastError());
 						bError = true;
 					}
 				}
 			}
 			else
 			{
-				DWORD dwLastError = GetLastError();
+				DWORD dwLastError = ::GetLastError();
 
 				if (dwLastError == ERROR_FILE_NOT_FOUND)
 				{
@@ -509,7 +509,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 					if (!ktm.CreateDirectoryEx(NULL, strParentPath, NULL))
 					{
 						// Could not create the directory, let's report this error.
-						OnRenameError(nIndex, GetLastError());
+						OnRenameError(nIndex, ::GetLastError());
 						bError = true;
 
 						// Now we exit and continue on the next file.
@@ -541,8 +541,36 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 					renamingOperation.pathAfter.GetPath(),
 					MOVEFILE_COPY_ALLOWED))
 			{
-				OnRenameError(nIndex, GetLastError());
-				bError = true;
+				DWORD dwErrorCode = ::GetLastError();
+
+				// If the file system does not support KTM,
+				if (dwErrorCode == ERROR_RM_NOT_ACTIVE)
+				{
+					// Fail-back on non-KTM renaming.
+					// TODO: See how to alert the user or even tell him before
+					//       renaming that KTM will or will not be supported.
+					// FIXME: When KTM is supported on the system but not on some of its
+					//        file systems (like the case here), the error report dialog
+					//        still proposes to roll back even though it can't.
+					// FIXME: Possibly set bError to true here also and OnRenameError()
+					//        to issue a warning.
+					// FIXME: Also support fail back for FindFile, MoveFileEx and
+					//        directory creation (above), and directory removal (below),
+					//        or other places using KTM here.
+					if (!::MoveFileEx(
+						renamingOperation.pathBefore.GetPath(),
+						renamingOperation.pathAfter.GetPath(),
+						MOVEFILE_COPY_ALLOWED))
+					{
+						OnRenameError(nIndex, ::GetLastError());
+						bError = true;
+					}
+				}
+				else
+				{
+					OnRenameError(nIndex, dwErrorCode);
+					bError = true;
+				}
 			}
 			else
 				OnRenamed(nIndex);

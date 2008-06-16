@@ -1,4 +1,4 @@
-/* 
+ /* 
  * Copyright (C) 2002 Markus Eriksson, marre@renameit.hypermart.net
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,6 +100,15 @@
 # else
 #  pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 # endif
+#endif
+
+// General stuff
+#include <math.h>
+#include <Winerror.h>
+
+#ifndef ERROR_RM_NOT_ACTIVE
+// MessageText: Transaction support within the specified file system resource manager is not started or was shutdown due to an error.
+# define ERROR_RM_NOT_ACTIVE       6801L
 #endif
 
 // STL

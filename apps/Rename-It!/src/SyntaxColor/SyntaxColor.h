@@ -110,11 +110,11 @@ namespace SyntaxColor
 			ctrl.GetSel(crOriginalSelection);
 
 			// Colour using the syntax colouring rules.
-			char szSubjectA[1024];
 #ifdef _UNICODE
+			char szSubjectA[1024];
 			szSubjectA[WideCharToMultiByte(CP_ACP, 0, strSubject, -1, szSubjectA, sizeof(szSubjectA), NULL, NULL)] = '\0';
 #else
-			strcpy(szSubjectA, strSubject);
+			const char* szSubjectA = strSubject;
 #endif
 			for (vector<COMPILED_SYNTAX_COLORING>::const_iterator iter=vColouringRules.begin(); iter!=vColouringRules.end(); ++iter)
 			{
