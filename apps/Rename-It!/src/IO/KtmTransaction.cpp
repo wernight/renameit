@@ -171,15 +171,6 @@ HANDLE CKtmTransaction::GetTransaction() const
 	return m_transaction; // handle to the current transaction, usually not needed (may be NULL, e.g. on Win XP)
 }
 
-BOOL CKtmTransaction::DeleteFile(LPCTSTR lpFileName)
-{
-	if(UseTransactedFunctions()){
-		return m_ProcAddress_DeleteFileTransacted(lpFileName, m_transaction);
-	}else{
-		return ::DeleteFile(lpFileName);
-	}
-}
-
 BOOL CKtmTransaction::CopyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists){
 	// Overload - just calls other function
 	BOOL cancel(FALSE);
@@ -231,6 +222,15 @@ HANDLE CKtmTransaction::CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DW
 		return m_ProcAddress_CreateFileTransacted(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile, m_transaction, 0, 0);
 	}else{
 		return ::CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+	}
+}
+
+BOOL CKtmTransaction::DeleteFile(LPCTSTR lpFileName)
+{
+	if(UseTransactedFunctions()){
+		return m_ProcAddress_DeleteFileTransacted(lpFileName, m_transaction);
+	}else{
+		return ::DeleteFile(lpFileName);
 	}
 }
 

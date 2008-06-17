@@ -4,7 +4,7 @@
 #include "IO/Renaming/RenamingList.h"
 #include "IO/Renaming/RenamingError.h"
 #include "IO/Renaming/RenamingList.h"
-#include "IO/KtmTransaction.h"
+#include "IO/FailoverKtmTransaction.h"
 #include "Gui/ReportDlg.h"
 
 using namespace Beroux::IO::Renaming;
@@ -49,7 +49,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 	// Initialize the renaming.
 	CMultithreadRenamingList multithreadRenamingList;
-	Beroux::IO::CKtmTransaction ktm;
+	Beroux::IO::CFailoverKtmTransaction ktm;
 
 	// Define the callbacks for the renaming manager.
 	m_renamingList->SetRenamedCallback(bind(&CRenamingController::OnRenamed, this, _1, _2));

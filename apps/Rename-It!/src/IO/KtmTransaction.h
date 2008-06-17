@@ -59,7 +59,7 @@ namespace Beroux{ namespace IO
 		/**
 		 * Causes RollBack() if you do not call Commit().
 		 */
-		~CKtmTransaction();
+		virtual ~CKtmTransaction();
 
 		/**
 		 * Tells whether it's using the Vista KTM (Kernel Transaction Manager) to make
@@ -76,12 +76,12 @@ namespace Beroux{ namespace IO
 		/**
 		 * \return true for success, false for failure (call GetLastError on failure to get the reason).
 		 */
-		bool RollBack();
+		virtual bool RollBack();
 
 		/**
 		 * \return true for success, false for failure (call GetLastError on failure to get the reason).
 		 */
-		bool Commit();
+		virtual bool Commit();
 
 
 		///////////////////////////////////////////////////////////////////////////////////////
@@ -90,30 +90,30 @@ namespace Beroux{ namespace IO
 		///////////////////////////////////////////////////////////////////////////////////////
 
 		// File Functions
+		virtual BOOL   CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+		virtual BOOL   RemoveDirectory(LPCTSTR lpPathName);	
 		BOOL   CopyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists);
-		BOOL   CopyFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, LPBOOL pbCancel, DWORD dwCopyFlags);
-		BOOL   CreateDirectoryEx(LPCTSTR lpTemplateDirectory, LPCTSTR lpNewDirectory, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
-	#if (_WIN32_WINNT >= 0x0500)
-		BOOL   CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
-	#endif // (_WIN32_WINNT >= 0x0500)
-		HANDLE CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
-		BOOL   DeleteFile(LPCTSTR lpFileName);
-		HANDLE FindFirstFileEx(LPCTSTR lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, LPVOID lpSearchFilter, DWORD dwAdditionalFlags);
-		DWORD  GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSizeHigh);
-		BOOL   GetFileAttributesEx(LPCTSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation);
-		DWORD  GetFullPathName(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart);
-		DWORD  GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer);	
-		BOOL   MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags);
-	#if (_WIN32_WINNT >= 0x0500)
-		BOOL   MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags);
-	#endif // (_WIN32_WINNT >= 0x0500)
-		BOOL   RemoveDirectory(LPCTSTR lpPathName);	
-		BOOL   SetFileAttributes(LPCTSTR lpFileName, DWORD dwFileAttributes);
+		virtual BOOL   CopyFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, LPBOOL pbCancel, DWORD dwCopyFlags);
+		virtual BOOL   MoveFileEx(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags);
+#if (_WIN32_WINNT >= 0x0500)
+		virtual BOOL   MoveFileWithProgress(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags);
+#endif // (_WIN32_WINNT >= 0x0500)
+		virtual HANDLE CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
+		virtual BOOL   DeleteFile(LPCTSTR lpFileName);
+		virtual HANDLE FindFirstFileEx(LPCTSTR lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, LPVOID lpSearchFilter, DWORD dwAdditionalFlags);
+		virtual DWORD  GetCompressedFileSize(LPCTSTR lpFileName, LPDWORD lpFileSizeHigh);
+		virtual BOOL   GetFileAttributesEx(LPCTSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation);
+		virtual BOOL   SetFileAttributes(LPCTSTR lpFileName, DWORD dwFileAttributes);
+		virtual DWORD  GetFullPathName(LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart);
+		virtual DWORD  GetLongPathName(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer);	
+#if (_WIN32_WINNT >= 0x0500)
+		virtual BOOL   CreateHardLink(LPCTSTR lpFileName, LPCTSTR lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+#endif // (_WIN32_WINNT >= 0x0500)
 
 		// Registry Functions
-		LONG RegCreateKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD Reserved, LPTSTR lpClass, DWORD dwOptions, REGSAM samDesired, LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition);
-		LONG RegDeleteKey(HKEY hKey, LPCTSTR lpSubKey);
-		LONG RegOpenKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult);
+		virtual LONG RegCreateKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD Reserved, LPTSTR lpClass, DWORD dwOptions, REGSAM samDesired, LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition);
+		virtual LONG RegDeleteKey(HKEY hKey, LPCTSTR lpSubKey);
+		virtual LONG RegOpenKeyEx(HKEY hKey, LPCTSTR lpSubKey, DWORD ulOptions, REGSAM samDesired, PHKEY phkResult);
 
 	protected:
 		bool InitFunctions();

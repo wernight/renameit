@@ -451,6 +451,14 @@
 				Name="IO"
 				>
 				<File
+					RelativePath=".\src\IO\FailoverKtmTransaction.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\IO\FailoverKtmTransaction.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\IO\KtmTransaction.cpp"
 					>
 				</File>

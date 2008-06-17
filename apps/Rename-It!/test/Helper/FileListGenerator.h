@@ -2,7 +2,7 @@
 #include "IO/Renaming/FileList.h"
 #include "IO/Renaming/RenamingList.h"
 #include "IO/Renaming/RenamingError.h"
-#include "IO/KtmTransaction.h"
+#include "IO/FailoverKtmTransaction.h"
 #include "Helper/RandomMT.h"
 #include <sstream>
 
@@ -157,7 +157,7 @@ public:
 	bool PerformRenaming(bool bUseTransactions=true)
 	{
 		m_ossRenameErrors.reset(new ostringstream());
-		CKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
+		CFailoverKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
 		CRenamingList renamingList = MakeRenamingList();
 		renamingList.SetRenameErrorCallback(bind(&CFileListGenerator::OnRenameError, this, _1));
 

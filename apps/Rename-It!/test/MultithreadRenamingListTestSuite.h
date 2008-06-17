@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 #include "IO/Renaming/MultithreadRenamingList.h"
-#include "IO/KtmTransaction.h"
+#include "IO/FailoverKtmTransaction.h"
 #include <iostream>
 
 #ifdef _UNICODE
@@ -127,7 +127,7 @@ public:
 
 	void testBasicFunction()
 	{
-		CKtmTransaction ktm;
+		CFailoverKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultNotStarted, mrl.GetRenamingResult());
 
@@ -158,7 +158,7 @@ public:
 
 	void testCheckingFailure()
 	{
-		CKtmTransaction ktm;
+		CFailoverKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		mrl.Start(*m_impossibleRenamingList, ktm);
 		mrl.WaitForTerminaison();
@@ -169,7 +169,7 @@ public:
 
 	void testRenamingFailure()
 	{
-		CKtmTransaction ktm;
+		CFailoverKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 		mrl.Start(*m_failingRenamingList, ktm);
 		mrl.WaitForTerminaison();
@@ -183,7 +183,7 @@ public:
 
 	void testCallbacks()
 	{
-		CKtmTransaction ktm;
+		CFailoverKtmTransaction ktm;
 		CMultithreadRenamingList mrl;
 
 		// Register callbacks.
@@ -218,7 +218,7 @@ public:
 
 		for (int i=0; i<3; ++i)
 		{
-			CKtmTransaction ktm;
+			CFailoverKtmTransaction ktm;
 			mrl.Start(*m_simpleRenamingList, ktm);
 			mrl.WaitForTerminaison();
 			TS_ASSERT_EQUALS(CMultithreadRenamingList::resultSuccess, mrl.GetRenamingResult());
@@ -227,7 +227,7 @@ public:
 
 		// Use the same KTM also.
 		{
-			CKtmTransaction ktm;
+			CFailoverKtmTransaction ktm;
 		
 			mrl.Start(*m_simpleRenamingList, ktm);
 			mrl.WaitForTerminaison();

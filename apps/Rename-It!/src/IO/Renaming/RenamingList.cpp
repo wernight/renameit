@@ -452,19 +452,19 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 	// Rename files in topological order.
 	OnProgress(stageRenaming, 0, (int)vOrderedOperationList.size());	// Inform we start renaming.
 
+	// Failover to non-KTM when ::GetLastError() == ERROR_RM_NOT_ACTIVE
+	// TODO: See how to alert the user or even tell him before
+	//       renaming that KTM will or will not be supported.
+	//       Could use the FindFile to detect before renaming.
+	// FIXME: When KTM is supported on the system but not on some of its
+	//        file systems (like the case here), the error report dialog
+	//        still proposes to roll back even though it can't.
+
 	bool bError = false;
 	for (unsigned i=0; i<vOrderedOperationList.size(); ++i)
 	{
 		unsigned nIndex = vOrderedOperationList[i];
 		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
-
-		// FIXME: When moving a directory, the destination must be on the same drive.
-		// Note: Added MOVEFILE_COPY_ALLOWED flag to MoveFileEx().
-/*				ASSERT(!renamingOperation.pathBefore.IsDirectory() ||
-			CPath::FSCompare(
-				renamingOperation.pathBefore.GetPathRoot(),
-				renamingOperation.pathAfter.GetPathRoot()
-			) == 0);*/
 
 		bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
 
@@ -541,36 +541,8 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 					renamingOperation.pathAfter.GetPath(),
 					MOVEFILE_COPY_ALLOWED))
 			{
-				DWORD dwErrorCode = ::GetLastError();
-
-				// If the file system does not support KTM,
-				if (dwErrorCode == ERROR_RM_NOT_ACTIVE)
-				{
-					// Fail-back on non-KTM renaming.
-					// TODO: See how to alert the user or even tell him before
-					//       renaming that KTM will or will not be supported.
-					// FIXME: When KTM is supported on the system but not on some of its
-					//        file systems (like the case here), the error report dialog
-					//        still proposes to roll back even though it can't.
-					// FIXME: Possibly set bError to true here also and OnRenameError()
-					//        to issue a warning.
-					// FIXME: Also support fail back for FindFile, MoveFileEx and
-					//        directory creation (above), and directory removal (below),
-					//        or other places using KTM here.
-					if (!::MoveFileEx(
-						renamingOperation.pathBefore.GetPath(),
-						renamingOperation.pathAfter.GetPath(),
-						MOVEFILE_COPY_ALLOWED))
-					{
-						OnRenameError(nIndex, ::GetLastError());
-						bError = true;
-					}
-				}
-				else
-				{
-					OnRenameError(nIndex, dwErrorCode);
-					bError = true;
-				}
+				OnRenameError(nIndex, ::GetLastError());
+				bError = true;
 			}
 			else
 				OnRenamed(nIndex);
