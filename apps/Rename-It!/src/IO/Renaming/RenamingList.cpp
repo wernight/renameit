@@ -5,8 +5,6 @@
 #include "RenamingError.h"
 #include "DirectoryRemovalError.h"
 
-// TODO: Use unordered_map/set for speed improvement.
-
 namespace Beroux{ namespace IO{ namespace Renaming
 {
 
