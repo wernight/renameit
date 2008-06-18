@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="Rename-It! Application"
 	ProjectGUID="{927E31EC-B8C4-455B-8015-95AB8AB56375}"
 	RootNamespace="RenameItApplication"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -17,6 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
@@ -51,7 +53,6 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -68,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\RenameIt.exe"
+				OutputFile="$(OutDir)\RenameIt.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -92,16 +93,14 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="1"
@@ -136,7 +135,6 @@
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -153,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\RenameIt.exe"
+				OutputFile="$(OutDir)\RenameIt.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -179,16 +177,14 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Debug|Win32"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
@@ -223,7 +219,6 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -240,7 +235,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\RenameIt.exe"
+				OutputFile="$(OutDir)\RenameIt.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -264,16 +259,14 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Release|Win32"
+			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="1"
@@ -308,7 +301,6 @@
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -325,7 +317,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\RenameIt.exe"
+				OutputFile="$(OutDir)\RenameIt.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -351,12 +343,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\&quot; &gt;NUL"
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
 			/>
 		</Configuration>
 	</Configurations>
@@ -450,6 +439,46 @@
 			<File
 				RelativePath="..\Rename-It!\hlp\RenameIt.hhp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling HTML help..."
+						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
+						Outputs="$(ProjectDir)$(InputName).chm"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling HTML help..."
+						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
+						Outputs="$(ProjectDir)$(InputName).chm"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Unicode Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling HTML help..."
+						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
+						Outputs="$(ProjectDir)$(InputName).chm"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Unicode Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling HTML help..."
+						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
+						Outputs="$(ProjectDir)$(InputName).chm"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter

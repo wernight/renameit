@@ -5,6 +5,8 @@
 #include "RenamingError.h"
 #include "DirectoryRemovalError.h"
 
+// TODO: Use unordered_map/set for speed improvement.
+
 namespace Beroux{ namespace IO{ namespace Renaming
 {
 
@@ -12,7 +14,7 @@ CRenamingList::CRenamingList(void)
 	: m_nWarnings(0)
 	, m_nErrors(0)
 {
-	m_fOnProgress = boost::bind(&CRenamingList::DefaultProgressCallback, this, _1, _2, _3);
+	m_fOnProgress = bind(&CRenamingList::DefaultProgressCallback, this, _1, _2, _3);
 }
 
 CRenamingList::CRenamingList(const CFileList& flBefore, const CFileList& flAfter)
@@ -420,6 +422,46 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 	}
 
 	return COperationProblem();
+}
+
+void CRenamingList::SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage)
+{
+	COperationProblem& operationProblem = m_vProblems[nOperationIndex];
+
+	// Errors should always go up and keep the highest one only.
+	if (nErrorCode > operationProblem.nErrorCode)
+	{
+		// Find the error level from the error code.
+		EErrorLevel nLevel;
+		BOOST_STATIC_ASSERT(errCount == 10);
+		switch (nErrorCode)
+		{
+		case errDirCaseInconsistent:
+		case errLonguerThanMaxPath:
+		case errRiskyFileName:
+		case errRiskyDirectoryName:
+			nLevel = levelWarning;
+			break;
+
+		default:
+			nLevel = levelError;
+			break;
+		}
+
+		// Update error counters.
+		switch (nLevel)
+		{
+		case levelWarning:	++m_nWarnings; break;
+		case levelError:	++m_nErrors; break;
+		}
+
+		// Save the problem in the report.
+		operationProblem.nErrorLevel = nLevel;
+		operationProblem.nErrorCode = nErrorCode;
+		operationProblem.strMessage = strMessage;
+		ASSERT((operationProblem.nErrorLevel==levelNone) ^ (operationProblem.nErrorCode!=errNoError)); // no error <=> no error code, an error <=> error code set
+		ASSERT((operationProblem.nErrorLevel==levelNone) ^ !operationProblem.strMessage.IsEmpty());	// no error <=> no error message, an error <=> error message set
+	}
 }
 
 bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)

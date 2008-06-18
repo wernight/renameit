@@ -68,13 +68,13 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] pathNameBefore	The old name of file/directory before renaming.
 		 * @param[in] pathNameAfter	The new name of file/directory after renaming.
 		 */
-		typedef boost::function<void (const CPath& pathNameBefore, const CPath& pathNameAfter)> CRenamedEventHandler;
+		typedef function<void (const CPath& pathNameBefore, const CPath& pathNameAfter)> CRenamedEventHandler;
 
 		/**
-		 * A callback function called when a problem arised during the renaming.
+		 * A callback function called when a problem arises during the renaming.
 		 * @param[in] renameError	A derived type indicating the error type.
 		 */
-		typedef boost::function<void (const IRenameError&)> CRenameErrorEventHandler;
+		typedef function<void (const IRenameError&)> CRenameErrorEventHandler;
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
@@ -82,7 +82,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] nDone			The number of files renamed (with or without problem).
 		 * @param[in] nTotal		The total number of files to be rename.
 		 */
-		typedef boost::function<void (EStage nStage, int nDone, int nTotal)> CRenameProgressChangedEventHandler;
+		typedef function<void (EStage nStage, int nDone, int nTotal)> CRenameProgressChangedEventHandler;
 
 		struct CRenamingOperation
 		{
@@ -292,45 +292,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		static COperationProblem CheckName(const CString& strName, const CString& strNameWithoutExtension, bool bIsFileName);
 
-		void SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage)
-		{
-			vector<COperationProblem>::iterator iter = m_vProblems.begin() + nOperationIndex;
-
-			// Errors should always go up and keep the highest one only.
-			if (nErrorCode > iter->nErrorCode)
-			{
-				// Find the error level from the error code.
-				EErrorLevel nLevel;
-				BOOST_STATIC_ASSERT(errCount == 10);
-				switch (nErrorCode)
-				{
-				case errDirCaseInconsistent:
-				case errLonguerThanMaxPath:
-				case errRiskyFileName:
-				case errRiskyDirectoryName:
-					nLevel = levelWarning;
-					break;
-
-				default:
-					nLevel = levelError;
-					break;
-				}
-
-				// Update error counters.
-				switch (nLevel)
-				{
-				case levelWarning:	++m_nWarnings; break;
-				case levelError:	++m_nErrors; break;
-				}
-				
-				// Save the problem in the report.
-				iter->nErrorLevel = nLevel;
-				iter->nErrorCode = nErrorCode;
-				iter->strMessage = strMessage;
-				ASSERT((iter->nErrorLevel==levelNone) ^ (iter->nErrorCode!=errNoError)); // no error <=> no error code, an error <=> error code set
-				ASSERT((iter->nErrorLevel==levelNone) ^ !iter->strMessage.IsEmpty());	// no error <=> no error message, an error <=> error message set
-			}
-		}
+		void SetProblem(int nOperationIndex, EErrorCode nErrorCode, CString strMessage);
 
 		/**
 		 * Prepare a PerformRenaming().

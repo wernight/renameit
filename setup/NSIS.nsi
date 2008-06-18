@@ -76,15 +76,14 @@ Section "!${PRODUCT}" SecProduct
 		; Unicode Install
 		SetOutPath "$INSTDIR"
 		File "..\build\Rename-It!\Unicode Release\RenameIt.exe"
-		File "..\build\Rename-It!\Unicode Release\RenameIt.chm"
 		GoTo lblEndSpecificOSInstall
 	lblAsciiInstall: 
 		; Non-Unicode Install
 		SetOutPath "$INSTDIR"
 		File "..\build\Rename-It!\Release\RenameIt.exe"
-		File "..\build\Rename-It!\Release\RenameIt.chm"
 		GoTo lblEndSpecificOSInstall
 	lblEndSpecificOSInstall:
+	File "..\apps\Rename-It!\RenameIt.chm"
 
 	; Other install files (not depending to OS)
 	SetOutPath "$INSTDIR"

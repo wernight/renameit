@@ -48,7 +48,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * meaning when the worker thread finished working.
 		 * @param[in] nRenamingResult	The result of the renaming.
 		 */
-		typedef boost::function<void (ERenamingResult)> CDoneEventHandler;
+		typedef function<void (ERenamingResult)> CDoneEventHandler;
 
 	// Construction
 		CMultithreadRenamingList();
@@ -75,7 +75,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		/**
 		 * Callback when the renaming in done.
-		 * \note Use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1);
+		 * \note Use bind(&MyClass::MyCallBack, &myClassInstance, _1);
 		 */
 		void SetDoneCallback(const CDoneEventHandler& listener) {
 			m_fOnDone = listener;
@@ -118,7 +118,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings);
 
-		boost::shared_ptr<CWinThread> m_pWinThread;
+		shared_ptr<CWinThread> m_pWinThread;
 		CDoneEventHandler m_fOnDone;
 		bool m_bAllowWarnings;
 	};
