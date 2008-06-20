@@ -1,13 +1,17 @@
 #pragma once
 #include "IO/Renaming/FileList.h"
 #include "IO/Renaming/RenamingList.h"
-#include "IO/Renaming/RenamingError.h"
+#include "IO/Renaming/IOOperation/IOOperation.h"
+#include "IO/Renaming/IOOperation/CreateDirectoryOperation.h"
+#include "IO/Renaming/IOOperation/RemoveEmptyDirectoryOperation.h"
+#include "IO/Renaming/IOOperation/RenameOperation.h"
 #include "IO/FailoverKtmTransaction.h"
 #include "Helper/RandomMT.h"
 #include <sstream>
 
 using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
+using namespace Beroux::IO::Renaming::IOOperation;
 
 class CFileListGenerator
 {
@@ -45,7 +49,7 @@ public:
 		return m_flAfter;
 	}
 
-	CString GetTempFolder() const
+	CString GetTempDirectory() const
 	{
 		return m_strTempDir;
 	}
@@ -55,34 +59,18 @@ public:
 	 * The file name before is created.
 	 * Both file names provided should be relative to a temporary folder.
 	 */
-	void AddFile(const CString& fileNameBefore, const CString& fileNameAfter)
+	void AddFile(const CString& strFileNameBefore, const CString& strFileNameAfter)
 	{
 		// Make full path.
-		CString pathBefore = m_strTempDir + fileNameBefore;
-		CString pathAfter = m_strTempDir + fileNameAfter;
+		CString strPathBefore = m_strTempDir + strFileNameBefore;
+		CString strPathAfter = m_strTempDir + strFileNameAfter;
 
-		// Create the parent directories.
-		CString strParentPath = CPath(pathBefore).GetPathRoot();
-		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
-		{
-			// Get the full parent directory's path.
-			strParentPath += strDirectoryName + '\\';
-
-			if (!CPath::PathFileExists(strParentPath))
-				::CreateDirectory(strParentPath, NULL);
-		}
-
-		// Create the file name before.
-		::CloseHandle(::CreateFile(pathBefore,
-			GENERIC_WRITE,
-			FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL, CREATE_NEW, 
-			FILE_ATTRIBUTE_TEMPORARY,
-			NULL));
+		// Create the file path before.
+		CreateFile(strFileNameBefore);
 
 		// Add to the list.
-		m_flBefore.AddFile(pathBefore);
-		m_flAfter.AddFile(pathAfter);
+		m_flBefore.AddFile(strPathBefore);
+		m_flAfter.AddFile(strPathAfter);
 	}
 
 	/**
@@ -90,15 +78,58 @@ public:
 	 * The directory name before is created.
 	 * Both directory names provided should be relative to a temporary folder.
 	 */
-	void AddFolder(const CString& folderNameBefore, const CString& folderNameAfter)
+	void AddDirectory(const CString& strFolderNameBefore, const CString& strFolderNameAfter)
 	{
 		// Make full path.
-		CString pathBefore = m_strTempDir + folderNameBefore;
-		CString pathAfter = m_strTempDir + folderNameAfter;
+		CString pathBefore = m_strTempDir + strFolderNameBefore;
+		CString pathAfter = m_strTempDir + strFolderNameAfter;
+
+		// Create the directory
+		CreateDirectory(strFolderNameBefore);
+
+		// Add to the list.
+		m_flBefore.AddFile(pathBefore);
+		m_flAfter.AddFile(pathAfter);
+	}
+
+	/**
+	 * Create a file path.
+	 * The files will be removed when the CFileListGenerator is destroyed or cleaned.
+	 */
+	void CreateFile(const CString& strFileName)
+	{
+		// Make full path.
+		CString strFilePath = m_strTempDir + strFileName;
+		CPath pathFilePath(strFilePath);
 
 		// Create the parent directories.
-		CString strParentPath = CPath(pathBefore).GetPathRoot();
-		BOOST_FOREACH(CString strDirectoryName, CPath(pathBefore).GetDirectories())
+		CreateDirectory(pathFilePath.GetDirectoryName().Mid(m_strTempDir.GetLength()));
+
+		// Create the file name before.
+		::CloseHandle(::CreateFile(strFilePath,
+			GENERIC_WRITE,
+			FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+			NULL, CREATE_NEW, 
+			FILE_ATTRIBUTE_TEMPORARY,
+			NULL));
+	}
+
+	/**
+	 * Create a folder path.
+	 * The folders will be removed when the CFileListGenerator is destroyed or cleaned.
+	 */
+	void CreateDirectory(const CString& strFolderName)
+	{
+		if (strFolderName.IsEmpty())
+			return;
+
+		// Make full path.
+		CString strFolderPath = m_strTempDir + strFolderName;
+		CPath pathFolderPath = strFolderPath;
+
+		// Create the parent directories.
+		CString strParentPath = pathFolderPath.GetPathRoot();
+		BOOST_FOREACH(CString strDirectoryName, pathFolderPath.GetDirectories())
 		{
 			// Get the full parent directory's path.
 			strParentPath += strDirectoryName + '\\';
@@ -108,11 +139,7 @@ public:
 		}
 
 		// Create the directory
-		::CreateDirectory(pathBefore, NULL);
-
-		// Add to the list.
-		m_flBefore.AddFile(pathBefore);
-		m_flAfter.AddFile(pathAfter);
+		::CreateDirectory(strFolderPath, NULL);
 	}
 
 	CRenamingList MakeRenamingList() const
@@ -159,7 +186,7 @@ public:
 		m_ossRenameErrors.reset(new ostringstream());
 		CFailoverKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
 		CRenamingList renamingList = MakeRenamingList();
-		renamingList.SetRenameErrorCallback(bind(&CFileListGenerator::OnRenameError, this, _1));
+		renamingList.SetRenameErrorCallback(bind(&CFileListGenerator::OnRenameError, this, _1, _2));
 
 		if (!renamingList.Check())
 		{
@@ -220,17 +247,31 @@ private:
 		}
 	}
 
-	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError)
+	void OnRenameError(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 	{
 		*m_ossRenameErrors << "OnRenameError(): ";
-		if (typeid(renameError) == typeid(CRenamingError))
+		if (typeid(ioOperation) == typeid(CRenameOperation))
 		{
-			const CRenamingError& renErr = static_cast<const CRenamingError&>(renameError);
+			const CRenameOperation& renErr = static_cast<const CRenameOperation&>(ioOperation);
 			*m_ossRenameErrors 
-				<< '`' << CStringToString(renErr.GetPathNameBefore().GetPath()) << '`'
+				<< '`' << CStringToString(renErr.GetPathBefore().GetPath()) << '`'
 				<< " --> "
-				<< '`' << CStringToString(renErr.GetPathNameAfter().GetPath()) << '`'
+				<< '`' << CStringToString(renErr.GetPathAfter().GetPath()) << '`'
 				<< ": " << CStringToString(renErr.GetErrorMessage());
+		}
+		else if (typeid(ioOperation) == typeid(CCreateDirectoryOperation))
+		{
+			const CCreateDirectoryOperation& createDirOp = static_cast<const CCreateDirectoryOperation&>(ioOperation);
+			*m_ossRenameErrors 
+				<< "Creating directory failed: `" << CStringToString(createDirOp.GetDirectoryPath().GetPath()) << '`'
+				<< ": " << CStringToString(createDirOp.GetErrorMessage());
+		}
+		else if (typeid(ioOperation) == typeid(CRemoveEmptyDirectoryOperation))
+		{
+			const CRemoveEmptyDirectoryOperation& delDirOp = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
+			*m_ossRenameErrors 
+				<< "Removing empty directory failed: `" << CStringToString(delDirOp.GetDirectoryPath()) << '`'
+				<< ": " << CStringToString(delDirOp.GetErrorMessage());
 		}
 		else
 			*m_ossRenameErrors << "Unknown error type.";

@@ -2,8 +2,11 @@
 #include "RenamingList.h"
 #include "../resource.h"
 #include "ScopedLocale.h"
-#include "RenamingError.h"
-#include "DirectoryRemovalError.h"
+#include "IOOperation/CreateDirectoryOperation.h"
+#include "IOOperation/RenameOperation.h"
+#include "IOOperation/RemoveEmptyDirectoryOperation.h"
+
+using namespace Beroux::IO::Renaming::IOOperation;
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
@@ -44,7 +47,7 @@ bool CRenamingList::Check()
 #ifdef _DEBUG
 	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
 	{
-		// Each operation must be a unicode path.
+		// Each operation must be a Unicode path.
 		ASSERT(operation.pathBefore.GetPath().Left(4) == "\\\\?\\");
 		ASSERT(operation.pathAfter.GetPath().Left(4) == "\\\\?\\");
 
@@ -399,8 +402,8 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 
 	// Starting or ending by one or more spaces.
 	ASSERT(!strName.IsEmpty());
-	if (strName[0] == _T(' ') ||						// Files/Folders starting by a space is not good.
-		strName[strName.GetLength() - 1] == _T(' '))	// Files/Folders ending by a space is not good.
+	if (strName[0] == _T(' ') ||						// Files/Directories starting by a space is not good.
+		strName[strName.GetLength() - 1] == _T(' '))	// Files/Directories ending by a space is not good.
 	{
 		// Warning: Spaces before or after.
 		COperationProblem problem;
@@ -486,11 +489,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 	// one after another is possible and will result in performing all the
 	// renaming operations asked.
 	// Note: This may modify the m_vRenamingOperations[].
-	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;
-	vector<int> vOrderedOperationList = PrepareRenaming(setDeleteIfEmptyDirectories);
-
-	// Rename files in topological order.
-	OnProgress(stageRenaming, 0, (int)vOrderedOperationList.size());	// Inform we start renaming.
+	vector<shared_ptr<CIOOperation>> vOperationList = PrepareRenaming();
 
 	// Failover to non-KTM when ::GetLastError() == ERROR_RM_NOT_ACTIVE
 	// TODO: See how to alert the user or even tell him before
@@ -500,121 +499,22 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 	//        file systems (like the case here), the error report dialog
 	//        still proposes to roll back even though it can't.
 
+	// Rename files order.
+	OnProgress(stageRenaming, 0, (int)vOperationList.size());	// Inform we start renaming.
+
 	bool bError = false;
-	for (unsigned i=0; i<vOrderedOperationList.size(); ++i)
+	for (unsigned i=0; i<vOperationList.size(); ++i)
 	{
-		unsigned nIndex = vOrderedOperationList[i];
-		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
-
-		bool bAfterPathCreation = true;	// We suppose the creation of the new parent tree path worked.
-
-		// Check that every parent directory exists, or create it.
-		CString strParentPath = renamingOperation.pathAfter.GetPathRoot();
-		BOOST_FOREACH(CString strDirectoryName, renamingOperation.pathAfter.GetDirectories())
+		// Perform the operation.
+		CIOOperation::EErrorLevel nErrorLevel = vOperationList[i]->Perform(ktm);
+		if (nErrorLevel != CIOOperation::elSuccess)
 		{
-			// Keep the parent directory of this parent directory.
-			CString strParentParentPath = strParentPath;
-
-			// Get the full parent directory's path.
-			strParentPath += strDirectoryName;
-
-			// Check if the parent path exists.
-			WIN32_FIND_DATA fd;
-			HANDLE hFind = ktm.FindFirstFileEx(strParentPath, FindExInfoStandard, &fd, FindExSearchNameMatch/*FindExSearchLimitToDirectories*/, NULL, 0);
-			if (hFind != INVALID_HANDLE_VALUE)
-			{// This parent directory already exist.
-				::FindClose(hFind);
-
-				// Check if the case is changed.
-				if (strDirectoryName != fd.cFileName)
-				{
-					// Change the case.
-					if (!ktm.MoveFileEx(
-							strParentParentPath + fd.cFileName,
-							strParentPath,
-							MOVEFILE_COPY_ALLOWED))
-					{
-						OnRenameError(nIndex, ::GetLastError());
-						bError = true;
-					}
-				}
-			}
-			else
-			{
-				DWORD dwLastError = ::GetLastError();
-
-				if (dwLastError == ERROR_FILE_NOT_FOUND)
-				{
-					// Create the parent directory.
-					if (!ktm.CreateDirectoryEx(NULL, strParentPath, NULL))
-					{
-						// Could not create the directory, let's report this error.
-						OnRenameError(nIndex, ::GetLastError());
-						bError = true;
-
-						// Now we exit and continue on the next file.
-						bAfterPathCreation = false;
-						break;
-					}
-				}
-				else
-				{
-					// Some other problem, report it.
-					OnRenameError(nIndex, dwLastError);
-					bError = true;
-
-					// Now we exit and continue on the next file.
-					bAfterPathCreation = false;
-					break;
-				}
-			}
-
-			// Add a backslash at the end.
-			strParentPath.AppendChar('\\');
-		}
-
-		// Rename file.
-		if (bAfterPathCreation)
-		{
-			if (!ktm.MoveFileEx(
-					renamingOperation.pathBefore.GetPath(),
-					renamingOperation.pathAfter.GetPath(),
-					MOVEFILE_COPY_ALLOWED))
-			{
-				OnRenameError(nIndex, ::GetLastError());
-				bError = true;
-			}
-			else
-				OnRenamed(nIndex);
-		}
-
-		// Report progress
-		OnProgress(stageRenaming, i, (int)vOrderedOperationList.size());	// Inform we start renaming.
-	}
-
-	// Delete emptied folders (folders that are empty after renaming).
-	// Note that the set is ordered so that the longest path comes first,
-	// which implies that sub-folders are removed prior to checking their parent folder.
-	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
-	{
-		// Remove ONLY a non-empty directory.
-		// Note: ERROR_ACCESS_DENIED may be reported for non-empty dir that are protected,
-		//       so we need to check if the directory is empty prior to calling RemoveDirectory().
-		if (DirectoryIsEmpty(strDirectoryPath, &ktm) &&
-			!ktm.RemoveDirectory(strDirectoryPath))
-		{
-			DWORD dwErrorCode = ::GetLastError();
-			/** Some possible error codes include:
-			 * ERROR_ACCESS_DENIED		For folders marked as read-only, and probably for folders with other security settings.
-			 * ERROR_FILE_CORRUPT		When the directory cannot be accessed because of some problem.
-			 * ERROR_DIR_NOT_EMPTY		Directory not empty.
-			 * ERROR_FILE_NOT_FOUND		Directory doesn't exist.
-			 */
-			ASSERT(dwErrorCode != ERROR_DIR_NOT_EMPTY);
-
-			OnRenameError(CDirectoryRemovalError(strDirectoryPath, dwErrorCode));
+			OnRenameError(*vOperationList[i], nErrorLevel);
 			bError = true;
 		}
+
+		// Report progress.
+		OnProgress(stageRenaming, i, (int)vOperationList.size());	// Inform we start renaming.
 	}
 
 	return !bError;
@@ -628,18 +528,10 @@ void CRenamingList::OnRenamed(int nIndex)
 			m_vRenamingOperations[nIndex].GetPathAfter());
 }
 
-void CRenamingList::OnRenameError(const IRenameError& renameError)
+void CRenamingList::OnRenameError(const CIOOperation& ioOperation, CIOOperation::EErrorLevel nErrorLevel)
 {
 	if (m_fOnRenameError)
-		m_fOnRenameError(renameError);
-}
-
-void CRenamingList::OnRenameError(int nIndex, DWORD dwErrorCode)
-{
-	OnRenameError(CRenamingError(
-		m_vRenamingOperations[nIndex].GetPathBefore(),
-		m_vRenamingOperations[nIndex].GetPathAfter(),
-		dwErrorCode));
+		m_fOnRenameError(ioOperation, nErrorLevel);
 }
 
 void CRenamingList::OnProgress(EStage nStage, int nDone, int nTotal)
@@ -648,7 +540,7 @@ void CRenamingList::OnProgress(EStage nStage, int nDone, int nTotal)
 		m_fOnProgress(nStage, nDone, nTotal);
 }
 
-vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories)
+vector<shared_ptr<CIOOperation>> CRenamingList::PrepareRenaming()
 {
 	///////////////////////////////////////////////////////////////////
 	// Create an oriented graph of conflicting renaming operations
@@ -688,6 +580,9 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 			DIR_CASE(nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
 	}
 
+	// Directories to remove if empty (ordered set by longest path first).
+	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;
+
 	// Define the successors in the graph,
 	// and add folders to later erase if they're empty.
 	for (int i=0; i<nFilesCount; ++i)
@@ -696,8 +591,8 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 		OnProgress(stagePreRenaming, 20 + i*75/nFilesCount, 100);
 
 		// Definitions
-		CPath *proBefore = &m_vRenamingOperations[i].pathBefore;
-		CPath *proAfter = &m_vRenamingOperations[i].pathAfter;
+		CPath* proBefore = &m_vRenamingOperations[i].pathBefore;
+		CPath* proAfter = &m_vRenamingOperations[i].pathAfter;
 
 		// Look if there is a node with name-after equal to this node's name-before
 		// (meaning that there should be an edge from the this node to the found node).
@@ -765,9 +660,8 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 			} // end if cycle detection.
 		} // end if successor found.
 
-		// Mark folders that should be erased after renaming if they are empty.
-		if (_tcsicmp(proBefore->GetDirectoryName(),
-			         proAfter->GetDirectoryName()) != 0 &&
+		// Add directories to remove later if they're empty.
+		if (proBefore->GetDirectoryName().CompareNoCase(proAfter->GetDirectoryName()) != 0 &&
 			!DirectoryIsEmpty(proBefore->GetDirectoryName()))
 		{
 			CString strParentPath = proBefore->GetPathRoot();
@@ -843,7 +737,8 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 	} // end for each operations index `i`.
 
 	///////////////////////////////////////////////////////////////////
-	// Finally, create an ordered map of elements to rename so that the longest path comes first.
+	// Finally, create an ordered map of elements to rename so that the
+	// longest path comes first.
 	map<CString, int, path_compare<CString> > mapRenamingOperations;
 	typedef std::pair<CString, int> ro_pair_t;
 	{
@@ -858,14 +753,15 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 		}
 	}
 
-	// Create a list of operations index that'll provide the files to rename in topological order.
-	vector<int> vOrderedOperationList;
+	// Create a list of operations index that'll provide the files to rename
+	// in topological order.
+	vector<int> vOrderedOperationsIndexes;
 	BOOST_FOREACH(ro_pair_t pair, mapRenamingOperations)
 	{
 		int nIndex = pair.second;
 		while (true)
 		{
-			vOrderedOperationList.push_back(nIndex);
+			vOrderedOperationsIndexes.push_back(nIndex);
 
 			// Rename its successors.
 			if (graph[nIndex].HasSuccessor())
@@ -873,6 +769,56 @@ vector<int> CRenamingList::PrepareRenaming(set<CString, path_compare<CString> >&
 			else
 				break;
 		}
+	}
+
+	// Create the list of operations
+	vector<shared_ptr<CIOOperation>> vOrderedOperationList;
+
+	// Add renaming operation that would change the case of existing
+	// folders if different from the existing one (part of the folder case unification process).
+	{
+		for (map<CString, DIR_CASE, dir_case_compare>::const_iterator iter = mapDirsCase.begin(); iter != mapDirsCase.end(); ++iter)
+		{
+			// If the folder currently exists with another case,
+			if (CPath::PathFileExists(iter->first))
+			{
+				CString strCurrentPathName = CPath::FindPathCase(iter->first);
+				if (strCurrentPathName != iter->first)
+				{
+					vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
+						new CRenameOperation(strCurrentPathName, iter->first)
+					));
+				}
+			}
+		}
+ 	}
+
+	// Add requested renaming operations.
+	BOOST_FOREACH(unsigned nIndex, vOrderedOperationsIndexes)
+	{
+		const CRenamingOperation& renamingOperation = m_vRenamingOperations[nIndex];
+
+		// Check that every parent directory exists, or create it.
+		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
+			new CCreateDirectoryOperation(renamingOperation.pathAfter)
+		));
+
+		// Rename file.
+		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
+			new CRenameOperation(renamingOperation.pathBefore.GetPath(), renamingOperation.pathAfter.GetPath())
+		));
+	}
+
+	// Delete emptied folders (folders that are empty after renaming).
+	// Note that the set is ordered so that the longest path comes first,
+	// which implies that sub-folders are removed prior to checking their parent folder.
+	// Mark folders that should be erased after renaming if they are empty.
+	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
+	{
+		// Remove ONLY a non-empty directory.
+		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
+			new CRemoveEmptyDirectoryOperation(strDirectoryPath)
+		));
 	}
 
 	return vOrderedOperationList;

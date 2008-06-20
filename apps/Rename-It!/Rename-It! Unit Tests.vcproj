@@ -6,6 +6,7 @@
 	ProjectGUID="{30B1DF1E-C714-4EFA-A350-F8F1C7A2C11D}"
 	RootNamespace="RenameItUnitTests"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -323,14 +324,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Test Runner"
-			>
-			<File
-				RelativePath=".\test\Generated\Main.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			>
@@ -437,9 +430,25 @@
 				>
 			</File>
 			<Filter
+				Name="Helper"
+				>
+				<File
+					RelativePath=".\test\Helper\FileListGenerator.h"
+					>
+				</File>
+				<File
+					RelativePath=".\test\Helper\RandomMT.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="Generated"
 				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				>
+				<File
+					RelativePath=".\test\Generated\Main.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\test\Generated\MultithreadRenamingListTestSuite.cpp"
 					>
@@ -450,18 +459,6 @@
 				</File>
 				<File
 					RelativePath=".\test\Generated\RenamingListTestSuite.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Helper"
-				>
-				<File
-					RelativePath=".\test\Helper\FileListGenerator.h"
-					>
-				</File>
-				<File
-					RelativePath=".\test\Helper\RandomMT.h"
 					>
 				</File>
 			</Filter>

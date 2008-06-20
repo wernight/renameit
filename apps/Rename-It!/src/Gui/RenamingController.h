@@ -44,7 +44,7 @@ private:
 	static UINT RenamingThread(LPVOID lpParam);
 
 	void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter);
-	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError);
+	void OnRenameError(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel);
 	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
 	void OnDone(Beroux::IO::Renaming::CMultithreadRenamingList::ERenamingResult nRenamingResult);
 	void DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const;

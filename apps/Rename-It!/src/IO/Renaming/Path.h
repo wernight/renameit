@@ -85,7 +85,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		static bool PathFileExists(const CString& strPath)
 		{
 			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
-			ASSERT(strPath.IsEmpty() || ::GetFileAttributes(strPath) != S_OK || (::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0);	// Doesn't fully support directories (yet).
+			ASSERT(strPath.IsEmpty() || ::GetFileAttributes(strPath) != S_OK || ((::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0));	// Doesn't fully support directories (yet).
 
 			if (strPath.IsEmpty())
 				return false;
@@ -113,6 +113,30 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				else
 					return false;
 			}
+		}
+
+		/**
+		 * Return the same path as provided with the case of the currently existing full file/folder path.
+		 */
+		static CString FindPathCase(const CString& strPathName)
+		{
+			CFileFind ff;
+
+			// Directories should not end by '\' for FindFirstFileEx (or it would fail the test).
+			BOOL bPathFound;
+			if (strPathName[strPathName.GetLength() - 1] != '\\')
+				bPathFound = ff.FindFile(strPathName);
+			else
+				bPathFound = ff.FindFile(strPathName.Left(strPathName.GetLength() - 1));
+
+			if (!bPathFound)
+			{
+				ASSERT(false);
+				return _T("");
+			}
+
+			ff.FindNextFile();
+			return ff.GetFilePath();
 		}
 
 		/**

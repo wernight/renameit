@@ -62,7 +62,7 @@ public:
 	{
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		fileListGenerator.AddFolder(_T("dir_before"), _T("dir_after"));
+		fileListGenerator.AddDirectory(_T("dir_before"), _T("dir_after"));
 
 		// Rename
 		if (!fileListGenerator.PerformRenaming())
@@ -73,23 +73,38 @@ public:
 	{
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		fileListGenerator.AddFolder(_T("d"), _T("a"));
-		fileListGenerator.AddFolder(_T("ccc"), _T("d"));
-		fileListGenerator.AddFolder(_T("a"), _T("bb"));
-		fileListGenerator.AddFolder(_T("bb"), _T("ccc"));
+		fileListGenerator.AddDirectory(_T("d"), _T("a"));
+		fileListGenerator.AddDirectory(_T("ccc"), _T("d"));
+		fileListGenerator.AddDirectory(_T("a"), _T("bb"));
+		fileListGenerator.AddDirectory(_T("bb"), _T("ccc"));
 
 		// Rename
 		if (!fileListGenerator.PerformRenaming())
 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
+	void testComplifiedFolderRenaming()
+	{
+		// A simple renaming operation made complex.
+
+// 		// Prepare
+// 		CFileListGenerator fileListGenerator;
+// 		fileListGenerator.AddDirectory(_T("a"), _T("b"));
+// 		fileListGenerator.AddDirectory(_T("a/a"), _T("b/b"));
+// 		fileListGenerator.AddDirectory(_T("a/a/a"), _T("b/b/b"));
+// 
+// 		// Rename
+// 		if (!fileListGenerator.PerformRenaming())
+// 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	}
+
 	void testEmboxedFolderRenaming()
 	{
 // 		// Prepare
 // 		CFileListGenerator fileListGenerator;
-// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d"), _T("a\\b2\\c2\\d2"));
-// 		fileListGenerator.AddFolder(_T("a\\b"), _T("a\\b2"));
-// 		fileListGenerator.AddFolder(_T("a\\b\\c"), _T("a\\b2\\c2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\b2\\c2\\d2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
 // 
 // 		// Rename
 // 		if (!fileListGenerator.PerformRenaming(false))
@@ -100,12 +115,12 @@ public:
 	{
 // 		// Prepare
 // 		CFileListGenerator fileListGenerator;
-// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d"), _T("a\\B\\d2"));
-// 		fileListGenerator.AddFolder(_T("a\\b"), _T("a\\b2"));
-// 		fileListGenerator.AddFolder(_T("a\\b\\c"), _T("a\\b2\\c2"));
-// 		fileListGenerator.AddFolder(_T("a\\b2"), _T("a\\B\\c2"));
-// 		fileListGenerator.AddFolder(_T("a\\b\\c22"), _T("a\\B"));
-// 		fileListGenerator.AddFolder(_T("a\\b\\c\\d2"), _T("a\\B\\c22"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\B\\d2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b2"), _T("a\\B\\c2"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c22"), _T("a\\B"));
+// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d2"), _T("a\\B\\c22"));
 // 
 // 		for (int i=0; i<10; ++i)
 // 		{
@@ -118,7 +133,7 @@ public:
 // 		}
 	}
 	
-	void testFoldersCaseUnfication()
+	void testNewFoldersCaseUnfication()
 	{
 		// There should be another difference: When the case differ, the case of
 		// the directory being renamed prevails on the case of some directory
@@ -130,22 +145,35 @@ public:
 
 		// Prepare
 		CFileListGenerator fileListGenerator;
-		fileListGenerator.AddFolder(_T("A\\B"), _T("A\\b"));
-		fileListGenerator.AddFolder(_T("A\\B\\C"), _T("A\\B\\c"));
+		fileListGenerator.AddDirectory(_T("A\\B"), _T("A\\b"));
+		fileListGenerator.AddDirectory(_T("A\\B\\C"), _T("A\\B\\c"));
 
 		// Rename
 		if (!fileListGenerator.PerformRenaming())
 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 
 		// Check case
-		CFileFind ff;
-		CFileList flAfter = fileListGenerator.GetAfterFileList();
-		for (int i=0; i<flAfter.GetFileCount(); ++i)
-		{
-			TS_ASSERT(ff.FindFile(flAfter.GetFile(i).GetPath()));
-			TS_ASSERT(!ff.FindNextFile());
-			TS_ASSERT_EQUALS(flAfter.GetFile(i).GetPath(), ff.GetFilePath());
-		}
+		CString strExpectFullUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("A\\b\\c");
+		CString strResultDirectoryPath = CPath::FindPathCase(strExpectFullUnifiedDirectoryPath);
+		TS_ASSERT_EQUALS(strExpectFullUnifiedDirectoryPath, strResultDirectoryPath);
+	}
+
+	void testExistingFolderCaseUnification()
+	{
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.CreateDirectory(_T("dirA\\dirB"));
+		fileListGenerator.AddFile(_T("dirA\\file1"), _T("DIRA\\file1"));
+		fileListGenerator.AddDirectory(_T("dirC\\dirD"), _T("DIRA\\DIRb\\dirD"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+		// Check the case.
+		CString strExpectFullUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
+		CString strResultDirectoryPath = CPath::FindPathCase(strExpectFullUnifiedDirectoryPath);
+		TS_ASSERT_EQUALS(strExpectFullUnifiedDirectoryPath, strResultDirectoryPath);
 	}
 
 	void testRemoveRenamedEmptyParentsFolders()
@@ -171,27 +199,27 @@ public:
 				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 
 			// Check
-			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1\\c1")));
-			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1")));
-			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1\\c1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1")));
+			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1")));
 		}
 
 		// Test with folders
 		{
 			// Prepare
 			CFileListGenerator fileListGenerator;
-			fileListGenerator.AddFolder(_T("a1\\b1\\c1\\d1"), _T("a2"));
-			fileListGenerator.AddFolder(_T("a1\\b1\\c2"), _T("a3"));
-			fileListGenerator.AddFolder(_T("a1\\b2"), _T("a1\\b3"));
+			fileListGenerator.AddDirectory(_T("a1\\b1\\c1\\d1"), _T("a2"));
+			fileListGenerator.AddDirectory(_T("a1\\b1\\c2"), _T("a3"));
+			fileListGenerator.AddDirectory(_T("a1\\b2"), _T("a1\\b3"));
 
 			// Rename
 			if (!fileListGenerator.PerformRenaming())
 				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 
 			// Check
-			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1\\c1")));
-			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1\\b1")));
-			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempFolder() + _T("a1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1\\c1")));
+			TS_ASSERT(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1")));
+			TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1")));
 		}
 	}
 

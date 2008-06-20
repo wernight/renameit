@@ -191,9 +191,9 @@ public:
 		m_nOnErrors = 0;
 		m_nOnProgress = 0;
 		m_nOnDone = 0;
-		m_failingRenamingList->SetRenamedCallback(boost::bind(&MultithreadRenamingListTestSuite::OnRenamed, this, _1, _2));
-		m_failingRenamingList->SetRenameErrorCallback(boost::bind(&MultithreadRenamingListTestSuite::OnRenameError, this, _1));
-		m_failingRenamingList->SetProgressCallback(boost::bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
+		m_failingRenamingList->SetRenamedCallback(bind(&MultithreadRenamingListTestSuite::OnRenamed, this, _1, _2));
+		m_failingRenamingList->SetRenameErrorCallback(bind(&MultithreadRenamingListTestSuite::OnRenameError, this, _1, _2));
+		m_failingRenamingList->SetProgressCallback(bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
 		mrl.SetDoneCallback(bind(&MultithreadRenamingListTestSuite::OnDone, this, _1));
 
 		// Rename the files.
@@ -263,7 +263,7 @@ private:
 		++m_nOnRenamed;
 	}
 
-	void OnRenameError(const Beroux::IO::Renaming::IRenameError& renameError)
+	void OnRenameError(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 	{
 		++m_nOnErrors;
 	}

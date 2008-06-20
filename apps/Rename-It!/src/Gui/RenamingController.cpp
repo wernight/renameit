@@ -1,13 +1,14 @@
 #include "StdAfx.h"
 #include "RenamingController.h"
-#include "IO/Renaming/DirectoryRemovalError.h"
 #include "IO/Renaming/RenamingList.h"
-#include "IO/Renaming/RenamingError.h"
-#include "IO/Renaming/RenamingList.h"
+#include "IO/Renaming/IOOperation/CreateDirectoryOperation.h"
+#include "IO/Renaming/IOOperation/RemoveEmptyDirectoryOperation.h"
+#include "IO/Renaming/IOOperation/RenameOperation.h"
 #include "IO/FailoverKtmTransaction.h"
 #include "Gui/ReportDlg.h"
 
 using namespace Beroux::IO::Renaming;
+using namespace Beroux::IO::Renaming::IOOperation;
 
 CRenamingController::CRenamingController() :
 	m_nErrorLevel(elALL)
@@ -53,7 +54,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 
 	// Define the callbacks for the renaming manager.
 	m_renamingList->SetRenamedCallback(bind(&CRenamingController::OnRenamed, this, _1, _2));
-	m_renamingList->SetRenameErrorCallback(bind(&CRenamingController::OnRenameError, this, _1));
+	m_renamingList->SetRenameErrorCallback(bind(&CRenamingController::OnRenameError, this, _1, _2));
 	m_renamingList->SetProgressCallback(bind(&CRenamingController::OnProgress, this, _1, _2, _3));
 	multithreadRenamingList.SetDoneCallback(bind(&CRenamingController::OnDone, this, _1));
 
@@ -134,32 +135,39 @@ void CRenamingController::OnRenamed(const CPath& pathNameBefore, const CPath& pa
 	m_dlgRenameError.Add(pathNameBefore, pathNameAfter, NULL);
 }
 
-void CRenamingController::OnRenameError(const IRenameError& renameError)
+void CRenamingController::OnRenameError(const IOOperation::CIOOperation& ioFailedOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 {
-	if (typeid(renameError) == typeid(CRenamingError))
+	if (typeid(ioFailedOperation) == typeid(CRenameOperation))
 	{// Renaming error
-		const CRenamingError& renamingError = static_cast<const CRenamingError&>(renameError);
+		const CRenameOperation& renamingError = static_cast<const CRenameOperation&>(ioFailedOperation);
 
 		// Add that error.
-		CString strErrorMessage;
-		strErrorMessage.Format(_T("%d %s"), renamingError.GetErrorCode(), renamingError.GetErrorMessage());
 		m_dlgRenameError.Add(
-			renamingError.GetPathNameBefore(),
-			renamingError.GetPathNameAfter(),
-			strErrorMessage);
+			renamingError.GetPathBefore(),
+			renamingError.GetPathAfter(),
+			renamingError.GetErrorMessage());
 	}
-	else if (typeid(renameError) == typeid(CDirectoryRemovalError))
+	else if (typeid(ioFailedOperation) == typeid(CCreateDirectoryOperation))
 	{// Directory removal error
-		const CDirectoryRemovalError& dirRemovalError = static_cast<const CDirectoryRemovalError&>(renameError);
+		const CCreateDirectoryOperation& dirCreationError = static_cast<const CCreateDirectoryOperation&>(ioFailedOperation);
 
 		// Add that error.
 		// TODO: Test it.
-		CString strErrorMessage;
-		strErrorMessage.Format(_T("%d %s"), dirRemovalError.GetErrorCode(), dirRemovalError.GetErrorMessage());
+		m_dlgRenameError.Add(
+			CPath(_T("<create folder>")),
+			dirCreationError.GetDirectoryPath(),
+			dirCreationError.GetErrorMessage());
+	}
+	else if (typeid(ioFailedOperation) == typeid(CRemoveEmptyDirectoryOperation))
+	{// Directory removal error
+		const CRemoveEmptyDirectoryOperation& dirRemovalError = static_cast<const CRemoveEmptyDirectoryOperation&>(ioFailedOperation);
+
+		// Add that error.
+		// TODO: Test it.
 		m_dlgRenameError.Add(
 			dirRemovalError.GetDirectoryPath(),
-			CPath(),
-			strErrorMessage);
+			CPath(_T("<delete folder if empty>")),
+			dirRemovalError.GetErrorMessage());
 	}
 	else
 	{// Unknown error.

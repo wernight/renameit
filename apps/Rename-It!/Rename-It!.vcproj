@@ -6,6 +6,7 @@
 	ProjectGUID="{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}"
 	RootNamespace="RenameIt"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -466,19 +467,11 @@
 					Name="Renaming"
 					>
 					<File
-						RelativePath=".\src\IO\Renaming\DirectoryRemovalError.h"
-						>
-					</File>
-					<File
 						RelativePath=".\src\IO\Renaming\FileList.h"
 						>
 					</File>
 					<File
 						RelativePath=".\src\IO\Renaming\Filter.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\src\IO\Renaming\IRenameError.h"
 						>
 					</File>
 					<File
@@ -499,10 +492,6 @@
 					</File>
 					<File
 						RelativePath=".\src\IO\Renaming\RenameErrorDlg.h"
-						>
-					</File>
-					<File
-						RelativePath=".\src\IO\Renaming\RenamingError.h"
 						>
 					</File>
 					<File
@@ -616,6 +605,26 @@
 								>
 							</File>
 						</Filter>
+					</Filter>
+					<Filter
+						Name="IOOperation"
+						>
+						<File
+							RelativePath=".\src\IO\Renaming\IOOperation\CreateDirectoryOperation.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\IOOperation\IOOperation.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\IOOperation\RemoveEmptyDirectoryOperation.h"
+							>
+						</File>
+						<File
+							RelativePath=".\src\IO\Renaming\IOOperation\RenameOperation.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>

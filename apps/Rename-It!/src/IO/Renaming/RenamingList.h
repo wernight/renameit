@@ -3,7 +3,7 @@
 #include "FileList.h"
 #include "../KtmTransaction.h"
 #include "Math/OrientedGraph.h"
-#include "IRenameError.h"
+#include "IOOperation/IOOperation.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming
 {
@@ -72,9 +72,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		/**
 		 * A callback function called when a problem arises during the renaming.
-		 * @param[in] renameError	A derived type indicating the error type.
 		 */
-		typedef function<void (const IRenameError&)> CRenameErrorEventHandler;
+		typedef function<void (const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> CRenameErrorEventHandler;
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
@@ -163,8 +162,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * See the declaration of m_fOnRenamed for more details about
 		 * the callback function arguments.
-		 * You can create a method void MyCallback(const IRenameError& renameError);
-		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1);
+		 * You can create a method void MyCallback(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
+		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1, _2);
 		 */
 		void SetRenameErrorCallback(const CRenameErrorEventHandler& fOnRenameError) {
 			m_fOnRenameError = fOnRenameError;
@@ -246,8 +245,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	protected:
 		virtual void OnRenamed(int nIndex);
 
-		virtual void OnRenameError(const IRenameError& renameError);
-		void OnRenameError(int nIndex, DWORD dwErrorCode);
+		virtual void OnRenameError(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
 
 		virtual void OnProgress(EStage nStage, int nDone, int nTotal);
 
@@ -301,7 +299,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \return An list of operations indexes in the updated m_vRenamingOperations ordered so that
 		 *         by performing them in order it should to the renaming job.
 		 */
-		vector<int> PrepareRenaming(set<CString, path_compare<CString> >& setDeleteIfEmptyDirectories);
+		vector<shared_ptr<IOOperation::CIOOperation>> PrepareRenaming();
 
 		/**
 		 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
