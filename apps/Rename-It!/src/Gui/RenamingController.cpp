@@ -53,8 +53,7 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	Beroux::IO::CFailoverKtmTransaction ktm;
 
 	// Define the callbacks for the renaming manager.
-	m_renamingList->SetRenamedCallback(bind(&CRenamingController::OnRenamed, this, _1, _2));
-	m_renamingList->SetRenameErrorCallback(bind(&CRenamingController::OnRenameError, this, _1, _2));
+	m_renamingList->SetIOOperationPerformedCallback(bind(&CRenamingController::OnRenamingIOOperation, this, _1, _2));
 	m_renamingList->SetProgressCallback(bind(&CRenamingController::OnProgress, this, _1, _2, _3));
 	multithreadRenamingList.SetDoneCallback(bind(&CRenamingController::OnDone, this, _1));
 
@@ -129,45 +128,39 @@ RestartRenaming:
 	}
 }
 
-void CRenamingController::OnRenamed(const CPath& pathNameBefore, const CPath& pathNameAfter)
+void CRenamingController::OnRenamingIOOperation(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 {
-	// Renaming succeed
-	m_dlgRenameError.Add(pathNameBefore, pathNameAfter, NULL);
-}
-
-void CRenamingController::OnRenameError(const IOOperation::CIOOperation& ioFailedOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)
-{
-	if (typeid(ioFailedOperation) == typeid(CRenameOperation))
+	if (typeid(ioOperation) == typeid(CRenameOperation))
 	{// Renaming error
-		const CRenameOperation& renamingError = static_cast<const CRenameOperation&>(ioFailedOperation);
+		const CRenameOperation& renamingError = static_cast<const CRenameOperation&>(ioOperation);
 
 		// Add that error.
 		m_dlgRenameError.Add(
 			renamingError.GetPathBefore(),
 			renamingError.GetPathAfter(),
-			renamingError.GetErrorMessage());
+			nErrorLevel == IOOperation::CIOOperation::elSuccess ? NULL : renamingError.GetErrorMessage());
 	}
-	else if (typeid(ioFailedOperation) == typeid(CCreateDirectoryOperation))
+	else if (typeid(ioOperation) == typeid(CCreateDirectoryOperation))
 	{// Directory removal error
-		const CCreateDirectoryOperation& dirCreationError = static_cast<const CCreateDirectoryOperation&>(ioFailedOperation);
+		const CCreateDirectoryOperation& dirCreationError = static_cast<const CCreateDirectoryOperation&>(ioOperation);
 
 		// Add that error.
 		// TODO: Test it.
 		m_dlgRenameError.Add(
 			CPath(_T("<create folder>")),
 			dirCreationError.GetDirectoryPath(),
-			dirCreationError.GetErrorMessage());
+			nErrorLevel == IOOperation::CIOOperation::elSuccess ? NULL : dirCreationError.GetErrorMessage());
 	}
-	else if (typeid(ioFailedOperation) == typeid(CRemoveEmptyDirectoryOperation))
+	else if (typeid(ioOperation) == typeid(CRemoveEmptyDirectoryOperation))
 	{// Directory removal error
-		const CRemoveEmptyDirectoryOperation& dirRemovalError = static_cast<const CRemoveEmptyDirectoryOperation&>(ioFailedOperation);
+		const CRemoveEmptyDirectoryOperation& dirRemovalError = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
 
 		// Add that error.
 		// TODO: Test it.
 		m_dlgRenameError.Add(
 			dirRemovalError.GetDirectoryPath(),
 			CPath(_T("<delete folder if empty>")),
-			dirRemovalError.GetErrorMessage());
+			nErrorLevel == IOOperation::CIOOperation::elSuccess ? NULL : dirRemovalError.GetErrorMessage());
 	}
 	else
 	{// Unknown error.

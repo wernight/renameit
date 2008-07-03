@@ -1,6 +1,4 @@
-#ifndef INC_MT_PSEUDO_RANDOM_NUMBER_GENERATOR_H_
-#define INC_MT_PSEUDO_RANDOM_NUMBER_GENERATOR_H_
-
+#pragma once
 /* 
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
@@ -47,13 +45,9 @@
 /** C++ wrapper and optimizations by Werner BEROUX
  * E-Mail: werner@beroux.com
  *
- * @version 1.12
- * @date 2007-06-11
+ * @version 1.13
+ * @date 2008-06-23
  */
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include <time.h>
 
@@ -68,15 +62,16 @@
 
 namespace Beroux{ namespace Math
 {
-	class RandomMT
+	class CRandomMT
 	{
 	// Construction
 	public:
-		RandomMT()
+		CRandomMT()
 		{
 			Initialize( 5489UL );
 		}
-		RandomMT(unsigned long seed)
+
+		CRandomMT(unsigned long seed)
 		{
 			Initialize( seed );
 		}
@@ -98,10 +93,10 @@ namespace Beroux{ namespace Math
 		}
 
 		/** Initialize by an array with array-length
-		* init_key is the array for initializing keys
-		* key_length is its length
-		* slight change for C++, 2004/2/26
-		*/
+		 * init_key is the array for initializing keys
+		 * key_length is its length
+		 * slight change for C++, 2004/2/26
+		 */
 		void InitialiteByArray(unsigned long init_key[], int key_length)
 		{
 			int i, j, k;
@@ -262,6 +257,3 @@ namespace Beroux{ namespace Math
 		int mti;
 	};
 }}
-
-#endif
-

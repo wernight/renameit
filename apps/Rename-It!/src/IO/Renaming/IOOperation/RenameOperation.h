@@ -1,5 +1,6 @@
 #pragma once
 #include "IOOperation.h"
+#include "../Path.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace IOOperation
 {

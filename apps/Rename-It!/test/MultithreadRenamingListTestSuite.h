@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
-#include "IO/Renaming/MultithreadRenamingList.h"
 #include "IO/FailoverKtmTransaction.h"
+#include "IO/Renaming/IOOperation/RenameOperation.h"
+#include "IO/Renaming/MultithreadRenamingList.h"
 #include <iostream>
 
 #ifdef _UNICODE
@@ -191,8 +192,7 @@ public:
 		m_nOnErrors = 0;
 		m_nOnProgress = 0;
 		m_nOnDone = 0;
-		m_failingRenamingList->SetRenamedCallback(bind(&MultithreadRenamingListTestSuite::OnRenamed, this, _1, _2));
-		m_failingRenamingList->SetRenameErrorCallback(bind(&MultithreadRenamingListTestSuite::OnRenameError, this, _1, _2));
+		m_failingRenamingList->SetIOOperationPerformedCallback(bind(&MultithreadRenamingListTestSuite::OnIOOperationPerformed, this, _1, _2));
 		m_failingRenamingList->SetProgressCallback(bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
 		mrl.SetDoneCallback(bind(&MultithreadRenamingListTestSuite::OnDone, this, _1));
 
@@ -258,14 +258,15 @@ private:
 		tcout << endl;
 	}
 
-	void OnRenamed(const Beroux::IO::Renaming::CPath& pathNameBefore, const Beroux::IO::Renaming::CPath& pathNameAfter)
+	void OnIOOperationPerformed(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 	{
-		++m_nOnRenamed;
-	}
-
-	void OnRenameError(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
-	{
-		++m_nOnErrors;
+		if (nErrorLevel == Beroux::IO::Renaming::IOOperation::CIOOperation::elSuccess)
+		{
+			if (typeid(ioOperation) == typeid(Beroux::IO::Renaming::IOOperation::CRenameOperation))
+				++m_nOnRenamed;
+		}
+		else
+			++m_nOnErrors;
 	}
 
 	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal)

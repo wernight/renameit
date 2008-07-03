@@ -83,56 +83,95 @@ public:
 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 
-	void testComplifiedFolderRenaming()
-	{
-		// A simple renaming operation made complex.
-
-// 		// Prepare
-// 		CFileListGenerator fileListGenerator;
-// 		fileListGenerator.AddDirectory(_T("a"), _T("b"));
-// 		fileListGenerator.AddDirectory(_T("a/a"), _T("b/b"));
-// 		fileListGenerator.AddDirectory(_T("a/a/a"), _T("b/b/b"));
-// 
-// 		// Rename
-// 		if (!fileListGenerator.PerformRenaming())
-// 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
-	}
-
 	void testEmboxedFolderRenaming()
 	{
-// 		// Prepare
-// 		CFileListGenerator fileListGenerator;
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\b2\\c2\\d2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
-// 
-// 		// Rename
-// 		if (!fileListGenerator.PerformRenaming(false))
-// 			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\b2\\c2\\d2"));
+		fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
+		fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming(false))
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 	}
 	
 	void testComplexFolderRenaming()
 	{
-// 		// Prepare
-// 		CFileListGenerator fileListGenerator;
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\B\\d2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b2"), _T("a\\B\\c2"));
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c22"), _T("a\\B"));
-// 		fileListGenerator.AddDirectory(_T("a\\b\\c\\d2"), _T("a\\B\\c22"));
-// 
-// 		for (int i=0; i<10; ++i)
-// 		{
-// 			// Randomize
-// 			fileListGenerator.RandomizeOperationsOrder(i);
-// 
-// 			// Rename
-// 			if (!fileListGenerator.PerformRenaming())
-// 				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
-// 		}
+		for (int i=0; i<5; ++i)
+		{
+			// Prepare
+			CFileListGenerator fileListGenerator;
+			fileListGenerator.AddDirectory(_T("a\\b\\c\\d"), _T("a\\B\\d2"));
+			fileListGenerator.AddDirectory(_T("a\\b"), _T("a\\b2"));
+			fileListGenerator.AddDirectory(_T("a\\b\\c"), _T("a\\b2\\c2"));
+			fileListGenerator.AddDirectory(_T("a\\b2"), _T("a\\B\\c2"));
+			fileListGenerator.AddDirectory(_T("a\\b\\c22"), _T("a\\B"));
+			fileListGenerator.AddDirectory(_T("a\\b\\c\\d2"), _T("a\\B\\c22"));
+
+			// Randomize
+			fileListGenerator.RandomizeOperationsOrder(i);
+
+			// Rename
+			if (!fileListGenerator.PerformRenaming())
+				TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+		}
 	}
 	
+	void testComplifiedFolderRenaming()
+	{
+		// A simple renaming operation made complex.
+
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddDirectory(_T("a"), _T("b"));
+		fileListGenerator.AddDirectory(_T("a/a"), _T("b/b"));
+		fileListGenerator.AddDirectory(_T("a/a/a"), _T("b/b/b"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	}
+
+	void testComplified2FolderRenaming()
+	{
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddDirectory(_T("a"), _T("b"));
+		fileListGenerator.AddDirectory(_T("a\\b"), _T("b\\c"));
+		fileListGenerator.CreateFile(_T("a\\file1"));
+		fileListGenerator.CreateFile(_T("a\\b\\file2"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+		// Check
+		TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("b\\file1")));
+		TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("b\\c\\file2")));
+	}
+
+	void testIdenticalParentFolderRenaming()
+	{
+		// Prepare
+		CFileListGenerator fileListGenerator;
+		fileListGenerator.AddDirectory(_T("A"), _T("B"));
+		fileListGenerator.AddDirectory(_T("B"), _T("A\\B"));
+		fileListGenerator.AddDirectory(_T("C"), _T("A"));
+		fileListGenerator.CreateFile(_T("A\\file1"));
+		fileListGenerator.CreateFile(_T("B\\file2"));
+		fileListGenerator.CreateFile(_T("C\\file3"));
+
+		// Rename
+		if (!fileListGenerator.PerformRenaming())
+			TS_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+
+		// Check
+		TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("B\\file1")));
+		TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("A\\B\\file2")));
+		TS_ASSERT(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("A\\file3")));
+	}
+
 	void testNewFoldersCaseUnfication()
 	{
 		// There should be another difference: When the case differ, the case of
@@ -164,7 +203,7 @@ public:
 		CFileListGenerator fileListGenerator;
 		fileListGenerator.CreateDirectory(_T("dirA\\dirB"));
 		fileListGenerator.AddFile(_T("dirA\\file1"), _T("DIRA\\file1"));
-		fileListGenerator.AddDirectory(_T("dirC\\dirD"), _T("DIRA\\DIRb\\dirD"));
+		fileListGenerator.AddFile(_T("dirC\\dirD\\file2"), _T("DIRA\\DIRb\\file2"));
 
 		// Rename
 		if (!fileListGenerator.PerformRenaming())

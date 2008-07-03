@@ -64,16 +64,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		};
 
 		/**
-		 * A callback function called when a file was successfully renamed.
-		 * @param[in] pathNameBefore	The old name of file/directory before renaming.
-		 * @param[in] pathNameAfter	The new name of file/directory after renaming.
+		 * A callback function called when a renaming IOOperation was performed during renaming.
+		 * The operation may be successful or a failure.
+		 * \param ioOperation The operation performed.
+		 * \param nErrorLevel A code indication success or failure level.
 		 */
-		typedef function<void (const CPath& pathNameBefore, const CPath& pathNameAfter)> CRenamedEventHandler;
-
-		/**
-		 * A callback function called when a problem arises during the renaming.
-		 */
-		typedef function<void (const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> CRenameErrorEventHandler;
+		typedef function<void (const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> CIOOperationPerformedEventHandler;
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
@@ -132,9 +128,9 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		};
 
 	// Construction
-		CRenamingList(void);
+		CRenamingList();
 		CRenamingList(const CFileList& flBefore, const CFileList& flAfter);
-		~CRenamingList(void);
+		~CRenamingList();
 
 		void Create(const CFileList& flBefore, const CFileList& flAfter);
 
@@ -151,22 +147,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		int GetErrorCount() const { return m_nErrors; }
 
 		/**
-		 * Event raised when problems arised during renaming.
-		 * You can create a method void MyCallback(const CString& strNameBefore, const CString& strNameAfter);
-		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1, _2);
-		 */
-		void SetRenamedCallback(const CRenamedEventHandler& fOnRenamed) {
-			m_fOnRenamed = fOnRenamed;
-		}
-
-		/**
-		 * See the declaration of m_fOnRenamed for more details about
-		 * the callback function arguments.
+		 * See the declaration of CIOOperationPerformedEventHandler for more details.
 		 * You can create a method void MyCallback(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
 		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1, _2);
 		 */
-		void SetRenameErrorCallback(const CRenameErrorEventHandler& fOnRenameError) {
-			m_fOnRenameError = fOnRenameError;
+		void SetIOOperationPerformedCallback(const CIOOperationPerformedEventHandler& fOnIOOperationPerformed) {
+			m_fOnIOOperationPerformed = fOnIOOperationPerformed;
 		}
 
 		/**
@@ -243,14 +229,17 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 	// Overrides
 	protected:
-		virtual void OnRenamed(int nIndex);
+		virtual void OnIOOperationPerformed(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
 
-		virtual void OnRenameError(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
-
-		virtual void OnProgress(EStage nStage, int nDone, int nTotal);
+		virtual void OnProgress(EStage nStage, int nDone, int nTotal) const;
 
 	// Implementation
 	private:
+		typedef vector<CRenamingOperation> CRenamingOperationList;
+
+		// Map a drive to a temporary path and the length of the shortest common path on that drive.
+		typedef map<CString, pair<CString, unsigned> > CTempDirectoryMap;
+
 		// A comparison used to order such a set such as the longest path come first.
 		template <class _Tp>
 		struct path_compare : public binary_function<_Tp, _Tp, bool>
@@ -259,6 +248,19 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			{
 				if (__x.GetLength() != __y.GetLength())
 					return __x.GetLength() > __y.GetLength();
+				else
+					return __x < __y;
+			}
+		};
+
+		// A comparison used to order such a set such as the shortest path come first.
+		template <class _Tp>
+		struct path_reverse_compare : public binary_function<_Tp, _Tp, bool>
+		{
+			bool operator()(const _Tp& __x, const _Tp& __y) const
+			{
+				if (__x.GetLength() != __y.GetLength())
+					return __x.GetLength() < __y.GetLength();
 				else
 					return __x < __y;
 			}
@@ -299,12 +301,18 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \return An list of operations indexes in the updated m_vRenamingOperations ordered so that
 		 *         by performing them in order it should to the renaming job.
 		 */
-		vector<shared_ptr<IOOperation::CIOOperation>> PrepareRenaming();
+		vector<shared_ptr<IOOperation::CIOOperation> > PrepareRenaming() const;
+
+		vector<shared_ptr<IOOperation::CIOOperation> > PrepareFileRenaming() const;
+
+		vector<shared_ptr<IOOperation::CIOOperation> > PrepareDirectoryRenaming() const;
+
+		static CTempDirectoryMap FindTempDirectories(const CRenamingOperationList& vRenamingOperations);
 
 		/**
 		 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
 		 */
-		static int FindShortestDirectoryPathAfter(vector<CRenamingOperation>& vRenamingOperations);
+		static int FindShortestDirectoryPathAfter(CRenamingOperationList& vRenamingOperations);
 
 		/**
 		 * Detects if a directory contains some elements or not.
@@ -315,12 +323,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		// Default progress callback that does nothing.
 		void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}
 
-		vector<CRenamingOperation> m_vRenamingOperations;
+		CRenamingOperationList m_vRenamingOperations;
 		vector<COperationProblem> m_vProblems;
 		int m_nWarnings;
 		int m_nErrors;
-		CRenamedEventHandler m_fOnRenamed;
-		CRenameErrorEventHandler m_fOnRenameError;
+		CIOOperationPerformedEventHandler m_fOnIOOperationPerformed;
 		CRenameProgressChangedEventHandler m_fOnProgress;
 	};
 }}}

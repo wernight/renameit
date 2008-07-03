@@ -3,16 +3,14 @@
 
 #define KTM_FAILOVER_WRAP(ReturnType, ReturnErrorValue, FunctionArgs) \
 	ReturnType ret = CKtmTransaction::FunctionArgs; \
-	if (ret == ReturnErrorValue && ::GetLastError() == ERROR_RM_NOT_ACTIVE) \
+	m_bIsLastOperationUsingKtm = UseTransactedFunctions(); \
+	if (m_bIsLastOperationUsingKtm && ret == ReturnErrorValue && (::GetLastError() == ERROR_RM_NOT_ACTIVE || ::GetLastError() == ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION)) \
 	{ \
 		m_bIsLastOperationUsingKtm = false; \
 		return ::FunctionArgs; \
 	} \
 	else \
-	{ \
-		m_bIsLastOperationUsingKtm = UseTransactedFunctions(); \
-		return ret; \
-	}
+		return ret;
 
 
 namespace Beroux{ namespace IO

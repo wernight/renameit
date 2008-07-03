@@ -6,7 +6,7 @@
 #include "IO/Renaming/IOOperation/RemoveEmptyDirectoryOperation.h"
 #include "IO/Renaming/IOOperation/RenameOperation.h"
 #include "IO/FailoverKtmTransaction.h"
-#include "Helper/RandomMT.h"
+#include "Math/RandomMT.h"
 #include <sstream>
 
 using namespace Beroux::IO;
@@ -166,7 +166,7 @@ public:
 
 	void RandomizeOperationsOrder(unsigned long seed)
 	{
-		Beroux::Math::RandomMT random(seed);
+		Beroux::Math::CRandomMT random(seed);
 		for (int i=0; i<m_flBefore.GetFileCount(); ++i)
 		{
 			unsigned nIndex = random.RandomRange(0, m_flBefore.GetFileCount() - 1);
@@ -176,7 +176,7 @@ public:
 			m_flBefore.RemoveFile(nIndex);
 			m_flAfter.RemoveFile(nIndex);
 			m_flBefore.AddFile(pathBefore);
-			m_flAfter.AddFile(pathBefore);
+			m_flAfter.AddFile(pathAfter);
 		}
 	}
 
@@ -186,7 +186,7 @@ public:
 		m_ossRenameErrors.reset(new ostringstream());
 		CFailoverKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
 		CRenamingList renamingList = MakeRenamingList();
-		renamingList.SetRenameErrorCallback(bind(&CFileListGenerator::OnRenameError, this, _1, _2));
+		renamingList.SetIOOperationPerformedCallback(bind(&CFileListGenerator::OnIOOperationPerformed, this, _1, _2));
 
 		if (!renamingList.Check())
 		{
@@ -247,35 +247,47 @@ private:
 		}
 	}
 
-	void OnRenameError(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
+	void OnIOOperationPerformed(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 	{
-		*m_ossRenameErrors << "OnRenameError(): ";
-		if (typeid(ioOperation) == typeid(CRenameOperation))
+		if (nErrorLevel != Beroux::IO::Renaming::IOOperation::CIOOperation::elSuccess)
 		{
-			const CRenameOperation& renErr = static_cast<const CRenameOperation&>(ioOperation);
-			*m_ossRenameErrors 
-				<< '`' << CStringToString(renErr.GetPathBefore().GetPath()) << '`'
-				<< " --> "
-				<< '`' << CStringToString(renErr.GetPathAfter().GetPath()) << '`'
-				<< ": " << CStringToString(renErr.GetErrorMessage());
+			*m_ossRenameErrors << "OnIOOperationPerformed(): ";
+
+			if (nErrorLevel == Beroux::IO::Renaming::IOOperation::CIOOperation::elWarning)
+				*m_ossRenameErrors << "WARNING: ";
+			else
+				*m_ossRenameErrors << "ERROR: ";
+
+			if (typeid(ioOperation) == typeid(CRenameOperation))
+			{
+				const CRenameOperation& renErr = static_cast<const CRenameOperation&>(ioOperation);
+				*m_ossRenameErrors 
+					<< "CRenameOperation failed: "
+					<< '"' << CStringToString(renErr.GetPathBefore().GetPath()) << '"'
+					<< " --> "
+					<< '"' << CStringToString(renErr.GetPathAfter().GetPath()) << '"'
+					<< ": " << CStringToString(renErr.GetErrorMessage());
+			}
+			else if (typeid(ioOperation) == typeid(CCreateDirectoryOperation))
+			{
+				const CCreateDirectoryOperation& createDirOp = static_cast<const CCreateDirectoryOperation&>(ioOperation);
+				*m_ossRenameErrors 
+					<< "CCreateDirectoryOperation failed: "
+					<< '"' << CStringToString(createDirOp.GetDirectoryPath().GetPath()) << '"'
+					<< ": " << CStringToString(createDirOp.GetErrorMessage());
+			}
+			else if (typeid(ioOperation) == typeid(CRemoveEmptyDirectoryOperation))
+			{
+				const CRemoveEmptyDirectoryOperation& delDirOp = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
+				*m_ossRenameErrors 
+					<< "CRemoveEmptyDirectoryOperation failed: "
+					<< '"' << CStringToString(delDirOp.GetDirectoryPath()) << '"'
+					<< ": " << CStringToString(delDirOp.GetErrorMessage());
+			}
+			else
+				*m_ossRenameErrors << "Unknown error type.";
+			*m_ossRenameErrors << endl;
 		}
-		else if (typeid(ioOperation) == typeid(CCreateDirectoryOperation))
-		{
-			const CCreateDirectoryOperation& createDirOp = static_cast<const CCreateDirectoryOperation&>(ioOperation);
-			*m_ossRenameErrors 
-				<< "Creating directory failed: `" << CStringToString(createDirOp.GetDirectoryPath().GetPath()) << '`'
-				<< ": " << CStringToString(createDirOp.GetErrorMessage());
-		}
-		else if (typeid(ioOperation) == typeid(CRemoveEmptyDirectoryOperation))
-		{
-			const CRemoveEmptyDirectoryOperation& delDirOp = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
-			*m_ossRenameErrors 
-				<< "Removing empty directory failed: `" << CStringToString(delDirOp.GetDirectoryPath()) << '`'
-				<< ": " << CStringToString(delDirOp.GetErrorMessage());
-		}
-		else
-			*m_ossRenameErrors << "Unknown error type.";
-		*m_ossRenameErrors << endl;
 	}
 
 	static void DeleteAllInFolder(const CString& strDir)

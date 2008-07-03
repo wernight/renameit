@@ -1,5 +1,5 @@
 #pragma once
-#include "../KtmTransaction.h"
+#include "../../KtmTransaction.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace IOOperation
 { 
@@ -39,7 +39,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace IOOperation
 		{
 			DWORD dwLastError = ::GetLastError();
 			CString strErrorMessage;
-			strErrorMessage.Format(_T("%d %s"), dwLastError, GetErrorMessage(dwLastError));
+			strErrorMessage.Format(_T("(%d) %s"), dwLastError, GetErrorMessage(dwLastError));
 			return strErrorMessage;
 		}
 
