@@ -84,8 +84,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		// Determines whether a path to a file system object such as a file or directory is valid and is already existing.
 		static bool PathFileExists(const CString& strPath)
 		{
-			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
 			ASSERT(strPath.IsEmpty() || ::GetFileAttributes(strPath) != S_OK || ((::GetFileAttributes(strPath) & FILE_ATTRIBUTE_DIRECTORY) == 0));	// Doesn't fully support directories (yet).
+
+			if (!strPath.IsEmpty() && strPath.GetAt(strPath.GetLength() - 1) == '.')	// No file or folder should end by a dot (.).
+				return false;
+
+			ASSERT(strPath.IsEmpty() || strPath.GetAt(strPath.GetLength() - 1) != '.');	// No file or folder should end by a dot (.).
 
 			if (strPath.IsEmpty())
 				return false;
@@ -209,6 +213,14 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		inline bool operator!=(const CPath& other) const {
 			return m_strPath != other.m_strPath;
+		}
+
+		/**
+		 * Return the path use to be displayed to the user.
+		 */
+		CString GetDisplayPath() const
+		{
+			return MakeSimplePath(GetPath());
 		}
 
 	// Private

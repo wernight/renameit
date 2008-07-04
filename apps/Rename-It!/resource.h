@@ -42,8 +42,8 @@
 #define IDS_MENU_ADD_FILES              134
 #define IDR_MAINMENU                    135
 #define IDS_FILES                       135
-#define IDS_DIR                         136
 #define IDR_SEARCH_REGEXP               136
+#define IDS_UNITTEST_UNICODE_BEFORE     136
 #define IDS_ERROR                       137
 #define IDS_REMOVED_FROM_DISK           138
 #define IDS_CONFLICT_WITH_EXISTING      139
@@ -210,7 +210,6 @@
 #define IDC_HIDE_DETAILS_BUTTON         1124
 #define IDC_ACTION3_RADIO               1125
 #define IDC_DESCR_STATIC                1126
-#define IDC_DESCR_NONE_STATIC           1127
 #define IDC_PROGRESS                    1128
 #define IDC_PROGRESS_STATIC             1129
 #define IDC_SEARCH_RICHEDIT             1130

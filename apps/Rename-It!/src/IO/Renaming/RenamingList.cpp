@@ -32,13 +32,13 @@ CRenamingList::~CRenamingList(void)
 
 void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 {
-	if (flBefore.GetFileCount() != flAfter.GetFileCount())
+	if (flBefore.GetCount() != flAfter.GetCount())
 		throw logic_error("The number of files before and after renaming must be the same.");
 
 	// Combine the two lists into a renaming list.
-	m_vRenamingOperations.resize(flBefore.GetFileCount());
-	m_vProblems.resize(flBefore.GetFileCount());
-	for (int i=0; i<flBefore.GetFileCount(); ++i)
+	m_vRenamingOperations.resize(flBefore.GetCount());
+	m_vProblems.resize(flBefore.GetCount());
+	for (int i=0; i<flBefore.GetCount(); ++i)
 		m_vRenamingOperations[i] = CRenamingOperation(flBefore[i], flAfter[i]);
 }
 
@@ -277,6 +277,8 @@ void CRenamingList::CheckDirectoryPath(int nOperationIndex)
 
 CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName, const CString& strNameWithoutExtension, bool bIsFileName)
 {
+	ASSERT(strName.Left(strNameWithoutExtension.GetLength()) == strNameWithoutExtension);
+
 	// Empty name.
 	if (strName.IsEmpty())
 	{

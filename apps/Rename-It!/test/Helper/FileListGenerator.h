@@ -49,6 +49,7 @@ public:
 		return m_flAfter;
 	}
 
+	// Temporary directory for this test, including an ending '\'.
 	CString GetTempDirectory() const
 	{
 		return m_strTempDir;
@@ -59,18 +60,18 @@ public:
 	 * The file name before is created.
 	 * Both file names provided should be relative to a temporary folder.
 	 */
-	void AddFile(const CString& strFileNameBefore, const CString& strFileNameAfter)
+	void AddFile(const CString& strFileNameBefore, const CString& strFileNameAfter, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
 	{
 		// Make full path.
 		CString strPathBefore = m_strTempDir + strFileNameBefore;
 		CString strPathAfter = m_strTempDir + strFileNameAfter;
 
 		// Create the file path before.
-		CreateFile(strFileNameBefore);
+		CreateFile(strFileNameBefore, dwFileAttributes);
 
 		// Add to the list.
-		m_flBefore.AddFile(strPathBefore);
-		m_flAfter.AddFile(strPathAfter);
+		m_flBefore.AddPath(strPathBefore);
+		m_flAfter.AddPath(strPathAfter);
 	}
 
 	/**
@@ -88,15 +89,15 @@ public:
 		CreateDirectory(strFolderNameBefore);
 
 		// Add to the list.
-		m_flBefore.AddFile(pathBefore);
-		m_flAfter.AddFile(pathAfter);
+		m_flBefore.AddPath(pathBefore);
+		m_flAfter.AddPath(pathAfter);
 	}
 
 	/**
 	 * Create a file path.
 	 * The files will be removed when the CFileListGenerator is destroyed or cleaned.
 	 */
-	void CreateFile(const CString& strFileName)
+	void CreateFile(const CString& strFileName, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
 	{
 		// Make full path.
 		CString strFilePath = m_strTempDir + strFileName;
@@ -110,7 +111,7 @@ public:
 			GENERIC_WRITE,
 			FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL, CREATE_NEW, 
-			FILE_ATTRIBUTE_TEMPORARY,
+			dwFileAttributes | FILE_ATTRIBUTE_TEMPORARY,
 			NULL));
 	}
 
@@ -151,7 +152,7 @@ public:
 	// This does not remove the created files.
 	void Clear()
 	{
-		for (int i=m_flBefore.GetFileCount() - 1; i>=0; --i)
+		for (int i=m_flBefore.GetCount() - 1; i>=0; --i)
 		{
 			m_flBefore.RemoveFile(i);
 			m_flAfter.RemoveFile(i);
@@ -167,16 +168,16 @@ public:
 	void RandomizeOperationsOrder(unsigned long seed)
 	{
 		Beroux::Math::CRandomMT random(seed);
-		for (int i=0; i<m_flBefore.GetFileCount(); ++i)
+		for (int i=0; i<m_flBefore.GetCount(); ++i)
 		{
-			unsigned nIndex = random.RandomRange(0, m_flBefore.GetFileCount() - 1);
+			unsigned nIndex = random.RandomRange(0, m_flBefore.GetCount() - 1);
 
-			CPath pathBefore = m_flBefore.GetFile(nIndex);
-			CPath pathAfter = m_flAfter.GetFile(nIndex);
+			CPath pathBefore = m_flBefore.GetPath(nIndex);
+			CPath pathAfter = m_flAfter.GetPath(nIndex);
 			m_flBefore.RemoveFile(nIndex);
 			m_flAfter.RemoveFile(nIndex);
-			m_flBefore.AddFile(pathBefore);
-			m_flAfter.AddFile(pathAfter);
+			m_flBefore.AddPath(pathBefore);
+			m_flAfter.AddPath(pathAfter);
 		}
 	}
 
@@ -217,7 +218,7 @@ public:
 	// Returns true if all files/folders have have been renamed.
 	bool AreAllRenamed() const
 	{
-		for (int i=0; i<m_flBefore.GetFileCount(); ++i)
+		for (int i=0; i<m_flBefore.GetCount(); ++i)
 		{
 			// We don't check that the path before is removed
 			// because it's not a must. Ex: Cyclic renaming.

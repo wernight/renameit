@@ -10,11 +10,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	{
 	// Attributes
 	public:
-		int GetFileCount() const {
+		int GetCount() const {
 			return (int) m_vfnFiles.size();
 		}
 
-		const CPath& GetFile(int nIndex) const {
+		const CPath& GetPath(int nIndex) const {
 			return m_vfnFiles.at(nIndex);
 		}
 
@@ -24,7 +24,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] fnFileName	The file name of the file to be renamed.
 		 * @return The index of the added file.
 		 */
-		int AddFile(const CPath& fnFileName)
+		int AddPath(const CPath& fnFileName)
 		{
 			m_vfnFiles.push_back(fnFileName);
 			return (int) m_vfnFiles.size() - 1;
@@ -35,8 +35,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] strFileName	Path to the file or folder to be renamed.
 		 * @return The index of the added file.
 		 */
-		inline int AddFile(const CString& strFileName) {
-			return AddFile(CPath(strFileName));
+		inline int AddPath(const CString& strFileName) {
+			return AddPath(CPath(strFileName));
 		}
 
 		/**
@@ -44,10 +44,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] fnFileName	The file name of the file to be renamed.
 		 * @param[in] nIndex		Index position where the file should be insert (0 means first element of the list).
 		 */
-		void InsertFile(int nIndex, const CPath& fnFileName)
+		void InsertPath(int nIndex, const CPath& fnFileName)
 		{
 			if (nIndex == (int) m_vfnFiles.size())
-				AddFile(fnFileName);
+				AddPath(fnFileName);
 			else if (nIndex >= (int) m_vfnFiles.size())
 				throw out_of_range("Index is out of range.");
 			else
@@ -57,10 +57,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Overloaded method that constructs the CPath from the path.
 		 * @param[in] strFileName	Path to the file or folder to be renamed.
-		 * @param[in] nIndex		See InsertFile above.
+		 * @param[in] nIndex		See InsertPath above.
 		 */
-		inline void InsertFile(int nIndex, const CString& strFileName) {
-			return InsertFile(nIndex, CPath(strFileName));
+		inline void InsertPath(int nIndex, const CString& strFileName) {
+			return InsertPath(nIndex, CPath(strFileName));
 		}
 
 		/**

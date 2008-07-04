@@ -332,7 +332,103 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			>
 			<File
+				RelativePath=".\res\add files.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\add folder.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\bad name.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\badname.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\conflict.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\delete all.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\delete.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\down.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\error.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\inverse selection.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\lien.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\res\new.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ok.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\open.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\prop.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\removed.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\RenameIt.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\RenameIt.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\renamer.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\save.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\select all.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\unselect all.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\up.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\WinError.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\wiz_toolbar.bmp"
 				>
 			</File>
 		</Filter>
@@ -431,6 +527,10 @@
 			</File>
 			<File
 				RelativePath=".\test\RenamingListTestSuite.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<Filter

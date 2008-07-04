@@ -40,9 +40,9 @@ public:
 		::CreateDirectory(m_strTempDir, NULL);
 
 		// Create basic file list.
-		m_vTestFilesBefore.AddFile(m_strTempDir + _T("a.tmp"));
-		m_vTestFilesBefore.AddFile(m_strTempDir + _T("b.tmp"));
-		m_vTestFilesBefore.AddFile(m_strTempDir + _T("c.tmp"));
+		m_vTestFilesBefore.AddPath(m_strTempDir + _T("a.tmp"));
+		m_vTestFilesBefore.AddPath(m_strTempDir + _T("b.tmp"));
+		m_vTestFilesBefore.AddPath(m_strTempDir + _T("c.tmp"));
 	}
 
 	~MultithreadRenamingListTestSuite()
@@ -55,9 +55,9 @@ public:
 		CString strCannotRenameFileName = m_strTempDir + _T("cannot_rename.tmp");
 
 		// Create the temporary test files.
-		for (int i=0; i<m_vTestFilesBefore.GetFileCount(); ++i)
+		for (int i=0; i<m_vTestFilesBefore.GetCount(); ++i)
 		{
-			::CloseHandle(::CreateFile(m_vTestFilesBefore.GetFile(i).GetPath(),
+			::CloseHandle(::CreateFile(m_vTestFilesBefore.GetPath(i).GetPath(),
 				GENERIC_WRITE,
 				FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
 				NULL, CREATE_NEW, 
@@ -77,9 +77,9 @@ public:
 		// Create the simple renaming list.
 		{
 			CFileList after;
-			after.AddFile(m_strTempDir + _T("a_after.tmp"));
-			after.AddFile(m_strTempDir + _T("b_after.tmp"));
-			after.AddFile(m_strTempDir + _T("c_after.tmp"));
+			after.AddPath(m_strTempDir + _T("a_after.tmp"));
+			after.AddPath(m_strTempDir + _T("b_after.tmp"));
+			after.AddPath(m_strTempDir + _T("c_after.tmp"));
 
 			m_simpleRenamingList.reset( new CRenamingList(m_vTestFilesBefore, after) );
 		}
@@ -87,9 +87,9 @@ public:
 		// Create the checking failure renaming list.
 		{
 			CFileList after;
-			after.AddFile(m_strTempDir + _T("a_after.tmp"));
-			after.AddFile(m_strTempDir + _T("b_after.tmp"));
-			after.AddFile(m_strTempDir + _T("b_after.tmp"));
+			after.AddPath(m_strTempDir + _T("a_after.tmp"));
+			after.AddPath(m_strTempDir + _T("b_after.tmp"));
+			after.AddPath(m_strTempDir + _T("b_after.tmp"));
 
 			m_impossibleRenamingList.reset( new CRenamingList(m_vTestFilesBefore, after) );
 		}
@@ -97,13 +97,13 @@ public:
 		// Create the renaming failure renaming list.
 		{
 			CFileList before = m_vTestFilesBefore;
-			before.AddFile(strCannotRenameFileName);
+			before.AddPath(strCannotRenameFileName);
 
 			CFileList after;
-			after.AddFile(m_strTempDir + _T("a_after.tmp"));
-			after.AddFile(m_strTempDir + _T("b_after.tmp"));
-			after.AddFile(m_strTempDir + _T("c_after.tmp"));
-			after.AddFile(m_strTempDir + _T("cannot_rename_after.tmp"));
+			after.AddPath(m_strTempDir + _T("a_after.tmp"));
+			after.AddPath(m_strTempDir + _T("b_after.tmp"));
+			after.AddPath(m_strTempDir + _T("c_after.tmp"));
+			after.AddPath(m_strTempDir + _T("cannot_rename_after.tmp"));
 
 			m_failingRenamingList.reset( new CRenamingList(before, after) );
 		}

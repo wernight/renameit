@@ -2003,11 +2003,11 @@ bool CRenameItDlg::RenameAllFiles(unsigned nRenamingControllerErrorLevel)
 	{
 		if (item.bChecked)
 		{
-			flBefore.AddFile(item.fnBefore);
-			flAfter.AddFile(item.fnAfter);
+			flBefore.AddPath(item.fnBefore);
+			flAfter.AddPath(item.fnAfter);
 		}
 	}
-	ASSERT(flBefore.GetFileCount() == flAfter.GetFileCount());
+	ASSERT(flBefore.GetCount() == flAfter.GetCount());
 
 	// Do the renaming.
 	CRenamingController	renaming;

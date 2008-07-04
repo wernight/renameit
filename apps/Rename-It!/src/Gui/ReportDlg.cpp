@@ -48,10 +48,9 @@ BOOL CReportDlg::OnInitDialog()
 
 	// Report columns
 	CString str;
-	str.LoadString(IDS_BEFORE);	m_ctlReportList.InsertColumn(0, str, LVCFMT_LEFT, 220, -1);
-	str.LoadString(IDS_AFTER);	m_ctlReportList.InsertColumn(1, str, LVCFMT_LEFT, 220, -1);
-	str.LoadString(IDS_DIR);	m_ctlReportList.InsertColumn(2, str, LVCFMT_LEFT, 400, -1);
-	str.LoadString(IDS_ERROR);	m_ctlReportList.InsertColumn(3, str, LVCFMT_LEFT, 500, -1);
+	str.LoadString(IDS_BEFORE);	m_ctlReportList.InsertColumn(0, str, LVCFMT_LEFT, 420, -1);
+	str.LoadString(IDS_AFTER);	m_ctlReportList.InsertColumn(1, str, LVCFMT_LEFT, 420, -1);
+	str.LoadString(IDS_ERROR);	m_ctlReportList.InsertColumn(2, str, LVCFMT_LEFT, 500, -1);
 
 	// Create image list
 	VERIFY( m_ilImages.Create(16, 16, ILC_COLOR8|ILC_MASK, 0, 4) );
@@ -97,10 +96,10 @@ bool CReportDlg::RenameItem(int nItem)
 	CPath fnOriginalFileName = m_renamingList[nOperationIndex].GetPathBefore();
 	ren.SetOriginalFileName( fnOriginalFileName.GetFileName() );
 
-	CPath fnNewFileName = m_renamingList[nOperationIndex].GetPathAfter();
-	ren.SetNewFileName( fnNewFileName.GetFileName() );
+	CPath pathAfter = m_renamingList[nOperationIndex].GetPathAfter();
+	ren.SetNewFileName( pathAfter.GetFileName() );
 
-	ASSERT(fnOriginalFileName.GetDirectoryName() == fnNewFileName.GetDirectoryName());
+	ASSERT(fnOriginalFileName.GetDirectoryName() == pathAfter.GetDirectoryName());
 	CString strBaseFolder = fnOriginalFileName.GetDirectoryName();
 
 	if (ren.DoModal() == IDOK)
@@ -109,11 +108,11 @@ bool CReportDlg::RenameItem(int nItem)
 		CRenamingList::CRenamingOperation roRenamingOperation = m_renamingList[nOperationIndex];
 		roRenamingOperation.SetPathAfter(strBaseFolder + ren.GetNewFileName());
 		m_renamingList.SetRenamingOperation(nOperationIndex, roRenamingOperation);
-		m_ctlReportList.SetItemText(nItem, 1, ren.GetNewFileName());
+		m_ctlReportList.SetItemText(nItem, 1, roRenamingOperation.GetPathAfter().GetDisplayPath());
 
 		// Clear the error message.
 		m_ctlReportList.SetItem(nItem, 0, LVIF_IMAGE, NULL, -1, 0, 0, NULL);
-		m_ctlReportList.SetItemText(nItem, 3, _T(""));
+		m_ctlReportList.SetItemText(nItem, 2, _T(""));
 		return true;
 	}
 	else
@@ -168,18 +167,11 @@ void CReportDlg::ShowErrors()
 void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 {
 	// Get the file name before and after to display.
-	CPath fnOriginalFileName = m_renamingList[nRenamingOperationIndex].GetPathBefore();
-	CString strOriFileName = fnOriginalFileName.GetFileName();
-	CString strPath = fnOriginalFileName.GetDirectoryName();
-
-	CPath fnNewFileName = m_renamingList[nRenamingOperationIndex].GetPathAfter();
-	CString strNewFileName = fnNewFileName.GetFileName();
-
-	ASSERT(	CPath(fnOriginalFileName.GetDirectoryName()).FSCompare(
-			CPath(fnNewFileName.GetDirectoryName())) == 0);	// Same path before/after renaming
+	CPath pathBefore = m_renamingList[nRenamingOperationIndex].GetPathBefore();
+	CPath pathAfter = m_renamingList[nRenamingOperationIndex].GetPathAfter();
 
 	// Add item to the report list.
-	int nItemIndex = m_ctlReportList.InsertItem(LVIF_TEXT | LVIF_PARAM, m_ctlReportList.GetItemCount(), strOriFileName, 0, 0, -1, nRenamingOperationIndex);
+	int nItemIndex = m_ctlReportList.InsertItem(LVIF_TEXT | LVIF_PARAM, m_ctlReportList.GetItemCount(), pathBefore.GetDisplayPath(), 0, 0, -1, nRenamingOperationIndex);
 	if (nItemIndex == -1)
 	{
 		// Show critical error and exit the application.
@@ -188,8 +180,8 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 		AfxPostQuitMessage(1);
 		return;
 	}
-	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 1, strNewFileName) );
-	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 2, strPath) );
+	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 1, pathBefore.GetDisplayPath()) );
+	VERIFY( m_ctlReportList.SetItemText(nItemIndex, 2, pathAfter.GetDisplayPath()) );
 
 	// Update to show the problems.
 	const CRenamingList::COperationProblem& problem = m_renamingList.GetOperationProblem(nRenamingOperationIndex);
@@ -230,7 +222,7 @@ void CReportDlg::InsertOperation(int nRenamingOperationIndex)
 	}
 
 	m_ctlReportList.SetItem(nItemIndex, 0, LVIF_IMAGE, NULL, nIcon, 0, 0, NULL);
-	m_ctlReportList.SetItemText(nItemIndex, 3, problem.strMessage);
+	m_ctlReportList.SetItemText(nItemIndex, 2, problem.strMessage);
 }
 
 void CReportDlg::UpdateStatus()

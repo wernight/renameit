@@ -143,8 +143,8 @@ void CRenameErrorDlg::UpdateErrorList()
 		if (bShowOnlyProblems && m_vErrors[i].strError.IsEmpty())
 			continue;
 
-		int nInsertedIndex = m_ctlReport.InsertItem(i, m_vErrors[i].fnBefore.GetPath());
-		m_ctlReport.SetItem(nInsertedIndex, 1, LVIF_TEXT, m_vErrors[i].fnAfter.GetPath(), NULL, NULL, NULL, NULL);
+		int nInsertedIndex = m_ctlReport.InsertItem(i, m_vErrors[i].fnBefore.GetDisplayPath());
+		m_ctlReport.SetItem(nInsertedIndex, 1, LVIF_TEXT, m_vErrors[i].fnAfter.GetDisplayPath(), NULL, NULL, NULL, NULL);
 		m_ctlReport.SetItem(nInsertedIndex, 2, LVIF_TEXT, m_vErrors[i].strError, NULL, NULL, NULL, NULL);
 
 		// Change icon

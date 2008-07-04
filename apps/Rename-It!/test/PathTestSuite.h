@@ -201,4 +201,35 @@ public:
 
 		TS_ASSERT( m_pathSimple != m_pathSimpleUnc );
 	}
+
+	void testDisplayPath()
+	{
+		TS_ASSERT_EQUALS(_T("\\\\Network\\ParentFolder\\..Sub.Folder\\.File.Name.Extension"), m_pathNetworkUnc.GetDisplayPath());
+		TS_ASSERT_EQUALS(m_pathSimple.GetDisplayPath(), m_pathSimpleUnc.GetDisplayPath());
+	}
+
+// 	void testLimitedDisplayPath()
+// 	{
+// 		TS_ASSERT_EQUALS(_T("\\\\Network\\ParentFo...\\.File.Name.Extension"), m_pathNetworkUnc.GetDisplayPath(42));
+// 		TS_ASSERT_EQUALS(m_pathNetworkUnc.GetDisplayPath(), m_pathNetworkUnc.GetDisplayPath(m_pathNetworkUnc.GetPath().GetLength()));
+// 
+// 		for (int i=0; i<200; ++i)
+// 			TS_ASSERT_EQUALS(m_pathSimple.GetDisplayPath(i), m_pathSimpleUnc.GetDisplayPath(i));
+// 
+// 		CPath pathLongPath = _T("\\\\?\\C\\Hello\\aaaaa\\b\\ccccc\\ddddddddd\\eeeeeeeeee\\fff\\g\\h\\iiiiiiiiiiiii\\ j j j j j \\kkkkkkkkkk\\llllllllll\\mmmmmmmmmmmmmmm\\nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\\oooooooo\\pppppppppp\\qqqqqqqqqqqq\\rrrrrrrrrrrrrrr\\sssssssssssssss\\tttttttttttt\\uuuuuuuuuuuuuuuu\\vvvvvvvvvvvvvvvvvvv\\wwwwwwwwwwww\\xxxxxxxx..x.x.x.x.x.x.x.x.x.x\\yyyyyyyyyyy...yy.y\\zzzzzzzzzzzzzzzzzzz.zzz");
+// 		int nLongPathMaxDisplayLength = pathLongPath.GetDisplayPath().GetLength();
+// 		TS_ASSERT(nLongPathMaxDisplayLength > pathLongPath.GetPath().GetLength() - 10);
+// 		for (int i=0; i<1000; ++i)
+// 		{
+// 			// Generate a path.
+// 			if (i < nLongPathMaxDisplayLength)
+// 			{
+// 				TS_ASSERT_EQUALS(i, pathLongPath.GetDisplayPath(i).GetLength());
+// 			}
+// 			else
+// 			{
+// 				TS_ASSERT_EQUALS(nLongPathMaxDisplayLength, pathLongPath.GetDisplayPath(i).GetLength());
+// 			}
+// 		}
+// 	}
 };
