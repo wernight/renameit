@@ -19,7 +19,7 @@
 
 	;General
 	Name "${PRODUCT}"
-	OutFile "renameit-${VERSION}-install.exe"
+	OutFile "renameit-${VERSION}-setup.exe"
 
 	;The Default Installation Directory
 	InstallDir "$PROGRAMFILES\${PRODUCT}"
@@ -68,21 +68,21 @@ Section "!${PRODUCT}" SecProduct
 	SectionIn RO
 
 	; Get Windows Version
-	Call GetWindowsVersion
-	Pop $R0
-	StrCmp $R0 "95" lblAsciiInstall
-	StrCmp $R0 "98" lblAsciiInstall
-	StrCmp $R0 "ME" lblAsciiInstall
+;	Call GetWindowsVersion
+;	Pop $R0
+;	StrCmp $R0 "95" lblAsciiInstall
+;	StrCmp $R0 "98" lblAsciiInstall
+;	StrCmp $R0 "ME" lblAsciiInstall
 		; Unicode Install
 		SetOutPath "$INSTDIR"
 		File "..\build\Rename-It!\Unicode Release\RenameIt.exe"
-		GoTo lblEndSpecificOSInstall
-	lblAsciiInstall: 
-		; Non-Unicode Install
-		SetOutPath "$INSTDIR"
-		File "..\build\Rename-It!\Release\RenameIt.exe"
-		GoTo lblEndSpecificOSInstall
-	lblEndSpecificOSInstall:
+;		GoTo lblEndSpecificOSInstall
+;	lblAsciiInstall: 
+;		; Non-Unicode Install
+;		SetOutPath "$INSTDIR"
+;		File "..\build\Rename-It!\Release\RenameIt.exe"
+;		GoTo lblEndSpecificOSInstall
+;	lblEndSpecificOSInstall:
 	File "..\apps\Rename-It!\RenameIt.chm"
 
 	; Other install files (not depending to OS)
@@ -118,17 +118,17 @@ Section "Shell Incorporation" SecShell
 	SetOutPath "$INSTDIR"
 	Call GetWindowsVersion
 	Pop $R0
-	StrCmp $R0 "95" lblAsciiInstall
-	StrCmp $R0 "98" lblAsciiInstall
-	StrCmp $R0 "ME" lblAsciiInstall
+;	StrCmp $R0 "95" lblAsciiInstall
+;	StrCmp $R0 "98" lblAsciiInstall
+;	StrCmp $R0 "ME" lblAsciiInstall
 		; Unicode Install
 		File /oname=SimpleExt.dl_ "..\build\SimpleExt\Unicode Release MinDependency\SimpleExt.dll"
-		GoTo lblEndSpecificOSInstall
-	lblAsciiInstall: 
-		; Non-Unicode Install
-		File /oname=SimpleExt.dl_ "..\build\SimpleExt\Release MinDependency\SimpleExt.dll"
-		GoTo lblEndSpecificOSInstall
-	lblEndSpecificOSInstall:
+;		GoTo lblEndSpecificOSInstall
+;	lblAsciiInstall: 
+;		; Non-Unicode Install
+;		File /oname=SimpleExt.dl_ "..\build\SimpleExt\Release MinDependency\SimpleExt.dll"
+;		GoTo lblEndSpecificOSInstall
+;	lblEndSpecificOSInstall:
 
 	; Rename the file to the correct name
 	Rename /REBOOTOK "$INSTDIR\SimpleExt.dl_" "$INSTDIR\SimpleExt.dll"

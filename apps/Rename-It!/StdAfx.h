@@ -30,45 +30,47 @@
 # define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
 
+
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
 #ifndef _UNICODE			// Windows 95/98/Me
 
-# ifndef _WIN32_WINNT		// Allow use of features specific to Windows NT 4 or later.
-#  define _WIN32_WINNT 0x0400		// Change this to the appropriate value to target Windows 98 and Windows 2000 or later.
-# endif						
-
-# ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
-#  define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
+# ifndef WINVER					// Specifies that the minimum required platform is Windows NT 4.
+#  define WINVER 0x0400			// Change this to the appropriate value to target other versions of Windows.
 # endif
 
-# ifndef _WIN32_IE			// Allow use of features specific to IE 4.0 or later.
-#  define _WIN32_IE 0x0400	// Change this to the appropriate value to target IE 5.0 or later.
+# ifndef _WIN32_WINNT			// Specifies that the minimum required platform is Windows NT 4.
+#  define _WIN32_WINNT 0x0400	// Change this to the appropriate value to target other versions of Windows.
+# endif
+
+# ifndef _WIN32_WINDOWS			// Specifies that the minimum required platform is Windows 98.
+#  define _WIN32_WINDOWS 0x0410	// Change this to the appropriate value to target Windows Me or later.
+# endif
+
+# ifndef _WIN32_IE				// Specifies that the minimum required platform is Internet Explorer 4.0.
+#  define _WIN32_IE 0x0400		// Change this to the appropriate value to target other versions of IE.
 # endif
 
 #else						// Windows 2000-XP
 
-# ifndef WINVER				// Allow use of features specific to Windows XP or later.
-#  define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
+# ifndef WINVER					// Specifies that the minimum required platform is Windows XP.
+#  define WINVER 0x0501			// Change this to the appropriate value to target other versions of Windows.
 # endif
 
-# ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
+# ifndef _WIN32_WINNT			// Specifies that the minimum required platform is Windows XP.
 #  define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
-# endif						
-
-# ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
-#  define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
 # endif
 
-# ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
-#  define _WIN32_IE 0x0600	// Change this to the appropriate value to target other versions of IE.
+# ifndef _WIN32_WINDOWS			// Specifies that the minimum required platform is Windows 98.
+#  define _WIN32_WINDOWS 0x0410	// Change this to the appropriate value to target Windows Me or later.
+# endif
+
+# ifndef _WIN32_IE				// Specifies that the minimum required platform is Internet Explorer 6.0.
+#  define _WIN32_IE 0x0600		// Change this to the appropriate value to target other versions of IE.
 # endif
 
 #endif
 
-#ifndef WINVER
-# define WINVER _WIN32_WINNT
-#endif
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
