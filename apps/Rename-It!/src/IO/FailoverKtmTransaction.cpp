@@ -4,10 +4,13 @@
 #define KTM_FAILOVER_WRAP(ReturnType, ReturnErrorValue, FunctionArgs) \
 	ReturnType ret = CKtmTransaction::FunctionArgs; \
 	m_bIsLastOperationUsingKtm = UseTransactedFunctions(); \
-	if (m_bIsLastOperationUsingKtm && ret == ReturnErrorValue && (::GetLastError() == ERROR_RM_NOT_ACTIVE || ::GetLastError() == ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION)) \
+	/* Some transaction errors include: ERROR_RM_NOT_ACTIVE, ERROR_EFS_NOT_ALLOWED_IN_TRANSACTION, ERROR_TRANSACTIONS_UNSUPPORTED_REMOTE... */ \
+	if (ret == ReturnErrorValue && m_bIsLastOperationUsingKtm) \
 	{ \
-		m_bIsLastOperationUsingKtm = false; \
-		return ::FunctionArgs; \
+		ReturnType ret = ::FunctionArgs; \
+		if (ret != ReturnErrorValue) \
+			m_bIsLastOperationUsingKtm = false; \
+		return ret; \
 	} \
 	else \
 		return ret;

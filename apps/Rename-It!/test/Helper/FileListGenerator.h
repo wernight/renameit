@@ -154,8 +154,8 @@ public:
 	{
 		for (int i=m_flBefore.GetCount() - 1; i>=0; --i)
 		{
-			m_flBefore.RemoveFile(i);
-			m_flAfter.RemoveFile(i);
+			m_flBefore.RemovePath(i);
+			m_flAfter.RemovePath(i);
 		}
 	}
 
@@ -174,8 +174,8 @@ public:
 
 			CPath pathBefore = m_flBefore.GetPath(nIndex);
 			CPath pathAfter = m_flAfter.GetPath(nIndex);
-			m_flBefore.RemoveFile(nIndex);
-			m_flAfter.RemoveFile(nIndex);
+			m_flBefore.RemovePath(nIndex);
+			m_flAfter.RemovePath(nIndex);
 			m_flBefore.AddPath(pathBefore);
 			m_flAfter.AddPath(pathAfter);
 		}

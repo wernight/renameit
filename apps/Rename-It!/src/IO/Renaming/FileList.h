@@ -14,8 +14,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			return (int) m_vfnFiles.size();
 		}
 
-		const CPath& GetPath(int nIndex) const {
+		inline const CPath& GetPath(int nIndex) const {
 			return m_vfnFiles.at(nIndex);
+		}
+
+		void SetPath(int nIndex, const CString& strValue) {
+			m_vfnFiles[nIndex] = strValue;
 		}
 
 	// Basic list operations
@@ -67,7 +71,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * Remove a file from the list of files to be renamed.
 		 * @param[in] nIndex		Index of the file to remove.
 		 */
-		void RemoveFile(int nIndex) {
+		void RemovePath(int nIndex) {
 			if (nIndex < 0 || nIndex >= (int) m_vfnFiles.size())
 				throw out_of_range("Index is out of range.");
 			else
