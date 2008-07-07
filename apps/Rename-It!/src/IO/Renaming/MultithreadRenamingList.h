@@ -40,6 +40,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			resultRenamingFailed,
 
 			resultSuccess,
+			resultCancelled,
 		};
 
 
@@ -48,10 +49,14 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * meaning when the worker thread finished working.
 		 * @param[in] nRenamingResult	The result of the renaming.
 		 */
-		typedef function<void (ERenamingResult)> CDoneEventHandler;
+		typedef signal<void (ERenamingResult)> CDoneSignal;
+		
+		CDoneSignal Done;
 
 	// Construction
 		CMultithreadRenamingList();
+
+		~CMultithreadRenamingList();
 
 	// Attributes
 		/**
@@ -73,14 +78,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		ERenamingResult GetRenamingResult() const;
 
-		/**
-		 * Callback when the renaming in done.
-		 * \note Use bind(&MyClass::MyCallBack, &myClassInstance, _1);
-		 */
-		void SetDoneCallback(const CDoneEventHandler& listener) {
-			m_fOnDone = listener;
-		}
-
 	// Operations
 		/**
 		 * Perform the checking and renaming in a worker thread.
@@ -93,33 +90,52 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		void Start(CRenamingList& renamingList, CKtmTransaction& ktm);
 
 		/**
+		 * Stop the renaming or pre-renaming operation started.
+		 * \param bCancelOnlyRollBackable	Return false if the renaming at the current stage cannot be rolled back.
+		 * \return True if the operation was canceled, false if it cannot be canceled.
+		 */
+		void Cancel(bool bCancelOnlyRollBackable=false);
+
+		/**
 		 * Returns only after the worker thread has finished.
 		 */
 		void WaitForTerminaison();
 
 	// Implementation
 	private:
+		struct CCancelMessage
+		{
+			// Set to true when the cancel message is set and ready to be processed
+			// by the worker thread.
+			bool m_bMessageSet;
+
+			// Input argument, set to true to avoid canceling when cannot roll back.
+			bool m_bCancelOnlyRollBackable;
+		};
+
 		struct CThreadArgs
 		{
-			CThreadArgs(CRenamingList& renamingList, CKtmTransaction& ktm, CDoneEventHandler& fOnDone, bool bAllowWarnings)
+			CThreadArgs(CRenamingList& renamingList, CKtmTransaction& ktm, CDoneSignal& fnOnDone, bool bAllowWarnings, CCancelMessage& cancelMessage)
 				: m_renamingList(renamingList)
 				, m_ktm(ktm)
-				, m_fOnDone(fOnDone)
+				, m_fnOnDone(fnOnDone)
 				, m_bAllowWarnings(bAllowWarnings)
+				, m_cancelMessage(cancelMessage)
 			{}
 
 			CRenamingList& m_renamingList;
 			CKtmTransaction& m_ktm;
-			CDoneEventHandler& m_fOnDone;
+			CDoneSignal& m_fnOnDone;
 			bool m_bAllowWarnings;
+			CCancelMessage& m_cancelMessage;
 		};
 
 		static UINT RenamingThread(LPVOID lpParam);
 
-		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings);
+		static ERenamingResult CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings, CCancelMessage& cancelMessage);
 
 		shared_ptr<CWinThread> m_pWinThread;
-		CDoneEventHandler m_fOnDone;
 		bool m_bAllowWarnings;
+		CCancelMessage m_cancelMessage;
 	};
 }}}

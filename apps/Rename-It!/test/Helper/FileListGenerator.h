@@ -187,7 +187,7 @@ public:
 		m_ossRenameErrors.reset(new ostringstream());
 		CFailoverKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
 		CRenamingList renamingList = MakeRenamingList();
-		renamingList.SetIOOperationPerformedCallback(bind(&CFileListGenerator::OnIOOperationPerformed, this, _1, _2));
+		renamingList.IOOperationPerformed.connect( bind(&CFileListGenerator::OnIOOperationPerformed, this, _1, _2, _3) );
 
 		if (!renamingList.Check())
 		{
@@ -248,13 +248,13 @@ private:
 		}
 	}
 
-	void OnIOOperationPerformed(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
+	void OnIOOperationPerformed(const CRenamingList& sender, const CIOOperation& ioOperation, CIOOperation::EErrorLevel nErrorLevel)
 	{
-		if (nErrorLevel != Beroux::IO::Renaming::IOOperation::CIOOperation::elSuccess)
+		if (nErrorLevel != CIOOperation::elSuccess)
 		{
 			*m_ossRenameErrors << "OnIOOperationPerformed(): ";
 
-			if (nErrorLevel == Beroux::IO::Renaming::IOOperation::CIOOperation::elWarning)
+			if (nErrorLevel == CIOOperation::elWarning)
 				*m_ossRenameErrors << "WARNING: ";
 			else
 				*m_ossRenameErrors << "ERROR: ";

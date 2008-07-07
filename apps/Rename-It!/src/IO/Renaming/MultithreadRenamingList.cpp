@@ -8,6 +8,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	{
 	}
 
+	CMultithreadRenamingList::~CMultithreadRenamingList()
+	{
+		WaitForTerminaison();
+	}
+
 	bool CMultithreadRenamingList::IsDone() const
 	{
 		return GetRenamingResult() != resultInProgress;
@@ -31,9 +36,26 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 	void CMultithreadRenamingList::Start(CRenamingList& renamingList, CKtmTransaction& ktm)
 	{
+		// Reset the cancel message.
+		m_cancelMessage.m_bMessageSet = false;
+
 		// Start the thread.
-		m_pWinThread.reset( AfxBeginThread(RenamingThread, new CThreadArgs(renamingList, ktm, m_fOnDone, m_bAllowWarnings)) );
+		m_pWinThread.reset( AfxBeginThread(RenamingThread,
+			new CThreadArgs(
+				renamingList,
+				ktm,
+				Done,
+				m_bAllowWarnings,
+				m_cancelMessage)
+			) );
 		m_pWinThread->m_bAutoDelete = FALSE;
+	}
+
+	void CMultithreadRenamingList::Cancel(bool bCancelOnlyRollBackable)
+	{
+		// Set the message
+		m_cancelMessage.m_bCancelOnlyRollBackable = bCancelOnlyRollBackable;
+		m_cancelMessage.m_bMessageSet = true;
 	}
 
 	void CMultithreadRenamingList::WaitForTerminaison()
@@ -47,15 +69,17 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		// Retrieve the thread arguments.
 		scoped_ptr<CThreadArgs> threadArgs( static_cast<CThreadArgs*>(lpParam) );
 
-		// Do the renaming.
-		ERenamingResult result = CheckAndRename(threadArgs->m_renamingList, threadArgs->m_ktm, threadArgs->m_bAllowWarnings);
+		// Wait a bit to let the main thread initialize.
+		::Sleep(100);
 
-		if (threadArgs->m_fOnDone)
-			threadArgs->m_fOnDone(result);
+		// Do the renaming.
+		ERenamingResult result = CheckAndRename(threadArgs->m_renamingList, threadArgs->m_ktm, threadArgs->m_bAllowWarnings, threadArgs->m_cancelMessage);
+
+		threadArgs->m_fnOnDone(result);
 		return result;
 	}
 
-	CMultithreadRenamingList::ERenamingResult CMultithreadRenamingList::CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings)
+	CMultithreadRenamingList::ERenamingResult CMultithreadRenamingList::CheckAndRename(CRenamingList& renamingList, CKtmTransaction& ktm, bool bAllowWarnings, CCancelMessage& cancelMessage)
 	{
 		// Check if there are some errors.
 		renamingList.Check();
@@ -63,11 +87,21 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			(!bAllowWarnings && renamingList.GetWarningCount() > 0))
 			return resultCheckingFailed;
 
+		// Cancel?
+		if (cancelMessage.m_bMessageSet)
+			return resultCancelled;
+
 		// Do the renaming.
 		if (!renamingList.PerformRenaming(ktm))
 			return resultRenamingFailed;
 
+		// Cancel?
+		if (cancelMessage.m_bMessageSet)
+		{
+			if (!cancelMessage.m_bCancelOnlyRollBackable || ktm.IsUsingKtm())
+				return resultCancelled;
+		}
+
 		return resultSuccess;
 	}
-
 }}}

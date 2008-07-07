@@ -131,6 +131,7 @@ using namespace std;
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
+#include <boost/signal.hpp>
 #include <boost/static_assert.hpp>
 using namespace boost;
 

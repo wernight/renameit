@@ -25,18 +25,18 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	m_dlgProgress.SetTitle(IDS_PGRS_TITLE);
 
 	// Create a renaming list.
-	m_renamingList.reset(new CRenamingList(flBefore, flAfter));
+	CRenamingList renamingList(flBefore, flAfter);
 
 	// Remove files that have the same name before and after.
-	for (int i=0; i<m_renamingList->GetCount(); ++i)
-		if ((*m_renamingList)[i].GetPathBefore() == (*m_renamingList)[i].GetPathAfter())
+	for (int i=0; i<renamingList.GetCount(); ++i)
+		if (renamingList[i].GetPathBefore() == renamingList[i].GetPathAfter())
 		{
-			m_renamingList->RemoveRenamingOperation(i);
+			renamingList.RemoveRenamingOperation(i);
 			--i;
 		}
 
 	// When there is no file to be renamed...
-	if (m_renamingList->IsEmpty())
+	if (renamingList.IsEmpty())
 	{
 		DisplayError(IDS_NO_FILENAME_CHANGES, elNotice);
 		return true; // No file to rename.
@@ -45,31 +45,21 @@ bool CRenamingController::RenameFiles(const CFileList& flBefore, const CFileList
 	// Initialize
 	m_nPreviousStage = -1;	// No progress displayed yet.
 
-	// Keep the number of files the user would like to rename.
-	unsigned nFilesToRename = m_renamingList->GetCount();	// This value may change later, so we keep it.
-
 	// Initialize the renaming.
 	CMultithreadRenamingList multithreadRenamingList;
 	Beroux::IO::CFailoverKtmTransaction ktm;
 
 	// Define the callbacks for the renaming manager.
-	m_renamingList->SetIOOperationPerformedCallback(bind(&CRenamingController::OnRenamingIOOperation, this, _1, _2));
-	m_renamingList->SetProgressCallback(bind(&CRenamingController::OnProgress, this, _1, _2, _3));
-	multithreadRenamingList.SetDoneCallback(bind(&CRenamingController::OnDone, this, _1));
+	renamingList.IOOperationPerformed.connect( bind(&CRenamingController::OnRenamingIOOperationPerformed, this, _1, _2, _3) );
+	renamingList.ProgressChanged.connect( bind(&CRenamingController::OnRenamingProgressChanged, this, _1, _2, _3, _4) );
+	multithreadRenamingList.Done.connect( bind(&CRenamingController::OnRenamingDone, this, _1) );
+	m_dlgProgress.Canceling.connect( bind(&CMultithreadRenamingList::Cancel, ref(multithreadRenamingList), true) );
 
 	// Start renaming.
 RestartRenaming:
-	multithreadRenamingList.Start(*m_renamingList, ktm);
-
-	/* FIXME: On canceling the thread operation must be stopped.
-	 * m_dlgProgress.EnableCancel(m_nCurrentStage != CRenamingList::stageRenaming);
-	 * or... if KTM supports transactions.
-	 */
-	if (m_dlgProgress.DoModal() == IDCANCEL)
-	{
-		ktm.RollBack();
-		return false;
-	}
+	m_dlgProgress.EnableCancel(true);
+	multithreadRenamingList.Start(renamingList, ktm);
+	m_dlgProgress.DoModal();
 
 	// Wait for the working thread to terminate.
 	multithreadRenamingList.WaitForTerminaison();
@@ -82,7 +72,7 @@ RestartRenaming:
 		AfxMessageBox(IDS_REPORT_ERROR_DETECTED, MB_ICONINFORMATION);
 
 		// Show the report dialog.
-		if (CReportDlg(*m_renamingList).DoModal() == IDOK)
+		if (CReportDlg(renamingList).DoModal() == IDOK)
 		{
 			multithreadRenamingList.SetAllowWarnings(true);
 			goto RestartRenaming;
@@ -116,10 +106,16 @@ RestartRenaming:
 		{
 			// Show message box.
 			CString str;
-			str.Format(IDS_RENAMED_ALL, nFilesToRename);
+			str.Format(IDS_RENAMED_ALL, renamingList.GetCount());
 			DisplayError(str, elNotice);
 			return true;
 		}
+		return false;
+
+	case CMultithreadRenamingList::resultCancelled:
+		ktm.RollBack();
+		// Tell the use it was canceled.
+		DisplayError(IDS_RENAMING_CANCELED, elNotice);
 		return false;
 
 	default:
@@ -128,7 +124,7 @@ RestartRenaming:
 	}
 }
 
-void CRenamingController::OnRenamingIOOperation(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)
+void CRenamingController::OnRenamingIOOperationPerformed(const CRenamingList& sender, const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 {
 	if (typeid(ioOperation) == typeid(CRenameOperation))
 	{// Renaming error
@@ -145,7 +141,6 @@ void CRenamingController::OnRenamingIOOperation(const IOOperation::CIOOperation&
 		const CCreateDirectoryOperation& dirCreationError = static_cast<const CCreateDirectoryOperation&>(ioOperation);
 
 		// Add that error.
-		// TODO: Test it.
 		m_dlgRenameError.Add(
 			CPath(_T("<create folder>")),
 			dirCreationError.GetDirectoryPath(),
@@ -156,7 +151,6 @@ void CRenamingController::OnRenamingIOOperation(const IOOperation::CIOOperation&
 		const CRemoveEmptyDirectoryOperation& dirRemovalError = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
 
 		// Add that error.
-		// TODO: Test it.
 		m_dlgRenameError.Add(
 			dirRemovalError.GetDirectoryPath(),
 			CPath(_T("<delete folder if empty>")),
@@ -168,7 +162,7 @@ void CRenamingController::OnRenamingIOOperation(const IOOperation::CIOOperation&
 	}
 }
 
-void CRenamingController::OnProgress(CRenamingList::EStage nStage, int nDone, int nTotal)
+void CRenamingController::OnRenamingProgressChanged(const CRenamingList& sender, CRenamingList::EStage nStage, int nDone, int nTotal)
 {
 	if (nStage != m_nPreviousStage)
 	{
@@ -183,7 +177,6 @@ void CRenamingController::OnProgress(CRenamingList::EStage nStage, int nDone, in
 			break;
 
 		case CRenamingList::stageRenaming:
-			m_dlgProgress.EnableCancel(false);
 			m_dlgProgress.SetCaption(IDS_PGRS_RENAMING_CAPTION);
 			break;
 
@@ -196,7 +189,7 @@ void CRenamingController::OnProgress(CRenamingList::EStage nStage, int nDone, in
 	m_dlgProgress.SetProgress(nStage, nDone, nTotal);
 }
 
-void CRenamingController::OnDone(CMultithreadRenamingList::ERenamingResult nRenamingResult)
+void CRenamingController::OnRenamingDone(CMultithreadRenamingList::ERenamingResult nRenamingResult)
 {
 	m_dlgProgress.Done();
 }

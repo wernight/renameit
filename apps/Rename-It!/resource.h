@@ -43,7 +43,7 @@
 #define IDR_MAINMENU                    135
 #define IDS_FILES                       135
 #define IDR_SEARCH_REGEXP               136
-#define IDS_UNITTEST_UNICODE_BEFORE     136
+#define IDS_RENAMING_CANCELED           136
 #define IDS_ERROR                       137
 #define IDS_REMOVED_FROM_DISK           138
 #define IDS_CONFLICT_WITH_EXISTING      139

@@ -16,7 +16,6 @@ CRenamingList::CRenamingList(void)
 	: m_nWarnings(0)
 	, m_nErrors(0)
 {
-	m_fOnProgress = bind(&CRenamingList::DefaultProgressCallback, this, _1, _2, _3);
 }
 
 CRenamingList::CRenamingList(const CFileList& flBefore, const CFileList& flAfter)
@@ -81,7 +80,7 @@ bool CRenamingList::Check()
 		for (unsigned i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			OnProgress(stageChecking, i*20/nFilesCount, 100);
+			OnProgressChanged(stageChecking, i*20/nFilesCount, 100);
 
 			// Create a map of file names (in lower case) associated to the operation index.
 			CString strName = m_vRenamingOperations[i].pathBefore.GetPath();
@@ -105,7 +104,7 @@ bool CRenamingList::Check()
 		for (unsigned i=0; i<nFilesCount; ++i)
 		{
 			// Report progress
-			OnProgress(stageChecking, 20 + i*80/nFilesCount, 100);
+			OnProgressChanged(stageChecking, 20 + i*80/nFilesCount, 100);
 	
 			// Check for file conflicts.
 			CheckFileConflict(i, setBeforeLower, mapAfterLower);
@@ -468,7 +467,7 @@ void CRenamingList::SetProblem(int nOperationIndex, EErrorCode nErrorCode, CStri
 	}
 }
 
-bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
+bool CRenamingList::PerformRenaming(CKtmTransaction& ktm) const
 {
 	// Avoid possible strange behaviors for empty lists.
 	if (m_vRenamingOperations.size() == 0)
@@ -488,9 +487,13 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 	// FIXME: When KTM is supported on the system but not on some of its
 	//        file systems (like the case here), the error report dialog
 	//        still proposes to roll back even though it can't.
+	// POSSIBLE SOLUTION: Try with KTM (showing some logo somewhere before),
+	//                    and if it fails, ask the user to possibly retry
+	//                    without KTM.
+	// TODO: Add a command-line option to specify whenever KTM should be used or not.
 
 	// Rename files order.
-	OnProgress(stageRenaming, 0, (int)vOperationList.size());	// Inform we start renaming.
+	OnProgressChanged(stageRenaming, 0, (int)vOperationList.size());	// Inform we start renaming.
 
 	bool bError = false;
 	for (unsigned i=0; i<vOperationList.size(); ++i)
@@ -502,22 +505,20 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm)
 			bError = true;
 
 		// Report progress.
-		OnProgress(stageRenaming, i, (int)vOperationList.size());	// Inform we start renaming.
+		OnProgressChanged(stageRenaming, i, (int)vOperationList.size());	// Inform we start renaming.
 	}
 
 	return !bError;
 }
 
-void CRenamingList::OnIOOperationPerformed(const CIOOperation& ioOperation, CIOOperation::EErrorLevel nErrorLevel)
+void CRenamingList::OnIOOperationPerformed(const CIOOperation& ioOperation, CIOOperation::EErrorLevel nErrorLevel) const
 {
-	if (m_fOnIOOperationPerformed)
-		m_fOnIOOperationPerformed(ioOperation, nErrorLevel);
+	IOOperationPerformed(*this, ioOperation, nErrorLevel);
 }
 
-void CRenamingList::OnProgress(EStage nStage, int nDone, int nTotal) const
+void CRenamingList::OnProgressChanged(EStage nStage, int nDone, int nTotal) const
 {
-	if (m_fOnProgress)
-		m_fOnProgress(nStage, nDone, nTotal);
+	ProgressChanged(*this, nStage, nDone, nTotal);
 }
 
 vector<shared_ptr<CIOOperation> > CRenamingList::PrepareRenaming() const
@@ -568,7 +569,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 	for (int i=0; i<nFilesCount; ++i)	
 	{
 		// Report progress
-		OnProgress(stagePreRenaming, i*20/nFilesCount, 100);
+		OnProgressChanged(stagePreRenaming, i*20/nFilesCount, 100);
 
 		graph.AddNode(i);
 
@@ -596,7 +597,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 	for (int i=0; i<nFilesCount; ++i)
 	{
 		// Report progress
-		OnProgress(stagePreRenaming, 20 + i*75/nFilesCount, 100);
+		OnProgressChanged(stagePreRenaming, 20 + i*75/nFilesCount, 100);
 
 		// Definitions
 		CPath* proBefore = &vRenamingOperations[i].pathBefore;
@@ -754,7 +755,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 		for (int i=0; i<nTotal; ++i)
 		{
 			// Report progress
-			OnProgress(stagePreRenaming, 95 + i*5/nTotal, 100);
+			OnProgressChanged(stagePreRenaming, 95 + i*5/nTotal, 100);
 
 			if (!graph[i].HasAntecedent())
 				mapRenamingOperations.insert( ro_pair_t(vRenamingOperations[i].pathBefore.GetPath(), i) );
@@ -835,7 +836,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() const
 {
 	// Report progress
-	OnProgress(stagePreRenaming, 0, 100);
+	OnProgressChanged(stagePreRenaming, 0, 100);
 
 	// Change the locale to match the file system stricmp().
 	CScopedLocale scopeLocale(_T(""));
@@ -855,7 +856,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 			));
 
 	// Report progress
-	OnProgress(stagePreRenaming, 2, 100);
+	OnProgressChanged(stagePreRenaming, 2, 100);
 
 	// For directories only changing their case, directly add the renaming operation.
 	BOOST_FOREACH(const CRenamingOperation& renamingOperation, m_vRenamingOperations)
@@ -872,7 +873,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	}
 
 	// Report progress
-	OnProgress(stagePreRenaming, 10, 100);
+	OnProgressChanged(stagePreRenaming, 10, 100);
 
 	// Prepare a map moving the directories flat and then moving them to their destination path.
 	typedef map<CString, shared_ptr<CRenameOperation>, path_compare<CString> > CFirstRenameOperationMap;	// Order so that the longest path comes first.
@@ -914,7 +915,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	}
 
 	// Report progress
-	OnProgress(stagePreRenaming, 70, 100);
+	OnProgressChanged(stagePreRenaming, 70, 100);
 
 	// Move all other(=not only changing case) directories as a direct child of the
 	// temporary directory. Use a meaningful name, example:
@@ -929,7 +930,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	mapFirstOperation.clear();
 
 	// Report progress
-	OnProgress(stagePreRenaming, 75, 100);
+	OnProgressChanged(stagePreRenaming, 75, 100);
 
 	// Move all other(=not only changing case) directories to their destination
 	// folder after creating the missing parent directories, by increasing
@@ -952,7 +953,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	mapSecondOperation.clear();
 
 	// Report progress
-	OnProgress(stagePreRenaming, 80, 100);
+	OnProgressChanged(stagePreRenaming, 80, 100);
 
 	// Delete temporary directory if empty.
 	for (CTempDirectoryMap::const_iterator iter=mapTempDirectories.begin(); iter!=mapTempDirectories.end(); ++iter)
@@ -961,7 +962,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 			));
 
 	// Report progress
-	OnProgress(stagePreRenaming, 82, 100);
+	OnProgressChanged(stagePreRenaming, 82, 100);
 
 	// Delete the parents of the renamed directories if they're empty.
 	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;	// Directories to remove if empty (ordered set by longest path first).
@@ -988,7 +989,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	}
 
 	// Report progress
-	OnProgress(stagePreRenaming, 95, 100);
+	OnProgressChanged(stagePreRenaming, 95, 100);
 
 	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
 	{
@@ -999,7 +1000,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	}
 
 	// Report progress
-	OnProgress(stagePreRenaming, 100, 100);
+	OnProgressChanged(stagePreRenaming, 100, 100);
 
 	// Return list of operations.
 	return vOrderedOperationList;

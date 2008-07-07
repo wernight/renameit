@@ -24,6 +24,8 @@ public:
 	CProgressDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CProgressDlg();
 
+	signal<void (void)> Canceling;
+
 // Pre-display attributes
 	// Change the dialog title.
 	void SetTitle(const CString& strValue) {
@@ -51,20 +53,27 @@ public:
 		m_strProgressCaption.LoadString(nStringID);
 	}
 
-	// Enable or disable the user cancelling possibility.
+// Operations (can always be used)
+	// Enable or disable the user canceling possibility.
 	void EnableCancel(bool bEnable=true) {
 		if (bEnable != m_bEnableCancel)
 		{
 			m_bEnableCancel = bEnable;
+
+			// Cancel user's canceling (if any).
+			m_bCancelled = false;
+
 			m_bRefreshEverything = true;
 		}
 	}
 
+	/**
+	 * Tell that the renaming is done (either canceled or successful).
+	 */
 	void Done() {
 		m_bDone = true;
 	}
 
-// Operations (can always be used)
 	/**
 	 * Set the current progress.
 	 * @param nStage The current renaming stage.
@@ -90,6 +99,9 @@ public:
 		m_nDone = nDone;
 	}
 
+// Overridables
+	virtual void OnCanceling();
+
 // Dialog Data
 private:
 	enum { IDD = IDD_RENAMING_PROGRESS };
@@ -111,6 +123,7 @@ private:
 	unsigned m_nTotal;	// Total number of items in the current stage.
 	bool m_bRefreshEverything;	// True everything in the windows should be updated.
 	bool m_bDone;		// Set to true when the total operation is complete.
+	bool m_bCancelled;	// Set to true when the user wish to cancel.
 
 	CString m_strDialogTitle;
 	CString m_strProgressCaption;

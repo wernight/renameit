@@ -43,13 +43,12 @@ public:
 private:
 	static UINT RenamingThread(LPVOID lpParam);
 
-	void OnRenamingIOOperation(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel);
-	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
-	void OnDone(Beroux::IO::Renaming::CMultithreadRenamingList::ERenamingResult nRenamingResult);
+	void OnRenamingIOOperationPerformed(const Beroux::IO::Renaming::CRenamingList& sender, const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel);
+	void OnRenamingProgressChanged(const Beroux::IO::Renaming::CRenamingList& sender, Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
+	void OnRenamingDone(Beroux::IO::Renaming::CMultithreadRenamingList::ERenamingResult nRenamingResult);
 	void DisplayError(UINT nMsgID, EErrorLevels nErrorLevel) const;
 	void DisplayError(const CString& strErrorMsg, EErrorLevels nErrorLevel) const;
 
-	shared_ptr<Beroux::IO::Renaming::CRenamingList> m_renamingList;
 	CProgressDlg m_dlgProgress;
 	CRenameErrorDlg m_dlgRenameError;
 	unsigned m_nErrorLevel;

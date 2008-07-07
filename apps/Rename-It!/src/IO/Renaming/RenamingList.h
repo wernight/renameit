@@ -69,7 +69,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \param ioOperation The operation performed.
 		 * \param nErrorLevel A code indication success or failure level.
 		 */
-		typedef function<void (const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> CIOOperationPerformedEventHandler;
+		signal<void (const CRenamingList& sender, const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> IOOperationPerformed;
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
@@ -77,7 +77,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @param[in] nDone			The number of files renamed (with or without problem).
 		 * @param[in] nTotal		The total number of files to be rename.
 		 */
-		typedef function<void (EStage nStage, int nDone, int nTotal)> CRenameProgressChangedEventHandler;
+		signal<void (const CRenamingList& sender, EStage nStage, int nDone, int nTotal)> ProgressChanged;
 
 		struct CRenamingOperation
 		{
@@ -147,24 +147,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		int GetErrorCount() const { return m_nErrors; }
 
 		/**
-		 * See the declaration of CIOOperationPerformedEventHandler for more details.
-		 * You can create a method void MyCallback(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
-		 * and then use boost::bind(&MyClass::MyCallBack, &myClassInstance, _1, _2);
-		 */
-		void SetIOOperationPerformedCallback(const CIOOperationPerformedEventHandler& fOnIOOperationPerformed) {
-			m_fOnIOOperationPerformed = fOnIOOperationPerformed;
-		}
-
-		/**
-		 * Used to track progress of renaming and other long operations.
-		 * See the declaration of m_fOnProgress for more details about
-		 * the callback function arguments.
-		 */
-		void SetProgressCallback(const CRenameProgressChangedEventHandler& fOnRenameProgress) {
-			m_fOnProgress = fOnRenameProgress;
-		}
-
-		/**
 		 * Return the problems found for a specific operation.
 		 * Call Check() to update the problems' list.
 		 */
@@ -225,13 +207,13 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * @return True on success, false if one or more files couldn't be renamed.
 		 * @note Does not commit or abort at the end.
 		 */
-		bool PerformRenaming(CKtmTransaction& ktm);
+		bool PerformRenaming(CKtmTransaction& ktm) const;
 
 	// Overrides
 	protected:
-		virtual void OnIOOperationPerformed(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel);
+		virtual void OnIOOperationPerformed(const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel) const;
 
-		virtual void OnProgress(EStage nStage, int nDone, int nTotal) const;
+		virtual void OnProgressChanged(EStage nStage, int nDone, int nTotal) const;
 
 	// Implementation
 	private:
@@ -320,14 +302,9 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		static bool DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransaction* pKTM = NULL);
 
-		// Default progress callback that does nothing.
-		void DefaultProgressCallback(EStage nStage, int nDone, int nTotal) {}
-
 		CRenamingOperationList m_vRenamingOperations;
 		vector<COperationProblem> m_vProblems;
 		int m_nWarnings;
 		int m_nErrors;
-		CIOOperationPerformedEventHandler m_fOnIOOperationPerformed;
-		CRenameProgressChangedEventHandler m_fOnProgress;
 	};
 }}}

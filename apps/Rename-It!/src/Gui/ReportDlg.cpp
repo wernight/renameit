@@ -124,7 +124,7 @@ BOOL CReportDlg::FindErrors(void)
 	// Initialize progress display.
 	m_dlgProgress.SetTitle(IDS_PGRS_TITLE);
 	m_dlgProgress.SetCaption(IDS_PGRS_CHECK_CAPTION);
-	m_renamingList.SetProgressCallback(boost::bind(&CReportDlg::OnProgress, this, _1, _2, _3));
+	m_renamingList.ProgressChanged.connect( bind(&CReportDlg::OnProgress, this, _1, _2, _3, _4) );
 
 	// Find errors in another thread and display the progress.
 	AfxBeginThread(CheckingThread, this);
@@ -250,7 +250,7 @@ UINT CReportDlg::CheckingThread(LPVOID lpParam)
 	return 0;
 }
 
-void CReportDlg::OnProgress(CRenamingList::EStage nStage, int nDone, int nTotal)
+void CReportDlg::OnProgress(const CRenamingList& sender, CRenamingList::EStage nStage, int nDone, int nTotal)
 {
 	ASSERT(nStage == CRenamingList::stageChecking);
 	m_dlgProgress.SetProgress(nStage, nDone, nTotal);

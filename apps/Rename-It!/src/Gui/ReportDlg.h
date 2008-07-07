@@ -55,7 +55,7 @@ private:
 	void InsertOperation(int nRenamingOperationIndex);
 	void UpdateStatus();
 	static UINT CheckingThread(LPVOID lpParam);
-	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
+	void OnProgress(const Beroux::IO::Renaming::CRenamingList& sender, Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal);
 	virtual void OnOK();
 	void RemoveItem(int nIndex);
 	bool RenameFiles();

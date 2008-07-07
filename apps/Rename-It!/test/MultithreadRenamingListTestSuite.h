@@ -192,9 +192,9 @@ public:
 		m_nOnErrors = 0;
 		m_nOnProgress = 0;
 		m_nOnDone = 0;
-		m_failingRenamingList->SetIOOperationPerformedCallback(bind(&MultithreadRenamingListTestSuite::OnIOOperationPerformed, this, _1, _2));
-		m_failingRenamingList->SetProgressCallback(bind(&MultithreadRenamingListTestSuite::OnProgress, this, _1, _2, _3));
-		mrl.SetDoneCallback(bind(&MultithreadRenamingListTestSuite::OnDone, this, _1));
+		m_failingRenamingList->IOOperationPerformed.connect( bind(&MultithreadRenamingListTestSuite::OnIOOperationPerformed, this, _1, _2, _3) );
+		m_failingRenamingList->ProgressChanged.connect( bind(&MultithreadRenamingListTestSuite::OnProgressChanged, this, _1, _2, _3, _4) );
+		mrl.Done.connect( bind(&MultithreadRenamingListTestSuite::OnDone, this, _1) );
 
 		// Rename the files.
 		mrl.Start(*m_failingRenamingList, ktm);
@@ -241,6 +241,24 @@ public:
 		}
 	}
 
+	void testCancel()
+	{
+		CFailoverKtmTransaction ktm;
+		CMultithreadRenamingList mrl;
+
+		// Start renaming
+		mrl.Start(*m_simpleRenamingList, ktm);
+		mrl.Cancel();
+		TS_ASSERT(!mrl.IsDone());
+
+		// Wait until it's done.
+		mrl.WaitForTerminaison();
+		TS_ASSERT(ktm.RollBack());
+
+		// Check success.
+		TS_ASSERT_EQUALS(CMultithreadRenamingList::resultCancelled, mrl.GetRenamingResult());
+	}
+
 private:
 	void PrintCheckingErrors(const CRenamingList& renamingList)
 	{
@@ -258,9 +276,9 @@ private:
 		tcout << endl;
 	}
 
-	void OnIOOperationPerformed(const Beroux::IO::Renaming::IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
+	void OnIOOperationPerformed(const CRenamingList& sender, const IOOperation::CIOOperation& ioOperation, Beroux::IO::Renaming::IOOperation::CIOOperation::EErrorLevel nErrorLevel)
 	{
-		if (nErrorLevel == Beroux::IO::Renaming::IOOperation::CIOOperation::elSuccess)
+		if (nErrorLevel == IOOperation::CIOOperation::elSuccess)
 		{
 			if (typeid(ioOperation) == typeid(Beroux::IO::Renaming::IOOperation::CRenameOperation))
 				++m_nOnRenamed;
@@ -269,7 +287,7 @@ private:
 			++m_nOnErrors;
 	}
 
-	void OnProgress(Beroux::IO::Renaming::CRenamingList::EStage nStage, int nDone, int nTotal)
+	void OnProgressChanged(const CRenamingList& sender, CRenamingList::EStage nStage, int nDone, int nTotal)
 	{
 		++m_nOnProgress;
 	}

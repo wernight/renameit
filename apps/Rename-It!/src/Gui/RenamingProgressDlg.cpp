@@ -43,10 +43,21 @@ END_MESSAGE_MAP()
 
 // CProgressDlg message handlers
 
+void CProgressDlg::OnCanceling()
+{
+	Canceling();
+}
+
 void CProgressDlg::OnCancel()
 {
 	if (m_bEnableCancel)
-		CDialog::OnCancel();
+	{
+		OnCanceling();
+
+		// Disable the cancel button (as a way to tell the user the command was understood).
+		m_bEnableCancel = false;
+		GetDlgItem(IDCANCEL)->EnableWindow(false);
+	}
 }
 
 void CProgressDlg::OnOK()
@@ -108,7 +119,7 @@ void CProgressDlg::UpdateProgress()
 	{
 		SetWindowText(m_strDialogTitle);
 
-		// Enable/Disable cancelling possibility.
+		// Enable/Disable canceling possibility.
 		GetDlgItem(IDCANCEL)->EnableWindow(m_bEnableCancel);
 		// We mark the preview ones as completed.
 		for (int i=0; i<m_nStage; ++i)

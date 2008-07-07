@@ -653,6 +653,7 @@ BEGIN
     IDS_MENU_ADD_FOLDER     "&Add folders"
     IDS_MENU_ADD_FILES      "Add &files"
     IDS_FILES               "Files"
+    IDS_RENAMING_CANCELED   "The renaming was canceled by the user."
     IDS_ERROR               "Error"
     IDS_REMOVED_FROM_DISK   "Removed: File has been deleted from disk"
     IDS_CONFLICT_WITH_EXISTING 
@@ -1440,6 +1441,7 @@ BEGIN
     IDS_MENU_ADD_FOLDER     "&Ajouter un dossier"
     IDS_MENU_ADD_FILES      "Ajouter des &fichiers"
     IDS_FILES               "Fichiers"
+    IDS_RENAMING_CANCELED   "L'opération à été annulée par l'utilisateur."
     IDS_ERROR               "Erreur"
     IDS_REMOVED_FROM_DISK   "Supprimé: Le fichier a été supprimé du disque"
     IDS_CONFLICT_WITH_EXISTING 
