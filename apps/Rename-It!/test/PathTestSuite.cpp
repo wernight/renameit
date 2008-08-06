@@ -30,6 +30,16 @@ struct CPathFixture
 
 BOOST_FIXTURE_TEST_SUITE(PathTestSuite, CPathFixture);
 
+BOOST_AUTO_TEST_CASE(TrimEndingBackslash)
+{
+	BOOST_CHECK_EQUAL("C:\\foo", CPath(_T("C:\\foo\\")).GetPath());
+	BOOST_CHECK_EQUAL("C:\\", CPath(_T("C:\\")).GetPath());
+
+	BOOST_CHECK_EQUAL("\\\\?\\UNC\\", CPath(_T("\\\\?\\UNC\\")).GetPath());
+	BOOST_CHECK_EQUAL("\\\\?\\UNC\\Network\\", CPath(_T("\\\\?\\UNC\\Network\\")).GetPath());
+	BOOST_CHECK_EQUAL("\\\\?\\UNC\\Network\\Share", CPath(_T("\\\\?\\UNC\\Network\\Share\\")).GetPath());
+}
+
 BOOST_AUTO_TEST_CASE(CopyConstructor)
 {
 	CPath copy(m_pathNetworkUnc);
@@ -199,7 +209,7 @@ BOOST_AUTO_TEST_CASE(OpDifferent)
 
 BOOST_AUTO_TEST_CASE(DisplayPath)
 {
-	BOOST_CHECK_EQUAL("", m_pathNetworkUnc.GetDisplayPath());
+	BOOST_CHECK_EQUAL("\\\\Network\\ParentFolder\\..Sub.Folder\\.File.Name.Extension", m_pathNetworkUnc.GetDisplayPath());
 	BOOST_CHECK_EQUAL(m_pathSimple.GetDisplayPath(), m_pathSimpleUnc.GetDisplayPath());
 }
 

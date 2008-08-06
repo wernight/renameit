@@ -5,6 +5,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 { 
 	/**
 	 * Path to a file or a folder.
+	 * 
+	 * For a folder the ending backslash (\\) is removed, and
+	 * the path's file name becomes the directory name, and the extension
+	 * becomes the directory's "extension".
+	 *
 	 * Based on C# System.IO.Path (cf http://msdn2.microsoft.com/en-us/library/system.io.path_members(vs.90).aspx )
 	 */
 	class CPath
@@ -32,6 +37,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		}
 
 	// Attributes
+		inline bool IsUnicode() const {
+			return IsUnicodePath(m_strPath);
+		}
+
 		/**
 		 * Return the path as provided during the creation of this object.
 		 * It's the right one to be used when displaying the full path to the user.
@@ -143,6 +152,11 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			return ff.GetFilePath();
 		}
 
+		static inline bool IsUnicodePath(const CString& strPath)
+		{
+			return strPath.Left(4) == _T("\\\\?\\");
+		}
+
 		/**
 		 * Returns the absolute path for the specified path string.
 		 * The Unicode 32,000 characters path to be used for system functions.
@@ -237,10 +251,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			while ((nPos = m_strPath.Find('/')) != -1)
 				m_strPath.SetAt(nPos, '\\');
 
-			// Never keep an ending '\'.
-			if (!m_strPath.IsEmpty() && m_strPath[m_strPath.GetLength() - 1] == '\\')
-				m_strPath = m_strPath.Left(m_strPath.GetLength() - 1);
-
 			// Find the root.
 			const int DRIVE_ROOT_LENGTH = 3; // = strlen("C:\\")
 			const int UNICODE_ROOT_LENGTH = 4; // = strlen("\\\\?\\")
@@ -279,6 +289,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 					m_nPathRootLength = 0;
 			}
 
+			// Never keep an ending '\' after directory names.
+			if (!m_strPath.IsEmpty()
+				&& m_strPath[m_strPath.GetLength() - 1] == '\\'
+				&& m_strPath.GetLength() > m_nPathRootLength)
+				m_strPath = m_strPath.Left(m_strPath.GetLength() - 1);
+
 			// Split the path into components.
 			m_nExtensionLength = 0;
 			m_nFileNameFirst = m_strPath.GetLength();
@@ -298,7 +314,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 					goto loop_exit;
 				}
 			}
-	loop_exit:;
+			loop_exit:;
 		}
 
 		CString	m_strPath;		// The full path to the file or folder (ex: "\\?\C:\foo\bar").

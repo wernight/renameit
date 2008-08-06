@@ -1,13 +1,32 @@
 #pragma once
-
 #include "../Path.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 {
 	/**
-	 * A file name that is renamed by a rename-it! filter. So the part being renamed can be accessed.
+	 * A file name that is renamed by a rename-it! filter.
+	 * So the part being renamed can be accessed.
+	 *
+	 * It expects the path to be to a file when the filtered path includes
+	 * the file name or extension, and it expects path to be to a folder
+	 * when the filtered path doesn't include the file name or extension.
+	 *
+	 * Unicode paths are temporarily transformed to simple path to
+	 * avoid showing the "\\?\" part in the filtered sub-string.
+	 *
+	 * Usage example:
+	 * \code
+	 * CFilteredPath filteredPath(_T("\\\\?\\C:\\foo\\bar"),
+	 *     CFilteredPath::renameRoot | CFilteredPath::renameFoldersPath);
+	 * cout << filteredPath.GetFilteredSubstring() << endl; // Displays: "C:\foo".
+	 * cout << filteredPath.GetFilteredPath() << endl; // Displays "\\?\C:\foo\bar".
+	 *
+	 * filteredPath.SetFilteredSubstring(_T("X:\\xx"));
+	 * cout << filteredPath.GetFilteredSubstring() << endl; // Displays: "X:\xx".
+	 * cout << filteredPath.GetFilteredPath() << endl; // Displays "\\?\X:\xx\bar".
+	 * \endcode
 	 */
-	class CFilteredPath : public CPath
+	class CFilteredPath
 	{
 	public:
 	// Definitions
@@ -19,20 +38,39 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 		enum ERenamePartFlags {
 			renameRoot =		0x01,	// 'C:\'
 			renameFoldersPath =	0x02,	// 'ParentFolder\Subfolder\'
-			renameLastFolder =	0x04,	// 'Subfolder'
+			renameLastFolder =	0x04,	// 'Subfolder' -- can only be used alone
 			renameFilename =	0x08,	// 'Filename'
 			renameExtension =	0x10,	// 'Ext'
 			renameVersion = 100			// Some value that should be incremented every time there is an important change in the flags.
 		};
 
 	// Construction
-		CFilteredPath(const CPath& fnFileName, unsigned nRenamedPart) : CPath(fnFileName),
-			m_nRenamePart(nRenamedPart)
+		/**
+		 * Create a filtered path from a path name.
+		 * \param strPath Path to filter.
+		 * \param nRenamedPart A set of ERenamePartFlags bit flags.
+		 */
+		CFilteredPath(const CString& strPath, unsigned nRenamedPart)
 		{
-			FindFilteredSubstring();
-			ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
-			ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
+			Construct(strPath, nRenamedPart);
 		}
+
+		CFilteredPath(const CPath& path, unsigned nRenamedPart)
+		{
+			Construct(path.GetPath(), nRenamedPart);
+		}
+
+	private:
+		void Construct(const CString& strPath, unsigned nRenamedPart)
+		{
+			m_bIsUncPath = CPath::IsUnicodePath(strPath);
+
+			CPathFilter pathFilter(CPath::MakeSimplePath(strPath), nRenamedPart);
+			m_strBefore = pathFilter.GetPartBefore();
+			m_strFilteredSubstring = pathFilter.GetPartFiltered();
+			m_strAfter = pathFilter.GetPartAfter();
+		}
+	public:
 
 	// Attributes
 		/**
@@ -41,10 +79,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 		 */
 		CString GetFilteredSubstring() const 
 		{
-			ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
-			ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
-
-			return m_strPath.Mid(m_nFirst, m_nEnd - m_nFirst);
+			return m_strFilteredSubstring;
 		}
 
 		/**
@@ -53,57 +88,100 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 		 */
 		void SetFilteredSubstring(const CString& strValue) 
 		{
-			ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
-			ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
+			m_strFilteredSubstring = strValue;
+		}
 
+	// Operations
+		/**
+		 * Return the full path after applying the filtering.
+		 */
+		CString GetFilteredPath() const
+		{
 			// Change the renamed part.
-			SetPath(m_strPath.Left(m_nFirst) + strValue + m_strPath.Mid(m_nEnd));
+			CString strNewPath(m_strBefore + m_strFilteredSubstring + m_strAfter);
+			if (m_bIsUncPath)
+				return CPath::MakeUnicodePath(strNewPath);
+			else
+				return strNewPath;
+		}
 
-			FindFilteredSubstring();
+		/**
+		 * Convert the new filtered path to a CPath.
+		 */
+		operator CPath() const
+		{
+			return CPath(GetFilteredPath());
 		}
 
 	// Implementation
 	private:
-		// Update the m_nFirst and m_nLast.
-		inline void FindFilteredSubstring()
+		class CPathFilter : private CPath
 		{
-			BOOST_STATIC_ASSERT(renameVersion == 100);
-
-			// Note: It may be awkward to select the file name when renaming the folders,
-			//       but that's because when renaming folders, the file name IS the last
-			//       folder's name.
-
-			// Find the first character of the filtered substring.
-			if (m_nRenamePart & renameRoot)
-				m_nFirst = 0;
-			else if (m_nRenamePart & renameFoldersPath)
-				m_nFirst = m_nPathRootLength;
-			else if (m_nRenamePart & (renameLastFolder | renameFilename))
-				m_nFirst = m_nFileNameFirst;
-			else
+		public:
+			CPathFilter(const CString& strPath, unsigned filteredPart) : CPath(strPath)
 			{
-				// Only the extension is being renamed.
-				ASSERT(m_nRenamePart == renameExtension);
-				m_nFirst = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
+				BOOST_STATIC_ASSERT(renameVersion == 100);
+
+				if (filteredPart == 0
+					|| filteredPart == CFilteredPath::renameVersion
+					|| ((filteredPart & renameLastFolder) && filteredPart != renameLastFolder))
+					throw exception("Invalid path filtered substring.");
+
+				// Note: It may be awkward to select the file name when renaming the folders,
+				//       but that's because when renaming folders, the file name IS the last
+				//       folder's name.
+
+				// Find the first character of the filtered substring.
+				if (filteredPart & renameRoot)
+					m_nBegin = 0;
+				else if (filteredPart & renameFoldersPath)
+					m_nBegin = m_nPathRootLength;
+				else if (filteredPart & (renameLastFolder | renameFilename))
+					m_nBegin = m_nFileNameFirst;
+				else
+				{
+					// Only the extension is being renamed.
+					ASSERT(filteredPart == renameExtension);
+					m_nBegin = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
+				}
+
+				// Find the last character of the filtered substring.
+				if (filteredPart & (renameLastFolder | renameExtension))
+					m_nEnd = m_strPath.GetLength();
+				else if (filteredPart & renameFilename)
+					m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
+				else if (filteredPart & renameFoldersPath)
+					m_nEnd = m_strPath.GetLength();
+				else
+				{
+					ASSERT(filteredPart == renameRoot);
+					m_nEnd = m_nPathRootLength;
+				}
+
+				ASSERT(0 <= m_nBegin && m_nBegin <= m_strPath.GetLength());
+				ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
 			}
 
-			// Find the last character of the filtered substring.
-			if (m_nRenamePart & renameExtension)
-				m_nEnd = m_strPath.GetLength();
-			else if (m_nRenamePart & (renameFoldersPath | renameLastFolder | renameFilename))
-				m_nEnd = m_strPath.GetLength() - m_nExtensionLength;
-			else
-			{
-				ASSERT(m_nRenamePart == renameRoot);
-				m_nEnd = m_nPathRootLength;
+			CString GetPartBefore() const {
+				return m_strPath.Left(m_nBegin);
 			}
 
-			ASSERT(0 <= m_nFirst && m_nFirst <= m_strPath.GetLength());
-			ASSERT(0 <= m_nEnd && m_nEnd <= m_strPath.GetLength());
-		}
+			CString GetPartFiltered() const {
+				return m_strPath.Mid(m_nBegin, m_nEnd - m_nBegin);
+			}
 
-		unsigned m_nRenamePart;	// A set of ERenamePartFlags bit flags.
-		int m_nFirst;	// First character of the filtered substring.
-		int m_nEnd;		// The character right after last character of the filtered substring.
+			CString GetPartAfter() const {
+				return m_strPath.Mid(m_nEnd);
+			}
+
+		private:
+			int m_nBegin;	// First character of the filtered substring.
+			int m_nEnd;		// The character right after last character of the filtered substring.
+		};
+
+		bool m_bIsUncPath;	// True when the original and final path should be UNC.
+		CString m_strBefore;
+		CString m_strFilteredSubstring;
+		CString m_strAfter;
 	};
 }}}}

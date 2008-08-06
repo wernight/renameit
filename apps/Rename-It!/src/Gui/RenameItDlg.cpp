@@ -1751,7 +1751,7 @@ void CRenameItDlg::OnLvnEndlabeleditFilenamesIn(NMHDR *pNMHDR, LRESULT *pResult)
 		// Rename file.
 		if (MoveFile(
 				CPath::MakeUnicodePath(fnBefore.GetPath()),
-				CPath::MakeUnicodePath(fnNewBefore.GetPath())
+				CPath::MakeUnicodePath(fnNewBefore.GetFilteredPath())
 			))
 		{
 			// Freeze the updates.
