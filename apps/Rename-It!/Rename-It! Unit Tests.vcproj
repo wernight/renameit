@@ -25,8 +25,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest..."
-				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -89,7 +89,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				Description="Auto run unit tests"
+				CommandLine="&quot;$(TargetPath)&quot; --result_code=no --report_level=no"
 			/>
 		</Configuration>
 		<Configuration
@@ -102,8 +103,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest..."
-				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -164,8 +165,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Run the unit tests"
-				CommandLine="&quot;$(TargetPath)&quot;"
+				Description="Auto run unit tests"
+				CommandLine="&quot;$(TargetPath)&quot; --result_code=no --report_level=no"
 			/>
 		</Configuration>
 		<Configuration
@@ -177,8 +178,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest..."
-				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -240,7 +241,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				Description="Auto run unit tests"
+				CommandLine="&quot;$(TargetPath)&quot; --result_code=no --report_level=no"
 			/>
 		</Configuration>
 		<Configuration
@@ -253,8 +255,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Generate CxxTest..."
-				CommandLine="cd test\Generated &amp; GenerateTests.cmd"
+				Description=""
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -315,8 +317,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Run the unit tests"
-				CommandLine="&quot;$(TargetPath)&quot;"
+				Description="Auto run unit tests"
+				CommandLine="&quot;$(TargetPath)&quot; --result_code=no --report_level=no"
 			/>
 		</Configuration>
 	</Configurations>
@@ -434,11 +436,27 @@
 		</Filter>
 		<Filter
 			Name="Unit Tests"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\test\MultithreadRenamingListTestSuite.h"
+				RelativePath=".\test\FilteredPathTestSuite.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\test\Main.cpp"
+				>
+				<FileConfiguration
+					Name="Unicode Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\test\MultithreadRenamingListTestSuite.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -482,51 +500,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\test\PathTestSuite.h"
+				RelativePath=".\test\PathTestSuite.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						Outputs=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						Outputs=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						Outputs=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""
-						Outputs=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\test\RenamingListTestSuite.h"
+				RelativePath=".\test\RenamingListTestSuite.cpp"
 				>
 			</File>
 			<File
@@ -535,6 +513,7 @@
 			</File>
 			<Filter
 				Name="Helper"
+				Filter="h;hpp;hxx;hm;inl;inc;xsd"
 				>
 				<File
 					RelativePath=".\test\Helper\FileListGenerator.h"
@@ -545,30 +524,9 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="Generated"
-				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-				>
-				<File
-					RelativePath=".\test\Generated\Main.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\test\Generated\MultithreadRenamingListTestSuite.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\test\Generated\PathTestSuite.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\test\Generated\RenamingListTestSuite.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\StdAfx.cpp"
+			RelativePath=".\test\StdAfx.cpp"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -604,7 +562,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\StdAfx.h"
+			RelativePath=".\test\StdAfx.h"
 			>
 		</File>
 	</Files>

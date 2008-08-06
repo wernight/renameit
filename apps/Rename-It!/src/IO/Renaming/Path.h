@@ -223,6 +223,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			return MakeSimplePath(GetPath());
 		}
 
+		friend ostream& operator <<(ostream& os, const CPath& value);
+
 	// Private
 	protected:
 		inline void SetPath(const CString& strFullPath)
@@ -304,4 +306,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		int m_nFileNameFirst;	// First character of the file name (or the length of m_strPath if there is none).
 		int m_nExtensionLength;	// The length of the extension including the "." (can be zero).
 	};
+
+	ostream& operator <<(ostream& os, const CPath& value);
 }}}

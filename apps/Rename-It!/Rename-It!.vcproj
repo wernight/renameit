@@ -483,6 +483,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\src\IO\Renaming\Path.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\src\IO\Renaming\Path.h"
 						>
 					</File>
