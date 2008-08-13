@@ -123,7 +123,10 @@
 using namespace std;
 
 // Boost
-#define BOOST_LIB_DIAGNOSTIC	// to display the use lib file
+#ifdef _DEBUG
+#  define BOOST_LIB_DIAGNOSTIC	// Optional: when set the header will print out the name
+								// of the library selected (useful for debugging).
+#endif
 #include <boost/bind.hpp>
 #include <boost/cast.hpp>
 #include <boost/foreach.hpp>
