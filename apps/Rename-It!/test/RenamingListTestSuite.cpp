@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE(NewFoldersCaseUnfication)
 	BOOST_CHECK_EQUAL(strExpectFullUnifiedDirectoryPath, strResultDirectoryPath);
 }
 
-BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification)
+BOOST_AUTO_TEST_CASE(ExistingFileCaseUnification)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
@@ -465,12 +465,12 @@ BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification)
 		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check the case.
-	CString strExpectFullUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
-	CString strResultDirectoryPath = CPath::FindPathCase(strExpectFullUnifiedDirectoryPath);
-	BOOST_CHECK_EQUAL(strExpectFullUnifiedDirectoryPath, strResultDirectoryPath);
+	CString strExpectUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
+	CString strResultDirectoryPath = CPath::FindPathCase(strExpectUnifiedDirectoryPath);
+	BOOST_CHECK_EQUAL(strResultDirectoryPath, strExpectUnifiedDirectoryPath);
 }
 
-BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification2)
+BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
@@ -483,9 +483,9 @@ BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification2)
 		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check the case.
-	CString strExpectFullUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
-	CString strResultDirectoryPath = CPath::FindPathCase(strExpectFullUnifiedDirectoryPath);
-	BOOST_CHECK_EQUAL(strExpectFullUnifiedDirectoryPath, strResultDirectoryPath);
+	CString strExpectedUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
+	CString strResultDirectoryPath = CPath::FindPathCase(strExpectedUnifiedDirectoryPath);
+	BOOST_CHECK_EQUAL(strResultDirectoryPath, strExpectedUnifiedDirectoryPath);
 }
 
 BOOST_AUTO_TEST_CASE(RemoveRenamedEmptyParentsFolders)

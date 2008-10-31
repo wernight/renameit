@@ -22,7 +22,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	 * [1]: Note that "C:\program.txt" when "C:\Program Files\" exits is not checked by should give a warning
 	 *      See http://www.cs.rpi.edu/courses/fall01/os/CreateProcess.html
 	 *
-	 * @todo Check for more dangerous file names and check if files are opened by another process.
+	 * \todo Check for more dangerous file names and check if files are opened by another process.
 	 */
 	class CRenamingList
 	{
@@ -73,9 +73,9 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
-		 * @param[in] nStage		The current long operation being performed.
-		 * @param[in] nDone			The number of files renamed (with or without problem).
-		 * @param[in] nTotal		The total number of files to be rename.
+		 * \param[in] nStage		The current long operation being performed.
+		 * \param[in] nDone			The number of operations done (with or without problem) in this stage.
+		 * \param[in] nTotal		The total number of operations to do in this stage.
 		 */
 		signal<void (const CRenamingList& sender, EStage nStage, int nDone, int nTotal)> ProgressChanged;
 
@@ -138,7 +138,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		bool IsEmpty() const { return m_vRenamingOperations.empty(); }
 
 		/**
-		 * @return Number of renaming operations to perform.
+		 * \return Number of renaming operations to perform.
 		 */
 		int GetCount() const { return (int) m_vRenamingOperations.size(); }
 
@@ -196,16 +196,16 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Search for possible renaming problems before doing the renaming.
 		 * After calling Check, you can GetOperationProblems().
-		 * @return True when no problems (neither errors or warnings) have been detected.
+		 * \return True when no problems (neither errors or warnings) have been detected.
 		 */
 		bool Check();
 
 		/**
 		 * Perform the renaming of all the file.
 		 * When KTM is used and the operation fails, no file is renamed.
-		 * @param ktm The class used to perform the renaming.
-		 * @return True on success, false if one or more files couldn't be renamed.
-		 * @note Does not commit or abort at the end.
+		 * \param ktm The class used to perform the renaming.
+		 * \return True on success, false if one or more files couldn't be renamed.
+		 * \note Does not commit or abort at the end.
 		 */
 		bool PerformRenaming(CKtmTransaction& ktm) const;
 
@@ -217,7 +217,10 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 	// Implementation
 	private:
-		typedef vector<CRenamingOperation> CRenamingOperationList;
+		typedef vector<CRenamingOperation> TRenamingOperationSet;
+
+		/** Defines an ordered list of IO operations to perform. */
+		typedef vector<shared_ptr<IOOperation::CIOOperation> > TPreparedIOOperations;
 
 		// Map a drive to a temporary path and the length of the shortest common path on that drive.
 		typedef map<CString, pair<CString, unsigned> > CTempDirectoryMap;
@@ -248,24 +251,90 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			}
 		};
 
-		struct dir_case_compare : public binary_function<CString, CString, bool>
-		{
-			bool operator()(const CString& __x, const CString& __y) const
-			{
-				return __x.CompareNoCase(__y) < 0;
-			}
-		};
+// 		/**
+// 		 * An abstract operation to perform to prepare renaming.
+// 		 */
+// 		class IPreparationOperation
+// 		{
+// 		public:
+// 			virtual ~IPreparationOperation() {}
+// 
+// 			/**
+// 			 * Prepare an operation.
+// 			 */
+// 			virtual void Prepare(int nIndex) = 0;
+// 
+// 			/**
+// 			 * Generate the renaming operations.
+// 			 * To be called once all operations have been prepared.
+// 			 */
+// 			virtual void AddRenamingOperations(TPreparedIOOperations& ioList) const;
+// 		};
 
-		struct DIR_CASE
+		/**
+		 * Unifies the case of the parent directories of the operations.
+		 *
+		 * Example: Supposing you define renaming operations:
+		 * /foo/before1     --> /FOO/after1
+		 * /foo/bar/before2 --> /foo/BAR/after2
+		 * This class will unify the directories so they look like:
+		 * /foo/before1     --> /FOO/after1
+		 * /foo/bar/before2 --> /FOO/BAR/after2
+		 *
+		 * The case of the shortest path prevails.
+		 *
+		 * Usage example:
+		 * \code
+		 * CDirectoryCaseUnifier dirCaseUnifier(roList);
+		 * for (int i=0; i<roList.size(); ++i)
+		 *     dirCaseUnifier.ProcessOperation(i);
+		 * // Done!
+		 * \endcode
+		 */
+		class CDirectoryCaseUnifier
 		{
-			DIR_CASE(int nDirLength, int nOperationIndex)
+		public:
+			struct dir_case_compare : public binary_function<CString, CString, bool>
 			{
-				nMinDirLength = nDirLength;
-				vnOperationsIndex.push_back(nOperationIndex);
-			}
+				bool operator()(const CString& __x, const CString& __y) const
+				{
+					return __x.CompareNoCase(__y) < 0;
+				}
+			};
 
-			int nMinDirLength;
-			vector<int> vnOperationsIndex;
+			struct DIR_CASE
+			{
+				DIR_CASE(int nDirLength, int nOperationIndex)
+				{
+					nMinDirLength = nDirLength;
+					vnOperationsIndex.push_back(nOperationIndex);
+				}
+
+				int nMinDirLength;	///< Length of the shortest directory path in vnOperationsIndex.
+				vector<int> vnOperationsIndex;	///< A list of operations that use this directory path in their path name.
+			};
+
+			typedef map<CString, DIR_CASE, dir_case_compare> TDirCaseMap;
+
+			CDirectoryCaseUnifier(TRenamingOperationSet& roList);
+			
+			virtual void ProcessOperation(int nIndex);
+
+			virtual void AddRenamingOperations(TPreparedIOOperations& ioList) const;
+
+		private:
+			TRenamingOperationSet& m_vRenamingOperations;
+
+			int m_nMinAfterDirIndex;
+
+			/**
+			 * Map each renaming operation path after parent directory path
+			 * to a DIR_CASE: A list of operations indexes using that path,
+			 * together with the shortest path used to enforce this case.
+			 *
+			 * The keys are compared case-insensitive.
+			 */
+			TDirCaseMap m_mapDirsCase;
 		};
 
 		void CheckFileConflict(int nOperationIndex, const set<CString>& setBeforeLower, map<CString, int>& mapAfterLower);
@@ -283,18 +352,26 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \return An list of operations indexes in the updated m_vRenamingOperations ordered so that
 		 *         by performing them in order it should to the renaming job.
 		 */
-		vector<shared_ptr<IOOperation::CIOOperation> > PrepareRenaming() const;
+		TPreparedIOOperations PrepareRenaming() const;
 
-		vector<shared_ptr<IOOperation::CIOOperation> > PrepareFileRenaming() const;
+		/**
+		 * PrepareRenaming() when renaming files.
+		 */
+		TPreparedIOOperations PrepareFileRenaming(TRenamingOperationSet& vRenamingOperations) const;
 
-		vector<shared_ptr<IOOperation::CIOOperation> > PrepareDirectoryRenaming() const;
+		/**
+		 * PrepareRenaming() when renaming folders.
+		 * First renames all folders to temporary name under the level of the
+		 * shortest common path, then rename to the destination path.
+		 */
+		TPreparedIOOperations PrepareDirectoryRenaming(TRenamingOperationSet& vRenamingOperations) const;
 
-		static CTempDirectoryMap FindTempDirectories(const CRenamingOperationList& vRenamingOperations);
+		static CTempDirectoryMap FindTempDirectories(const TRenamingOperationSet& vRenamingOperations);
 
 		/**
 		 * Find the index of the shortest pathAfter in all the m_vRenamingOperations.
 		 */
-		static int FindShortestDirectoryPathAfter(CRenamingOperationList& vRenamingOperations);
+		static int FindShortestDirectoryPathAfter(TRenamingOperationSet& vRenamingOperations);
 
 		/**
 		 * Detects if a directory contains some elements or not.
@@ -302,7 +379,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		static bool DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransaction* pKTM = NULL);
 
-		CRenamingOperationList m_vRenamingOperations;
+		TRenamingOperationSet m_vRenamingOperations;
 		vector<COperationProblem> m_vProblems;
 		int m_nWarnings;
 		int m_nErrors;

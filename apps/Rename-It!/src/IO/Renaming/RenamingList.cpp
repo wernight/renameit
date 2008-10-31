@@ -57,8 +57,8 @@ bool CRenamingList::Check()
 #endif
 
 	// Declarations.
-	const unsigned nFilesCount = (unsigned)m_vRenamingOperations.size();
-	if (nFilesCount == 0)
+	const unsigned nRenamingOperationCount = (unsigned)m_vRenamingOperations.size();
+	if (nRenamingOperationCount == 0)
 		return true;	// Nothing to rename.
 
 	// Reinitialize the error list.
@@ -77,34 +77,24 @@ bool CRenamingList::Check()
 	{
 		// First pass: Preparation.
 		set<CString> setBeforeLower;
-		for (unsigned i=0; i<nFilesCount; ++i)
+		for (unsigned i=0; i<nRenamingOperationCount; ++i)
 		{
 			// Report progress
-			OnProgressChanged(stageChecking, i*20/nFilesCount, 100);
+			OnProgressChanged(stageChecking, i*20/nRenamingOperationCount, 100);
 
 			// Create a map of file names (in lower case) associated to the operation index.
 			CString strName = m_vRenamingOperations[i].pathBefore.GetPath();
 			setBeforeLower.insert( strName.MakeLower() );
 		}	
 	
-		// Check folders' case consistency (1/2): Find the length of the shortest path.
-		int nMinAfterDirIndex = FindShortestDirectoryPathAfter(m_vRenamingOperations);
-
-		map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
-		{
-			// Insert the shortest path to the map (to improve a little the speed).
-			CString strShortestDirAfter = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName();
-			mapDirsCase.insert( pair<CString, DIR_CASE>(
-				strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
-				DIR_CASE(nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
-		}
-
 		// Checking loop.
+		TRenamingOperationSet vRenamingOperations = m_vRenamingOperations;
+		CDirectoryCaseUnifier dirCaseUnifier(vRenamingOperations);
 		map<CString, int> mapAfterLower;
-		for (unsigned i=0; i<nFilesCount; ++i)
+		for (unsigned i=0; i<nRenamingOperationCount; ++i)
 		{
 			// Report progress
-			OnProgressChanged(stageChecking, 20 + i*80/nFilesCount, 100);
+			OnProgressChanged(stageChecking, 20 + i*70/nRenamingOperationCount, 100);
 	
 			// Check for file conflicts.
 			CheckFileConflict(i, setBeforeLower, mapAfterLower);
@@ -131,49 +121,25 @@ bool CRenamingList::Check()
 			// Check the directory name.
 			CheckDirectoryPath(i);
 
-			// Check folders' case consistency 2/2
-			{
-				// Create a copy of the folder name.
-				CString strDirAfter = m_vRenamingOperations[i].pathAfter.GetDirectoryName();
-				ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
-				strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
-
-				// For each parent directory name (starting from GetDirectoryName()).
-				const int nMinDirAfterLength = m_vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength() - 1; // note we don't count the last '\' since we remove it.
-				while (strDirAfter.GetLength() >= nMinDirAfterLength)
-				{
-					// If the directory is in the map.
-					map<CString, DIR_CASE, dir_case_compare>::iterator iter = mapDirsCase.find(strDirAfter);
-					if (iter == mapDirsCase.end())
-					{
-						// Add it to the map.
-						mapDirsCase.insert( pair<CString, DIR_CASE>(
-							strDirAfter,
-							DIR_CASE(i, strDirAfter.GetLength())) );
-					}
-					else
-					{
-						// Check if the case differ.
-						if (iter->first != strDirAfter)
-						{
-							// Report the problem.
-							CString strMessage;
-							strMessage.LoadString(IDS_INCONSISTENT_DIRECTORY_CASE);
-							SetProblem(i, errDirCaseInconsistent, strMessage);
-						} // end: Check if the case differ.
-
-						// Add the RO's index.
-						iter->second.vnOperationsIndex.push_back( i );
-					} // end if the directory is in the map.
-
-					// Go to the next parent folder.
-					int nPos = strDirAfter.ReverseFind('\\');
-					if (nPos == -1)
-						break;
-					strDirAfter = strDirAfter.Left(nPos);
-				} // end while.
-			} // end of case consistency check.
+			// Check folders' case consistency
+			dirCaseUnifier.ProcessOperation(i);
 		} // end: checking loop.
+
+		// Report operations with not unified directory case.
+		for (unsigned i=0; i<nRenamingOperationCount; ++i)
+		{
+			// Report progress
+			OnProgressChanged(stageChecking, 90 + i*10/nRenamingOperationCount, 100);
+
+			// Check if the case is not unified.
+			if (vRenamingOperations[i].pathAfter != m_vRenamingOperations[i].pathAfter)
+			{
+				// Report the problem.
+				CString strMessage;
+				strMessage.LoadString(IDS_INCONSISTENT_DIRECTORY_CASE);
+				SetProblem(i, errDirCaseInconsistent, strMessage);
+			} // end: Check if the case differ.
+		}
 	}
 
 	// Post condition.
@@ -542,18 +508,18 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareRenaming() const
 	}
 #endif
 
+	TRenamingOperationSet vRenamingOperations = m_vRenamingOperations;
 	if (bRenamingDirectories)
-		return PrepareDirectoryRenaming();
+		return PrepareDirectoryRenaming(vRenamingOperations);
 	else
-		return PrepareFileRenaming();
+		return PrepareFileRenaming(vRenamingOperations);
 }
 
-vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
+vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming(TRenamingOperationSet& vRenamingOperations) const
 {
 	///////////////////////////////////////////////////////////////////
 	// Create an oriented graph of conflicting renaming operations
-	CRenamingOperationList vRenamingOperations = m_vRenamingOperations;
-	const int nFilesCount = (int) m_vRenamingOperations.size();
+	const int nRenamingOperationCount = (int) vRenamingOperations.size();
 
 	// Change the locale to match the file system stricmp().
 	CScopedLocale scopeLocale(_T(""));
@@ -566,10 +532,10 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 
 	// Create a node for each renaming operation,
 	// and the mapAfterLower.
-	for (int i=0; i<nFilesCount; ++i)	
+	for (int i=0; i<nRenamingOperationCount; ++i)	
 	{
 		// Report progress
-		OnProgressChanged(stagePreRenaming, i*20/nFilesCount, 100);
+		OnProgressChanged(stagePreRenaming, i*20/nRenamingOperationCount, 100);
 
 		graph.AddNode(i);
 
@@ -578,26 +544,17 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 	}
 
 	// Unify folders' case (1/2): Find the length of the shortest path.
-	int nMinAfterDirIndex = FindShortestDirectoryPathAfter(vRenamingOperations);
-
-	map<CString, DIR_CASE, dir_case_compare> mapDirsCase;
-	// Insert the shortest path to the map (to improve a little the speed).
-	{
-		CString strShortestDirAfter = vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName();
-		mapDirsCase.insert( pair<CString, DIR_CASE>(
-			strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
-			DIR_CASE(nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
-	}
+	CDirectoryCaseUnifier dirCaseUnifier(vRenamingOperations);
 
 	// Directories to remove if empty (ordered set by longest path first).
 	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;
 
 	// Define the successors in the graph,
 	// and add folders to later erase if they're empty.
-	for (int i=0; i<nFilesCount; ++i)
+	for (int i=0; i<nRenamingOperationCount; ++i)
 	{
 		// Report progress
-		OnProgressChanged(stagePreRenaming, 20 + i*75/nFilesCount, 100);
+		OnProgressChanged(stagePreRenaming, 20 + i*75/nRenamingOperationCount, 100);
 
 		// Definitions
 		CPath* proBefore = &vRenamingOperations[i].pathBefore;
@@ -686,63 +643,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 		}
 
 		// Unify folders' case 2/2
-		{
-			// Create a copy of the folder name.
-			CString strDirAfter = proAfter->GetDirectoryName();
-			ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
-			strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
-
-			// For each parent directory name (starting from GetDirectoryName()).
-			const int nMinDirAfterLength = vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength() - 1; // note we don't count the last '\' since we remove it.
-			while (strDirAfter.GetLength() >= nMinDirAfterLength)
-			{
-				// If the directory is in the map.
-				map<CString, DIR_CASE, dir_case_compare>::iterator iter = mapDirsCase.find(strDirAfter);
-				if (iter == mapDirsCase.end())
-				{
-					// Add it to the map.
-					mapDirsCase.insert( pair<CString, DIR_CASE>(
-						strDirAfter,
-						DIR_CASE(i, strDirAfter.GetLength())) );
-				}
-				else
-				{
-					// Check if the case differ.
-					if (iter->first != strDirAfter)
-					{
-						// If the RO's length > map's length,
-						// then it means that that map's case should prevail.
-						if (strDirAfter.GetLength() >= iter->second.nMinDirLength)
-						{
-							// Change the RO's case.
-							*proAfter = iter->first + proAfter->GetPath().Mid(iter->first.GetLength());
-						}
-						else
-						{
-							// Change the map's case and update the map's min length.
-							// Since changing the case doesn't affect this operation's order in the map, we can const_cast<>.
-							const_cast<CString&>(iter->first) = strDirAfter;
-							iter->second.nMinDirLength = strDirAfter.GetLength();
-
-							// Change the map's case, all RO's in the map.
-							BOOST_FOREACH(int nROIndex, iter->second.vnOperationsIndex)
-							{
-								vRenamingOperations[nROIndex].pathAfter = strDirAfter + vRenamingOperations[nROIndex].pathAfter.GetPath().Mid(strDirAfter.GetLength());
-							}
-						}
-					} // end: Check if the case differ.
-
-					// Add the RO's index.
-					iter->second.vnOperationsIndex.push_back( i );
-				} // end if the directory is in the map.
-
-				// Go to the next parent folder.
-				int nPos = strDirAfter.ReverseFind('\\');
-				if (nPos == -1)
-					break;
-				strDirAfter = strDirAfter.Left(nPos);
-			} // end while.
-		} // end of case unification.
+		dirCaseUnifier.ProcessOperation(i);
 	} // end for each operations index `i`.
 
 	///////////////////////////////////////////////////////////////////
@@ -784,23 +685,8 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 	vector<shared_ptr<CIOOperation> > vOrderedOperationList;
 
 	// Add renaming operation that would change the case of existing
-	// folders if different from the existing one (part of the folder case unification process).
-	{
-		for (map<CString, DIR_CASE, dir_case_compare>::const_iterator iter = mapDirsCase.begin(); iter != mapDirsCase.end(); ++iter)
-		{
-			// If the folder currently exists with another case,
-			if (CPath::PathFileExists(iter->first))
-			{
-				CString strCurrentPathName = CPath::FindPathCase(iter->first);
-				if (strCurrentPathName != iter->first)
-				{
-					vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
-						new CRenameOperation(strCurrentPathName, iter->first)
-						));
-				}
-			}
-		}
-	}
+	// folders if different from the existing one.
+	dirCaseUnifier.AddRenamingOperations(vOrderedOperationList);
 
 	// Add requested renaming operations.
 	BOOST_FOREACH(unsigned nIndex, vOrderedOperationsIndexes)
@@ -833,8 +719,10 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming() const
 	return vOrderedOperationList;
 }
 
-vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() const
+vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming(TRenamingOperationSet& vRenamingOperations) const
 {
+	const int nRenamingOperationCount = (int) vRenamingOperations.size();
+
 	// Report progress
 	OnProgressChanged(stagePreRenaming, 0, 100);
 
@@ -848,18 +736,29 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	// - On the same drive as the directories to rename,
 	// - As a child from of the shortest common directory (before),
 	// - Non-existing name in that directory (before and after renaming).
-	CTempDirectoryMap mapTempDirectories = FindTempDirectories(m_vRenamingOperations);
+	CTempDirectoryMap mapTempDirectories = FindTempDirectories(vRenamingOperations);
 
 	for (CTempDirectoryMap::const_iterator iter=mapTempDirectories.begin(); iter!=mapTempDirectories.end(); ++iter)
 		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
 			new CCreateDirectoryOperation(iter->second.first)
 			));
 
-	// Report progress
-	OnProgressChanged(stagePreRenaming, 2, 100);
+	// Unify folders' case
+	CDirectoryCaseUnifier dirCaseUnifier(vRenamingOperations);
+	for (int i=0; i<nRenamingOperationCount; ++i)
+	{
+		// Report progress
+		OnProgressChanged(stagePreRenaming, 0 + i*20/nRenamingOperationCount, 100);
+
+		dirCaseUnifier.ProcessOperation(i);
+	}
+
+	// Add renaming operation that would change the case of existing
+	// folders if different from the existing one.
+	dirCaseUnifier.AddRenamingOperations(vOrderedOperationList);
 
 	// For directories only changing their case, directly add the renaming operation.
-	BOOST_FOREACH(const CRenamingOperation& renamingOperation, m_vRenamingOperations)
+	BOOST_FOREACH(const CRenamingOperation& renamingOperation, vRenamingOperations)
 	{
 		const CPath& pathBefore = renamingOperation.GetPathBefore().GetPath();
 		const CPath& pathAfter = renamingOperation.GetPathAfter().GetPath();
@@ -873,7 +772,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	}
 
 	// Report progress
-	OnProgressChanged(stagePreRenaming, 10, 100);
+	OnProgressChanged(stagePreRenaming, 20, 100);
 
 	// Prepare a map moving the directories flat and then moving them to their destination path.
 	typedef map<CString, shared_ptr<CRenameOperation>, path_compare<CString> > CFirstRenameOperationMap;	// Order so that the longest path comes first.
@@ -881,7 +780,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	CFirstRenameOperationMap mapFirstOperation;	// Make all directory flat (= in one folder).
 	CSecondRenameOperationMap mapSecondOperation;	// Make all directories to their final place.
 
-	BOOST_FOREACH(const CRenamingOperation& renamingOperation, m_vRenamingOperations)
+	BOOST_FOREACH(const CRenamingOperation& renamingOperation, vRenamingOperations)
 	{
 		const CPath& pathBefore = renamingOperation.GetPathBefore();
 		const CPath& pathAfter = renamingOperation.GetPathAfter();
@@ -967,7 +866,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	// Delete the parents of the renamed directories if they're empty.
 	set<CString, path_compare<CString> > setDeleteIfEmptyDirectories;	// Directories to remove if empty (ordered set by longest path first).
 
-	BOOST_FOREACH(const CRenamingOperation& renamingOperation, m_vRenamingOperations)
+	BOOST_FOREACH(const CRenamingOperation& renamingOperation, vRenamingOperations)
 	{
 		CString strDirectoryBefore = renamingOperation.GetPathBefore().GetDirectoryName();
 		CString strDirectoryAfter = renamingOperation.GetPathAfter().GetDirectoryName();
@@ -1006,7 +905,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming() cons
 	return vOrderedOperationList;
 }
 
-CRenamingList::CTempDirectoryMap CRenamingList::FindTempDirectories(const CRenamingOperationList& vRenamingOperations)
+CRenamingList::CTempDirectoryMap CRenamingList::FindTempDirectories(const TRenamingOperationSet& vRenamingOperations)
 {
 	CTempDirectoryMap mapTempDirectories;
 
@@ -1082,14 +981,14 @@ GenerateNewTemp:
 	return mapTempDirectories;
 }
 
-int CRenamingList::FindShortestDirectoryPathAfter(CRenamingOperationList& vRenamingOperations)
+int CRenamingList::FindShortestDirectoryPathAfter(TRenamingOperationSet& vRenamingOperations)
 {
 	int nMinAfterDirIndex = 0;
 	int nMinAfterDirLength = vRenamingOperations[nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength();
 
 	// Find the shortest path.
-	const int nFilesCount = (int)vRenamingOperations.size();
-	for (int i=0; i<nFilesCount; ++i)
+	const int nRenamingOperationCount = (int)vRenamingOperations.size();
+	for (int i=0; i<nRenamingOperationCount; ++i)
 	{
 		int nDirLength = vRenamingOperations[i].pathAfter.GetDirectoryName().GetLength();
 
@@ -1149,6 +1048,98 @@ bool CRenamingList::DirectoryIsEmpty(const CString& strDirectoryPath, CKtmTransa
 
 		::FindClose(hFindFile);
 		return true;
+	}
+}
+
+CRenamingList::CDirectoryCaseUnifier::CDirectoryCaseUnifier(TRenamingOperationSet& roList)
+: m_vRenamingOperations(roList)
+, m_nMinAfterDirIndex(FindShortestDirectoryPathAfter(roList))
+{
+	// Insert the shortest path to the map (to improve a little the speed).
+	CString strShortestDirAfter = roList[m_nMinAfterDirIndex].pathAfter.GetDirectoryName();
+	m_mapDirsCase.insert( pair<CString, DIR_CASE>(
+		strShortestDirAfter.Left(strShortestDirAfter.GetLength() - 1),
+		DIR_CASE(m_nMinAfterDirIndex, strShortestDirAfter.GetLength())) );
+}
+
+void CRenamingList::CDirectoryCaseUnifier::ProcessOperation(int nIndex)
+{
+	CPath& pathAfter = m_vRenamingOperations[nIndex].pathAfter;
+
+	// Create a copy of the folder name.
+	CString strDirAfter = pathAfter.GetDirectoryName();
+	ASSERT(strDirAfter[strDirAfter.GetLength() - 1] == '\\');
+	strDirAfter = strDirAfter.Left(strDirAfter.GetLength() - 1);
+
+	// For each parent directory name (starting from GetDirectoryName()).
+	const int nMinDirAfterLength = m_vRenamingOperations[m_nMinAfterDirIndex].pathAfter.GetDirectoryName().GetLength() - 1; // note we don't count the last '\' since we remove it.
+	while (strDirAfter.GetLength() >= nMinDirAfterLength)
+	{
+		// If the directory is not in the map.
+		map<CString, DIR_CASE, dir_case_compare>::iterator iter = m_mapDirsCase.find(strDirAfter);
+		if (iter == m_mapDirsCase.end())
+		{
+			// Add it to the map.
+			m_mapDirsCase.insert( pair<CString, DIR_CASE>(
+				strDirAfter,
+				DIR_CASE(nIndex, strDirAfter.GetLength())) );
+		}
+		else
+		{
+			// Check if the case differ.
+			if (iter->first != strDirAfter)
+			{
+				// If this renaming operation's directory path length > map's length,
+				// then it means that that map's case should prevail.
+				if (strDirAfter.GetLength() >= iter->second.nMinDirLength)
+				{
+					// Change the RO's case.
+					pathAfter = iter->first + pathAfter.GetPath().Mid(iter->first.GetLength());
+				}
+				else
+				{
+					// Change the map's case and update the map's min length.
+					// Since changing the case doesn't affect this operation's order in the map, we can const_cast<>.
+					const_cast<CString&>(iter->first) = strDirAfter;
+					iter->second.nMinDirLength = strDirAfter.GetLength();
+
+					// Change the map's case, all RO's in the map.
+					BOOST_FOREACH(int nROIndex, iter->second.vnOperationsIndex)
+					{
+						m_vRenamingOperations[nROIndex].pathAfter = strDirAfter + m_vRenamingOperations[nROIndex].pathAfter.GetPath().Mid(strDirAfter.GetLength());
+					}
+				}
+			} // end: Check if the case differ.
+
+			// Add the RO's index.
+			iter->second.vnOperationsIndex.push_back(nIndex);
+		} // end if the directory is in the map.
+
+		// Go to the next parent folder.
+		int nPos = strDirAfter.ReverseFind('\\');
+		if (nPos == -1)
+			break;
+		strDirAfter = strDirAfter.Left(nPos);
+	} // end while.
+}
+
+void CRenamingList::CDirectoryCaseUnifier::AddRenamingOperations(TPreparedIOOperations& ioList) const
+{
+	// Add renaming operation that would change the case of existing
+	// folders if different from the existing one (part of the folder case unification process).
+	for (CDirectoryCaseUnifier::TDirCaseMap::const_iterator iter = m_mapDirsCase.begin(); iter != m_mapDirsCase.end(); ++iter)
+	{
+		// If the folder currently exists with another case,
+		if (CPath::PathFileExists(iter->first))
+		{
+			CString strCurrentPathName = CPath::FindPathCase(iter->first);
+			if (strCurrentPathName != iter->first)
+			{
+				ioList.push_back(shared_ptr<CIOOperation>(
+					new CRenameOperation(strCurrentPathName, iter->first)
+					));
+			}
+		}
 	}
 }
 

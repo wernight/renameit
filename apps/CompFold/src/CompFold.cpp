@@ -116,7 +116,7 @@ int CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bR
 		// If it is a folder
 		if ((*iter)[(*iter).length() - 1] == '\\')
 		{
-			// Do a recursive comparaison
+			// Do a recursive comparison
 			nMismatch += CompareFolders(strFullFolder1 + *iter, strFullFolder2 + *iter, false);
 			continue;
 		}
@@ -124,11 +124,13 @@ int CompareFolders(const wstring& strFolder1, const wstring& strFolder2, bool bR
 		// Open both files
 		wstring strFile1 = strFullFolder1;
 		strFile1 += *iter;
-		FILE* f1 = _wfopen(strFile1.c_str(), _T("rb"));
+		FILE* f1 = NULL;
+		_wfopen_s(&f1, strFile1.c_str(), _T("rb"));
 
 		wstring strFile2 = strFullFolder2;
 		strFile2 += *iter;
-		FILE* f2 = _wfopen(strFile2.c_str(), _T("rb"));
+		FILE* f2 = NULL;
+		_wfopen_s(&f2, strFile2.c_str(), _T("rb"));
 
 		// Check that the file is in both folders
 		if (find(vFilesList1.begin(), vFilesList1.end(), *iter) == vFilesList1.end())
