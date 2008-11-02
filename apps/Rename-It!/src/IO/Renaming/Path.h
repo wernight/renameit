@@ -52,6 +52,8 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		/**
 		 * Gets the root directory information of the specified path.
 		 * Ex: "C:\".
+		 * The root is defined as the most parent part of the path in which
+		 * no files or folders can be created/removed/renamed/...
 		 */
 		inline CString GetPathRoot() const {
 			return m_strPath.Left(m_nPathRootLength);
@@ -261,7 +263,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				{
 					int nPos = m_strPath.Find('\\', UNICODE_ROOT_UNC_LENGTH);
 					if (nPos != -1)
+					{
 						m_nPathRootLength = nPos + 1;					// `\\?\UNC\network\`
+						int nPos = m_strPath.Find('\\', m_nPathRootLength);
+						if (nPos != -1)
+							m_nPathRootLength = nPos + 1;					// `\\?\UNC\network\share_name\`
+					}
 					else
 						m_nPathRootLength = UNICODE_ROOT_UNC_LENGTH;	// `\\?\UNC\`
 				}
@@ -281,7 +288,12 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				{
 					int nPos = m_strPath.Find('\\', 2);
 					if (nPos != -1)
+					{
 						m_nPathRootLength = nPos + 1;				// `\\network\`
+						int nPos = m_strPath.Find('\\', m_nPathRootLength);
+						if (nPos != -1)
+							m_nPathRootLength = nPos + 1;				// `\\network\share_name\`
+					}
 					else
 						m_nPathRootLength = 0;
 				}

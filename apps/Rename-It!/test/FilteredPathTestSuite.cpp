@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE(ExcludesUnicodeRoot)
 		BOOST_CHECK_EQUAL("X:\\", filteredPath.GetFilteredSubstring());
 		BOOST_CHECK_EQUAL("\\\\?\\X:\\", filteredPath.GetFilteredPath());
 
-		filteredPath.SetFilteredSubstring(_T("\\\\foo\\hi\\"));
-		BOOST_CHECK_EQUAL("\\\\foo\\hi\\", filteredPath.GetFilteredSubstring());
-		BOOST_CHECK_EQUAL("\\\\?\\UNC\\foo\\hi", static_cast<CPath>(filteredPath).GetPath());
+		filteredPath.SetFilteredSubstring(_T("\\\\foo\\bar\\hi\\"));
+		BOOST_CHECK_EQUAL("\\\\foo\\bar\\hi\\", filteredPath.GetFilteredSubstring());
+		BOOST_CHECK_EQUAL("\\\\?\\UNC\\foo\\bar\\hi", static_cast<CPath>(filteredPath).GetPath());
 	}
 
 	{
