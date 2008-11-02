@@ -311,7 +311,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				}
 
 				int nMinDirLength;	///< Length of the shortest directory path in vnOperationsIndex.
-				vector<int> vnOperationsIndex;	///< A list of operations that use this directory path in their path name.
+				vector<int> vnOperationsIndex;	///< A list of operation indexes that use this directory path in their path name.
 			};
 
 			typedef map<CString, DIR_CASE, dir_case_compare> TDirCaseMap;

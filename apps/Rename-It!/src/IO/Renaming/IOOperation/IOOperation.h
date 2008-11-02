@@ -39,7 +39,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace IOOperation
 		{
 			DWORD dwLastError = ::GetLastError();
 			CString strErrorMessage;
-			strErrorMessage.Format(_T("(%d) %s"), dwLastError, GetErrorMessage(dwLastError));
+			strErrorMessage.Format(_T("Error %d: %s"), dwLastError, GetErrorMessage(dwLastError));
 			return strErrorMessage;
 		}
 
