@@ -1,0 +1,443 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head id="ctl00_Head1">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+
+<link id="ctl00_HeaderLink2" rel="stylesheet" type="text/css" href="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/PrintFriendly-bn20090616.css">
+  <script defer="defer" type="text/javascript"></script>
+<meta name="ROBOTS" content="NOINDEX,NOFOLLOW"><meta name="MN" content="BD8B9FF1-10:59:43 PM"><meta name="ms.locale" content="en-us"><meta name="Search.ShortId" content="aa365247">
+<!-- Looking for metadata? Use the robot view instead http://currentsite/currenturl(robot).aspx -->
+<link rel="stylesheet" type="text/css" href="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/mtps-bn20090616.css"><link rel="alternate" media="print" href="http://msdn.microsoft.com/en-us/library/aa365247%28VS.85,printer%29.aspx">
+<title>
+	File Names, Paths, and Namespaces  (Windows)
+</title><script>try {  for(var lastpass_iter=0; lastpass_iter < document.forms.length; lastpass_iter++){    var lastpass_f = document.forms[lastpass_iter];    if(typeof(lastpass_f.lpsubmitorig)=="undefined"){      if (typeof(lastpass_f.submit) == "function") {        lastpass_f.lpsubmitorig = lastpass_f.submit;        lastpass_f.submit = function(){          var form = this;          try {            if (document.documentElement && 'createEvent' in document)            {              var forms = document.getElementsByTagName('form');              for (var i=0 ; i<forms.length ; ++i)                if (forms[i]==form)                {                  var element = document.createElement('lpformsubmitdataelement');                  element.setAttribute('formnum',i);                  element.setAttribute('from','submithook');                  document.documentElement.appendChild(element);                  var evt = document.createEvent('Events');                  evt.initEvent('lpformsubmit',true,false);                  element.dispatchEvent(evt);                  break;                }            }          } catch (e) {}          try {            form.lpsubmitorig();          } catch (e) {}        }      }    }  }} catch (e) {}</script></head><body id="ctl00_Mtps_body" dir="ltr">
+
+    <form name="aspnetForm" method="post" action="aa365247(VS.85,printer).aspx" id="aspnetForm">
+<div>
+<input name="__EVENTTARGET" id="__EVENTTARGET" value="" type="hidden">
+<input name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" type="hidden">
+<input name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUBMGRk9fo2u6sAqapv5HtNATug6rd+gms=" type="hidden">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/WebResource.js" type="text/javascript"></script>
+
+
+<script src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/jquery-1.js" type="text/javascript"></script>
+<script src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/Silverlight-bn20090616.js" type="text/javascript"></script>
+<script src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/MicrosoftAjax.htm" type="text/javascript"></script>
+<script src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/MicrosoftAjaxWebForms.htm" type="text/javascript"></script>
+      <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager1', document.getElementById('aspnetForm'));
+Sys.WebForms.PageRequestManager.getInstance()._updateControls([], [], [], 90);
+//]]>
+</script>
+
+      <div id="ctl00_BannerControl1_MTPS_PrinterFriendlyBanner" class="PrinterFriendlyBanner">
+	
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr>
+	<td class="PFB_Left"><img id="ctl00_BannerControl1_LogoImage" src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/msdn.gif" style="border-width: 0px;"></td>
+	<td class="PFB_Right"><span id="ctl00_BannerControl1_CopyrightLabel" title="©2009 Microsoft Corporation. All rights reserved." class="PrinterFriendlyCopyrightText">©2009 Microsoft Corporation. All rights reserved.</span></td>
+</tr>
+</tbody></table>
+
+</div> 
+      
+<style type="text/css">
+.vb, .cs, .cpp, .nu
+{
+	display:none;
+}
+</style>
+<style id="LanguageSpecificTextStyle" type="text/css">
+.nu
+{
+   display:inline;
+}
+</style> 
+      <div class="ContentArea">
+          
+          <!--starting processing--><div class="topic"><div class="majorTitle"><!----></div><div class="title">File Names, Paths, and Namespaces</div><!--Content type: HTML. Transform: webcollection2mtps.xslt.--><div id="mainSection">
+<div class="clsServerSDKContent"></div>
+<p><!----></p><p>All file systems follow the same general naming
+conventions for an individual file: a base file name and an optional
+extension, separated by a period. However, each file system, such as
+NTFS and FAT, can have specific and differing rules about the formation
+of the individual components in a directory or file name. Character
+count limitations can also be different and can vary depending on the
+path name prefix format used. Any Windows (Win32) application developer
+should be aware of these limitations and differences and know which
+file and path names are valid.</p>
+<p>For example, the older MS-DOS FAT file system supports a maximum of
+8 characters for the base file name and 3 characters for the extension,
+for a total of 12 characters including the dot separator. This is
+commonly known as an <em>8.3 file name</em>. The Windows FAT and NTFS file systems are not 
+    limited to 8.3 file names, because they have <em>long file name support</em>.</p>
+<p>Be aware that the term <em>directory</em> simply refers to a special
+type of file as far as the file system is concerned, therefore in
+certain contexts some reference material will use the general term <em>file</em>
+to encompass both concepts of directories and data files as such.
+Because of the higher level nature of this topic, it will use the term <em>file</em> to refer to actual data files only.</p>
+<p>Some file systems, such as NTFS, support linked files and
+directories, which also follow file naming conventions and rules just
+as a regular file or directory would. For additional information, see <a id="ctl00_mainContentContainer_ctl01" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl01',this);" href="http://msdn.microsoft.com/en-us/library/aa365006%28VS.85,printer%29.aspx">Hard Links and Junctions</a> [ http://msdn.microsoft.com/en-us/library/aa365006(VS.85).aspx ]  and <a id="ctl00_mainContentContainer_ctl02" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl02',this);" href="http://msdn.microsoft.com/en-us/library/aa365505%28VS.85,printer%29.aspx">Reparse Points and File Operations</a> [ http://msdn.microsoft.com/en-us/library/aa365505(VS.85).aspx ] .</p>
+<p>For additional information, see the following subsections:</p>
+<p>
+</p><ul>
+<li><a href="#basic_naming_conventions">Basic Naming Conventions</a></li>
+<li><a href="#path_names_and_namespaces">Path Names and Namespaces</a></li>
+<li><a href="#maximum_path_length">Maximum Path Length</a></li>
+<li><a href="#relative_paths">Relative Paths</a></li>
+<li><a href="#short_and_long_file_names_and_paths">Short and Long File Names and Paths</a></li>
+</ul>
+
+
+<h3><a id="basic_naming_conventions"><!----></a>Basic Naming Conventions</h3>
+<p>The following fundamental rules enable applications to create and process valid names for files and directories, regardless 
+     of the file system:</p>
+<p><!----></p>
+<ul>
+<li>Use a period to separate the base file name from the extension in the name of a directory or file.</li>
+<li>Use a backslash (\) to separate the <em>components</em> of a path.
+The backslash divides the file name from the path to it, and one
+directory name from another directory name in a path. For additional
+details about what a path is, see the Path Names and Namespaces section
+below. </li>
+<li> Use a backslash as required as part of <a id="ctl00_mainContentContainer_ctl03" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl03',this);" href="http://msdn.microsoft.com/en-us/library/aa365248%28VS.85,printer%29.aspx">volume names</a>
+[ http://msdn.microsoft.com/en-us/library/aa365248(VS.85).aspx ] , for
+example, the "C:\" in "C:\path\file" or the "\\server\share" in
+"\\server\share\path\file" for Universal Naming Convention (UNC) names.
+You cannot use a backslash in the actual file or directory name
+components because it separates the names into components.</li>
+<li>Use almost any character in the current code page for a name,
+including Unicode characters and characters in the extended character
+set (128–255), except for the following: <p><!----></p>
+<ul>
+<li>The 
+      following reserved characters are not allowed:
+      <p>&lt; &gt; : " / \ | ? *</p>
+</li>
+<li>Characters whose integer representations are in 
+      the range from zero through 31 are not allowed.</li>
+<li>Any other character that the target file system does not allow.</li>
+</ul>
+</li>
+<li>Use a period as a directory <em>component</em> in a path to represent the current directory, for example ".\tmp.txt".</li>
+<li>Use two consecutive periods (..) as a directory <em>component</em> in a path to represent the parent of the current 
+      directory, for example "..\tmp.txt".</li>
+<li>Do not use the following reserved device names  for the name of a file: <p>CON, PRN, AUX, NUL, COM1, COM2, 
+      COM3, COM4, COM5, COM6, COM7, COM8, COM9, LPT1, LPT2, LPT3, LPT4, LPT5, LPT6, LPT7, LPT8, and LPT9</p>
+<p>Also avoid 
+      these names followed immediately by an extension; for example, NUL.txt is not recommended.</p>
+</li>
+<li>Do not assume case sensitivity. For example, consider the names
+OSCAR, Oscar, and oscar to be the same, even though some file systems
+(such as a POSIX-compliant file system) may consider them as different.
+Note that NTFS supports POSIX semantics for case sensitivity but this
+is not the default behavior. For additional information, see <a id="ctl00_mainContentContainer_ctl04" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl04',this);" href="http://msdn.microsoft.com/en-us/library/aa363858%28VS.85,printer%29.aspx"><strong>CreateFile</strong></a> [ http://msdn.microsoft.com/en-us/library/aa363858(VS.85).aspx ] .</li>
+<li>Do not end a file or directory name with a trailing space or a  period.  Although the underlying file 
+      system may support such names, the operating system does not. However, it is acceptable to start a name with a period.</li>
+</ul>
+<h3><a id="path_names_and_namespaces"><!----></a>Path Names and Namespaces</h3>
+<p>The <em>path</em> to a specified file consists of one or more <em>components</em>,
+separated by special characters, with each component usually being a
+directory name or file name, with some notable exceptions discussed
+below. It is often critical to the system's interpretation of a path
+what the beginning of the path (the <em>prefix</em>) looks like and
+what special characters are used in which position within the path,
+including the last character. If a component of a path is a file name,
+it must be the last component.</p>
+<p>Each component of a path will also be constrained by the maximum
+length specified for a particular file system. In general, these rules
+fall into two categories: <em>short</em> and <em>long</em>. Note that
+directory names are stored by the file system as a special type of
+file, but naming rules for files also apply to directory names. A path
+is simply the string representation of the hierarchy between all of the
+directories that exist for a particular file or directory name.</p>
+<p>Any discussion of path names needs to include the concept of a <em>namespace</em> in Windows. There are two main categories of namespace conventions used in the Win32 APIs, commonly referred to as the <em>NT namespace</em> and the <em>Win32 namespace</em>.
+The NT namespace was designed to be the lowest level namespace on which
+other subsystems and namespaces could exist, including the Win32
+subsystem and, by extension, the Win32 file and device namespaces.
+POSIX is another example of a subsystem in Windows that is built on top
+of the NT namespace. Early versions of Windows also defined several
+predefined, or reserved, names for certain special devices such as
+communications (serial and parallel) ports and the default display
+console as part of what is now called the NT device namespace, and are
+still supported in currect versions of Windows for backward
+compatibility.</p>
+<p>To sort out some of this, the following items are different examples
+of Win32 namespace prefixing and conventions, and summarizes how they
+are used.</p>
+<p>The "\\?\" prefix tells the Win32 APIs to disable all string parsing
+and to send this string straight to the file system. For example, if
+the file system supports large paths and file names, you can exceed the
+MAX_PATH limits that are otherwise enforced by the Win32 APIs. This
+also allows you to turn off automatic expansion of ".." and "." in the
+path names. Many but not all file APIs support "\\?\"; you should look
+at the reference topic for each API to be sure.
+</p>
+<p>The "\\.\" prefix will access the device namespace instead of the
+file namespace. This is how you access physical disks and volumes
+directly, without going through the file system, if the API supports
+this type of access. You can access many other devices this way (using
+the <a id="ctl00_mainContentContainer_ctl05" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl05',this);" href="http://msdn.microsoft.com/en-us/library/aa363858%28VS.85,printer%29.aspx"><strong>CreateFile</strong></a> [ http://msdn.microsoft.com/en-us/library/aa363858(VS.85).aspx ]  and <a id="ctl00_mainContentContainer_ctl06" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl06',this);" href="http://msdn.microsoft.com/en-us/library/aa363904%28VS.85,printer%29.aspx"><strong>DefineDosDevice</strong></a> [ http://msdn.microsoft.com/en-us/library/aa363904(VS.85).aspx ]  functions, for example).
+ 
+Most APIs won't support "\\.\", only those that are designed to work with the device namespace.</p>
+<p>For example, if you want to open the system's serial communications
+port 1, you can use either "\\.\COM1" or "COM1" in the call to the <strong>CreateFile</strong>
+function. This works because COM1-COM9 are part of the reserved names
+in the NT file namespace as previously mentioned. But if you have a 100
+port serial expansion board and want to open COM56, you need to open it
+using "\\.\COM56". This works because "\\.\" goes to the device
+namespace, and there is no predefined NT namespace for COM56. Another
+example of this is using the <strong>CreateFile</strong>
+function on "\\.\PhysicalDiskX" or "\\.\CdRom1" allow you to access
+those devices, bypassing the file system. It just happens that the
+device driver that implements the name "C:\" has its own namespace that
+is the file system. APIs that go through the <strong>CreateFile</strong> function should work because <strong>CreateFile</strong> is the same API to open files and devices.
+ 
+If you're working with Win32 functions, you should use only "\\.\" to access devices and not files. 
+</p>
+<p>There are also APIs that allow the use of the NT namespace
+convention, but the Windows Object Manager makes that unnecessary in
+most cases. To illustrate, it is useful to browse the Windows
+namespaces in the system object browser using the Windows Sysinternals <a id="ctl00_mainContentContainer_ctl07" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl07',this);" href="http://go.microsoft.com/fwlink/?LinkId=141211" target="_blank">WinObj</a>
+[ http://go.microsoft.com/fwlink/?LinkId=141211 ] tool. When you run
+this tool, what you see is the NT namespace rooted at "\". The
+subdirectory "Global??" is where the Win32 namespace resides. Named
+device objects reside in the NT namespace within the "Device"
+subdirectory. Here you may also find Serial0 and Serial1, the device
+objects representing the two COM ports if present on your system. The
+device object representing a volume would be something like
+"HarddiskVolume1", although the numeric suffix may vary. The name "DR0"
+under subdirectory "Harddisk0" would be the device object representing
+a disk, and so on. To make these device objects accessible by Win32
+applications, the device drivers create a symbolic link (symlink) in
+the Win32 namespace to their respective device objects. For example,
+COM0 and COM1 under the "Global??" subdirectory are simply symlinks to
+Serial0 and Serial1, "C:" is a symlink to HarddiskVolume1,
+"Physicaldrive0" is a symlink to DR0, and so on. Without a symlink, a
+specified device "Xxx" will not be available to any Win32 application
+using Win32 namespace conventions as described previously. However, a
+handle could be opened to that device using any APIs that support the
+NT namespace absolute path of the format "\Device\Xxx".</p>
+<p>With the addition of multi-user support via Terminal Services and
+virtual machines, it has further become necessary to virtualize the
+system-wide root device within the Win32 namespace. This was
+accomplished by adding the symlink named "GLOBALROOT" to the Win32
+namespace, which you can see in the "Global??" subdirectory of the
+WinObj browser tool previously discussed, and can access via the path
+"\\?\GLOBALROOT". This prefix ensures that the path following it looks
+in the true root path of the system object manager and not a
+session-dependent path.</p>
+<h3><a id="maximum_path_length"><!----></a>Maximum Path Length</h3>
+<p>In the Windows API (with some exceptions discussed in the following
+paragraphs), the maximum length for a path is MAX_PATH, which is
+defined as 260 characters. A local path is structured in the following
+order: drive letter, colon, backslash, components separated by
+backslashes, and a terminating null character. For example, the maximum
+path on drive D is "D:\&lt;some 256 character path
+string&gt;&lt;NUL&gt;" where "&lt;NUL&gt;" represents the invisible
+terminating null character for the current system codepage. (The
+characters &lt; &gt; are used here for visual clarity and cannot be
+part of a valid path string.)</p>
+<p class="note"><strong>Note</strong>&nbsp;&nbsp;File I/O functions in the Windows API convert "/" to "\" as part of converting the 
+      name to an NT-style name, except when using the "\\?\" prefix as detailed in the following sections.</p>
+<p>The Windows API has many functions that also have Unicode versions
+to permit an extended-length path for a maximum total path length of
+32,767 characters. This type of path is composed of components
+separated by backslashes, each up to the value returned in the <em>lpMaximumComponentLength</em> parameter of the <a id="ctl00_mainContentContainer_ctl08" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl08',this);" href="http://msdn.microsoft.com/en-us/library/aa364993%28VS.85,printer%29.aspx"><strong>GetVolumeInformation</strong></a>
+[ http://msdn.microsoft.com/en-us/library/aa364993(VS.85).aspx ]
+function. To specify an extended-length path, use the "\\?\" prefix.
+For example, "\\?\D:\&lt;very long path&gt;". (The characters &lt; &gt;
+are used here for visual clarity and cannot be part of a valid path
+string.)</p><p class="note"><strong>Note</strong>&nbsp;&nbsp;The maximum path of 32,767 characters is approximate, because the "\\?\" prefix may be 
+       expanded to a longer string by the system at run time, and this expansion applies to the total length.</p>
+
+<p>The "\\?\" prefix can also be used with paths constructed according
+to the universal naming convention (UNC). To specify such a path using
+UNC, use the "\\?\UNC\" prefix. For example, "\\?\UNC\server\share",
+where "server" is the name of the machine and "share" is the name of
+the shared folder. These prefixes are not used as part of the path
+itself. They indicate that the path should be passed to the system with
+minimal modification, which means that you cannot use forward slashes
+to represent path separators, or a period to represent the current
+directory. Also, you cannot use the "\\?\" prefix with a relative path,
+therefore relative paths are limited to MAX_PATH characters as
+previously stated for paths not using the "\\?\" prefix.</p>
+<p>When using an API to create a directory, the specified path cannot be so long that you cannot append an 
+     8.3 file name (that is, the  directory name cannot exceed MAX_PATH minus 12).</p>
+<p>The shell and the file system have different requirements. It is possible to create a path with the Windows API that 
+     the shell user interface might not be able to handle.</p>
+<h3><a id="relative_paths"><!----></a>Relative Paths</h3>
+<p>For functions that manipulate files, the file names can be relative to the current directory. A file name is 
+     relative to the current directory if it does not begin with one of the following:
+    </p><p><!----></p>
+<ul>
+<li>A UNC name of any format.</li>
+<li>A disk designator with a backslash, for example "C:\".</li>
+<li>A backslash, for example, "\directory").</li>
+</ul> If the file name begins with a disk designator with a backslash,
+it is a fully qualified path (for example, "C:\tmp"). If a file name
+begins with only a disk designator but not the backslash after the
+colon, it is interpreted as a relative path to the current directory on
+the drive with the specified letter . Examples of this format are as
+follows:<p><!----></p>
+<ul>
+<li>"C:tmp.txt" refers to a file in the current directory on drive C.</li>
+<li>"C:tempdir\tmp.txt" refers to a file in a subdirectory to the current directory on drive C.</li>
+</ul>
+
+<p>A path is also said to be relative if it contains "double-dots";
+that is, two periods together in one component of the path. This
+special specifier is used to denote the directory above the current
+directory, otherwise known as the "parent directory". Examples of this
+format are as follows: </p><p><!----></p>
+<ul>
+<li>"..\tmp.txt" specifies a file named tmp.txt located in the parent of the current directory.</li>
+<li>"..\..\tmp.txt" specifies a file that is two directories above the current directory.</li>
+<li>"..\tempdir\tmp.txt" specifies a file named tmp.txt located in a
+directory named tempdir that is a peer directory to the current
+directory.</li>
+</ul>
+
+<p>Relative paths can combine both example types, for example
+"C:..\tmp.txt". This is useful because, although the system keeps track
+of the current drive along with the current directory of that drive, it
+also keeps track of the current directories of all of the different
+drive letters if your system has more than one.</p>
+<p>As stated previously, you cannot use the "\\?\" prefix with a relative path because it is considered a form of UNC naming.</p>
+<h3><a id="short_and_long_file_names_and_paths"><!----></a>Short and Long File Names and Paths</h3>
+<p>Typically, Windows stores the long file names on disk as special
+directory entries, which can be disabled systemwide for performance
+reasons depending on the particular file system. When you create a long
+file name, Windows may also create a short MS-DOS (8.3) form of the
+name, called the <em>8.3 alias</em>, and store it on disk.
+Starting with Windows&nbsp;7 and Windows Server&nbsp;2008&nbsp;R2, this
+can also be disabled for a specified volume. On many file systems, a
+short file name contains a tilde (~) character within each component
+when it is too long to comply with 8.3 naming rules, as previously
+discussed. </p><p class="note"><strong>Note</strong>&nbsp;&nbsp;Not
+all file systems follow this convention, and systems can be configured
+to disable 8.3 alias generation even if they normally support it.
+Therefore, do not make the assumption that the 8.3 alias already exists.</p>
+
+<p>To request 8.3 file names, long file names, or the full path of a file from the system, consider the following options:
+     </p><p><!----></p>
+<ul>
+<li>To get an 8.3 file name that has a long file name, use 
+       <a id="ctl00_mainContentContainer_ctl09" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl09',this);" href="http://msdn.microsoft.com/en-us/library/aa364989%28VS.85,printer%29.aspx"><strong>GetShortPathName</strong></a> [ http://msdn.microsoft.com/en-us/library/aa364989(VS.85).aspx ] .</li>
+<li>To get the long file name that has a short name, use <a id="ctl00_mainContentContainer_ctl10" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl10',this);" href="http://msdn.microsoft.com/en-us/library/aa364980%28VS.85,printer%29.aspx"><strong>GetLongPathName</strong></a> [ http://msdn.microsoft.com/en-us/library/aa364980(VS.85).aspx ] .</li>
+<li>To get the full path of a file, use <a id="ctl00_mainContentContainer_ctl11" onclick="javascript:Track('ctl00_mainContentContainer_ctl00|ctl00_mainContentContainer_ctl11',this);" href="http://msdn.microsoft.com/en-us/library/aa364963%28VS.85,printer%29.aspx"><strong>GetFullPathName</strong></a> [ http://msdn.microsoft.com/en-us/library/aa364963(VS.85).aspx ] .</li>
+</ul>
+
+<p>On newer file systems, such as NTFS, exFAT, UDFS, and FAT32, Windows
+stores the long file names on disk in Unicode, which means that the
+original long file name is always preserved. This is true even if a
+long file name contains extended characters and regardless of the code
+page that is active during a disk read or write operation. The case of
+the file name is preserved, even when the file system is not
+case-sensitive.</p>
+<p>Files using long file names can be copied between NTFS file system
+partitions and Windows FAT file system partitions without losing any
+file name information. This may not be true for MS-DOS FAT and some
+types of CDFS (CD-ROM) file systems, depending on the actual file name.
+In this case, the short file name is substituted if possible.</p><p><a href="mailto:wsddocfb@microsoft.com?subject=Documentation%20feedback%20%5Bfileio%5Cfs%5D:%20File%20Names,%20Paths,%20and%20Namespaces%20%20RELEASE:%20%286/25/2009%29&amp;body=%0A%0APRIVACY%20STATEMENT%0A%0AThe%20SDK%20team%20uses%20the%20feedback%20submitted%20to%20improve%20the%20SDK%20documentation.%20We%20do%20not%20use%20your%20e-mail%20address%20for%20any%20other%20purpose.%20We%20will%20remove%20your%20e-mail%20address%20from%20our%20system%20after%20the%20issue%20you%20are%20reporting%20has%20been%20resolved.%20While%20we%20are%20working%20to%20resolve%20this%20issue,%20we%20may%20send%20you%20an%20e-mail%20message%20to%20request%20more%20information%20about%20your%20feedback.%20After%20the%20issues%20have%20been%20addressed,%20we%20may%20send%20you%20an%20e-mail%20message%20to%20let%20you%20know%20that%20your%20feedback%20has%20been%20addressed.%0A%0AFor%20more%20information%20about%20Microsoft%27s%20privacy%20policy,%20see%20http://privacy.microsoft.com/en-us/default.aspx." title="Send comments about this topic to Microsoft">Send comments about this topic to Microsoft</a></p>
+<p>Build date: 6/25/2009</p>
+</div></div>
+      </div>
+      <div id="ctl00_WikiViewer1_cc" class="wv_cc">
+	
+    <div id="ctl00_WikiViewer1_ccContainer">
+		<div class="wv_ccTopicTags">
+			<span class="wv_ccTitle">Tags:&nbsp;</span><span></span>
+		</div>
+        &nbsp;
+        <div class="wv_cclogo">
+	        <img id="ctl00_WikiViewer1_WikiLogo" src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/wiki.gif" style="border-width: 0px;">
+        </div>
+        <div class="wv_cch">
+           <span id="ctl00_WikiViewer1_CC_Title">Community Content</span>
+        </div>
+    
+	</div>
+
+</div>
+<div id="ctl00_WikiViewer1_wikiItems">
+	<div class="wv_ccItems">
+		<table class="wv_ccItemHeader" width="100%"><tbody><tr><td align="left"><span class="wv_ccTitle">Removing files with illegal names</span></td><td>&nbsp;&nbsp;&nbsp;</td><td align="right"><span class="wv_ccEdInfo">Last Edit 1:08 AM by Mark Amos - MSFT&nbsp;&nbsp;&nbsp;</span></td></tr></tbody></table><div class="wv_ccText">
+			<p>Although
+it is not recommended to name a file using reserved words like CON,
+sometimes they end up on disk through any number of ways. To remove
+them, try this method from a command prompt with appropriate
+priviledges. Let's say you have this offending file in the root of the
+C: drive. Here are the two commands to try:<br><br></p>
+<pre>C:\&gt; rename \\.\C:\CON. deleteme<br>C:\&gt; del deleteme<br></pre>
+<p>
+		</p></div><div class="wv_ccAnnotationTags">
+			<span class="wv_ccTitle">Tags:&nbsp;</span><span>findfirstfile&nbsp;</span>
+		</div>
+	</div><div class="wv_ccItems">
+		<table class="wv_ccItemHeader" width="100%"><tbody><tr><td align="left"><span class="wv_ccTitle">File component length</span></td><td>&nbsp;&nbsp;&nbsp;</td><td align="right"><span class="wv_ccEdInfo">Last Edit 5:54 PM by C000-000000000046&nbsp;&nbsp;&nbsp;</span></td></tr></tbody></table><div class="wv_ccText">
+			In a previous iteration of this document, it is mentioned that <div><br><div><span><pre>The Unicode versions of several functions permit a maximum path length of 
+approximately 32,000 characters composed of components up to 255 characters in 
+length.</pre></span></div><div><br></div><div>This
+information is now gone. You should add something to the "Basic Naming
+Conventions" that details this little fact; it gets very confusing when
+things fail and this bit of information is nowhere to be found. Even in
+the old docs, this piece of information was easy to miss.</div></div>
+		</div><div class="wv_ccAnnotationTags">
+			<span class="wv_ccTitle">Tags:&nbsp;</span><span></span>
+		</div>
+	</div><div class="wv_ccItems">
+		<table class="wv_ccItemHeader" width="100%"><tbody><tr><td align="left"><span class="wv_ccTitle">Unicode paths - NFC or NFD?</span></td><td>&nbsp;&nbsp;&nbsp;</td><td align="right"><span class="wv_ccEdInfo">Last Edit 1:05 PM by Eljay451&nbsp;&nbsp;&nbsp;</span></td></tr></tbody></table><div class="wv_ccText">
+Is the Unicode UNC long path file name ("\\?\" starting ones) supposed
+to be normalized as NFC or NFD (or NFKC or NFKD)? (I put NFKC and NFKD
+in parenthesis because I presume those normalizations are not suitable.
+But I may be mistaken.)<div><br></div><div>Are
+there recommended Microsoft Win APIs which perform UNC long path file
+name normalization? Or are we supposed to roll our own?<br></div>
+		</div><div class="wv_ccAnnotationTags">
+			<span class="wv_ccTitle">Tags:&nbsp;</span><span></span>
+		</div>
+	</div><div class="wv_ccItems">
+		<table class="wv_ccItemHeader" width="100%"><tbody><tr><td align="left"><span class="wv_ccTitle">Vista explorer removes leading spaces</span></td><td>&nbsp;&nbsp;&nbsp;</td><td align="right"><span class="wv_ccEdInfo">Last Edit 6:46 PM by marble65&nbsp;&nbsp;&nbsp;</span></td></tr></tbody></table><div class="wv_ccText">
+Explorer of Windows Vista and Windows 7 RC removes leading spaces on
+file- and directory names when copying. If you happen to have a file
+"example.txt" and a " example.txt" (with leading space) in the same
+source directory, it will even try to write one over the other at the
+target directory of the copy operation.<br><br>Explorer of Windows XP preserves leading spaces on file- and directory names when copying.<br><br>
+		</div><div class="wv_ccAnnotationTags">
+			<span class="wv_ccTitle">Tags:&nbsp;</span><span></span>
+		</div>
+	</div>
+</div>
+      <script type="text/javascript" src="MSDN%20-%20File%20Names,%20Paths,%20and%20Namespaces%20%28Windows%29_files/mtps-bn20090616.js"></script>  
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.initialize();
+//]]>
+</script>
+</form>
+<script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script><script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script><script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script><script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script><script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script><script>if (typeof(lpcurruser) == 'undefined') lpcurruser = ''; if (document.getElementById('lpcurruserelt') && document.getElementById('lpcurruserelt').value != '') { lpcurruser = document.getElementById('lpcurruserelt').value; document.getElementById('lpcurruserelt').value = ''; } if (typeof(lpcurrpass) == 'undefined') lpcurrpass=''; if (document.getElementById('lpcurrpasselt') && document.getElementById('lpcurrpasselt').value != '') { lpcurrpass = document.getElementById('lpcurrpasselt').value; document.getElementById('lpcurrpasselt').value = ''; } var lploc=1;var lponlyfill=null;if (typeof(onForgetMe) == 'function') { try { onForgetMe(0); } catch (lp_e) { } }lpcurruser = ''; lpcurrpass = '';</script></body></html>
