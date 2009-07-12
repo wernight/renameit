@@ -128,27 +128,33 @@ BOOST_AUTO_TEST_CASE(PathFileExists)
 	// Create a path.
 #define C_DIR		_T("C:\\REMOVE_ME_._RIT_TEST_FOLDER")
 #define C_FILENAME	_T("...Filé")
-	const LPCTSTR szDir = C_DIR;
-	const LPCTSTR szFile = C_DIR _T("\\") C_FILENAME;
-	const LPCTSTR szFileUnc = _T("\\\\?\\") C_DIR _T("\\") C_FILENAME;
-	::CreateDirectory(szDir, NULL);
+	const CString strDir = C_DIR;
+	const CString strFile = C_DIR _T("\\") C_FILENAME;
+	const CString strFileUnc = _T("\\\\?\\") C_DIR _T("\\") C_FILENAME;
+	::CreateDirectory(strDir, NULL);
 	FILE *f = NULL;
-	_tfopen_s(&f, szFile, _T("w"));
+	_tfopen_s(&f, strFile, _T("w"));
 	fclose(f);
 
 	// Test exists.
-	BOOST_CHECK( CPath::PathFileExists(szFile) );
-	BOOST_CHECK( CPath::PathFileExists(szFileUnc) );
+	BOOST_CHECK( CPath::PathFileExists(strFile) );
+	BOOST_CHECK( CPath::PathFileExists(strFileUnc) );
+
+	// Test doesn't exists with wildcards.
+	BOOST_CHECK( !CPath::PathFileExists(strFile + _T("*")));
+	CString strFileUncCopy = strFileUnc;
+	strFileUncCopy.SetAt(10, '*');
+	BOOST_CHECK( !CPath::PathFileExists(strFileUncCopy));
 
 	// Remove the file.
-	::DeleteFile(szFile);
+	::DeleteFile(strFile);
 
 	// Test not exist.
-	BOOST_CHECK( !CPath::PathFileExists(szFile) );
-	BOOST_CHECK( !CPath::PathFileExists(szFileUnc) );
+	BOOST_CHECK( !CPath::PathFileExists(strFile) );
+	BOOST_CHECK( !CPath::PathFileExists(strFileUnc) );
 
 	// Remove the directory.
-	::RemoveDirectory(szDir);
+	::RemoveDirectory(strDir);
 }
 
 BOOST_AUTO_TEST_CASE(MakeUnicodePath)
@@ -212,6 +218,21 @@ BOOST_AUTO_TEST_CASE(DisplayPath)
 {
 	BOOST_CHECK_EQUAL("\\\\Network\\Share Name\\Parent Folder\\..Sub.Folder\\.File.Name.Extension", m_pathNetworkUnc.GetDisplayPath());
 	BOOST_CHECK_EQUAL(m_pathSimple.GetDisplayPath(), m_pathSimpleUnc.GetDisplayPath());
+}
+
+BOOST_AUTO_TEST_CASE(CopyingWeirdPath)
+{
+	CPath path(_T("no_root_after"));
+	BOOST_CHECK_EQUAL("no_root_after", path.GetPath());
+	BOOST_CHECK_EQUAL("no_root_after", path.GetDisplayPath());
+
+	CPath unicode = CPath::MakeUnicodePath(path.GetPath());
+	BOOST_CHECK_EQUAL("\\\\?\\no_root_after", unicode.GetPath());
+	BOOST_CHECK_EQUAL("no_root_after", unicode.GetDisplayPath());
+
+	CPath copy = unicode;
+	BOOST_CHECK_EQUAL("\\\\?\\no_root_after", copy.GetPath());
+	BOOST_CHECK_EQUAL("no_root_after", copy.GetDisplayPath());
 }
 
 //  BOOST_AUTO_TEST_CASE(EllispisedDisplayPath)

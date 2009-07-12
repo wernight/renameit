@@ -104,29 +104,64 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 			if (strPath.IsEmpty())
 				return false;
-			else if (strPath.GetLength() < MAX_PATH)
-				return ::PathFileExists(strPath) != 0;
 			else
 			{
-				ASSERT(strPath.Left(4) == _T("\\\\?\\"));	// Only Unicode path case go past MAX_PATH.
-
-				// We must use FindFile for very long path.
-				WIN32_FIND_DATA fd;
-				HANDLE hFindFile;
-
-				// Directories should not end by '\' for FindFirstFileEx (or it would fail the test).
-				if (strPath[strPath.GetLength() - 1] != '\\')
-					hFindFile = ::FindFirstFileEx(strPath, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
-				else
-					hFindFile = ::FindFirstFileEx(strPath.Left(strPath.GetLength() - 1), FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
-
-				if (hFindFile != INVALID_HANDLE_VALUE)
+				HANDLE hOpenFile = ::CreateFile(strPath,
+					0,	// We only want to query without actually opening the file/directory.
+					FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL, OPEN_EXISTING, 
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+				if (hOpenFile != INVALID_HANDLE_VALUE)
 				{
-					::FindClose(hFindFile);
+					::CloseHandle(hOpenFile);
 					return true;
 				}
 				else
-					return false;
+				{
+					switch (::GetLastError())
+					{
+					case ERROR_FILE_NOT_FOUND:	// i.e., the file does NOT exist.
+					case ERROR_PATH_NOT_FOUND:
+					case ERROR_INVALID_NAME:	// e.g., "C:\foo<*>bar" is not a valid file name (and therefor cannot exist).
+					case ERROR_BAD_PATHNAME:
+						return false;
+
+					case ERROR_ACCESS_DENIED:
+						// Fall-back on another method.
+						if (strPath.GetLength() < MAX_PATH)
+							return ::PathFileExists(strPath) != 0;
+						else
+						{// Here we assume the path doesn't have wildcards because it's valid.
+							ASSERT(strPath.Left(4) == _T("\\\\?\\"));	// Only Unicode path case go past MAX_PATH.
+
+							// We must use FindFile for very long path.
+							WIN32_FIND_DATA fd;
+							HANDLE hFindFile;
+
+							// Directories should not end by '\' for FindFirstFileEx (or it would fail the test).
+							if (strPath[strPath.GetLength() - 1] != '\\')
+								hFindFile = ::FindFirstFileEx(strPath, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+							else
+								hFindFile = ::FindFirstFileEx(strPath.Left(strPath.GetLength() - 1), FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+
+							if (hFindFile != INVALID_HANDLE_VALUE)
+							{
+								::FindClose(hFindFile);
+								return true;
+							}
+							else
+								return false;
+						}
+
+					default:
+#if _DEBUG
+						DWORD dwErrorCode = ::GetLastError();
+						ASSERT(false);	// Assert to try to find out when does this possibly happen.
+#endif
+						return true;	// It failed but not because the file wasn't found.
+					}
+				}
 			}
 		}
 
@@ -165,17 +200,15 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		static inline CString MakeUnicodePath(const CString& strPath)
 		{
-			if (strPath.GetLength() >= 2)
-			{
-				if (strPath.GetLength() >= 4 && strPath.Left(4) == _T("\\\\?\\"))
-					return strPath;
-				else if (strPath[1] == ':' && isalpha(strPath[0]))
-					return _T("\\\\?\\") + strPath;
-				else
-					return _T("\\\\?\\UNC\\") + strPath.Mid(2);
-			}
-			else
+			if (IsUnicodePath(strPath))
 				return strPath;
+			else
+			{
+				if (strPath.Left(2) == _T("\\\\"))
+					return _T("\\\\?\\UNC\\") + strPath.Mid(2);
+				else
+					return _T("\\\\?\\") + strPath;
+			}
 		}
 
 		/**
