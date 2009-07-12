@@ -17,6 +17,7 @@ class CFileListGenerator
 {
 public:
 	CFileListGenerator()
+	: m_bLastRenamingSuccessful(false)
 	{
 		TCHAR szAllowed[] = _T("0123456789ABCDEF");
 		unsigned nAllowed = sizeof(szAllowed)/sizeof(szAllowed[0]) - 1;
@@ -49,7 +50,7 @@ public:
 		return m_flAfter;
 	}
 
-	// Temporary directory for this test, including an ending '\'.
+	/// Temporary directory for this test, including an ending '\'.
 	CString GetTempDirectory() const
 	{
 		return m_strTempDir;
@@ -60,18 +61,20 @@ public:
 	 * The file name before is created.
 	 * Both file names provided should be relative to a temporary folder.
 	 */
-	void AddFile(const CString& strFileNameBefore, const CString& strFileNameAfter, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
+	bool AddFile(const CString& strFileNameBefore, const CString& strFileNameAfter, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
 	{
 		// Make full path.
 		CString strPathBefore = m_strTempDir + strFileNameBefore;
 		CString strPathAfter = m_strTempDir + strFileNameAfter;
 
 		// Create the file path before.
-		CreateFile(strFileNameBefore, dwFileAttributes);
+		if (!CreateFile(strFileNameBefore, dwFileAttributes))
+			return false;
 
 		// Add to the list.
 		m_flBefore.AddPath(strPathBefore);
 		m_flAfter.AddPath(strPathAfter);
+		return true;
 	}
 
 	/**
@@ -97,7 +100,7 @@ public:
 	 * Create a file path.
 	 * The files will be removed when the CFileListGenerator is destroyed or cleaned.
 	 */
-	void CreateFile(const CString& strFileName, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
+	bool CreateFile(const CString& strFileName, DWORD dwFileAttributes = FILE_ATTRIBUTE_NORMAL)
 	{
 		// Make full path.
 		CString strFilePath = m_strTempDir + strFileName;
@@ -107,12 +110,18 @@ public:
 		CreateDirectory(pathFilePath.GetDirectoryName().Mid(m_strTempDir.GetLength()));
 
 		// Create the file name before.
-		::CloseHandle(::CreateFile(strFilePath,
+		HANDLE hFile = ::CreateFile(strFilePath,
 			GENERIC_WRITE,
 			FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL, CREATE_NEW, 
-			dwFileAttributes | FILE_ATTRIBUTE_TEMPORARY,
-			NULL));
+			NULL, CREATE_ALWAYS, 
+			dwFileAttributes,
+			NULL);
+
+		if (hFile == INVALID_HANDLE_VALUE)
+			return false;
+
+		::CloseHandle(hFile);
+		return true;
 	}
 
 	/**
@@ -148,8 +157,10 @@ public:
 		return CRenamingList(m_flBefore, m_flAfter);
 	}
 
-	// Remove all files/folder in the list.
-	// This does not remove the created files.
+	/**
+	 * Remove all files/folder in the list.
+	 * This does not remove the created files.
+	 */
 	void Clear()
 	{
 		for (int i=m_flBefore.GetCount() - 1; i>=0; --i)
@@ -159,7 +170,7 @@ public:
 		}
 	}
 
-	// Delete all files and folders.
+	/// Delete all files and folders.
 	void CleanUp()
 	{
 		DeleteAllInFolder(m_strTempDir);
@@ -181,10 +192,12 @@ public:
 		}
 	}
 
-	// Rename all the files and return true on success.
+	/// Rename all the files and return true on success.
 	bool PerformRenaming(bool bUseTransactions=true)
 	{
-		m_ossRenameErrors.reset(new ostringstream());
+		m_bLastRenamingSuccessful = false;
+
+		m_ossRenameErrors.str("");
 		CFailoverKtmTransaction ktm(NULL, 0, NULL, NULL, bUseTransactions);
 		CRenamingList renamingList = MakeRenamingList();
 		renamingList.IOOperationPerformed.connect( bind(&CFileListGenerator::OnIOOperationPerformed, this, _1, _2, _3) );
@@ -207,15 +220,21 @@ public:
 		if (!AreAllRenamed())
 			return false;
 
+		m_bLastRenamingSuccessful = true;
 		return true;
+	}
+
+	bool HasRenamingErrors() const
+	{
+		return !m_bLastRenamingSuccessful;
 	}
 
 	string GetRenamingErrors() const
 	{
-		return m_ossRenameErrors->str();
+		return string("\n") + m_ossRenameErrors.str();
 	}
 
-	// Returns true if all files/folders have have been renamed.
+	/// Returns true if all files/folders have have been renamed.
 	bool AreAllRenamed() const
 	{
 		for (int i=0; i<m_flBefore.GetCount(); ++i)
@@ -233,18 +252,18 @@ private:
 	{
 		if (renamingList.GetErrorCount() != 0 || renamingList.GetWarningCount() != 0)
 		{
-			*m_ossRenameErrors << "Checking failed (" << renamingList.GetErrorCount() << " errors, " << renamingList.GetWarningCount() << " warnings):" << endl;
+			m_ossRenameErrors << "Checking failed (" << renamingList.GetErrorCount() << " errors, " << renamingList.GetWarningCount() << " warnings):" << endl;
 
 			for (int i=0; i<renamingList.GetCount(); ++i)
 				if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelNone)
-					*m_ossRenameErrors 
+					m_ossRenameErrors 
 					<< '`' << CStringToString(renamingList.GetRenamingOperation(i).GetPathBefore().GetFileName()) << '`'
 					<< " --> "
 					<< '`' << CStringToString(renamingList.GetRenamingOperation(i).GetPathAfter().GetFileName()) << '`'
 					<< ": " << CStringToString(renamingList.GetOperationProblem(i).strMessage)
 					<< endl;
 
-			*m_ossRenameErrors << endl;
+			m_ossRenameErrors << endl;
 		}
 	}
 
@@ -252,17 +271,17 @@ private:
 	{
 		if (nErrorLevel != CIOOperation::elSuccess)
 		{
-			*m_ossRenameErrors << "OnIOOperationPerformed(): ";
+			m_ossRenameErrors << "- OnIOOperationPerformed(): ";
 
 			if (nErrorLevel == CIOOperation::elWarning)
-				*m_ossRenameErrors << "WARNING: ";
+				m_ossRenameErrors << "WARNING: ";
 			else
-				*m_ossRenameErrors << "ERROR: ";
+				m_ossRenameErrors << "ERROR: ";
 
 			if (typeid(ioOperation) == typeid(CRenameOperation))
 			{
 				const CRenameOperation& renErr = static_cast<const CRenameOperation&>(ioOperation);
-				*m_ossRenameErrors 
+				m_ossRenameErrors 
 					<< "CRenameOperation failed: "
 					<< '"' << CStringToString(renErr.GetPathBefore().GetPath()) << '"'
 					<< " --> "
@@ -272,7 +291,7 @@ private:
 			else if (typeid(ioOperation) == typeid(CCreateDirectoryOperation))
 			{
 				const CCreateDirectoryOperation& createDirOp = static_cast<const CCreateDirectoryOperation&>(ioOperation);
-				*m_ossRenameErrors 
+				m_ossRenameErrors 
 					<< "CCreateDirectoryOperation failed: "
 					<< '"' << CStringToString(createDirOp.GetDirectoryPath().GetPath()) << '"'
 					<< ": " << CStringToString(createDirOp.GetErrorMessage());
@@ -280,14 +299,14 @@ private:
 			else if (typeid(ioOperation) == typeid(CRemoveEmptyDirectoryOperation))
 			{
 				const CRemoveEmptyDirectoryOperation& delDirOp = static_cast<const CRemoveEmptyDirectoryOperation&>(ioOperation);
-				*m_ossRenameErrors 
+				m_ossRenameErrors 
 					<< "CRemoveEmptyDirectoryOperation failed: "
 					<< '"' << CStringToString(delDirOp.GetDirectoryPath()) << '"'
 					<< ": " << CStringToString(delDirOp.GetErrorMessage());
 			}
 			else
-				*m_ossRenameErrors << "Unknown error type.";
-			*m_ossRenameErrors << endl;
+				m_ossRenameErrors << "Unknown error type.";
+			m_ossRenameErrors << endl;
 		}
 	}
 
@@ -331,5 +350,6 @@ private:
 	CString m_strTempDir;
 	CFileList m_flBefore;
 	CFileList m_flAfter;
-	shared_ptr<ostringstream> m_ossRenameErrors;
+	ostringstream m_ossRenameErrors;
+	bool m_bLastRenamingSuccessful;
 };

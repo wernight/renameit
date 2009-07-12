@@ -27,15 +27,16 @@ struct CRenamingListFixture
 		else
 			fAddOperation = bind(&CFileListGenerator::AddDirectory, ref(fileListGenerator), _1, _2);
 
-		// Conflict
+		// Conflict: Two files try to become one in the end.
 		fAddOperation(_T("before1A"), _T("file1_after"));
 		fAddOperation(_T("before1B"), _T("file1_after"));
-		// Cannot replaces existing
+		// Cannot replace existing file (a directory cannot have the same name as an existing file in the same parent path).
 		fileListGenerator.CreateFile(_T("file2A_existing_after"));
-		fileListGenerator.CreateDirectory(_T("file2B_existing_after"));
 		fAddOperation(_T("file2A"), _T("file2A_existing_after"));
+		// Cannot replace existing folder (a file cannot have the same name as an existing folder in the same parent path).
+		fileListGenerator.CreateDirectory(_T("file2B_existing_after"));
 		fAddOperation(_T("file2B"), _T("file2B_existing_after"));
-		// Missing
+		// Missing: Try to rename a file that doesn't exist.
 		fileListGenerator.GetBeforeFileList().AddPath(fileListGenerator.GetTempDirectory() + _T("file_existing_before"));
 		fileListGenerator.GetAfterFileList().AddPath(fileListGenerator.GetTempDirectory() + _T("file_existing_after"));
 		// Invalid name: Empty
@@ -52,8 +53,8 @@ struct CRenamingListFixture
 		// Invalid parent name
 		fAddOperation(_T("before8A"), _T("\\\\empty_folder_after\\after8"));
 		fAddOperation(_T("before8B"), _T("invalid_folder_name_|_\\after8"));
-		// File open without shared renaming access.
-		HANDLE hOpenFile = NULL;
+		// (Not for directory renaming) File open without shared renaming access.
+		HANDLE hOpenFile = INVALID_HANDLE_VALUE;
 		if (bTestFileRenaming)
 		{
 			fAddOperation(_T("file10"), _T("file10_after"));
@@ -75,21 +76,25 @@ struct CRenamingListFixture
 		BOOST_CHECK(!renamingList.Check());
 		BOOST_CHECK_EQUAL(fileListGenerator.GetBeforeFileList().GetCount(), renamingList.GetErrorCount());
 		BOOST_CHECK_EQUAL(0, renamingList.GetWarningCount());
+		bool bSomeErrors = false;
 		for (int i=0; i<renamingList.GetCount(); ++i)
 		{
-			if (CRenamingList::levelError == renamingList.GetOperationProblem(i).nErrorLevel)
+			if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelError)
 			{
+				bSomeErrors = true;
+
 				ostringstream oss;
-				oss << "Operation (" << i << ") not detected as an ERROR: "
-					<< renamingList.GetRenamingOperation(i).GetPathBefore().GetDisplayPath()
-					<< " --> "
-					<< renamingList.GetRenamingOperation(i).GetPathAfter().GetDisplayPath();
+				oss << "- Operation (" << i << ") not detected as an error (got error level " << renamingList.GetOperationProblem(i).nErrorLevel << "):" << endl
+					<< "  BEFORE: "	<< renamingList.GetRenamingOperation(i).GetPathBefore().GetDisplayPath() << endl
+					<< "  AFTER : " << renamingList.GetRenamingOperation(i).GetPathAfter().GetDisplayPath();
 				BOOST_MESSAGE(oss.str());
 			}
 		}
+		if (bSomeErrors)
+			BOOST_MESSAGE("\n");
 
 		// Close the file.
-		if (hOpenFile != NULL)
+		if (hOpenFile != INVALID_HANDLE_VALUE)
 			::CloseHandle(hOpenFile);
 	}
 
@@ -129,18 +134,22 @@ struct CRenamingListFixture
 		BOOST_CHECK(!renamingList.Check());
 		BOOST_CHECK_EQUAL(0, renamingList.GetErrorCount());
 		BOOST_CHECK_EQUAL(fileListGenerator.GetBeforeFileList().GetCount(), renamingList.GetWarningCount());
+		bool bSomeErrors = false;
 		for (int i=0; i<renamingList.GetCount(); ++i)
 		{
-			if (CRenamingList::levelWarning == renamingList.GetOperationProblem(i).nErrorLevel)
+			if (renamingList.GetOperationProblem(i).nErrorLevel != CRenamingList::levelWarning)
 			{
+				bSomeErrors = true;
+
 				ostringstream oss;
-				oss << "Operation (" << i << ") not detected as a WARNING: "
-					<< renamingList.GetRenamingOperation(i).GetPathBefore().GetDisplayPath()
-					<< " --> "
-					<< renamingList.GetRenamingOperation(i).GetPathAfter().GetDisplayPath();
+				oss << "- Operation (" << i << ") not detected as a warning (got error level " << renamingList.GetOperationProblem(i).nErrorLevel << "):" << endl
+					<< "  BEFORE: " << renamingList.GetRenamingOperation(i).GetPathBefore().GetDisplayPath() << endl
+					<< "  AFTER : " << renamingList.GetRenamingOperation(i).GetPathAfter().GetDisplayPath();
 				BOOST_MESSAGE(oss.str());
 			}
 		}
+		if (bSomeErrors)
+			BOOST_MESSAGE("\n");
 	}
 
 	CString GetAnotherDriveRoot(unsigned nDriveTypeFlags = DRIVE_FIXED)
@@ -213,13 +222,15 @@ struct CRenamingListFixture
 		// - local disk --> network
 		// - network --> local disk
 
-		// Get a network root.
+		// Get 2 network paths.
 		CString strNetworkRoot = _T("\\\\localhost\\public\\");
 		CString strNetworkDirectory = strNetworkRoot + _T("rename-it_unit_test_tmp");
 		CString strNetworkPath1After = strNetworkDirectory + _T("\\1.tmp");
 		CString strNetworkPath2Before = strNetworkRoot + _T("2.tmp");
 
-		// Prepare
+		// Prepare:
+
+		// - local disk "before1" --> network strNetworkPath1After
 		CFileListGenerator fileListGenerator;
 		if (bTestFileRenaming)
 			fileListGenerator.AddFile(_T("before1"), _T("xxxx"));
@@ -227,22 +238,43 @@ struct CRenamingListFixture
 			fileListGenerator.AddDirectory(_T("before1"), _T("xxxx"));
 		fileListGenerator.GetAfterFileList().SetPath(fileListGenerator.GetAfterFileList().GetCount() - 1, strNetworkPath1After);
 
-		fileListGenerator.AddDirectory(_T("xxxx"), _T("after2"));
+		// - network strNetworkPath2Before --> local disk "after2"
+		fileListGenerator.AddDirectory(_T("yyyy"), _T("after2"));
 		if (bTestFileRenaming)
 		{
 			HANDLE hFile = ::CreateFile(strNetworkPath2Before,
 				GENERIC_WRITE,
 				FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
 				NULL, CREATE_NEW, 
-				FILE_ATTRIBUTE_TEMPORARY,
+				FILE_ATTRIBUTE_NORMAL,
 				NULL);
-			BOOST_REQUIRE_MESSAGE(hFile != INVALID_HANDLE_VALUE, CString("Failed to create file: ") + strNetworkPath2Before);
-			BOOST_WARN_MESSAGE(::CloseHandle(hFile), "Failed to close handle; invalid?");
+			if (hFile == INVALID_HANDLE_VALUE)
+			{
+				if (::GetLastError() == ERROR_FILE_EXISTS)
+					BOOST_WARN("Fixture set-up: Network file already exists.");
+				else
+				{
+					CString strError;
+					strError.Format(_T("Fixture set-up failed to create file \"%s\"; error code %d."), (LPCTSTR)strNetworkPath2Before, ::GetLastError());
+					BOOST_FAIL(strError);
+				}
+			}
+			else if (!::CloseHandle(hFile))
+				BOOST_WARN("Fixture set-up failed to close file handle; invalid?");
 		}
 		else
 		{
-			BOOST_REQUIRE_MESSAGE(::CreateDirectory(strNetworkPath2Before, NULL),
-				CString("Failed to create directory: ") + strNetworkPath2Before);
+			if (!::CreateDirectory(strNetworkPath2Before, NULL))
+			{
+				if (::GetLastError() == ERROR_ALREADY_EXISTS)
+					BOOST_WARN("Fixture set-up: Network directory already exists.");
+				else
+				{
+					CString strError;
+					strError.Format(_T("Fixture set-up failed to create directory \"%s\"; error code %d."), (LPCTSTR)strNetworkPath2Before, ::GetLastError());
+					BOOST_FAIL(strError);
+				}
+			}
 		}
 		fileListGenerator.GetBeforeFileList().SetPath(fileListGenerator.GetBeforeFileList().GetCount() - 1, strNetworkPath2Before);
 
@@ -260,6 +292,24 @@ struct CRenamingListFixture
 		}
 		::RemoveDirectory(strNetworkDirectory);
 	}
+
+	static CString GetErrorMessage(DWORD dwErrorCode)
+	{
+		// Get error message
+		LPTSTR lpMsgBuf = NULL;
+		::FormatMessage( 
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			dwErrorCode,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+			(LPTSTR) &lpMsgBuf,
+			0,
+			NULL );
+		CString strErrorMessage = lpMsgBuf;
+		::LocalFree( lpMsgBuf );
+
+		return strErrorMessage;
+	}
 };
 
 BOOST_FIXTURE_TEST_SUITE(RenamingListTestSuite, CRenamingListFixture);
@@ -271,7 +321,8 @@ BOOST_AUTO_TEST_CASE(SingleFileRenaming)
 	fileListGenerator.AddFile(_T("a.tmp"), _T("a-after.tmp"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -281,7 +332,8 @@ BOOST_AUTO_TEST_CASE(EmptyRenaming)
 	CFileListGenerator fileListGenerator;
 
 	// Rename nothing
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -292,7 +344,8 @@ BOOST_AUTO_TEST_CASE(SingleFolderRenaming)
 	fileListGenerator.AddDirectory(_T("dir_before"), _T("dir_after"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -307,7 +360,8 @@ BOOST_AUTO_TEST_CASE(CyclicFileRenaming)
 	fileListGenerator.AddFile(_T("5.tmp"), _T("1.tmp"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -321,7 +375,8 @@ BOOST_AUTO_TEST_CASE(CyclicFolderRenaming)
 	fileListGenerator.AddDirectory(_T("bb"),	_T("ccc"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -334,7 +389,8 @@ BOOST_AUTO_TEST_CASE(EmboxedFolderRenaming)
 	fileListGenerator.AddDirectory(_T("a\\b\\c"),		_T("a\\b2\\c2"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming(false))
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -347,7 +403,8 @@ BOOST_AUTO_TEST_CASE(EmboxedFolderFilesRenaming)
 	fileListGenerator.AddFile(_T("a\\b\\c\\file3"),		_T("a\\b2\\c2\\file3"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming(false))
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -368,7 +425,8 @@ BOOST_AUTO_TEST_CASE(ComplexFolderRenaming)
 		fileListGenerator.RandomizeOperationsOrder(i);
 
 		// Rename
-		if (!fileListGenerator.PerformRenaming())
+		BOOST_CHECK(fileListGenerator.PerformRenaming());
+		if (fileListGenerator.HasRenamingErrors())
 			BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 	}
 }
@@ -384,7 +442,8 @@ BOOST_AUTO_TEST_CASE(ComplifiedFolderRenaming)
 	fileListGenerator.AddDirectory(_T("a/a/a"), _T("b/b/b"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 }
 
@@ -398,7 +457,8 @@ BOOST_AUTO_TEST_CASE(Complified2FolderRenaming)
 	fileListGenerator.CreateFile(_T("a\\b\\file2"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check
@@ -418,8 +478,9 @@ BOOST_AUTO_TEST_CASE(IdenticalParentFolderRenaming)
 	fileListGenerator.CreateFile(_T("C\\file3"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
-		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
+		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check
 	BOOST_CHECK(CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("B\\file1")));
@@ -443,8 +504,9 @@ BOOST_AUTO_TEST_CASE(NewFoldersCaseUnfication)
 	fileListGenerator.AddDirectory(_T("A\\B\\C"), _T("A\\B\\c"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
-		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
+		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check case
 	CString strExpectFullUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("A\\b\\c");
@@ -461,8 +523,9 @@ BOOST_AUTO_TEST_CASE(ExistingFileCaseUnification)
 	fileListGenerator.AddFile(_T("dirC\\dirD\\file2"), _T("DIRA\\DIRb\\file2"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
-		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
+		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check the case.
 	CString strExpectUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
@@ -479,8 +542,9 @@ BOOST_AUTO_TEST_CASE(ExistingFolderCaseUnification)
 	fileListGenerator.AddDirectory(_T("dirC\\dirD\\dir2"), _T("DIRA\\DIRb\\dir2"));
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
-		BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
+		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Check the case.
 	CString strExpectedUnifiedDirectoryPath = fileListGenerator.GetTempDirectory() + _T("DIRA\\DIRb");
@@ -507,8 +571,9 @@ BOOST_AUTO_TEST_CASE(RemoveRenamedEmptyParentsFolders)
 		fileListGenerator.AddFile(_T("a1\\b2"), _T("a1\\b3"));
 
 		// Rename
-		if (!fileListGenerator.PerformRenaming())
-			BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+		BOOST_CHECK(fileListGenerator.PerformRenaming());
+		if (fileListGenerator.HasRenamingErrors())
+			BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 		// Check
 		BOOST_CHECK(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1\\c1")));
@@ -525,8 +590,9 @@ BOOST_AUTO_TEST_CASE(RemoveRenamedEmptyParentsFolders)
 		fileListGenerator.AddDirectory(_T("a1\\b2"), _T("a1\\b3"));
 
 		// Rename
-		if (!fileListGenerator.PerformRenaming())
-			BOOST_FAIL(fileListGenerator.GetRenamingErrors().c_str());
+		BOOST_CHECK(fileListGenerator.PerformRenaming());
+		if (fileListGenerator.HasRenamingErrors())
+			BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 		// Check
 		BOOST_CHECK(!CPath::PathFileExists(fileListGenerator.GetTempDirectory() + _T("a1\\b1\\c1")));
@@ -559,22 +625,49 @@ BOOST_AUTO_TEST_CASE(CompressedFileRenaming)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
-	fileListGenerator.AddFile(_T("file_before"), _T("file_after"), FILE_ATTRIBUTE_COMPRESSED);
+	BOOST_VERIFY(fileListGenerator.AddFile(_T("file_before"), _T("file_after")));
+	CString strPathBefore = fileListGenerator.GetBeforeFileList()[0].GetPath();
+
+	// Compress it.
+	HANDLE hFile = ::CreateFile(strPathBefore,
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL, OPEN_EXISTING, 
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
+	BOOST_VERIFY(hFile != INVALID_HANDLE_VALUE);
+
+	USHORT nInBuffer = COMPRESSION_FORMAT_DEFAULT;
+	DWORD dwDummy;
+	if (!::DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &nInBuffer, sizeof(USHORT), NULL, 0, &dwDummy, NULL))
+		BOOST_ERROR(GetErrorMessage(::GetLastError()));
+	::CloseHandle(hFile);
+	BOOST_VERIFY((::GetFileAttributes(strPathBefore) & FILE_ATTRIBUTE_COMPRESSED) != 0);
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
+
+	CString strPathAfter = fileListGenerator.GetAfterFileList()[0].GetPath();
+	BOOST_CHECK((::GetFileAttributes(strPathAfter) & FILE_ATTRIBUTE_COMPRESSED) != 0);
 }
 
 BOOST_AUTO_TEST_CASE(EncryptedFileRenaming)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
-	fileListGenerator.AddFile(_T("file_before"), _T("file_after"), FILE_ATTRIBUTE_ENCRYPTED);
+	BOOST_VERIFY(fileListGenerator.AddFile(_T("file_before"), _T("file_after"), FILE_ATTRIBUTE_ENCRYPTED));
+	CString strPathBefore = fileListGenerator.GetBeforeFileList()[0].GetPath();
+	BOOST_VERIFY((::GetFileAttributes(strPathBefore) & FILE_ATTRIBUTE_ENCRYPTED) != 0);
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
+
+	CString strPathAfter = fileListGenerator.GetAfterFileList()[0].GetPath();
+	BOOST_CHECK((::GetFileAttributes(strPathAfter) & FILE_ATTRIBUTE_ENCRYPTED) != 0);
 }
 
 BOOST_AUTO_TEST_CASE(RenameFileToAnotherDrive)
@@ -595,7 +688,8 @@ BOOST_AUTO_TEST_CASE(RenameFileToAnotherDrive)
 	fileListGenerator.GetAfterFileList().SetPath(0, strDestinationPath);
 
 	// Rename
-	if (!fileListGenerator.PerformRenaming())
+	BOOST_CHECK(fileListGenerator.PerformRenaming());
+	if (fileListGenerator.HasRenamingErrors())
 		BOOST_ERROR(fileListGenerator.GetRenamingErrors().c_str());
 
 	// Delete the temporary files/folders.
