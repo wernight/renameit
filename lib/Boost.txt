@@ -1,0 +1,5 @@
+NAME:		Boost
+VERSION:	1.38.0
+LICENCE:	Boost License (similar to LGPL but less restrictive and simpler)
+HOME SITE:	http://www.boost.org/
+DOWNLOAD (Win):	http://www.boostpro.com/download
