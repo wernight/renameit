@@ -1,7 +1,9 @@
 @echo off
-rem ==================================
-rem = Simply execute all the run.bat =
-rem ==================================
+rem =======================================
+rem = Simply execute all the run_test.bat =
+rem =======================================
+
+call cleanup.cmd
 
 set IN_RUN_ALL_TESTS=1
 set FAILED_TESTS=0
