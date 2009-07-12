@@ -50,6 +50,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			errInvalidDirectoryName,// The new directory name is invalid.
 			errBackslashMissing,	// The path must start and end by a backslash (\).
 			errFileMissing,			// The original file is missing from the storage.
+			errInUse,				// The file is opened by another process and therefor cannot be renamed until that process release the file.
 			errCount
 		};
 
@@ -130,7 +131,6 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	// Construction
 		CRenamingList();
 		CRenamingList(const CFileList& flBefore, const CFileList& flAfter);
-		~CRenamingList();
 
 		void Create(const CFileList& flBefore, const CFileList& flAfter);
 
@@ -175,7 +175,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 
 		void RemoveRenamingOperation(int nIndex) {
 			if (nIndex < 0 || nIndex >= (int) m_vRenamingOperations.size())
-				throw out_of_range("Index is out of range.");
+				throw std::out_of_range("Index is out of range.");
 
 			switch (m_vProblems[nIndex].nErrorLevel)
 			{

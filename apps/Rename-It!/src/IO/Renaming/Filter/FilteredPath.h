@@ -1,8 +1,15 @@
 #pragma once
 #include "../Path.h"
+#include <boost/exception/info.hpp>
 
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 {
+	struct CExceptionBase: virtual std::exception, virtual boost::exception { };
+	struct CRenamingException: virtual CExceptionBase { };
+	struct CInvalidFilteredPathPart: virtual CRenamingException { };
+
+	typedef boost::error_info<struct tag_CFilteredPart,unsigned> CFilteredPart;
+
 	/**
 	 * A file name that is renamed by a rename-it! filter.
 	 * So the part being renamed can be accessed.
@@ -125,7 +132,9 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 				if (filteredPart == 0
 					|| filteredPart == CFilteredPath::renameVersion
 					|| ((filteredPart & renameLastFolder) && filteredPart != renameLastFolder))
-					throw exception("Invalid path filtered substring.");
+				{
+					BOOST_THROW_EXCEPTION(CInvalidFilteredPathPart() << CFilteredPart(filteredPart));
+				}
 
 				// Note: It may be awkward to select the file name when renaming the folders,
 				//       but that's because when renaming folders, the file name IS the last

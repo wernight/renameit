@@ -25,14 +25,10 @@ CRenamingList::CRenamingList(const CFileList& flBefore, const CFileList& flAfter
 	Create(flBefore, flAfter);
 }
 
-CRenamingList::~CRenamingList(void)
-{
-}
-
 void CRenamingList::Create(const CFileList& flBefore, const CFileList& flAfter)
 {
 	if (flBefore.GetCount() != flAfter.GetCount())
-		throw logic_error("The number of files before and after renaming must be the same.");
+		throw std::logic_error("The number of files before and after renaming must be the same.");
 
 	// Combine the two lists into a renaming list.
 	m_vRenamingOperations.resize(flBefore.GetCount());
@@ -105,6 +101,24 @@ bool CRenamingList::Check()
 				CString strErrorMsg;
 				strErrorMsg.LoadString(IDS_REMOVED_FROM_DISK);
 				SetProblem(i, errFileMissing, strErrorMsg);
+			}
+			else
+			{
+				// Check if the file is open by another process
+				HANDLE hOpenFile = ::CreateFile(m_vRenamingOperations[i].pathBefore.GetPath(),
+					DELETE,
+					FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL, OPEN_EXISTING, 
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+				if (hOpenFile != INVALID_HANDLE_VALUE)
+					::CloseHandle(hOpenFile);
+				else if (::GetLastError() == ERROR_SHARING_VIOLATION)
+				{
+					CString strErrorMsg;
+					strErrorMsg.LoadString(IDS_IN_USE);
+					SetProblem(i, errInUse, strErrorMsg);
+				}
 			}
 
 			// Check the file/folder name.
@@ -264,11 +278,13 @@ CRenamingList::COperationProblem CRenamingList::CheckName(const CString& strName
 		return problem;
 	}
 
+	ASSERT(!strName.IsEmpty());
+
 	// Invalid path characters might include ASCII/Unicode characters 1 through 31, as well as quote ("), less than (<), greater than (>), pipe (|), backspace (\b), null (\0) and tab (\t).
 	if (strName.FindOneOf(_T("\\/:*?\"<>|\b\t")) != -1	// Forbidden characters.
-		|| strName.Right(0) == _T("."))	// The OS doesn't support files/directories ending by a dot.
+		|| strName[strName.GetLength() - 1] == '.')	// The OS doesn't support files/directories ending by a dot.
 	{
-		// Warning: Invalid.
+		// Error: Invalid.
 		COperationProblem problem;
 		if (bIsFileName)
 		{
@@ -402,7 +418,7 @@ void CRenamingList::SetProblem(int nOperationIndex, EErrorCode nErrorCode, CStri
 	{
 		// Find the error level from the error code.
 		EErrorLevel nLevel;
-		BOOST_STATIC_ASSERT(errCount == 10);
+		BOOST_STATIC_ASSERT(errCount == 11);
 		switch (nErrorCode)
 		{
 		case errDirCaseInconsistent:

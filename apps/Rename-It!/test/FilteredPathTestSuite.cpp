@@ -108,9 +108,9 @@ BOOST_AUTO_TEST_CASE(GetStrangePathFilteredSubstring)
 BOOST_AUTO_TEST_CASE(BadSelectionPart)
 {
 	CPath pathSimple(_T("C:\\FileName.txt"));
-	BOOST_CHECK_THROW(CFilteredPath(pathSimple, 0), exception);
-	BOOST_CHECK_THROW(CFilteredPath(pathSimple, CFilteredPath::renameLastFolder | CFilteredPath::renameFilename), exception);
-	BOOST_CHECK_THROW(CFilteredPath(pathSimple, CFilteredPath::renameVersion), exception);
+	BOOST_CHECK_THROW(CFilteredPath(pathSimple, 0), std::exception);
+	BOOST_CHECK_THROW(CFilteredPath(pathSimple, CFilteredPath::renameLastFolder | CFilteredPath::renameFilename), std::exception);
+	BOOST_CHECK_THROW(CFilteredPath(pathSimple, CFilteredPath::renameVersion), std::exception);
 }
 
 BOOST_AUTO_TEST_CASE(SetFilteredSubstring)

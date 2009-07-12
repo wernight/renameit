@@ -129,6 +129,7 @@ using namespace std;
 #endif
 #include <boost/bind.hpp>
 #include <boost/cast.hpp>
+#include <boost/exception/info.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
@@ -136,6 +137,7 @@ using namespace std;
 #include <boost/scoped_array.hpp>
 #include <boost/signal.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/throw_exception.hpp>
 using namespace boost;
 
 inline long int lrintf(float x) {

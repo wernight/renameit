@@ -3,7 +3,7 @@
 ;NSIS Script For Rename-It!
 
   !define PRODUCT "Rename-It!"  ;Define your own software name here
-  !define VERSION "4iter3"    ;Define your own software version here
+  !define VERSION "4iter4"    ;Define your own software version here
 
 ;--------------------------------
 ;Include Modern UI

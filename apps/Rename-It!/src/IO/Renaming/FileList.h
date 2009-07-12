@@ -53,7 +53,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			if (nIndex == (int) m_vfnFiles.size())
 				AddPath(fnFileName);
 			else if (nIndex >= (int) m_vfnFiles.size())
-				throw out_of_range("Index is out of range.");
+				throw std::out_of_range("Index is out of range.");
 			else
 				m_vfnFiles.insert(m_vfnFiles.begin() + nIndex, fnFileName);
 		}
@@ -73,7 +73,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 */
 		void RemovePath(int nIndex) {
 			if (nIndex < 0 || nIndex >= (int) m_vfnFiles.size())
-				throw out_of_range("Index is out of range.");
+				throw std::out_of_range("Index is out of range.");
 			else
 				m_vfnFiles.erase(m_vfnFiles.begin() + nIndex);
 		}

@@ -774,6 +774,7 @@ BEGIN
                             "Inconsistent folders name warning: The case of this directory's path name is not the same of every renaming operation. The shortest directory path's case will be used."
     IDS_RISKY_DIRNAME_TOO_LONG 
                             "Risky folder name: The folder name is too long (exceeds 120 characters)."
+    IDS_IN_USE              "In use: The file is opened by another process and therefor cannot be renamed until that process release it."
 END
 
 #endif    // English (U.S.) resources
@@ -1562,6 +1563,7 @@ BEGIN
                             "Casse du dossier inconsistent: La casse du chemin vers ce dossier n'est pas la même pour toutes les opérations de renommage. Seule casse du chemin le plus court sera utilisé."
     IDS_RISKY_DIRNAME_TOO_LONG 
                             "Nom de dossier à risque: Nom de dossier trop long (excède 120 charactères)."
+    IDS_IN_USE              "En cours d'utilisation: Le fichier est utilisé par un autre processus ce qui empêche le renommage."
 END
 
 #endif    // French (France) resources

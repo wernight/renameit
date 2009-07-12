@@ -93,7 +93,7 @@ namespace Beroux{ namespace Math{
 					m_vSuccessors.push_back(nNode);
 					return true;
 				}
-				catch (...) {
+				catch (std::exception&) {
 					return false;
 				}
 			}
