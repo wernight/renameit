@@ -1,4 +1,0 @@
-ID3lib can be downloaded from
-http://id3lib.sourceforge.net/
-
-This is version 3.8.3

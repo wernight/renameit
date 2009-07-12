@@ -1,0 +1,5 @@
+NAME:		ID3lib
+VERSION:	3.8.3
+LICENCE:	GNU Library General Public License (LGPL)
+HOME SITE:	http://id3lib.sourceforge.net/
+DOWNLOAD:	http://id3lib.sourceforge.net/

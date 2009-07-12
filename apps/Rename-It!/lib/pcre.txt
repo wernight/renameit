@@ -1,0 +1,5 @@
+NAME:		PCRE: Perl-Compatible Regular-Expression Library
+VERSION:	7.0
+LICENCE:	BSD
+HOME SITE:	http://www.pcre.org/
+DOWNLOAD:	http://gnuwin32.sourceforge.net/packages/pcre.htm
