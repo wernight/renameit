@@ -1,0 +1,21 @@
+*.Wernight.user
+*.swp
+
+apps/Rename-It!.ncb
+apps/Rename-It!.suo
+
+apps/Rename-It!/hlp/HTMLDefines.h
+apps/Rename-It!/hlp/RenameIt.chm
+
+apps/SimpleExt/dlldata.c
+apps/SimpleExt/SimpleExt.tlb
+apps/SimpleExt/SimpleExt.h
+apps/SimpleExt/SimpleExt_i.c
+apps/SimpleExt/SimpleExt_p.c
+
+build/compfold
+build/rename-it!
+build/rename-it! unit tests
+build/SimpleExt
+
+setup/*.exe
