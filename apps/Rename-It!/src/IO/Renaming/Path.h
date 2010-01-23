@@ -189,6 +189,29 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			return ff.GetFilePath();
 		}
 
+		/**
+		 * Tell if an existing path is a directory.
+		 */
+		static bool IsDirectory(const CString& strPath)
+		{
+			CFileFind ff;
+
+			// Directories should not end by '\' for FindFirstFileEx (or it would fail the test).
+			BOOL bPathFound;
+			if (strPath[strPath.GetLength() - 1] != '\\')
+				bPathFound = ff.FindFile(strPath);
+			else
+				bPathFound = ff.FindFile(strPath.Left(strPath.GetLength() - 1));
+
+			if (bPathFound)
+			{
+				ff.FindNextFile();
+				return ff.IsDirectory() != 0;
+			}
+			else
+				return false;
+		}
+
 		static inline bool IsUnicodePath(const CString& strPath)
 		{
 			return strPath.Left(4) == _T("\\\\?\\");

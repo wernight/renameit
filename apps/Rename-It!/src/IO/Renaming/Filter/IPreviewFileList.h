@@ -12,7 +12,8 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 {
 	/**
-	 * Interface of CPreviewFileList to avoid templates (because templates don't work with CObject xxx_DYNAMIC).
+	 * Interface of CPreviewFileList to avoid templates
+	 * (because templates don't work with CObject xxx_DYNAMIC).
 	 */
 	class IPreviewFileList
 	{

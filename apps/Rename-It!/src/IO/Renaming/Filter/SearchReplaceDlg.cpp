@@ -179,7 +179,7 @@ BOOL CSearchReplaceDlg::OnInitDialog()
 	m_ctrlSeriesStartSpin.SetRange(UD_MINVAL, UD_MAXVAL);
 	m_ctrlSeriesStepSpin.SetRange(UD_MINVAL, UD_MAXVAL);
 
-	// Be alterted when the text change.
+	// Be altered when the text change.
 	m_ctlSearchRichEdit.SetEventMask(ENM_CHANGE);
 	m_ctlReplaceRichEdit.SetEventMask(ENM_CHANGE);
 
@@ -352,7 +352,7 @@ void CSearchReplaceDlg::OnReplaceButton()
 	// Process command
 	switch (dwSelectionMade)
 	{
-	case 0:	// User cancelled
+	case 0:	// User canceled
 		replaceText.Empty();
 		break;
 	case ID_REPLACE_FILEDIR:

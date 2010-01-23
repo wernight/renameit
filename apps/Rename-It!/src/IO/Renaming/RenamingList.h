@@ -36,7 +36,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		};
 
 		/**
-		 * The higher, the higher the error level.
+		 * The higher the value, the more serious the error.
 		 */
 		enum EErrorCode
 		{
@@ -44,6 +44,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 			errDirCaseInconsistent,	// The directory's name case is different from this one for other renaming operations.
 			errRiskyFileName,		// The new file name should be avoided.
 			errRiskyDirectoryName,	// The new directory name should be avoided.
+			errRootChanged,			// The root part is different, cannot "rename" a directory from one root to another.
 			errLonguerThanMaxPath,	// The full path length is >= than MAX_PATH=260 chars long (it may not work properly with some applications).
 			errConflict,			// The renaming preview shows a conflict with other files (existing or in the renaming list).
 			errInvalidFileName,		// The new file name is invalid.

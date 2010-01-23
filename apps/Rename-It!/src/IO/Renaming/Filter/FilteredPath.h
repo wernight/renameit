@@ -100,7 +100,8 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 
 	// Operations
 		/**
-		 * Return the full path after applying the filtering.
+		 * Return the full path (with the updated filtered substring,
+		 * meaning it'll be the renamed full path).
 		 */
 		CString GetFilteredPath() const
 		{

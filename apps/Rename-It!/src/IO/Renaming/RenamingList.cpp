@@ -135,6 +135,22 @@ bool CRenamingList::Check()
 			// Check the directory name.
 			CheckDirectoryPath(i);
 
+			// Check that it's not trying to rename a directory from one drive to another.
+			if (CPath::IsDirectory(m_vRenamingOperations[i].pathBefore.GetPath()) &&
+				CPath::FSCompare(m_vRenamingOperations[i].pathBefore.GetPathRoot(), m_vRenamingOperations[i].pathAfter.GetPathRoot()) != 0)
+			{
+				// Same but actually ignore \\?\.
+				CString strPathRootBefore = CPath::MakeUnicodePath(m_vRenamingOperations[i].pathBefore.GetPathRoot());
+				CString strPathRootAfter =  CPath::MakeUnicodePath(m_vRenamingOperations[i].pathAfter.GetPathRoot());
+				if (CPath::FSCompare(strPathRootBefore, strPathRootAfter) != 0)
+				{
+					// Rename-It! doesn't allow that.
+					CString strErrorMsg;
+					strErrorMsg.LoadString(IDS_CANNOT_CHANGE_ROOT);
+					SetProblem(i, errRootChanged, strErrorMsg);
+				}
+			}
+
 			// Check folders' case consistency
 			dirCaseUnifier.ProcessOperation(i);
 		} // end: checking loop.
@@ -418,7 +434,7 @@ void CRenamingList::SetProblem(int nOperationIndex, EErrorCode nErrorCode, CStri
 	{
 		// Find the error level from the error code.
 		EErrorLevel nLevel;
-		BOOST_STATIC_ASSERT(errCount == 11);
+		BOOST_STATIC_ASSERT(errCount == 12);
 		switch (nErrorCode)
 		{
 		case errDirCaseInconsistent:

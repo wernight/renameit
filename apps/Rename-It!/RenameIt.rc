@@ -775,6 +775,7 @@ BEGIN
     IDS_RISKY_DIRNAME_TOO_LONG 
                             "Risky folder name: The folder name is too long (exceeds 120 characters)."
     IDS_IN_USE              "In use: The file is opened by another process and therefor cannot be renamed until that process release it."
+    IDS_CANNOT_CHANGE_ROOT  "Cannot rename a directory from one drive to another."
 END
 
 #endif    // English (U.S.) resources
@@ -1564,6 +1565,7 @@ BEGIN
     IDS_RISKY_DIRNAME_TOO_LONG 
                             "Nom de dossier à risque: Nom de dossier trop long (excède 120 charactères)."
     IDS_IN_USE              "En cours d'utilisation: Le fichier est utilisé par un autre processus ce qui empêche le renommage."
+    IDS_CANNOT_CHANGE_ROOT  "Impossible de renommer un répertoire d'un volume à un autre."
 END
 
 #endif    // French (France) resources

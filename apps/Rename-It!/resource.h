@@ -109,6 +109,7 @@
 #define IDS_RISKY_DIRNAME_TOO_LONG      183
 #define IDS_IN_USE                      184
 #define IDB_DELALL                      185
+#define IDS_CANNOT_CHANGE_ROOT          185
 #define IDR_SEARCH_WILD                 187
 #define ID_TAGGETBYSTAR                 191
 #define IDI_REN_ERROR                   194
