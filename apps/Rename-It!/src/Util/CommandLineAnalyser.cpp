@@ -37,14 +37,9 @@ bool CCommandLineAnalyser::AnalyseCommandLine(void)
 	// Get each argument of the command-line
 	int argc;
 	TCHAR** argv;
-#ifndef _UNICODE
-	argc = __argc;
-	argv = __argv;
-#else
 	argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-#endif
 
-	// Use a state machine to analyse the command-line
+	// Use a state machine to analyze the command-line
 	enum EStates
 	{
 		stateReadingNextArgument,
@@ -95,11 +90,9 @@ bool CCommandLineAnalyser::AnalyseCommandLine(void)
 			break;
 		}
 	}
-#ifdef _UNICODE
 	LocalFree(argv);
-#endif
 
-	// Check that the terminating state is authorised
+	// Check that the terminating state is authorized
 	switch (nState)
 	{
 	case stateReadingNextArgument:

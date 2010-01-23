@@ -16,12 +16,8 @@ namespace SyntaxColor
 		// Compile the search string to look for compilation errors.
 		CString strSubject;
 		ctrl.GetWindowText(strSubject);
-#ifdef _UNICODE
 		char szPatternA[1024];
 		szPatternA[WideCharToMultiByte(CP_ACP, 0, strSubject, -1, szPatternA, sizeof(szPatternA)/sizeof(szPatternA[0]), NULL, NULL)] = '\0';
-#else
-		const char* szPatternA = strSubject;
-#endif
 		const char *pchError = NULL;
 		int nErrorOffset = 0;
 		if (pcre_compile(szPatternA, 0, &pchError, &nErrorOffset, NULL) == NULL)

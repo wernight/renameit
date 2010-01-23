@@ -336,15 +336,11 @@ private:
 
 	static string CStringToString(const CString& source)
 	{
-#ifdef _UNICODE
 		size_t count = 0;
 		char dest[256];
 		wcstombs_s(&count, dest, (LPCWSTR)source, source.GetLength());
 		dest[source.GetLength()] = '\0';
 		return dest;
-#else
-		return (LPCSTR)source;
-#endif
 	}
 
 	CString m_strTempDir;

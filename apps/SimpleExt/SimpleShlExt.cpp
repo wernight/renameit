@@ -5,11 +5,7 @@
 #include <string>
 #include <memory>		// Used for auto_ptr
 
-#ifdef _UNICODE
 typedef std::wstring tstring;
-#else
-typedef std::string tstring;
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CSimpleShlExt

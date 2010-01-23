@@ -5,12 +5,6 @@
 #include "IO/Renaming/MultithreadRenamingList.h"
 #include <iostream>
 
-#ifdef _UNICODE
-# define tcout wcout
-#else
-# define tcout cout
-#endif
-
 using namespace Beroux::IO;
 using namespace Beroux::IO::Renaming;
 

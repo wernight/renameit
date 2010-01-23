@@ -22,172 +22,6 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="2"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="false"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="src"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
-				AdditionalIncludeDirectories="$(IntDir)"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\RenameIt.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
-			ConfigurationType="1"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
-			UseOfMFC="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
-				ValidateParameters="false"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				AdditionalIncludeDirectories="src"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
-				MinimalRebuild="false"
-				RuntimeLibrary="0"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-				AdditionalIncludeDirectories="$(IntDir)"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\RenameIt.exe"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy RenameIt.exe to test folder..."
-				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\test\RenameIt.exe&quot; &gt;NUL"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Unicode Debug|Win32"
-			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
-			ConfigurationType="1"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
-			UseOfMFC="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -265,7 +99,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Unicode Release|Win32"
+			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)..\build\Rename-It!\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
@@ -388,22 +222,6 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -451,26 +269,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Compiling HTML help..."
-						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						Outputs="$(ProjectDir)$(InputName).chm"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Compiling HTML help..."
-						CommandLine="hhc.exe &quot;$(InputPath)&quot;&#x0D;&#x0A;if errorlevel 2 exit /B %errorlevel%&#x0D;&#x0A;if not errorlevel 1 exit /B 1&#x0D;&#x0A;copy /Y &quot;$(InputDir)$(InputName).chm&quot; &quot;$(ProjectDir)$(InputName).chm&quot; &gt;NUL&#x0D;&#x0A;"
-						Outputs="$(ProjectDir)$(InputName).chm"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"

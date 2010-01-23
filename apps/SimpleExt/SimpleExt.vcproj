@@ -6,6 +6,7 @@
 	ProjectGUID="{7D856530-7E16-409B-A7FA-D75C2658DFF9}"
 	RootNamespace="SimpleExt"
 	Keyword="AtlProj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -16,7 +17,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Unicode Debug|Win32"
+			Name="Debug|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="0"
@@ -96,160 +97,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				Description="Performing registration"
-				CommandLine="regsvr32 /s /c &quot;$(TargetPath)&quot;&#x0D;&#x0A;echo regsvr32 exec. time &gt; &quot;$(OutDir)\regsvr32.trg&quot;&#x0D;&#x0A;"
-				Outputs="$(OutDir)\regsvr32.trg"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				SmallerTypeCheck="true"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib UnicoWS.lib"
-				LinkIncremental="2"
-				ModuleDefinitionFile="$(TargetName).def"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release MinDependency|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
-			UseOfMFC="0"
-			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="true"
-				UsePrecompiledHeader="2"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib UnicoWS.lib"
-				ModuleDefinitionFile="$(TargetName).def"
-				SubSystem="2"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Unicode Release MinSize|Win32"
+			Name="Release MinSize|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="0"
@@ -320,79 +168,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release MinSize|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="..\Rename-It!.vsprops"
-			UseOfMFC="0"
-			UseOfATL="2"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
-				StringPooling="true"
-				RuntimeLibrary="0"
-				UsePrecompiledHeader="2"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib UnicoWS.lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile="$(TargetName).def"
-				SubSystem="2"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Unicode Release MinDependency|Win32"
+			Name="Release MinDependency|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="..\Rename-It!.vsprops"
 			UseOfMFC="0"
@@ -481,40 +257,7 @@
 				RelativePath=".\SimpleExt.idl"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCMIDLTool"
-						GenerateStublessProxies="true"
-						TypeLibraryName=".\SimpleExt.tlb"
-						HeaderFileName="SimpleExt.h"
-						InterfaceIdentifierFileName="SimpleExt_i.c"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCMIDLTool"
-						GenerateStublessProxies="true"
-						TypeLibraryName=".\SimpleExt.tlb"
-						HeaderFileName="SimpleExt.h"
-						InterfaceIdentifierFileName="SimpleExt_i.c"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MinDependency|Win32"
-					>
-					<Tool
-						Name="VCMIDLTool"
-						GenerateStublessProxies="true"
-						TypeLibraryName=".\SimpleExt.tlb"
-						HeaderFileName="SimpleExt.h"
-						InterfaceIdentifierFileName="SimpleExt_i.c"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release MinSize|Win32"
 					>
 					<Tool
 						Name="VCMIDLTool"
@@ -536,7 +279,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release MinDependency|Win32"
+					Name="Release MinDependency|Win32"
 					>
 					<Tool
 						Name="VCMIDLTool"
@@ -559,31 +302,7 @@
 				RelativePath=".\StdAfx.cpp"
 				>
 				<FileConfiguration
-					Name="Unicode Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release MinDependency|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Unicode Release MinSize|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -599,7 +318,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release MinDependency|Win32"
+					Name="Release MinDependency|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

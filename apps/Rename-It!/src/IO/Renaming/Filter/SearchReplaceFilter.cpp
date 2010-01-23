@@ -161,15 +161,13 @@ void CSearchReplaceFilter::OnEndRenamingList()
 bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CString strvMacroValues[]) const
 {
 	// Load ID3 tag info.
-#if (defined _UNICODE || defined UNICODE)
+
 	// A workaround in VC7
 	FILE* f = NULL;
 	if (_wfopen_s(&f, CPath::MakeUnicodePath(fnOriginalFilename.GetPath()), _T("rb")) != 0)
 		return false;	// File not found.
 	ifstream stm(f);
-#else
-	ifstream stm(CPath::MakeUnicodePath(fnOriginalFilename.GetPath()), ios_base::in | ios_base::binary);
-#endif
+
 	ID3_IFStreamReader id3Reader(stm);
 
 	ID3_Tag	id3Tag;
@@ -178,9 +176,7 @@ bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStr
 	// No ID3 tag?
 	if (!id3Tag.HasV1Tag() && !id3Tag.HasV2Tag())
 	{
-#ifdef _UNICODE
 		fclose(f);
-#endif
 		return false;		// then don't change the file name
 	}
 
@@ -211,9 +207,7 @@ bool CSearchReplaceFilter::AddID3TagMacros(const CPath& fnOriginalFilename, CStr
 	if (m_nReplaceMacrosFlags & 1<<macroID3Genre)
 		strvMacroValues[macroID3Genre] = GetID3TagValue(id3Tag, ID3FID_CONTENTTYPE);
 
-#ifdef _UNICODE
 	fclose(f);
-#endif
 	return true;
 }
 
@@ -533,11 +527,7 @@ bool CSearchReplaceFilter::CompileRegExp()
 	int nErrorOffset;
 
 	CHAR	szPattherA[1024];
-#ifdef _UNICODE
 	szPattherA[WideCharToMultiByte(CP_ACP, 0, strSearch, -1, szPattherA, sizeof(szPattherA)/sizeof(szPattherA[0]), NULL, NULL)] = '\0';
-#else
-	strcpy_s(szPattherA, strSearch);
-#endif
 	m_regexpCompiled = pcre_compile(szPattherA, nOptions, &pchError, &nErrorOffset, NULL);
 	if (m_regexpCompiled == NULL)
 	{
@@ -627,11 +617,7 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 	if (m_bOnce)
 	{// Replace once.
 		CHAR	szInA[1024];
-#ifdef _UNICODE
 		szInA[WideCharToMultiByte(CP_ACP, 0, strIn, -1, szInA, sizeof(szInA)/sizeof(szInA[0]), NULL, NULL)] = '\0';
-#else
-		strcpy_s(szInA, strIn);
-#endif
 		int nCount = pcre_exec(m_regexpCompiled, m_regexpExtra, szInA, (int)strlen(szInA)/sizeof(szInA[0]), 0, 0, nvOffsets, OFFSETS_SIZE);
 		if (nCount > 0)
 		{
@@ -687,11 +673,7 @@ unsigned CSearchReplaceFilter::FilterRegExp(const CString &strIn, CString& strOu
 		while (true)
 		{
 			CHAR	szInA[1024];
-#ifdef _UNICODE
 			szInA[WideCharToMultiByte(CP_ACP, 0, strTmpIn, -1, szInA, sizeof(szInA)/sizeof(szInA[0]), NULL, NULL)] = '\0';
-#else
-			strcpy_s(szInA, strTmpIn);
-#endif
 			int nCount = pcre_exec(m_regexpCompiled, m_regexpExtra, szInA, strTmpIn.GetLength(), 0, 0, nvOffsets, OFFSETS_SIZE);
 			if (nCount <= 0 || nvOffsets[0] == nvOffsets[1])
 				break;
