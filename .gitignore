@@ -3,6 +3,7 @@
 
 apps/Rename-It!.ncb
 apps/Rename-It!.suo
+apps/Rename-It!/RenameIt.chm
 
 apps/Rename-It!/hlp/HTMLDefines.h
 apps/Rename-It!/hlp/RenameIt.chm
@@ -19,3 +20,5 @@ build/rename-it! unit tests
 build/SimpleExt
 
 setup/*.exe
+
+test/RenameIt.exe

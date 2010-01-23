@@ -10,7 +10,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		szBuffer[WideCharToMultiByte(CP_ACP, 0, value.GetPath(), -1, szBuffer, sizeof(szBuffer)/sizeof(szBuffer[0]), NULL, NULL)] = '\0';
 		os << szBuffer;
 #else
-		os << (LPTSTR)value.GetPath();
+		os << (LPCTSTR)value.GetPath();
 #endif
 
 		return os;

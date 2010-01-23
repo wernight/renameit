@@ -183,7 +183,7 @@ BOOL CRenameItApp::InitInstance()
 	AfxInitRichEdit2();
 
 	// Beta time bomb.
-	if (GetSafeCurrentDate() > DATE_AT(2009, 12, 12))
+	if (GetSafeCurrentDate() > DATE_AT(2010, 12, 12))
 	{
 		// Show time bomb expired dialog.
  		CAboutDlg dlg;
