@@ -1,6 +1,10 @@
 *.Wernight.user
 *.swp
 
+apps/CompFold/test/f1/
+apps/CompFold/test/f2/
+apps/CompFold/test/CompFold.exe
+
 apps/Rename-It!.ncb
 apps/Rename-It!.suo
 apps/Rename-It!/RenameIt.chm

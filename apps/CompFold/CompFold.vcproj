@@ -6,6 +6,7 @@
 	ProjectGUID="{11A541D1-914B-42B6-81AB-AD79325ECCF2}"
 	RootNamespace="CompFold"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -81,6 +82,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Run tests..."
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)test&quot; &gt;NUL&#x0D;&#x0A;&quot;$(ProjectDir)test\run.cmd&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -149,6 +152,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Run tests..."
+				CommandLine="copy /Y &quot;$(TargetPath)&quot; &quot;$(ProjectDir)test&quot; &gt;NUL&#x0D;&#x0A;&quot;$(ProjectDir)test\run.cmd&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
