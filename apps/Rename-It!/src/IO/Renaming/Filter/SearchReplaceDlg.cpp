@@ -617,7 +617,7 @@ void CSearchReplaceDlg::UpdateSample()
 	m_filter.SetID3TagEnabled(m_bID3Tag != 0);
 
 	// Update the sample
-	GetDlgItem(IDC_AFTER)->SetWindowText( m_previewSamples.PreviewRenaming(&m_filter).GetFilteredSubstring() );
+	GetDlgItem(IDC_AFTER)->SetWindowText( m_previewSamples.PreviewRenaming(&m_filter, m_strBefore).GetFilteredSubstring() );
 }
 
 void CSearchReplaceDlg::OnMatchWholeText()

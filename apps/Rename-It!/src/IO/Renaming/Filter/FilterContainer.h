@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IFilter.h"
-#include "IPreviewFileList.h"
+#include "PreviewFileList.h"
 #include "FilteredPath.h"
 
 namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
@@ -42,17 +42,19 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 		 */
 		void RemoveAllFilters();
 
-		// Load/Save all the filters to a file.
+		/// Save all the filters to a file.
 		BOOL SaveFilters(const CString &filename);
+
+		/// Load all the filters to a file.
 		int LoadFilters(const CString &filename);
 
-		// Return the filter at the given index.
+		/// Return the filter at the given index.
 		shared_ptr<IFilter> GetFilterAt(int nFilterIndex) const;
 
-		// Set the filter nFilterIndex.
+		/// Set the filter nFilterIndex.
 		void UpdateFilter(int nFilterIndex, const IFilter* filter);
 
-		// Swap filter A with filter B.
+		/// Swap filter A with filter B.
 		void SwapFilters(UINT nItemA, UINT nItemB);
 
 		/**
@@ -63,7 +65,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 		 * @param[in] a_first	First file to filter.
 		 * @param[in] a_last	Last file to filter.
 		 * @param[out] b_result Destination container where the filtered file names will be added.
-		 * @return End of the output range (ie. result + (last - first)).
+		 * @return End of the output range (i.e., result + (last - first)).
 		 */
 		template<class InputIterator, class OutputIterator>
 		OutputIterator FilterFileNames(InputIterator a_begin, InputIterator a_first, InputIterator a_last, OutputIterator b_result)
@@ -103,7 +105,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 				}
 			}
 
-			// We filter and insert in the ouput container the result the files between "first" and "last".
+			// We filter and insert in the output container the result the files between "first" and "last".
 			for (; a_first!=a_last; ++a_first)
 			{
 				// Get the filtered part of the path.
@@ -125,7 +127,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 			for (iterator iter=m_vFilters.begin(); iter!=m_vFilters.end(); ++iter)
 				(*iter)->OnEndRenamingList();
 
-			// Restaure the locale.
+			// Restore the locale.
 			_tsetlocale(LC_ALL, strLocaleBak);
 
 			return b_result;
