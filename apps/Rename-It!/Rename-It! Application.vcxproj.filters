@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{4f11be0c-8177-445b-a243-a29129bd0bae}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="HTML Help Files">
+      <UniqueIdentifier>{49fcaac3-5aed-4b46-b57d-24a86c87c753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HTML Help Topics">
+      <UniqueIdentifier>{fe506557-b8d6-4ecd-8c20-34de8835ffd0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\RenameIt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\RenameIt.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RenameIt.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hlp\RenameIt.hhc">
+      <Filter>HTML Help Files</Filter>
+    </None>
+    <None Include="hlp\RenameIt.hhk">
+      <Filter>HTML Help Files</Filter>
+    </None>
+    <None Include="hlp\HIDD_RENAMEIT_DIALOG.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
+    <None Include="hlp\HIDD_ROOT_DIALOG.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="hlp\RenameIt.hhp">
+      <Filter>HTML Help Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

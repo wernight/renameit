@@ -625,7 +625,7 @@ BOOST_AUTO_TEST_CASE(CompressedFileRenaming)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
-	BOOST_VERIFY(fileListGenerator.AddFile(_T("file_before"), _T("file_after")));
+	fileListGenerator.AddFile(_T("file_before"), _T("file_after"));
 	CString strPathBefore = fileListGenerator.GetBeforeFileList()[0].GetPath();
 
 	// Compress it.
@@ -657,7 +657,7 @@ BOOST_AUTO_TEST_CASE(EncryptedFileRenaming)
 {
 	// Prepare
 	CFileListGenerator fileListGenerator;
-	BOOST_VERIFY(fileListGenerator.AddFile(_T("file_before"), _T("file_after"), FILE_ATTRIBUTE_ENCRYPTED));
+	fileListGenerator.AddFile(_T("file_before"), _T("file_after"), FILE_ATTRIBUTE_ENCRYPTED);
 	CString strPathBefore = fileListGenerator.GetBeforeFileList()[0].GetPath();
 	BOOST_VERIFY((::GetFileAttributes(strPathBefore) & FILE_ATTRIBUTE_ENCRYPTED) != 0);
 

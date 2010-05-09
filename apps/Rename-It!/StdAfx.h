@@ -97,25 +97,28 @@
 #include <map>
 #include <stdexcept>
 #include <fstream>
-using namespace std;
 
 // Boost
 #ifdef _DEBUG
 #  define BOOST_LIB_DIAGNOSTIC	// Optional: when set the header will print out the name
 								// of the library selected (useful for debugging).
 #endif
-#include <boost/bind.hpp>
+//#include <boost/bind.hpp>	// Now part of TR1 too
 #include <boost/cast.hpp>
 #include <boost/exception/info.hpp>
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>	// Now part of TR1 too
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/signal.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/throw_exception.hpp>
-using namespace boost;
+
+using namespace std;
+using namespace std::placeholders;
+//using namespace boost;
 
 inline long int lrintf(float x) {
 	return (long int)(x + 0.5f);

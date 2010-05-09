@@ -318,7 +318,7 @@ void CRenameItDlg::OnCancel()
 
 void CRenameItDlg::OnButtonAddRenamer() 
 {
-	scoped_ptr<IFilter> filter(new CSearchReplaceFilter());
+	boost::scoped_ptr<Filter::IFilter> filter(new CSearchReplaceFilter());
 	AddFilter(filter.get());
 }
 
@@ -371,8 +371,8 @@ void CRenameItDlg::OnBnClickedButtonAddfilter2()
 
 	if (wizard.get() != NULL)
 	{
-		scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples(m_fcFilters.GetFilterCount()));
-		shared_ptr<IFilter> filter(wizard->Execute(*previewSamples));
+		boost::scoped_ptr<Filter::IPreviewFileList> previewSamples(GetPreviewSamples(m_fcFilters.GetFilterCount()));
+		shared_ptr<Filter::IFilter> filter(wizard->Execute(*previewSamples));
 		if (filter.get() != NULL)
 			AddFilter(filter.get());
 	}
@@ -652,7 +652,7 @@ void CRenameItDlg::UpdateFilterlist()
 
 	for (int i=0; i<m_fcFilters.GetFilterCount(); ++i)
 	{
-		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(i);
+		shared_ptr<Filter::IFilter> filter = m_fcFilters.GetFilterAt(i);
 		ASSERT(filter.get() != NULL);
 
 		strRule = filter->GetFilterDescription();
@@ -681,7 +681,7 @@ void CRenameItDlg::SwapFilterItems(UINT itemIdx1, UINT itemIdx2)
 
     // Update filter list box item specified by itemIdx1.
 	{
-		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(itemIdx1);
+		shared_ptr<Filter::IFilter> filter = m_fcFilters.GetFilterAt(itemIdx1);
 		ASSERT(filter.get() != NULL);
 		CString strRule = filter->GetFilterDescription();
 		LV_ITEM lvi = {(LVIF_TEXT | LVIF_STATE)}; // NOTE: Rest of struct init'd to 0's.
@@ -694,7 +694,7 @@ void CRenameItDlg::SwapFilterItems(UINT itemIdx1, UINT itemIdx2)
 
     // Update filter list box item specified by itemIdx2.
 	{
-		shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(itemIdx2);
+		shared_ptr<Filter::IFilter> filter = m_fcFilters.GetFilterAt(itemIdx2);
 		ASSERT(filter.get() != NULL);
 		CString strRule = filter->GetFilterDescription();
 		LV_ITEM lvi = {(LVIF_TEXT | LVIF_STATE)}; // NOTE: Rest of struct init'd to 0's.
@@ -1416,8 +1416,8 @@ BOOL CRenameItDlg::OnContextMenuRules(CPoint point)
 BOOL CRenameItDlg::EditRule(int nRuleItem)
 {
 	// Show filter dialog
-	boost::scoped_ptr<IPreviewFileList> previewSamples(GetPreviewSamples(nRuleItem));
-	shared_ptr<IFilter> filter = m_fcFilters.GetFilterAt(nRuleItem);
+	boost::scoped_ptr<Filter::IPreviewFileList> previewSamples(GetPreviewSamples(nRuleItem));
+	shared_ptr<Filter::IFilter> filter = m_fcFilters.GetFilterAt(nRuleItem);
 	ASSERT(filter.get() != NULL);
 	if (filter->ShowDialog(*previewSamples) == IDOK)
 	{
@@ -1842,7 +1842,7 @@ void CRenameItDlg::InverseFileSelection()
 	PopUpdatesFreeze();
 }
 
-bool CRenameItDlg::AddFilter(IFilter *pFilter)
+bool CRenameItDlg::AddFilter(Filter::IFilter *pFilter)
 {
 	UINT idxLastItem = m_ctlListFilters.GetItemCount();
 

@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\SyntaxColor">
+      <UniqueIdentifier>{f5081de8-0902-4650-8305-4f6707400927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO">
+      <UniqueIdentifier>{8b1edfd1-0f75-45c7-aff3-3adfc7b7bcac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO\Renaming">
+      <UniqueIdentifier>{4762c6c3-9d60-41d9-9420-c72a41cc3885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO\Renaming\Filter">
+      <UniqueIdentifier>{58a17eb4-d9fe-4207-9e98-99315be37b94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO\Renaming\Filter\Wizard">
+      <UniqueIdentifier>{69af3109-fd36-4bc7-9cc7-0aaea97d268e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO\Renaming\IOOperation">
+      <UniqueIdentifier>{be183efb-f370-4d59-8b66-10e57ddb83cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{328b9baf-f444-4258-b8d5-bcc4815caf26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{6926e2b1-c750-4236-9adf-1fb1e1a96d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gui">
+      <UniqueIdentifier>{fe334000-2d41-45d9-86d3-f78d9554367d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gui\Control">
+      <UniqueIdentifier>{e6b51cf0-9867-4f38-a8ee-5e96beccac2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\DetectNonDotNetCC.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MenuButton.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NewMenu.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SizingDialog.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\Enumeration.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\GeneralMacros.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\ID3Tags.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\RegExpReplace.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\RegExpSearch.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\SyntaxColor.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\WildcardsReplace.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxColor\WildcardsSearch.h">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\FailoverKtmTransaction.h">
+      <Filter>Source Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\KtmTransaction.h">
+      <Filter>Source Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\FileList.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\MultithreadRenamingList.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Path.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\RenameErrorDlg.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\RenamingList.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\ScopedLocale.h">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\FilterContainer.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\FilteredPath.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\IFilter.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\IPreviewFileList.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\PreviewFileList.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\SearchReplaceDlg.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\SearchReplaceFilter.h">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\AppendWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\CaseWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\CropWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\EnumWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\FilterWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\ID3TagWizard.h">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\IOOperation\CreateDirectoryOperation.h">
+      <Filter>Source Files\IO\Renaming\IOOperation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\IOOperation\IOOperation.h">
+      <Filter>Source Files\IO\Renaming\IOOperation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\IOOperation\RemoveEmptyDirectoryOperation.h">
+      <Filter>Source Files\IO\Renaming\IOOperation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IO\Renaming\IOOperation\RenameOperation.h">
+      <Filter>Source Files\IO\Renaming\IOOperation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\CommandLineAnalyser.h">
+      <Filter>Source Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\OrientedGraph.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\AboutDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\MemoryFileList.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\NotAddedFilesDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\RenameDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\RenameItDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\RenamingController.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\RenamingProgressDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\ReportDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\SettingsDlg.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\Control\ExplorerListCtrl.h">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\Control\InviteEdit.h">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\Control\InviteRichEdit.h">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gui\Control\RenamePartSelectionCtrl.h">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\MenuButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NewMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SizingDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\Enumeration.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\GeneralMacros.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\ID3Tags.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\RegExpReplace.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\RegExpSearch.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\WildcardsReplace.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\WildcardsSearch.cpp">
+      <Filter>Source Files\SyntaxColor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\FailoverKtmTransaction.cpp">
+      <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\KtmTransaction.cpp">
+      <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\MultithreadRenamingList.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Path.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\RenameErrorDlg.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\RenamingList.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\ScopedLocale.cpp">
+      <Filter>Source Files\IO\Renaming</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\FilterContainer.cpp">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\SearchReplaceDlg.cpp">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\SearchReplaceFilter.cpp">
+      <Filter>Source Files\IO\Renaming\Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\AppendWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\CaseWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\CropWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\EnumWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\FilterWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\ID3TagWizard.cpp">
+      <Filter>Source Files\IO\Renaming\Filter\Wizard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util\CommandLineAnalyser.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\AboutDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\NotAddedFilesDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\RenameDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\RenameItDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\RenamingController.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\RenamingProgressDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\ReportDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\SettingsDlg.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\Control\ExplorerListCtrl.cpp">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\Control\InviteEdit.cpp">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\Control\InviteRichEdit.cpp">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gui\Control\RenamePartSelectionCtrl.cpp">
+      <Filter>Source Files\Gui\Control</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\add files.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\add folder.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bad name.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\badname.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\conflict.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\down.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\inverse selection.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\lien.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\new.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ok.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\open.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\prop.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\removed.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RenameIt.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RenameIt.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\renamer.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\save.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\select all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\unselect all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\up.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\WinError.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\wiz_toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RenameIt.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

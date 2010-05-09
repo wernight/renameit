@@ -41,7 +41,7 @@ bool CRenamingList::Check()
 {
 	// Pre-conditions
 #ifdef _DEBUG
-	BOOST_FOREACH(CRenamingOperation& operation, m_vRenamingOperations)
+	BOOST_FOREACH(const CRenamingOperation& operation, m_vRenamingOperations)
 	{
 		// Each operation must be a Unicode path.
 		ASSERT(operation.pathBefore.GetPath().Left(4) == "\\\\?\\");
@@ -241,7 +241,7 @@ void CRenamingList::CheckDirectoryPath(int nOperationIndex)
 	}
 
 	// Check if the directories names are valid.
-	BOOST_FOREACH(CString strDirectory, pOperationPathAfter->GetDirectories())
+	BOOST_FOREACH(const CString& strDirectory, pOperationPathAfter->GetDirectories())
 	{
 		// Find the directory's name before the '.' (yes an extension is also counted for directories)
 		CString strDirectoryWithoutExtension;
@@ -475,7 +475,7 @@ bool CRenamingList::PerformRenaming(CKtmTransaction& ktm) const
 	// operations arranged so that by performing all the operations
 	// one after another is possible and will result in performing all the
 	// renaming operations asked.
-	vector<shared_ptr<CIOOperation> > vOperationList = PrepareRenaming();
+	TPreparedIOOperations vOperationList = PrepareRenaming();
 
 	// Failover to non-KTM when ::GetLastError() == ERROR_RM_NOT_ACTIVE
 	// TODO: See how to alert the user or even tell him before
@@ -519,7 +519,7 @@ void CRenamingList::OnProgressChanged(EStage nStage, int nDone, int nTotal) cons
 	ProgressChanged(*this, nStage, nDone, nTotal);
 }
 
-vector<shared_ptr<CIOOperation> > CRenamingList::PrepareRenaming() const
+CRenamingList::TPreparedIOOperations CRenamingList::PrepareRenaming() const
 {
 	bool bRenamingDirectories = (::GetFileAttributes(m_vRenamingOperations[0].GetPathBefore().GetPath()) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
 
@@ -547,7 +547,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareRenaming() const
 		return PrepareFileRenaming(vRenamingOperations);
 }
 
-vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming(TRenamingOperationSet& vRenamingOperations) const
+CRenamingList::TPreparedIOOperations CRenamingList::PrepareFileRenaming(TRenamingOperationSet& vRenamingOperations) const
 {
 	///////////////////////////////////////////////////////////////////
 	// Create an oriented graph of conflicting renaming operations
@@ -714,7 +714,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming(TRenamingOp
 	}
 
 	// Create the list of operations
-	vector<shared_ptr<CIOOperation> > vOrderedOperationList;
+	TPreparedIOOperations vOrderedOperationList;
 
 	// Add renaming operation that would change the case of existing
 	// folders if different from the existing one.
@@ -740,7 +740,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming(TRenamingOp
 	// Note that the set is ordered so that the longest path comes first,
 	// which implies that sub-folders are removed prior to checking their parent folder.
 	// Mark folders that should be erased after renaming if they are empty.
-	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
+	BOOST_FOREACH(const CString& strDirectoryPath, setDeleteIfEmptyDirectories)
 	{
 		// Remove ONLY a non-empty directory.
 		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(
@@ -751,7 +751,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareFileRenaming(TRenamingOp
 	return vOrderedOperationList;
 }
 
-vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming(TRenamingOperationSet& vRenamingOperations) const
+CRenamingList::TPreparedIOOperations CRenamingList::PrepareDirectoryRenaming(TRenamingOperationSet& vRenamingOperations) const
 {
 	const int nRenamingOperationCount = (int) vRenamingOperations.size();
 
@@ -762,7 +762,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming(TRenam
 	CScopedLocale scopeLocale(_T(""));
 
 	// Create the list of operations
-	vector<shared_ptr<CIOOperation> > vOrderedOperationList;
+	TPreparedIOOperations vOrderedOperationList;
 
 	// Create a unique temporary folder like follow:
 	// - On the same drive as the directories to rename,
@@ -922,7 +922,7 @@ vector<shared_ptr<CIOOperation> > CRenamingList::PrepareDirectoryRenaming(TRenam
 	// Report progress
 	OnProgressChanged(stagePreRenaming, 95, 100);
 
-	BOOST_FOREACH(CString& strDirectoryPath, setDeleteIfEmptyDirectories)
+	BOOST_FOREACH(const CString& strDirectoryPath, setDeleteIfEmptyDirectories)
 	{
 		// Remove ONLY a non-empty directory.
 		vOrderedOperationList.push_back(shared_ptr<CIOOperation>(

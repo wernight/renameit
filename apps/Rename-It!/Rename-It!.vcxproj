@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BFCBD75E-78F5-4CAB-8F43-63133AD647C0}</ProjectGuid>
+    <RootNamespace>RenameIt</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>lib/pcre/include; lib/id3lib/include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;ID3LIB_LINKOPTION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalDependencies>pcre.lib;id3lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib/pcre/lib; lib/id3lib/Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>lib/pcre/include; lib/id3lib/include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;ID3LIB_LINKOPTION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalDependencies>pcre.lib;id3lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib/pcre/lib; lib/id3lib/Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\DetectNonDotNetCC.h" />
+    <ClInclude Include="src\MenuButton.h" />
+    <ClInclude Include="src\NewMenu.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\SizingDialog.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="src\SyntaxColor\Enumeration.h" />
+    <ClInclude Include="src\SyntaxColor\GeneralMacros.h" />
+    <ClInclude Include="src\SyntaxColor\ID3Tags.h" />
+    <ClInclude Include="src\SyntaxColor\RegExpReplace.h" />
+    <ClInclude Include="src\SyntaxColor\RegExpSearch.h" />
+    <ClInclude Include="src\SyntaxColor\SyntaxColor.h" />
+    <ClInclude Include="src\SyntaxColor\WildcardsReplace.h" />
+    <ClInclude Include="src\SyntaxColor\WildcardsSearch.h" />
+    <ClInclude Include="src\IO\FailoverKtmTransaction.h" />
+    <ClInclude Include="src\IO\KtmTransaction.h" />
+    <ClInclude Include="src\IO\Renaming\FileList.h" />
+    <ClInclude Include="src\IO\Renaming\MultithreadRenamingList.h" />
+    <ClInclude Include="src\IO\Renaming\Path.h" />
+    <ClInclude Include="src\IO\Renaming\RenameErrorDlg.h" />
+    <ClInclude Include="src\IO\Renaming\RenamingList.h" />
+    <ClInclude Include="src\IO\Renaming\ScopedLocale.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\FilterContainer.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\FilteredPath.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\IFilter.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\IPreviewFileList.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\PreviewFileList.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\SearchReplaceDlg.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\SearchReplaceFilter.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\AppendWizard.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\CaseWizard.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\CropWizard.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\EnumWizard.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\FilterWizard.h" />
+    <ClInclude Include="src\IO\Renaming\Filter\Wizard\ID3TagWizard.h" />
+    <ClInclude Include="src\IO\Renaming\IOOperation\CreateDirectoryOperation.h" />
+    <ClInclude Include="src\IO\Renaming\IOOperation\IOOperation.h" />
+    <ClInclude Include="src\IO\Renaming\IOOperation\RemoveEmptyDirectoryOperation.h" />
+    <ClInclude Include="src\IO\Renaming\IOOperation\RenameOperation.h" />
+    <ClInclude Include="src\Util\CommandLineAnalyser.h" />
+    <ClInclude Include="src\Math\OrientedGraph.h" />
+    <ClInclude Include="src\Gui\AboutDlg.h" />
+    <ClInclude Include="src\Gui\MemoryFileList.h" />
+    <ClInclude Include="src\Gui\NotAddedFilesDlg.h" />
+    <ClInclude Include="src\Gui\RenameDlg.h" />
+    <ClInclude Include="src\Gui\RenameItDlg.h" />
+    <ClInclude Include="src\Gui\RenamingController.h" />
+    <ClInclude Include="src\Gui\RenamingProgressDlg.h" />
+    <ClInclude Include="src\Gui\ReportDlg.h" />
+    <ClInclude Include="src\Gui\SettingsDlg.h" />
+    <ClInclude Include="src\Gui\Control\ExplorerListCtrl.h" />
+    <ClInclude Include="src\Gui\Control\InviteEdit.h" />
+    <ClInclude Include="src\Gui\Control\InviteRichEdit.h" />
+    <ClInclude Include="src\Gui\Control\RenamePartSelectionCtrl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\MenuButton.cpp" />
+    <ClCompile Include="src\NewMenu.cpp" />
+    <ClCompile Include="src\SizingDialog.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxColor\Enumeration.cpp" />
+    <ClCompile Include="src\SyntaxColor\GeneralMacros.cpp" />
+    <ClCompile Include="src\SyntaxColor\ID3Tags.cpp" />
+    <ClCompile Include="src\SyntaxColor\RegExpReplace.cpp" />
+    <ClCompile Include="src\SyntaxColor\RegExpSearch.cpp" />
+    <ClCompile Include="src\SyntaxColor\WildcardsReplace.cpp" />
+    <ClCompile Include="src\SyntaxColor\WildcardsSearch.cpp" />
+    <ClCompile Include="src\IO\FailoverKtmTransaction.cpp" />
+    <ClCompile Include="src\IO\KtmTransaction.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter.cpp" />
+    <ClCompile Include="src\IO\Renaming\MultithreadRenamingList.cpp" />
+    <ClCompile Include="src\IO\Renaming\Path.cpp" />
+    <ClCompile Include="src\IO\Renaming\RenameErrorDlg.cpp" />
+    <ClCompile Include="src\IO\Renaming\RenamingList.cpp" />
+    <ClCompile Include="src\IO\Renaming\ScopedLocale.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\FilterContainer.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\SearchReplaceDlg.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\SearchReplaceFilter.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\AppendWizard.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\CaseWizard.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\CropWizard.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\EnumWizard.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\FilterWizard.cpp" />
+    <ClCompile Include="src\IO\Renaming\Filter\Wizard\ID3TagWizard.cpp" />
+    <ClCompile Include="src\Util\CommandLineAnalyser.cpp" />
+    <ClCompile Include="src\Gui\AboutDlg.cpp" />
+    <ClCompile Include="src\Gui\NotAddedFilesDlg.cpp" />
+    <ClCompile Include="src\Gui\RenameDlg.cpp" />
+    <ClCompile Include="src\Gui\RenameItDlg.cpp" />
+    <ClCompile Include="src\Gui\RenamingController.cpp" />
+    <ClCompile Include="src\Gui\RenamingProgressDlg.cpp" />
+    <ClCompile Include="src\Gui\ReportDlg.cpp" />
+    <ClCompile Include="src\Gui\SettingsDlg.cpp" />
+    <ClCompile Include="src\Gui\Control\ExplorerListCtrl.cpp" />
+    <ClCompile Include="src\Gui\Control\InviteEdit.cpp" />
+    <ClCompile Include="src\Gui\Control\InviteRichEdit.cpp" />
+    <ClCompile Include="src\Gui\Control\RenamePartSelectionCtrl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\add files.bmp" />
+    <None Include="res\add folder.bmp" />
+    <None Include="res\bad name.ico" />
+    <None Include="res\badname.ico" />
+    <None Include="res\conflict.ico" />
+    <None Include="res\delete all.bmp" />
+    <None Include="res\delete.bmp" />
+    <None Include="res\down.bmp" />
+    <None Include="res\error.ico" />
+    <None Include="res\inverse selection.bmp" />
+    <None Include="res\lien.cur" />
+    <None Include="res\new.bmp" />
+    <None Include="res\ok.ico" />
+    <None Include="res\open.bmp" />
+    <None Include="res\prop.bmp" />
+    <None Include="res\removed.ico" />
+    <None Include="res\RenameIt.ico" />
+    <None Include="res\RenameIt.rc2" />
+    <None Include="res\renamer.ico" />
+    <None Include="res\save.bmp" />
+    <None Include="res\select all.bmp" />
+    <None Include="res\unselect all.bmp" />
+    <None Include="res\up.bmp" />
+    <None Include="res\WinError.ico" />
+    <None Include="res\wiz_toolbar.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RenameIt.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="RenameIt.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

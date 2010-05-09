@@ -49,7 +49,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * meaning when the worker thread finished working.
 		 * @param[in] nRenamingResult	The result of the renaming.
 		 */
-		typedef signal<void (ERenamingResult)> CDoneSignal;
+		typedef boost::signal<void (ERenamingResult)> CDoneSignal;
 		
 		CDoneSignal Done;
 

@@ -1,5 +1,15 @@
 NAME:		Boost
-VERSION:	1.38.0
+VERSION:	1.43.0
 LICENCE:	Boost License (similar to LGPL but less restrictive and simpler)
 HOME SITE:	http://www.boost.org/
 DOWNLOAD (Win):	http://www.boostpro.com/download
+
+
+To install Boost:
+
+ 1. Download and extract it.
+
+ 2. Compile Boost signals:
+     a) Open command prompt in Boost folder (where you extracted it).
+     c) bootstrap.bat
+     d) bjam --with-signals --build-type=complete --toolset=msvc-10.0 --libdir=D:\boost_1_43_0\lib\x86 install

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{36ec5a5b-bced-4e01-952c-635c6384748d}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Unit Tests">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Unit Tests\Helper">
+      <UniqueIdentifier>{6612c399-4e67-4fb9-b072-bb81b15a269b}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\add files.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\add folder.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bad name.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\badname.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\conflict.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\down.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\inverse selection.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\lien.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\new.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ok.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\open.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\prop.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\removed.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RenameIt.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\renamer.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\save.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\select all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\unselect all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\up.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\WinError.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\wiz_toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RenameIt.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test\FilteredPathTestSuite.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="test\Main.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="test\PathTestSuite.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="test\RenamingListTestSuite.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="test\StdAfx.cpp">
+      <Filter>Unit Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="test\Helper\FileListGenerator.cpp">
+      <Filter>Unit Tests\Helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Unit Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="test\Helper\FileListGenerator.h">
+      <Filter>Unit Tests\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="test\Helper\RandomMT.h">
+      <Filter>Unit Tests\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="test\StdAfx.h">
+      <Filter>Unit Tests\Helper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="test\MultithreadRenamingListTestSuite.cpp">
+      <Filter>Unit Tests</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

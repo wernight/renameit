@@ -155,7 +155,7 @@ int CFilterContainer::LoadFilters(const CString &filename)
 	int		nFiltersAdded = 0;
 
 	CMapStringToString mapArgs;
-	scoped_ptr<IFilter> filter;
+	boost::scoped_ptr<IFilter> filter;
 
 	// open file
 	FILE	*file;

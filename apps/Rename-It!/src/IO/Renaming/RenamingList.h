@@ -71,7 +71,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \param ioOperation The operation performed.
 		 * \param nErrorLevel A code indication success or failure level.
 		 */
-		signal<void (const CRenamingList& sender, const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> IOOperationPerformed;
+		boost::signal<void (const CRenamingList& sender, const IOOperation::CIOOperation& ioOperation, IOOperation::CIOOperation::EErrorLevel nErrorLevel)> IOOperationPerformed;
 
 		/**
 		 * A callback function called during the renaming to indicate progress.
@@ -79,7 +79,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 		 * \param[in] nDone			The number of operations done (with or without problem) in this stage.
 		 * \param[in] nTotal		The total number of operations to do in this stage.
 		 */
-		signal<void (const CRenamingList& sender, EStage nStage, int nDone, int nTotal)> ProgressChanged;
+		boost::signal<void (const CRenamingList& sender, EStage nStage, int nDone, int nTotal)> ProgressChanged;
 
 		struct CRenamingOperation
 		{

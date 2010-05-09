@@ -67,7 +67,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 	UINT CMultithreadRenamingList::RenamingThread(LPVOID lpParam)
 	{
 		// Retrieve the thread arguments.
-		scoped_ptr<CThreadArgs> threadArgs( static_cast<CThreadArgs*>(lpParam) );
+		boost::scoped_ptr<CThreadArgs> threadArgs( static_cast<CThreadArgs*>(lpParam) );
 
 		// Wait a bit to let the main thread initialize.
 		::Sleep(100);

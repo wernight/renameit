@@ -24,7 +24,7 @@ public:
 	CProgressDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CProgressDlg();
 
-	signal<void (void)> Canceling;
+	boost::signal<void (void)> Canceling;
 
 // Pre-display attributes
 	// Change the dialog title.
