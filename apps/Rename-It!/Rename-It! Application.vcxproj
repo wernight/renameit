@@ -66,7 +66,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -83,10 +83,15 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>BugTrapU.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>Copy $(TargetName)$(TargetExt) to test folder...</Message>
-      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
+      <Message>Copy BugTrap to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,7 +106,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -119,17 +124,18 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>BugTrapU.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>Copy $(TargetName)$(TargetExt) to test folder...</Message>
-      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
+      <Message>Copy BugTrap to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL
+
+copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="Rename-It! Unit Tests.vcxproj">
-      <Project>{30b1df1e-c714-4efa-a350-f8f1c7a2c11d}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="Rename-It!.vcxproj">
       <Project>{bfcbd75e-78f5-4cab-8f43-63133ad647c0}</Project>
       <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>

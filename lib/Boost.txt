@@ -9,7 +9,7 @@ To install Boost:
 
  1. Download and extract it.
 
- 2. Compile Boost signals:
+ 2. Compile Boost required components (signals, test framework):
      a) Open command prompt in Boost folder (where you extracted it).
      c) bootstrap.bat
-     d) bjam --with-signals --build-type=complete --toolset=msvc-10.0 --libdir=D:\boost_1_43_0\lib\x86 install
+     d) bjam --with-signals --with-test --build-type=complete --toolset=msvc-10.0 --libdir=lib\x86 install

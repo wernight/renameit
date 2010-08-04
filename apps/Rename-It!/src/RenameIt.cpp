@@ -23,6 +23,7 @@
 #include "Gui/RenameItDlg.h"
 #include "Gui/AboutDlg.h"
 #include "IO/Renaming/RenameErrorDlg.h"
+#include "BugTrap.h"
 
 #include <Shlwapi.h>	// Used for PathGetArgs() and PathIsDirectory()
 
@@ -177,10 +178,25 @@ unsigned GetSafeCurrentDate()
 	return nCurrentDate;
 }
 
+static void SetupExceptionHandler()
+{
+	// Initialize BugTrap
+	BT_SetAppName(_T("Rename-It!"));
+    BT_SetSupportEMail(_T("werner@beroux.com"));
+    BT_SetFlags(BTF_DETAILEDMODE | BTF_EDITMAIL | BTF_ATTACHREPORT | BTF_SCREENCAPTURE);
+    BT_SetSupportURL(_T("http://www.beroux.com"));
+
+	// required for VS 2005 & 2008 & 2010
+	BT_InstallSehFilter();
+}
+
 BOOL CRenameItApp::InitInstance()
 {
 	// Call AfxInitRichEdit2() to initialize richedit2 library.
 	AfxInitRichEdit2();
+
+	// Global unhandled exception catcher.
+	SetupExceptionHandler();
 
 	// Beta time bomb.
 	if (GetSafeCurrentDate() > DATE_AT(2010, 12, 12))
