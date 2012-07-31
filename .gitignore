@@ -33,3 +33,4 @@ setup/*.exe
 
 test/*.exe
 test/*.dll
+test/*/tmp/

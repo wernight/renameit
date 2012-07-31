@@ -1,31 +1,35 @@
 @echo off
+set IN_RUN_ALL_TESTS=1
+setlocal enabledelayedexpansion
 
-if exist RenameIt.exe goto ready
+if not exist RenameIt.exe (
 	echo RenameIt.exe is missing.
 	echo Please copy it in this folder to test it.
 	echo.
 	pause
-	exit 1
-:ready
+	exit /B 1
+)
 
-set IN_RUN_ALL=1
+set failed_tests=0
 
 echo ==========================================
 echo TEST COMMAND-LINE
 echo ==========================================
-cd "test Command-line"
-call run.cmd
-if errorlevel 1 goto end
-cd ..
+pushd "%~dp0test Command-line"
+call run_test.cmd
+set /A failed_tests=%failed_tests%+%ERRORLEVEL%
+popd
+popd
 echo.
 
 echo ==========================================
 echo TEST FILTERS
 echo ==========================================
-cd "test Filters"
-call run_all.cmd
-cd ..
+pushd "%~dp0test Filters"
+call run_test.cmd
+set /A failed_tests=%failed_tests%+%ERRORLEVEL%
+popd
 echo.
 
-:end
 pause
+exit /B %failed_tests%

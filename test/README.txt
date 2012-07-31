@@ -10,7 +10,7 @@ which should be placed in the test directory for each component or module.
 	GETTING STARTED
 ========================================================================
 
-Copy the "RenameIt.exe" to test in this folder and then run "run_all.bat".
+Copy the "RenameIt.exe" to test in this folder and then run "run_test.cmd".
 
 
 ========================================================================

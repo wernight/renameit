@@ -1,93 +1,126 @@
 @echo off
-rem =======================
-rem = CHECK THE ARGUMENTS =
-rem =======================
-if '%1'=='' goto args_missing
-if exist "%~n1.rar" goto args_ok
-	echo Error: Cannot find the test file `%~n1.rar`.
-	echo.
-:args_missing
-	echo Provide the name of the test as first argument.
-	echo Example: To run the test "Series.rar" provide "Series.rar" as first argument.
-	pause
-	exit /B 2
-:args_ok
+::
+:: NOTE:
+:: You can Drag & Drop a zip file on this batch to run only that test.
+::
+setlocal enabledelayedexpansion
 
-rem =================
-rem = CONFIGURATION =
-rem =================
-set TEST_NAME=%~n1
-set RENAMEIT=..\..\RenameIt.exe
-set COMPFOLD=..\..\CompFold.exe
-set RAR=..\Rar.exe
+:::::::::::::::::::
+:: CONFIGURATION ::
+:::::::::::::::::::
+set script_dir=%~dp0
+set renameit=%script_dir%..\RenameIt.exe
+set compfold=%script_dir%..\..\tools\CompFold.exe
+set unzip=%script_dir%..\..\tools\7za.exe
+set echoc=%script_dir%..\..\tools\echoc.exe
 
-rem ======================
-rem = DISPLAY TEST START =
-rem ======================
-echo Running %TEST_NAME%...
+:::::::::::::::::::::::::
+:: CHECK THE ARGUMENTS ::
+:::::::::::::::::::::::::
+if not exist "%script_dir%tmp" mkdir "%script_dir%tmp"
+pushd "%script_dir%tmp"
 
-rem ==============
-rem = UNCOMPRESS =
-rem ==============
+set total_tests=0
+set failed_tests=0
 
-if not exist "%TEST_NAME%" goto rmdir_end
-	rmdir /s /q "%TEST_NAME%"
-	if not errorlevel 1 goto rmdir_end
-		echo Command failed: rmdir "%TEST_NAME%"
-		goto failed
-:rmdir_end
-%RAR% x "%TEST_NAME%.rar" >NUL
-cd %TEST_NAME%
+if not "%~1" == "" (
+    call :run_test "%~1"
+) else (
+    for %%i in ("%script_dir%*.7z") do (
+        call :run_test "%%~fi"
+    )
+)
 
-rem ===============================================
-rem = COPY THE FILES IN "BEFORE" TO A TEMP FOLDER =
-rem ===============================================
-mkdir after.generated
-if not errorlevel 1 goto mkdir_end
-	echo Command failed: mkdir after.generated
-	goto failed
-:mkdir_end
-xcopy before after.generated /S /E /Q /H /K >NUL
-if not errorlevel 1 goto xcopy_end
-	echo Command failed: xcopy before after.generated
-	goto failed
-:xcopy_end
+if "%failed_tests%" == "0" (
+    "%echoc%" 0 10 *** No errors detected^^
+) else (
+    "%echoc%" 0 12 *** %failed_tests%/%total_tests% tests failed^^
+    "%echoc%" 0 12 *** errors detected in test suite; see standard output for details^^
+)
 
-rem ==================================================
-rem = RENAME USING OUR FILTER                        =
-rem ==================================================
-%RENAMEIT% /x /f filter.rit after.generated /r /a
-if not errorlevel 1 goto passed1
-	echo Rename-It! returned error code: %ERRORLEVEL%
-	goto failed
-:passed1
+popd
+if not "%IN_RUN_ALL_TESTS%" == "1" pause
+exit /B %failed_tests%
 
-rem ==================================================
-rem = COMPARE THE RESULT WITH THE EXPECTED RESULT    =
-rem ==================================================
-if '%IN_RUN_ALL_TESTS%'=='1' %COMPFOLD% after.ref after.generated >NUL
-if not '%IN_RUN_ALL_TESTS%'=='1' %COMPFOLD% after.ref after.generated
-if errorlevel 1 goto failed
-goto passed
+:run_test test_file
+    set test_name=%~n1
+    set test_file=%~f1
+    set /A total_tests=%total_tests%+1
 
+    if not exist "%test_file%" (
+        echo Error: Cannot find the test file `%test_file%`.
+        echo.
+    )
+
+    ::::::::::::::::::::::::
+    :: DISPLAY TEST START ::
+    ::::::::::::::::::::::::
+    "%echoc%" 0 7 "Running %test_name%... "
+
+    ::::::::::::::::
+    :: UNCOMPRESS ::
+    ::::::::::::::::
+    if exist "%test_name%" (
+        rmdir /s /q "%test_name%" || (
+            call :failed
+            echo Command failed: rmdir "%test_name%"
+            goto :eof
+        )
+    )
+    "%unzip%" x "%test_file%" >NUL || (
+        call :failed
+        echo Command failed: 7za.exe x %test_name%.7z
+        goto :eof
+    )
+    pushd "%test_name%"
+
+    :::::::::::::::::::::::::::::::::::::::::::::::::
+    :: COPY THE FILES IN "BEFORE" TO A TEMP FOLDER ::
+    :::::::::::::::::::::::::::::::::::::::::::::::::
+    robocopy /MIR /R:0 before after.generated >NUL
+    if errorlevel 4 (
+        call :failed
+        echo Command failed: robocopy /MIR before after.generated
+        popd
+        goto :eof
+    )
+
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::
+    :: RENAME USING OUR FILTER                        ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::
+    "%renameit%" /x /f filter.rit after.generated /r /a || (
+        call :failed
+        echo Rename-It! returned error code: %ERRORLEVEL%
+        popd
+        goto :eof
+    )
+
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::
+    :: COMPARE THE RESULT WITH THE EXPECTED RESULT    ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::
+    "%compfold%" after.ref after.generated >NUL
+    if errorlevel 1 (
+        call :failed
+        if not "%IN_RUN_ALL_TESTS%" == "1" (
+            "%compfold%" after.ref after.generated
+            echo.
+        )
+        popd
+        goto :eof
+    )
+
+    call :passed
+    popd
+    rmdir /s /q "%test_name%"
+    goto :eof
+ 
 :passed
-cd ..
-rmdir /s /q "%TEST_NAME%"
-color 2
-if '%IN_RUN_ALL_TESTS%'=='1' echo                                         [PASSED]
-if not '%IN_RUN_ALL_TESTS%'=='1' echo.
-if not '%IN_RUN_ALL_TESTS%'=='1' echo *** No errors detected
-goto end
+    "%echoc%" 0 10 [PASSED]
+    echo.
+    exit /B 0
 
 :failed
-cd ..
-set /A FAILED_TESTS=%FAILED_TESTS%+1
-color c
-if '%IN_RUN_ALL_TESTS%'=='1' echo                                         [FAILED]
-if not '%IN_RUN_ALL_TESTS%'=='1' echo.
-if not '%IN_RUN_ALL_TESTS%'=='1' echo *** errors detected in test suite; see standard output for details
-goto end
-
-:end
-echo.
-if not '%IN_RUN_ALL_TESTS%'=='1' pause
+    set /A failed_tests=%failed_tests%+1
+    "%echoc%" 0 12 [FAILED]
+    echo.
+    exit /B 0
