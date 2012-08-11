@@ -16,10 +16,8 @@
 // Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
-#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,7 +68,7 @@ IDI_WIN_ERROR           ICON                    "res\\WinError.ico"
 // Toolbar
 //
 
-IDR_FILTERS_TOOLBAR TOOLBAR  16, 15
+IDR_FILTERS_TOOLBAR TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILTERS_CHANGECASE
     BUTTON      ID_FILTERS_APPEND
@@ -84,13 +82,11 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -107,7 +103,7 @@ BEGIN
     LTEXT           "Rename-It! version 4 Alpha",IDC_STATIC,40,10,119,8,SS_NOPREFIX
     EDITTEXT        IDC_WEB_EDIT,40,27,135,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     EDITTEXT        IDC_DEV_EDIT,40,41,63,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "This build will stop working on 31/10/2008, and will need to be replaced with a later release.",IDC_STATIC,40,70,170,25,SS_NOPREFIX
+    LTEXT           "This build will stop working on 31/12/2012, and will need to be replaced with a later release.",IDC_STATIC,40,70,170,25,SS_NOPREFIX
 END
 
 IDD_RENAMEIT_DIALOG DIALOGEX 0, 0, 237, 178
@@ -314,7 +310,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -471,7 +467,7 @@ END
 // Menu
 //
 
-IDR_MAINMENU MENU 
+IDR_MAINMENU MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -501,7 +497,7 @@ BEGIN
     END
 END
 
-IDR_SEARCH_WILD MENU 
+IDR_SEARCH_WILD MENU
 BEGIN
     POPUP "Search Wildcard"
     BEGIN
@@ -510,7 +506,7 @@ BEGIN
     END
 END
 
-IDR_SEARCH_REGEXP MENU 
+IDR_SEARCH_REGEXP MENU
 BEGIN
     POPUP "Search RegExp"
     BEGIN
@@ -533,7 +529,7 @@ BEGIN
     END
 END
 
-IDR_REPLACE MENU 
+IDR_REPLACE MENU
 BEGIN
     POPUP "Replace macros"
     BEGIN
@@ -606,7 +602,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About Rename-It!..."
     IDS_ADDDIR              "`%1` is a folder.\nDo you want to include all its subfolders and files?"
@@ -623,7 +619,7 @@ BEGIN
                             "The file/folder could not be renamed like that."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_NO_FILENAME_CHANGES "No file has to be renamed."
     IDS_RENAMED_ALL         "Done:\n%d files renamed."
@@ -643,7 +639,7 @@ BEGIN
     IDS_MENU_MOVE_UP        "Move &up"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_MENU_MOVE_DOWN      "Move &down"
     IDS_MENU_REMOVE         "Remove from list\tDel"
@@ -665,7 +661,7 @@ BEGIN
     IDS_MENU_REFRESH        "&Refresh\tF5"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_RENAME_LIST         "Rename list"
     IDS_FILE_ALREADY_EXIST  "File already in the list"
@@ -687,7 +683,7 @@ BEGIN
     IDS_COLUMN_ERROR_MESSAGE "Error message"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_REPORT_ERROR_DETECTED 
                             "Some problems have been detected that may affect your renaming. No file has been renamed yet.\n\nPlease take a look and fix the errors before continuing."
@@ -712,7 +708,7 @@ BEGIN
                             "Risky file name: Spaces before or after the file name should be avoided."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_SEARCH_AND_REPLACE  "Searc&h and replace"
     IDS_DESCR_ID3           "ID3Tag Reader: "
@@ -724,7 +720,7 @@ BEGIN
     IDS_DESCR_REPLACE       "Replace"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_DESCR_WITH          "with"
     IDS_DESCR_MATCH_CASE    "match case"
@@ -739,7 +735,7 @@ BEGIN
     IDS_TT_ONCE             "Replace one once for each element to rename"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CMDLINE_FILTER_FILE_MISSING 
                             "The filter file is not specified in the command-line."
@@ -748,7 +744,7 @@ BEGIN
     IDS_CMDLINE_NO_FILTER   "To rename from the command-line, you have to specify a valid filter file."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_PGRS_CHECK_CAPTION  "Stage 1: Checking..."
     IDS_PGRS_PREREN_CAPTION "Stage 2: Preparing renaming..."
@@ -756,7 +752,7 @@ BEGIN
     IDS_PGRS_TITLE          "Renaming Progress"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_LONGUER_THAN_MAX_PATH 
                             "Risky file name: The full path's length exceeds 260 characters limit. Some application may not support it."
@@ -778,7 +774,7 @@ BEGIN
     IDS_CANNOT_CHANGE_ROOT  "Cannot rename a directory from one drive to another."
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -786,10 +782,8 @@ END
 // French (France) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-#ifdef _WIN32
 LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -841,7 +835,7 @@ BEGIN
     LTEXT           "Rename-It! version 4 Alpha",IDC_STATIC,40,10,119,8,SS_NOPREFIX
     EDITTEXT        IDC_WEB_EDIT,40,27,136,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     EDITTEXT        IDC_DEV_EDIT,40,41,66,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "Ce logiciel cessera de fonctionner le 31/10/2008, et devra être remplacé par une version plus récente.",IDC_STATIC,40,67,170,28,SS_NOPREFIX
+    LTEXT           "Ce logiciel cessera de fonctionner le 31/12/2012, et devra être remplacé par une version plus récente.",IDC_STATIC,40,67,170,28,SS_NOPREFIX
 END
 
 IDD_CONFIGURE DIALOGEX 0, 0, 192, 100
@@ -1071,7 +1065,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_RENAMEIT_DIALOG, DIALOG
     BEGIN
@@ -1210,7 +1204,7 @@ END
 // Menu
 //
 
-IDR_MAINMENU MENU 
+IDR_MAINMENU MENU
 BEGIN
     POPUP "&Fichier"
     BEGIN
@@ -1240,7 +1234,7 @@ BEGIN
     END
 END
 
-IDR_SEARCH_WILD MENU 
+IDR_SEARCH_WILD MENU
 BEGIN
     POPUP "Search Wildcard"
     BEGIN
@@ -1249,7 +1243,7 @@ BEGIN
     END
 END
 
-IDR_SEARCH_REGEXP MENU 
+IDR_SEARCH_REGEXP MENU
 BEGIN
     POPUP "Search RegExp"
     BEGIN
@@ -1272,7 +1266,7 @@ BEGIN
     END
 END
 
-IDR_REPLACE MENU 
+IDR_REPLACE MENU
 BEGIN
     POPUP "Replace macros"
     BEGIN
@@ -1313,7 +1307,7 @@ BEGIN
     END
 END
 
-IDR_FILTERS_MENU MENU 
+IDR_FILTERS_MENU MENU
 BEGIN
     POPUP "Filters"
     BEGIN
@@ -1396,7 +1390,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "À &propos de Rename-It!..."
     IDS_ADDDIR              "%1 est un dossier.\nVoulez-vous ajouter tous ses fichiers et sous-dossiers?"
@@ -1413,7 +1407,7 @@ BEGIN
                             "Le fichier/dossier n'a pas pu être renommé ainsi."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_NO_FILENAME_CHANGES "Aucun fichier à renommer."
     IDS_RENAMED_ALL         "Terminé:\n%d fichiers renommés."
@@ -1433,7 +1427,7 @@ BEGIN
     IDS_MENU_MOVE_UP        "Déplacer vers le &haut"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_MENU_MOVE_DOWN      "Déplacer vers le &bas"
     IDS_MENU_REMOVE         "Retirer de la liste\tDel"
@@ -1455,7 +1449,7 @@ BEGIN
     IDS_MENU_REFRESH        "&Rafraîchir\tF5"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_RENAME_LIST         "Renommer la liste"
     IDS_FILE_ALREADY_EXIST  "Fichier déjà présent dans la liste"
@@ -1477,7 +1471,7 @@ BEGIN
     IDS_COLUMN_ERROR_MESSAGE "Message d'erreur"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_REPORT_ERROR_DETECTED 
                             "Des problèmes qui pourraient affecter le renommage des fichiers ont été détectés. Aucun fichier n'a été renommé pour l'instant.\n\nVeuillez vérifier et corriger les erreurs avant de continuer."
@@ -1502,7 +1496,7 @@ BEGIN
                             "Nom de fichier à risque: Éviter les espaces en début ou fin de fichier."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_SEARCH_AND_REPLACE  "C&hercher et remplacer"
     IDS_DESCR_ID3           "Lecteur Tag ID3: "
@@ -1514,7 +1508,7 @@ BEGIN
     IDS_DESCR_REPLACE       "Remplace"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_DESCR_WITH          "par"
     IDS_DESCR_MATCH_CASE    "respecter la case"
@@ -1529,7 +1523,7 @@ BEGIN
     IDS_TT_ONCE             "N'effectue qu'au plus un seul remplacement pour chaque élément à renommer."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CMDLINE_FILTER_FILE_MISSING 
                             "Le fichier filtre à charger n'est pas spécifié dans la ligne de commande."
@@ -1538,7 +1532,7 @@ BEGIN
     IDS_CMDLINE_NO_FILTER   "Pour renommer depuis la ligne de commande, vous devez spécifier un fichier de filtres valide."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_PGRS_CHECK_CAPTION  "Phase 1: Vérification..."
     IDS_PGRS_PREREN_CAPTION "Phase 2: Prépartion du renommage..."
@@ -1546,7 +1540,7 @@ BEGIN
     IDS_PGRS_TITLE          "Progression du renommage"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_LONGUER_THAN_MAX_PATH 
                             "Nom de fichier à risque: Le chemin vers le fichier atteint la limite des 260 caractères. Certaines applications peuvent ne pas le supporter."

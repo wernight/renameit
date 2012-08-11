@@ -35,6 +35,9 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ExceptionCatcher.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RenameIt.rc">
@@ -53,6 +56,78 @@
     </None>
     <None Include="hlp\HIDD_ROOT_DIALOG.htm">
       <Filter>HTML Help Topics</Filter>
+    </None>
+    <None Include="res\lien.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\down.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\new.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\prop.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\up.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\save.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\open.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\add folder.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\add files.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\delete all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\unselect all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\inverse selection.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\select all.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\wiz_toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RenameIt.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\removed.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ok.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\conflict.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bad name.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\badname.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\renamer.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\WinError.ico">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

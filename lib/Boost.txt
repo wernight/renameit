@@ -5,11 +5,24 @@ HOME SITE:	http://www.boost.org/
 DOWNLOAD (Win):	http://www.boostpro.com/download
 
 
-To install Boost:
+Installation
+------------
+
+There are two ways, choose one.
+
+Install Boost via Boost Computing setup:
+
+ 1. Download it on http://www.boostpro.com/download/
+ 2. During the setup wizard, check at least:
+      - Multithreaded
+      - Multithreaded debug
+ 3. Done
+
+Manually:
 
  1. Download and extract it.
-
  2. Compile Boost required components (signals, test framework):
      a) Open command prompt in Boost folder (where you extracted it).
-     c) bootstrap.bat
-     d) bjam --with-signals --with-test --build-type=complete --toolset=msvc-10.0 --libdir=lib\x86 install
+     c) `bootstrap.bat`
+     d) `bjam --with-signals --with-test --build-type=complete --toolset=msvc-10.0 --libdir=lib\x86 install`
+ 3. Add path in Visual Studio

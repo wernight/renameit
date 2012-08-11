@@ -48,6 +48,9 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -64,8 +67,8 @@
     </Link>
     <PostBuildEvent>
       <Message>Run tests...</Message>
-      <Command>copy /Y "$(TargetPath)" "$(ProjectDir)test" &gt;NUL
-"$(ProjectDir)test\run.cmd"
+      <Command>copy /Y "$(TargetPath)" "$(ProjectDir)test" &gt;NUL || exit 1
+"$(ProjectDir)test\run_test.cmd"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -84,8 +87,8 @@
     </Link>
     <PostBuildEvent>
       <Message>Run tests...</Message>
-      <Command>copy /Y "$(TargetPath)" "$(ProjectDir)test" &gt;NUL
-"$(ProjectDir)test\run.cmd"
+      <Command>copy /Y "$(TargetPath)" "$(ProjectDir)test" &gt;NUL || exit 1
+"$(ProjectDir)test\run_test.cmd"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

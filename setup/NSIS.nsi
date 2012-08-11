@@ -3,7 +3,7 @@
 ;NSIS Script For Rename-It!
 
   !define PRODUCT "Rename-It!"  ;Define your own software name here
-  !define VERSION "4iter5"    ;Define your own software version here
+  !define VERSION "4iter6"    ;Define your own software version here
 
 ;--------------------------------
 ;Include Modern UI
@@ -78,18 +78,15 @@ Section "!${PRODUCT}" SecProduct
 
   ; Install
   SetOutPath "$INSTDIR"
-  File "..\build\Rename-It!\Release\RenameIt.exe"
+  File "..\build\bin\Rename-It! Application\Release\RenameIt.exe"
+  File "..\build\bin\Rename-It! Application\Release\id3lib.dll"
+  File "..\build\bin\Rename-It! Application\Release\pcre3.dll"
+  File "..\build\bin\Rename-It! Application\Release\BugTrapU.dll"
+  File "..\build\bin\Rename-It! Application\Release\dbghelp.dll"
   File "..\apps\Rename-It!\RenameIt.chm"
-
-  ; Other install files (not depending to OS)
-  SetOutPath "$INSTDIR"
-  File "id3lib.dll"
-  File "pcre3.dll"
-  File "..\apps\Rename-It!\lib\BugTrap\BugTrap\BugTrapU.dll"
-  File "..\apps\Rename-It!\lib\BugTrap\BugTrap\dbghelp.dll"
+  File "..\build\Tutorials\Tutorial.exe"
   File "History.txt"
   File "gpl.txt"
-  File "..\build\Tutorials\Tutorial.exe"
   SetOutPath "$INSTDIR\Filters"
   File "Filters\*.rit"
 
@@ -116,7 +113,7 @@ Section "Shell Incorporation" SecShell
   SetOutPath "$INSTDIR"
 
   ; Install Shell context menu
-  File /oname=SimpleExt.dl_ "..\build\SimpleExt\Release MinDependency\SimpleExt.dll"
+  File /oname=SimpleExt.dl_ "..\build\bin\SimpleExt\Release MinDependency\SimpleExt.dll"
 
   ; Rename the file to the correct name
   Rename /REBOOTOK "$INSTDIR\SimpleExt.dl_" "$INSTDIR\SimpleExt.dll"

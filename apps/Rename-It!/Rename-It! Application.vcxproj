@@ -41,9 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\build\Rename-It!\$(Configuration)\</OutDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\build\Rename-It!\$(Configuration)\</OutDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -54,6 +52,8 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RenameIt</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RenameIt</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Command>
@@ -66,7 +66,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -87,11 +87,16 @@
       <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>Copy BugTrap to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
-      <Command>copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL
-copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,7 +111,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NU
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -128,11 +133,16 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NU
       <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Message>Copy BugTrap to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
-      <Command>copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL
-copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
 
-copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NUL</Command>
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,6 +160,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)..\test\$(TargetName)$(TargetExt)" &gt;NU
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ExceptionCatcher.h" />
     <ClInclude Include="src\RenameIt.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
@@ -181,6 +192,30 @@ copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &
     <None Include="hlp\HIDD_ROOT_DIALOG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="res\add files.bmp" />
+    <None Include="res\add folder.bmp" />
+    <None Include="res\bad name.ico" />
+    <None Include="res\badname.ico" />
+    <None Include="res\conflict.ico" />
+    <None Include="res\delete all.bmp" />
+    <None Include="res\delete.bmp" />
+    <None Include="res\down.bmp" />
+    <None Include="res\error.ico" />
+    <None Include="res\inverse selection.bmp" />
+    <None Include="res\lien.cur" />
+    <None Include="res\new.bmp" />
+    <None Include="res\ok.ico" />
+    <None Include="res\open.bmp" />
+    <None Include="res\prop.bmp" />
+    <None Include="res\removed.ico" />
+    <None Include="res\RenameIt.ico" />
+    <None Include="res\renamer.ico" />
+    <None Include="res\save.bmp" />
+    <None Include="res\select all.bmp" />
+    <None Include="res\unselect all.bmp" />
+    <None Include="res\up.bmp" />
+    <None Include="res\WinError.ico" />
+    <None Include="res\wiz_toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
