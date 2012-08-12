@@ -1,2 +1,3 @@
-Contains files that are relevant to the environment for a project or application. 
-This directory may contain database SQL files, or any other files that are used to configure a container for a project or application.
+This directory contains files that are relevant or used to deploy and set up the application on a customer's machine.
+
+It uses [NSIS - Nullsoft Script Install System](http://nsis.sourceforge.net/) to generate the installer.
