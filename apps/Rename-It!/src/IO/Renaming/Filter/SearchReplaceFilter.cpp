@@ -510,7 +510,8 @@ bool CSearchReplaceFilter::CompileRegExp()
 			// Change the Wildcard into a RegExp.
 			EscapeRegExp(strSearch);
 			strSearch.Replace(_T("\\?"), _T("."));
-			strSearch.Replace(_T("\\*"), _T("(.*)"));
+			strSearch.Replace(_T("\\*\\*"), _T("(.*)"));
+			strSearch.Replace(_T("\\*"), _T("([^\\\\]*)"));
 
 			// Match whole text?
 			if (m_bMatchWholeText)
