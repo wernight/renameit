@@ -22,7 +22,7 @@ struct CPathFixture
 		m_pathNetwork(_T("\\\\Network\\ShareName\\ParentFolder\\..Sub.Folder\\.File.Name.Extension")),
 		m_pathNetworkUnc(_T("\\\\?\\UNC\\Network\\Share Name\\Parent Folder\\..Sub.Folder\\.File.Name.Extension")),
 		m_pathSimpleDirectory(_T("C:\\ParentFolder\\..Sub.Folder\\")),
-		m_pathNetworkFileNoExtUnc(_T("\\\\?\\UNC\\Network\\ShareName\\File")),
+		m_pathNetworkFileNoExtUnc(_T("\\\\?\\UNC\\Network\\Share.Name\\File")),
 		m_pathNetworkExtNoFile(_T("\\\\UNC\\.ShareName\\.ext"))
 	{
 	}
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(GetPath)
 	BOOST_CHECK_EQUAL( m_pathNetwork.GetPath(), _T("\\\\Network\\ShareName\\ParentFolder\\..Sub.Folder\\.File.Name.Extension") );
 	BOOST_CHECK_EQUAL( m_pathNetworkUnc.GetPath(), _T("\\\\?\\UNC\\Network\\Share Name\\Parent Folder\\..Sub.Folder\\.File.Name.Extension") );
 	BOOST_CHECK_EQUAL( m_pathSimpleDirectory.GetPath(), _T("C:\\ParentFolder\\..Sub.Folder") );
-	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetPath(), _T("\\\\?\\UNC\\Network\\ShareName\\File") );
+	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetPath(), _T("\\\\?\\UNC\\Network\\Share.Name\\File") );
 	BOOST_CHECK_EQUAL( m_pathNetworkExtNoFile.GetPath(), _T("\\\\UNC\\.ShareName\\.ext") );
 }
 
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(GetPathRoot)
 	BOOST_CHECK_EQUAL( m_pathNetwork.GetPathRoot(), _T("\\\\Network\\ShareName\\") );
 	BOOST_CHECK_EQUAL( m_pathNetworkUnc.GetPathRoot(), _T("\\\\?\\UNC\\Network\\Share Name\\") );
 	BOOST_CHECK_EQUAL( m_pathSimpleDirectory.GetPathRoot(), _T("C:\\") );
-	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetPathRoot(), _T("\\\\?\\UNC\\Network\\ShareName\\") );
+	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetPathRoot(), _T("\\\\?\\UNC\\Network\\Share.Name\\") );
 	BOOST_CHECK_EQUAL( m_pathNetworkExtNoFile.GetPathRoot(), _T("\\\\UNC\\.ShareName\\") );
 }
 
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(GetDirectoryName)
 	BOOST_CHECK_EQUAL( m_pathNetwork.GetDirectoryName(), _T("\\\\Network\\ShareName\\ParentFolder\\..Sub.Folder\\") );
 	BOOST_CHECK_EQUAL( m_pathNetworkUnc.GetDirectoryName(), _T("\\\\?\\UNC\\Network\\Share Name\\Parent Folder\\..Sub.Folder\\") );
 	BOOST_CHECK_EQUAL( m_pathSimpleDirectory.GetDirectoryName(), _T("C:\\ParentFolder\\") );
-	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetDirectoryName(), _T("\\\\?\\UNC\\Network\\ShareName\\") );
+	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetDirectoryName(), _T("\\\\?\\UNC\\Network\\Share.Name\\") );
 	BOOST_CHECK_EQUAL( m_pathNetworkExtNoFile.GetDirectoryName(), _T("\\\\UNC\\.ShareName\\") );
 }
 
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(GetFileNameWithoutExtension)
 	BOOST_CHECK_EQUAL( m_pathNetworkUnc.GetFileNameWithoutExtension(), _T(".File.Name") );
 	BOOST_CHECK_EQUAL( m_pathSimpleDirectory.GetFileNameWithoutExtension(), _T("..Sub") );
 	BOOST_CHECK_EQUAL( m_pathNetworkFileNoExtUnc.GetFileNameWithoutExtension(), _T("File") );
-	BOOST_CHECK( m_pathNetworkExtNoFile.GetFileNameWithoutExtension().IsEmpty() );
+	BOOST_CHECK_EQUAL( m_pathNetworkExtNoFile.GetFileNameWithoutExtension(), _T(".ext") );
 }
 
 BOOST_AUTO_TEST_CASE(GetExtension)
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(GetExtension)
 	BOOST_CHECK_EQUAL( m_pathNetworkUnc.GetExtension(), _T(".Extension") );
 	BOOST_CHECK_EQUAL( m_pathSimpleDirectory.GetExtension(), _T(".Folder") );
 	BOOST_CHECK( m_pathNetworkFileNoExtUnc.GetExtension().IsEmpty() );
-	BOOST_CHECK_EQUAL( m_pathNetworkExtNoFile.GetExtension(), _T(".ext") );
+	BOOST_CHECK( m_pathNetworkExtNoFile.GetExtension().IsEmpty() );
 }
 
 BOOST_AUTO_TEST_CASE(PathFileExists)

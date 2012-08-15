@@ -363,7 +363,7 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				&& m_strPath.GetLength() > m_nPathRootLength)
 				m_strPath = m_strPath.Left(m_strPath.GetLength() - 1);
 
-			// Split the path into components.
+			// Split the path into components: base + filename + ext.
 			m_nExtensionLength = 0;
 			m_nFileNameFirst = m_strPath.GetLength();
 			LPCTSTR pszPath = m_strPath;
@@ -373,12 +373,14 @@ namespace Beroux{ namespace IO{ namespace Renaming
 				switch (*pch)
 				{
 				case '.':
-					if (m_nExtensionLength == 0)
+					// If the extension hasn't been set, and it's not the a filename starting by a dot (.).
+					if (m_nExtensionLength == 0 && (pch == pszPath || *(pch - 1) != '\\'))
 						m_nExtensionLength = (int)(pchEnd - pch);
 					break;
 
 				case '\\':
 					m_nFileNameFirst = (int)(pch - pszPath) + 1;
+					// Exit the for loop.
 					goto loop_exit;
 				}
 			}

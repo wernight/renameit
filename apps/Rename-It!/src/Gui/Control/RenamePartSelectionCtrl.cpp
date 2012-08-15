@@ -71,7 +71,7 @@ void CRenamePartSelectionCtrl::PreSubclassWindow()
 			nPosFilenameStart = nPosDirPathEnd + 1,
 			nPosFilenameEnd = strCaption.ReverseFind('.'),
 
-			nPosExtStart = nPosFilenameEnd + 1,
+			nPosExtStart = nPosFilenameEnd,
 			nPosExtEnd = strCaption.GetLength();
 
 	// Order selections so that the smallest selection area are used first.

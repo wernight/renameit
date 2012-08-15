@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(GetSingleFilteredSubstring)
 		BOOST_CHECK_EQUAL("ParentFolder\\..Sub.Folder\\.File.Name.Extension", CFilteredPath(path, CFilteredPath::renameFoldersPath).GetFilteredSubstring());
 		BOOST_CHECK_EQUAL(".File.Name.Extension", CFilteredPath(path, CFilteredPath::renameLastFolder).GetFilteredSubstring());
 		BOOST_CHECK_EQUAL(".File.Name", CFilteredPath(path, CFilteredPath::renameFilename).GetFilteredSubstring());
-		BOOST_CHECK_EQUAL("Extension", CFilteredPath(path, CFilteredPath::renameExtension).GetFilteredSubstring());
+		BOOST_CHECK_EQUAL(".Extension", CFilteredPath(path, CFilteredPath::renameExtension).GetFilteredSubstring());
 	}
 
 	// Single parts of a directory path.
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(GetSingleFilteredSubstring)
 		BOOST_CHECK_EQUAL("ParentFolder\\..Sub.Folder\\.Directory.Name.Extension", CFilteredPath(path, CFilteredPath::renameFoldersPath).GetFilteredSubstring());
 		BOOST_CHECK_EQUAL(".Directory.Name.Extension", CFilteredPath(path, CFilteredPath::renameLastFolder).GetFilteredSubstring());
 		BOOST_CHECK_EQUAL(".Directory.Name", CFilteredPath(path, CFilteredPath::renameFilename).GetFilteredSubstring());
-		BOOST_CHECK_EQUAL("Extension", CFilteredPath(path, CFilteredPath::renameExtension).GetFilteredSubstring());
+		BOOST_CHECK_EQUAL(".Extension", CFilteredPath(path, CFilteredPath::renameExtension).GetFilteredSubstring());
 	}
 }
 

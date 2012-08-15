@@ -152,7 +152,7 @@ namespace Beroux{ namespace IO{ namespace Renaming{ namespace Filter
 				{
 					// Only the extension is being renamed.
 					ASSERT(filteredPart == renameExtension);
-					m_nBegin = m_strPath.GetLength() - std::max<int>(m_nExtensionLength - 1, 0);
+					m_nBegin = m_strPath.GetLength() - m_nExtensionLength;
 				}
 
 				// Find the last character of the filtered substring.
