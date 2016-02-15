@@ -217,7 +217,10 @@
 #define IDC_SEARCH_RICHEDIT             1130
 #define IDC_REPLACE_RICHEDIT            1131
 #define IDC_DEV_EDIT                    1132
+#define IDC_WEB_SO_ON_DEM               1133
 #define IDC_PROGRESS1                   1134
+#define IDC_WEB_SO_ON_DEM2              1134
+#define IDC_DEV_SO_ON_DEM               1134
 #define IDC_PROGRESS2                   1135
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136
@@ -286,7 +289,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        222
+#define _APS_NEXT_RESOURCE_VALUE        235
 #define _APS_NEXT_COMMAND_VALUE         32863
 #define _APS_NEXT_CONTROL_VALUE         1139
 #define _APS_NEXT_SYMED_VALUE           104

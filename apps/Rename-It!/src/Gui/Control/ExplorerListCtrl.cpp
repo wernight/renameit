@@ -46,7 +46,7 @@
 //	class.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "ExplorerListCtrl.h"
 
 #ifdef _DEBUG
@@ -64,6 +64,7 @@ namespace Gui{ namespace Control
 // CExplorerListCtrl
 
 CExplorerListCtrl::CExplorerListCtrl() :
+	
 	m_nDropIndex(-1),
 	m_pDragImage(NULL),
 	m_nPrevDropIndex(-1),
@@ -71,6 +72,7 @@ CExplorerListCtrl::CExplorerListCtrl() :
 	m_uScrollTimer(0),
 	m_ScrollDirection(scrollNull),
 	m_dwStyle(NULL)
+	
 {
 }
 
@@ -516,7 +518,7 @@ void CExplorerListCtrl::DropItem()
 	}
 }
 
-void CExplorerListCtrl::OnTimer(UINT nIDEvent) 
+void CExplorerListCtrl::OnTimer(UINT_PTR nIDEvent) 
 {
 	if (nIDEvent == SCROLL_TIMER_ID && m_pDragImage)
 	{

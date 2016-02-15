@@ -26,20 +26,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SimpleExt.def">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="Menu.bmp">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="SimpleShlExt.rgs">
       <Filter>Resource Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Midl Include="SimpleExt.idl">
+    <None Include="SimpleExt_x64.def">
       <Filter>Source Files</Filter>
-    </Midl>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SimpleExt.rc">
@@ -59,5 +54,10 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="SimpleExt_x64.idl">
+      <Filter>Source Files</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

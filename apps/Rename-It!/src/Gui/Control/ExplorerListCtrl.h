@@ -2,6 +2,8 @@
 
 // DragDropListCtrl.h : header file
 //
+#include <windows.h>
+#include <afxcmn.h>
 
 #define NM_ELMOVEDITEM	0x002001
 struct NMELMOVEITEM
@@ -68,7 +70,7 @@ namespace Gui{ namespace Control
 		afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 		afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
-		afx_msg void OnTimer(UINT nIDEvent);
+		afx_msg void OnTimer(UINT_PTR nIDEvent);
 		afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 		afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 		//}}AFX_MSG

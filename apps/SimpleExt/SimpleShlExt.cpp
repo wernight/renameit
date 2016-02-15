@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>		// Used for auto_ptr
 
+
 typedef std::wstring tstring;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -25,59 +26,120 @@ CSimpleShlExt::~CSimpleShlExt()
 }
 
 
-HRESULT CSimpleShlExt::Initialize (LPCITEMIDLIST pidlFolder,
-								   LPDATAOBJECT pDataObj,
-								   HKEY hProgID )
+HRESULT CSimpleShlExt::Initialize(LPCITEMIDLIST pidlFolder,
+	LPDATAOBJECT pDataObj,
+	HKEY hProgID)
 {
-	LPTSTR		lpszBuffer;
+	
+	
+	USES_CONVERSION;
+
+	
 	FORMATETC	fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM	stg = { TYMED_HGLOBAL };
 	HDROP		hDrop;
 	UINT		uNumFiles,
-				i;				
+		i;
 
 	// Look for CF_HDROP data in the data object.
-	if (FAILED( pDataObj->GetData(&fmt, &stg) ))
+	if (FAILED(pDataObj->GetData(&fmt, &stg)))
 		// Nope! Return an "invalid argument" error back to Explorer.
 		return E_INVALIDARG;
 
 	// Get a pointer to the actual data.
-	hDrop = (HDROP) GlobalLock ( stg.hGlobal );
+	hDrop = (HDROP)GlobalLock(stg.hGlobal);
 
 	// Make sure it worked.
 	if (hDrop == NULL)
 		return E_INVALIDARG;
 
+	
 	// Get the number of files selected
 	// and make sure there is at least one file
-	if ((uNumFiles = DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0 )) == 0)
+	if ((uNumFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0)) == 0)
 	{
-		GlobalUnlock( stg.hGlobal );
-		ReleaseStgMedium( &stg );
+		GlobalUnlock(stg.hGlobal);
+		ReleaseStgMedium(&stg);
 		return E_INVALIDARG;
 	}
 
+	
 	// Create buffer
 	if (m_szFiles != NULL)
-		delete [] m_szFiles;
+	{
+	
+	delete[] m_szFiles;
+    
+	}
+	
 	m_nFilesLength = 1;
-	for (i=0; i<uNumFiles; ++i)
+	
+	for (i = 0; i < uNumFiles; ++i)
+	{
 		m_nFilesLength += DragQueryFile(hDrop, i, NULL, 0) + 1;
-	lpszBuffer = m_szFiles = new TCHAR[m_nFilesLength];
+		
+	}
+	
+	
+	//LPWSTR buffer length assignment
+	m_szFiles = new TCHAR[m_nFilesLength + 1];
+
+	
+
 	if (m_szFiles == NULL)
 	{
+			
 		GlobalUnlock( stg.hGlobal );
 		ReleaseStgMedium( &stg );
 		return E_INVALIDARG;
 	}
 
-	// Append all files into the buffer seperated by '\0'.
+	
+	
+
+	// Append all file names seperated by '\0'.
 	for (i=0; i<uNumFiles; ++i)
 	{
-		lpszBuffer += DragQueryFile(hDrop, i, lpszBuffer, MAX_PATH);
-		*lpszBuffer++ = _T('\0');
+		
+		
+		DragQueryFile(reinterpret_cast<HDROP>(stg.hGlobal), i, m_szFiles, MAX_PATH); // assign current filename to m_szFiles buffer
+		
+		
+		
+		m_strFilesBuff += m_szFiles; // append current file name to m_strFilesBuff ATL CString
+		
+		m_strFilesBuff += _T('\0'); // append nullchar at the end of every filename
+
+		
+		
 	}
-	*lpszBuffer = _T('\0');	// End by a double '\0'.
+
+	
+	m_strFilesBuff += _T('\0'); // double nullchar at the end of buffer;
+		
+
+	
+	//reset LPWSTR pointer
+	
+	if (m_szFiles != NULL)
+	{
+		delete[] m_szFiles;
+	}
+
+	// get total length of current concatenated ATL CString, nullchars included
+	UINT nLen = m_strFilesBuff.GetLength();  
+
+	m_szFiles = new TCHAR[nLen]; // allocate memory for current buffer size
+
+		
+	// fills the buffer without using conversion functions, this avoids any memory problems
+	for (int i = 0; i < nLen; i++)
+	{
+		m_szFiles[i] = m_strFilesBuff[i];
+	}
+	
+	
+	
 
 	GlobalUnlock ( stg.hGlobal );
 	ReleaseStgMedium ( &stg );
@@ -102,7 +164,7 @@ HRESULT CSimpleShlExt::QueryContextMenu( HMENU hmenu, UINT  uMenuIndex,
 	return MAKE_HRESULT ( SEVERITY_SUCCESS, FACILITY_NULL, 1 );
 }
 
-HRESULT CSimpleShlExt::GetCommandString( UINT  idCmd,      UINT uFlags,
+HRESULT CSimpleShlExt::GetCommandString( UINT_PTR  idCmd,      UINT uFlags,
 										 UINT* pwReserved, LPSTR pszName,
 										 UINT  cchMax )
 {
@@ -135,6 +197,7 @@ HRESULT CSimpleShlExt::GetCommandString( UINT  idCmd,      UINT uFlags,
 
 HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 {
+	
 	STARTUPINFO startupInfo;
 	PROCESS_INFORMATION	processInformation;
 	TCHAR	szDir[MAX_PATH];
@@ -144,6 +207,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 			hDoneEvent,
 			hWait[2];
 	LPVOID	lpMapAddress;
+	
 	unsigned __int64 nMapSize = m_nFilesLength*sizeof(TCHAR);
 
 	// If lpVerb really points to a string, ignore this function call and bail out.
@@ -155,19 +219,25 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		return E_INVALIDARG;
 
 	// Get RenameIt.exe directory
-	if (::RegOpenKey(HKEY_LOCAL_MACHINE, _T("Software\\Rename-It!"), &hKey) != ERROR_SUCCESS)
+	
+	//if (::RegOpenKey(HKEY_CURRENT_USER, _T("Software\\Rename-It!"), &hKey) != ERROR_SUCCESS) // x86 registry key
+	if (::RegOpenKey(HKEY_LOCAL_MACHINE, _T("Software\\WOW6432Node\\Rename-It!"), &hKey) != ERROR_SUCCESS) // x64 registry keys are different
 	{
 		::MessageBox(pCmdInfo->hwnd, _T("Unable to open registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		
 		return S_OK;
 	}
 	dwSize = sizeof(szDir)/sizeof(szDir[0]);
 	if (::RegQueryValueEx(hKey, _T("ExeDir"), NULL, NULL, (LPBYTE)szDir, &dwSize) != ERROR_SUCCESS)
 	{
 		::MessageBox(pCmdInfo->hwnd, _T("Unable to read registry key.\nPlease re-install the application."), _T("Rename-It!"), MB_ICONERROR);
+		
 		return S_OK;
 	}
 	::RegCloseKey(hKey);
 
+
+	
 	// Create file mapping
 	tstring strMapFileName;
 	strMapFileName.reserve(32);
@@ -207,8 +277,12 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		::MessageBox(pCmdInfo->hwnd, _T("Could not map view of file."), _T("Rename-It!"), MB_ICONERROR);
 		return S_OK;
 	}
+	
+	
+	
 	memcpy(lpMapAddress, m_szFiles, nMapSize);
-
+	
+	
 	// Create event
 	tstring strEventName;
 	strEventName.reserve(32);
@@ -230,12 +304,18 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		::CloseHandle(hDoneEvent);
 	}
 
+	
+	
+
+
+
 	// Parameters
 	tstring strApplication;
 	strApplication.reserve(MAX_PATH);
 	strApplication = _T("\"");
 	strApplication += szDir;
 	strApplication += _T("\\RenameIt.exe\"");
+	
 
 	TCHAR szMaxSize[32];
 	_stprintf_s(szMaxSize, _T("%I64u"), nMapSize);
@@ -243,29 +323,44 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	tstring strCommandLine;
 	strCommandLine.reserve(MAX_PATH);
 	strCommandLine += strApplication;
-	strCommandLine += _T(" /$shell$ext$ ");
+	
+	/////////////////////////////////////////
+	
+	/*use this line if you are compiling for 4.x version*/
+	//strCommandLine += _T(" /$shell$ext$ ");
+	
+	
+	/*use this line if you are compiling for 3.42 version*/
+	strCommandLine += _T(" /f ");
+	
+	////////////////////////////////////////
+	
 	strCommandLine += strMapFileName;
 	strCommandLine += _T(":");
 	strCommandLine += szMaxSize;
 	strCommandLine += _T(":");
 	strCommandLine += strEventName;
 
+
 	// Lauch the program
 	ZeroMemory(&startupInfo, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
 
 	std::auto_ptr<TCHAR> szCommandLine(new TCHAR[strCommandLine.length() + 1]);
+	
 	_tcscpy(szCommandLine.get(), strCommandLine.c_str());
 
+	
+	
 	if (!::CreateProcess(NULL, szCommandLine.get(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation))
 	{
-		LPTSTR lpMsgBuf = NULL;
+		/*LPTSTR*/ LPWSTR lpMsgBuf = NULL;
 		DWORD dwError = GetLastError();
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL,
 			dwError,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &lpMsgBuf,
+			(/*LPTSTR*/ LPWSTR) &lpMsgBuf,
 			0,
 			NULL );
 
@@ -279,6 +374,7 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		}
 		else
 			::MessageBox(NULL, _T("Critical error."), _T("Rename-It!"), MB_ICONSTOP);
+			
 
 		return S_OK;
 	}
@@ -286,10 +382,40 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	// Wait
 	hWait[0] = processInformation.hProcess;
 	hWait[1] = hDoneEvent;
-	::WaitForMultipleObjects(sizeof(hWait)/sizeof(hWait[0]), hWait, FALSE, INFINITE);
-	::CloseHandle(processInformation.hThread);
+	//::WaitForMultipleObjects(sizeof(hWait)/sizeof(hWait[0]), hWait, FALSE, INFINITE);
+	
+	DWORD dwWait = ::WaitForMultipleObjects(sizeof(hWait) / sizeof(hWait[0]), hWait, FALSE, INFINITE);
+
+	//For debugging only:
+	switch (dwWait)
+	{
+	case WAIT_OBJECT_0 + 0:
+		//::MessageBox(NULL, L" event 0 signaled !", L"Debug signals", MB_OK);
+		break;
+
+	case WAIT_OBJECT_0 + 1:
+		//::MessageBox(NULL, L" event 1 signaled !", L"Debug signals", MB_OK);
+		break;
+
+	case WAIT_TIMEOUT:
+		//::MessageBox(NULL, L"TIMEOUT signal!", L"Debug signals", MB_OK);
+		break;
+
+	default:
+		//::MessageBox(NULL, L"Other problems !", L"Info", MB_OK);
+		break;
+
+	}
+
+	CloseHandle(hDoneEvent);
+	
+	
 	::CloseHandle(processInformation.hProcess);
+	::CloseHandle(processInformation.hThread);
+	
+
 	UnmapViewOfFile(lpMapAddress);
+	
 	return S_OK;
 }
 
@@ -303,14 +429,14 @@ void CSimpleShlExt::MyFormatMessage(UINT nResourceID, ...)
 	int nLength = ::LoadString((HINSTANCE)GetModuleHandle(NULL), nResourceID, lpStringBuf, sizeof(lpStringBuf)/sizeof(lpStringBuf[0]));
 
 	// Format the message.
-	LPTSTR lpMsgBuf = NULL;
+	/*LPTSTR*/ LPWSTR lpMsgBuf = NULL;
 	if (nLength > 0 &&
 		::FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_STRING,
 		lpStringBuf,
 		0,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR) &lpMsgBuf,
+		(/*LPTSTR*/ LPWSTR) &lpMsgBuf,
 		0,
 		&ap))
 	{
@@ -321,6 +447,7 @@ void CSimpleShlExt::MyFormatMessage(UINT nResourceID, ...)
 	}
 	else
 		::MessageBox(NULL, _T("Critical error!"), _T("Rename-It!"), MB_ICONSTOP);
+	
 
 	va_end(ap);
 }

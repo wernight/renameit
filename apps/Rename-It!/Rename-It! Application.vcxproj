@@ -1,19 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="x64|Win32">
+      <Configuration>x64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="x64|x64">
+      <Configuration>x64</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{927E31EC-B8C4-455B-8015-95AB8AB56375}</ProjectGuid>
     <RootNamespace>RenameItApplication</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -21,11 +38,40 @@
     <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -34,7 +80,23 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Rename-It!.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='x64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='x64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Rename-It!.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\Rename-It!.props" />
   </ImportGroup>
@@ -42,18 +104,40 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='x64|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='x64|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='x64|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='x64|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='x64|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='x64|x64'" />
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RenameIt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RenameIt</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RenameIt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RenameIt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">RenameIt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='x64|x64'">RenameIt</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64|Win32'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Command>
@@ -99,7 +183,141 @@ copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
 copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>BugTrapU.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
+
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>C:\local\boost_1_60_0;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\pcre\lib;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\id3lib\Release;src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>BugTrapU.lib;Rename-It!.lib;id3lib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Gipix\Desktop\renameit-master\build\bin\Rename-It!\Release;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\BugTrap\BugTrap;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\pcre\lib;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\id3lib\Release;lib\BugTrap\BugTrap;C:\local\boost_1_60_0\lib32-msvc-14.0</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
+
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>BugTrapU.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\BugTrap\BugTrap</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
+
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">
     <PreBuildEvent>
       <Command>
       </Command>
@@ -145,18 +363,62 @@ copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
 copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectReference Include="Rename-It!.vcxproj">
-      <Project>{bfcbd75e-78f5-4cab-8f43-63133ad647c0}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='x64|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <AdditionalIncludeDirectories>C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\pcre\lib;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\BugTrap;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\id3lib\Release;C:\Program Files\boost;src;lib\BugTrap\BugTrap;$(IncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>BugTrapU.lib;Rename-It!.lib;id3lib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\pcre\lib;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\id3lib\Release;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\BugTrap\BugTrap;lib\BugTrap\BugTrap;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\pcre;C:\Users\Gipix\Desktop\renameit-master\apps\Rename-It!\lib\id3lib;C:\Program Files\boost\libs;C:\Users\Gipix\Desktop\renameit-master\build\bin\Rename-It!\x64</AdditionalLibraryDirectories>
+      <AdditionalOptions>pcre.lib
+id3lib.lib %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copy DLLs to ouput and $(TargetName)$(TargetExt) to test folder...</Message>
+      <Command>:: Copy required DLLs to output directory.
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\BugTrapU.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\BugTrap\BugTrap\dbghelp.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\pcre\lib\pcre3.dll" "$(TargetDir)" &gt;NUL || exit 1
+copy /Y "$(ProjectDir)lib\id3lib\$(Configuration)\id3lib.dll" "$(TargetDir)" &gt;NUL || exit 1
+
+:: Copy files to the system test directory.
+copy /Y "$(TargetDir)*.exe" "$(SolutionDir)..\test" &gt;NUL || exit 1
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\RenameIt.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='x64|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,19 +434,47 @@ copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\test" &gt;NUL || exit 1</Command>
     <None Include="hlp\RenameIt.hhk" />
     <CustomBuild Include="hlp\RenameIt.hhp">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling HTML help...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compiling HTML help...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hhc.exe "%(FullPath)"
 if errorlevel 2 exit /B %errorlevel%
 if not errorlevel 1 exit /B 1
 copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">hhc.exe "%(FullPath)"
+if errorlevel 2 exit /B %errorlevel%
+if not errorlevel 1 exit /B 1
+copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling HTML help...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling HTML help...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">Compiling HTML help...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='x64|x64'">Compiling HTML help...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hhc.exe "%(FullPath)"
 if errorlevel 2 exit /B %errorlevel%
 if not errorlevel 1 exit /B 1
 copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">hhc.exe "%(FullPath)"
+if errorlevel 2 exit /B %errorlevel%
+if not errorlevel 1 exit /B 1
+copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">hhc.exe "%(FullPath)"
+if errorlevel 2 exit /B %errorlevel%
+if not errorlevel 1 exit /B 1
+copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
+</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='x64|x64'">hhc.exe "%(FullPath)"
+if errorlevel 2 exit /B %errorlevel%
+if not errorlevel 1 exit /B 1
+copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &gt;NUL
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='x64|x64'">$(ProjectDir)%(Filename).chm;%(Outputs)</Outputs>
     </CustomBuild>
     <None Include="hlp\HIDD_RENAMEIT_DIALOG.htm">
       <DeploymentContent>true</DeploymentContent>
@@ -216,6 +506,14 @@ copy /Y "%(RootDir)%(Directory)%(Filename).chm" "$(ProjectDir)%(Filename).chm" &
     <None Include="res\up.bmp" />
     <None Include="res\WinError.ico" />
     <None Include="res\wiz_toolbar.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Rename-It!.vcxproj">
+      <Project>{bfcbd75e-78f5-4cab-8f43-63133ad647c0}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
