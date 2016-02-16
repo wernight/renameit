@@ -96,7 +96,7 @@ BEGIN
             VALUE "FileDescription", "Rename-It! v3.42 Shell Extension for x64"
             VALUE "FileVersion", "4.1.1.1"
             VALUE "InternalName", "SimpleEx"
-            VALUE "LegalCopyright", "Copyright (C) J.Pischedda 2016"
+            VALUE "LegalCopyright", "Under Apache License"
             VALUE "OriginalFilename", "SimpleEx.dll"
             VALUE "ProductName", " SimpleEx Dynamic Link Library"
             VALUE "ProductVersion", "4.1.1.1"
