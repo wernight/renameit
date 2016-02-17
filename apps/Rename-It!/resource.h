@@ -219,8 +219,6 @@
 #define IDC_DEV_EDIT                    1132
 #define IDC_WEB_SO_ON_DEM               1133
 #define IDC_PROGRESS1                   1134
-#define IDC_WEB_SO_ON_DEM2              1134
-#define IDC_DEV_SO_ON_DEM               1134
 #define IDC_PROGRESS2                   1135
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136

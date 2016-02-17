@@ -33,8 +33,8 @@ HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	{
 	case IDC_WEB_EDIT:
 	case IDC_DEV_EDIT:
-	case IDC_WEB_SO_ON_DEM:
-	case IDC_DEV_SO_ON_DEM:
+	//case IDC_WEB_SO_ON_DEM:
+   // case IDC_DEV_SO_ON_DEM:
 		pDC->SetTextColor(RGB(0x00, 0x00, 0xFF)); 
 	}
 
@@ -48,8 +48,8 @@ BOOL CAboutDlg::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	{
 	case IDC_WEB_EDIT:
 	case IDC_DEV_EDIT:
-	case IDC_WEB_SO_ON_DEM:
-	case IDC_DEV_SO_ON_DEM:
+	//case IDC_WEB_SO_ON_DEM:
+	//case IDC_DEV_SO_ON_DEM:
 		
 		::SetCursor(AfxGetApp()->LoadCursor(IDC_LINK_CURSOR));
 		return TRUE;
@@ -71,13 +71,13 @@ BOOL CAboutDlg::PreTranslateMessage(MSG* pMsg)
 			ShellExecute(GetSafeHwnd(), _T("open"), _T("mailto:werner@beroux.com"), NULL, NULL, SW_SHOWNORMAL);
 			return TRUE;
 
-		case IDC_WEB_SO_ON_DEM:
-			ShellExecute(GetSafeHwnd(), _T("open"), _T("http://www.software-on-demand-ita.com"), NULL, NULL, SW_SHOWNORMAL);
-			return TRUE;
+		//case IDC_WEB_SO_ON_DEM:
+		//	ShellExecute(GetSafeHwnd(), _T("open"), _T("http://www.software-on-demand-ita.com"), NULL, NULL, SW_SHOWNORMAL);
+			//return TRUE;
 
-		case IDC_DEV_SO_ON_DEM:
-			ShellExecute(GetSafeHwnd(), _T("open"), _T("mailto:gppischedda@gmail.com"), NULL, NULL, SW_SHOWNORMAL);
-			return TRUE;
+//		case IDC_DEV_SO_ON_DEM:
+			//ShellExecute(GetSafeHwnd(), _T("open"), _T("mailto:gppischedda@gmail.com"), NULL, NULL, SW_SHOWNORMAL);
+			//return TRUE;
 
 	}
 
@@ -94,8 +94,8 @@ BOOL CAboutDlg::OnInitDialog()
 	GetDlgItem(IDC_WEB_EDIT)->SetWindowText(str);
 	GetDlgItem(IDC_DEV_EDIT)->SetWindowText(_T("Werner BEROUX"));
 
-	GetDlgItem(IDC_WEB_SO_ON_DEM)->SetWindowText(L"http://www.software-on-demand-ita.com");
-	GetDlgItem(IDC_DEV_SO_ON_DEM)->SetWindowText(_T("Giuseppe Pischedda"));
+	//GetDlgItem(IDC_WEB_SO_ON_DEM)->SetWindowText(L"http://www.software-on-demand-ita.com");
+//	GetDlgItem(IDC_DEV_SO_ON_DEM)->SetWindowText(_T("Giuseppe Pischedda"));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE

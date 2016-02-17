@@ -92,8 +92,7 @@ BEGIN
     BEGIN
         BLOCK "000904b0"
         BEGIN
-            VALUE "CompanyName", "J.Pischedda 2016 - software-on-demand-ita.com"
-            VALUE "FileDescription", "Rename-It! v3.42 Shell Extension for x64"
+            VALUE "FileDescription", "Rename-It! v4.x Shell Extension for x64"
             VALUE "FileVersion", "4.1.1.1"
             VALUE "InternalName", "SimpleEx"
             VALUE "LegalCopyright", "Under Apache License"

@@ -327,11 +327,11 @@ HRESULT CSimpleShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	/////////////////////////////////////////
 	
 	/*use this line if you are compiling for 4.x version*/
-	//strCommandLine += _T(" /$shell$ext$ ");
+	strCommandLine += _T(" /$shell$ext$ ");
 	
 	
 	/*use this line if you are compiling for 3.42 version*/
-	strCommandLine += _T(" /f ");
+	//strCommandLine += _T(" /f ");
 	
 	////////////////////////////////////////
 	
