@@ -195,6 +195,7 @@
 #define IDC_RIGHTSIDE                   1070
 #define IDC_ID3FORMAT                   1079
 #define IDC_WEB_EDIT                    1082
+#define IDC_WEB_NEW_LIC                 1083
 #define IDC_REPORT_LIST                 1091
 #define IDC_NEW_EDIT                    1094
 #define IDC_ORIGINAL_EDIT               1095
@@ -217,13 +218,13 @@
 #define IDC_SEARCH_RICHEDIT             1130
 #define IDC_REPLACE_RICHEDIT            1131
 #define IDC_DEV_EDIT                    1132
-#define IDC_WEB_SO_ON_DEM               1133
 #define IDC_PROGRESS1                   1134
 #define IDC_PROGRESS2                   1135
 #define IDC_PROGRESS3                   1136
 #define IDC_SHOW_ALL_CHECK              1136
 #define IDC_REPLACE_ONCE_CHECK          1137
 #define IDC_SHOW_ONLY_PROBLEMS_CHECK    1138
+#define IDC_STATIC_TITLE                1140
 #define IDS_CMDLINE_FILTER_FILE_MISSING 2000
 #define IDS_CMDLINE_LOG_FILE_MISSING    2001
 #define IDS_CMDLINE_NO_FILTER           2002
@@ -289,7 +290,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        235
 #define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1139
+#define _APS_NEXT_CONTROL_VALUE         1141
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
