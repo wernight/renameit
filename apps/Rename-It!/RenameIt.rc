@@ -26,25 +26,40 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 IDC_LINK_CURSOR         CURSOR                  "res\\lien.cur"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
 IDB_DEL                 BITMAP                  "res\\delete.bmp"
+
 IDB_DOWN                BITMAP                  "res\\down.bmp"
+
 IDB_ADDFILTER           BITMAP                  "res\\new.bmp"
+
 IDB_PROP                BITMAP                  "res\\prop.bmp"
+
 IDB_UP                  BITMAP                  "res\\up.bmp"
+
 IDB_SAVE                BITMAP                  "res\\save.bmp"
+
 IDB_OPEN                BITMAP                  "res\\open.bmp"
+
 IDB_ADDFOLDER           BITMAP                  "res\\add folder.bmp"
+
 IDB_ADDFILES            BITMAP                  "res\\add files.bmp"
+
 IDB_DELALL              BITMAP                  "res\\delete all.bmp"
+
 IDB_UNSELECT_ALL        BITMAP                  "res\\unselect all.bmp"
+
 IDB_INVERSE_SELECTION   BITMAP                  "res\\inverse selection.bmp"
+
 IDB_SELECT_ALL          BITMAP                  "res\\select all.bmp"
+
 IDR_FILTERS_TOOLBAR     BITMAP                  "res\\wiz_toolbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -54,14 +69,23 @@ IDR_FILTERS_TOOLBAR     BITMAP                  "res\\wiz_toolbar.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\RenameIt.ico"
+
 IDI_REMOVED             ICON                    "res\\removed.ico"
+
 IDI_REN_OK              ICON                    "res\\ok.ico"
+
 IDI_CONFLICT            ICON                    "res\\conflict.ico"
+
 IDI_BADNAME             ICON                    "res\\bad name.ico"
+
 IDI_REN_ERROR           ICON                    "res\\error.ico"
+
 IDI_INVALIDNAME         ICON                    "res\\badname.ico"
+
 IDI_RENAMER             ICON                    "res\\renamer.ico"
+
 IDI_WIN_ERROR           ICON                    "res\\WinError.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -93,17 +117,19 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 217, 102
+IDD_ABOUTBOX DIALOGEX 0, 0, 281, 145
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Rename-It!"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,242,7,32,14,WS_GROUP
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "Rename-It! version 4 Alpha",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    EDITTEXT        IDC_WEB_EDIT,40,27,135,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    EDITTEXT        IDC_DEV_EDIT,40,41,63,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "This build will stop working on 31/12/2012, and will need to be replaced with a later release.",IDC_STATIC,40,70,170,25,SS_NOPREFIX
+    LTEXT           "Rename-It! 4 Alpha",IDC_STATIC_TITLE,40,10,200,14,SS_NOPREFIX
+    EDITTEXT        IDC_WEB_EDIT,40,46,191,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    EDITTEXT        IDC_DEV_EDIT,40,61,190,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "This software is under Apache License  v2.0",IDC_STATIC,40,82,143,13,SS_NOPREFIX
+    EDITTEXT        IDC_WEB_NEW_LIC,183,82,64,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Copyright (c) 1998-2016 Werner Beroux",IDC_STATIC,40,28,126,8
 END
 
 IDD_RENAMEIT_DIALOG DIALOGEX 0, 0, 237, 178
@@ -315,10 +341,10 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 210
+        RIGHTMARGIN, 274
         VERTGUIDE, 40
         TOPMARGIN, 7
-        BOTTOMMARGIN, 95
+        BOTTOMMARGIN, 138
     END
 
     IDD_RENAMEIT_DIALOG, DIALOG
@@ -418,8 +444,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,9,0,1
- PRODUCTVERSION 3,9,0,1
+ FILEVERSION 4,1,1,1
+ PRODUCTVERSION 4,1,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -436,23 +462,23 @@ BEGIN
         BEGIN
             VALUE "Comments", "Rename a large number of files at once."
             VALUE "FileDescription", "Rename-It!"
-            VALUE "FileVersion", "3, 9, 0, 1"
+            VALUE "FileVersion", "4.1.1.1"
             VALUE "InternalName", "RenameIt"
-            VALUE "LegalCopyright", "Copyright © 1998, 2007 Werner BEROUX"
+            VALUE "LegalCopyright", "Copyright © 1998, 2016 Werner BEROUX"
             VALUE "OriginalFilename", "RenameIt.exe"
             VALUE "ProductName", "Rename-It! Application"
-            VALUE "ProductVersion", "3, 9, 0, 1"
+            VALUE "ProductVersion", "4.1.1.1"
         END
         BLOCK "040c04b0"
         BEGIN
             VALUE "Comments", "Renomme un grand nombre de fichier en un fois."
             VALUE "FileDescription", "Rename-It!"
-            VALUE "FileVersion", "3, 9, 0, 1"
+            VALUE "FileVersion", "4.1.1.1"
             VALUE "InternalName", "RenameIt"
-            VALUE "LegalCopyright", "Copyright © 1998, 2007 Werner BEROUX"
+            VALUE "LegalCopyright", "Copyright © 1998, 2016 Werner BEROUX"
             VALUE "OriginalFilename", "RenameIt.exe"
             VALUE "ProductName", "Application RenameIt"
-            VALUE "ProductVersion", "3, 9, 0, 1"
+            VALUE "ProductVersion", "4.1.1.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -593,6 +619,17 @@ BEGIN
 0x6f57, 0x6472, 0x4320, 0x7361, 0x0065, 
     IDC_CASE_COMBO, 0x403, 12, 0
 0x4e69, 0x4556, 0x5452, 0x6320, 0x5341, 0x0045, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
     0
 END
 
@@ -1029,7 +1066,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,133,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,133,24,50,14
-    LTEXT           "TODO",IDC_STATIC,37,41,20,8
+    LTEXT           "TODO",IDC_STATIC,21,46,20,8
 END
 
 IDD_WIZ_ENUM DIALOGEX 0, 0, 186, 90
@@ -1383,6 +1420,17 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_WIZ_APPEND AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

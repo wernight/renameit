@@ -7,6 +7,8 @@
 #include <shlobj.h>
 #include <comdef.h>
 
+#include <atlstr.h> // ATL now supports CString
+
 struct __declspec(uuid("000214e4-0000-0000-c000-000000000046")) IContextMenu;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -35,18 +37,21 @@ public:
 
 // ISimpleShlExt
 private:
+	CString m_strFilesBuff = L"";
 	HBITMAP	m_hMenuBmp;
-	LPTSTR	m_szFiles;
+	/*LPTSTR*/ LPWSTR	m_szFiles;
 	UINT	m_nFilesLength;
 
 	void MyFormatMessage(UINT nResourceID, ...);
+
+	
 
 public:
 	// IShellExtInit
 	STDMETHOD(Initialize)(LPCITEMIDLIST, LPDATAOBJECT, HKEY);
 
 	// IContextMenu
-	STDMETHOD(GetCommandString)(UINT, UINT, UINT*, LPSTR, UINT);
+	STDMETHOD(GetCommandString)(UINT_PTR, UINT, UINT*, LPSTR, UINT);
 	STDMETHOD(InvokeCommand)(LPCMINVOKECOMMANDINFO);
 	STDMETHOD(QueryContextMenu)(HMENU, UINT, UINT, UINT, UINT);
 };

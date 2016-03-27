@@ -1,0 +1,9 @@
+; SimpleExt_x64.def : Declares the module parameters.
+
+LIBRARY      "SimpleExt_x64.DLL"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer	PRIVATE
