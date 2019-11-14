@@ -23,6 +23,8 @@ CSimpleShlExt::~CSimpleShlExt()
 {
 	if (m_szFiles != NULL)
 		delete [] m_szFiles;
+
+	DeleteObject(m_hMenuBmp);
 }
 
 
